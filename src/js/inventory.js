@@ -23,15 +23,15 @@ function createElementFromHTML(htmlString) {
 
 function createTableHTML(categoryName) {
   return `
-        <section id="${categoryName.toLowerCase().replace(/\s/g, '-')}-section" class="mb-4">
+        <section id="${categoryName.toLowerCase().replace(/\s/g, '-')}-section" class="mb-8">
             <h2 class="text-xl font-bold mb-2">${categoryName}</h2>
             <table class="min-w-full bg-white shadow-md rounded">
                 <thead class="bg-gray-200 text-left">
                     <tr>
                         <th class="px-4 py-2">Name</th>
-                        <th class="px-4 py-2">Weight Lbs</th>
+                        <th class="px-4 py-2">Weight lbs.</th>
                         <th class="px-4 py-2">Cost</th>
-                        <th class="px-4 py-2">Action</th>
+                        <th class="px-4 py-2">Actions</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -225,7 +225,7 @@ function bindConversionControls() {
     const notFoundItems = []; // To store items not found in the lists
 
     itemList.forEach(itemName => {
-      const cleanedItemName = itemName.trim().toLowerCase(); // Clean and case insensitive match
+      const cleanedItemName = itemName.trim().toLowerCase();
 
       const item = AllEquipment.find(i => i.name.toLowerCase() === cleanedItemName);
       if (item) {
