@@ -60,8 +60,8 @@ export const Equipment = [
   {"name": "Parchment (sheet)", "weightCoins": 0, "weightLbs": 0.5, "cost": 0.2}, // estimated weight in pounds: 0.05
   {"name": "Pole (10 foot)", "weightCoins": 0, "weightLbs": 10, "cost": 0.2}, // estimated weight in pounds: 7
   {"name": "Pot, iron", "weightCoins": 0, "weightLbs": 5, "cost": 0.5}, // estimated weight in pounds: 5
-  {"name": "Rations, Iron", "weightCoins": 75, "weightLbs": 7.5, "cost": 1},
-  {"name": "Rations, Standard", "weightCoins": 200, "weightLbs": 20, "cost": 0.5},
+  {"name": "Rations, Iron", "weightCoins": 75, "weightLbs": 1, "cost": 1},
+  {"name": "Rations, Standard", "weightCoins": 200, "weightLbs": 1, "cost": 0.5},
   {"name": "Rod", "weightCoins": 60, "weightLbs": 6, "cost": 1},
   {"name": "Rope, hemp (50 feet)", "weightCoins": 100, "weightLbs": 10, "cost": 1},
   {"name": "Rope, silk (50 feet)", "weightCoins": 50, "weightLbs": 5, "cost": 10},
