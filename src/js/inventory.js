@@ -39,6 +39,8 @@ function createTableHTML(categoryName) {
 
 function addEquipmentToTable(tableBody, item) {
   const row = tableBody.insertRow();
+  row.className = 'hover:bg-gray-100';  // Add hover style
+
   const cellClassnames = 'px-4 py-1'
 
   // Create and set properties for the name cell
@@ -92,6 +94,8 @@ function updateInventoryUI() {
   let totalWeight = 0, totalCost = 0;
   Object.values(inventory).forEach(item => {
     const row = inventoryTableBody.insertRow();
+    row.className = 'hover:bg-gray-100';  // Add hover style
+
     const cell1 = row.insertCell(0);
     cell1.textContent = item.name;
     cell1.className = cellClassnames
@@ -108,12 +112,29 @@ function updateInventoryUI() {
     cell4.textContent = item.cost * item.quantity;
     cell4.className = cellClassnames
 
+    // Create and append the Remove button
+    const removeButton = document.createElement('button');
+    removeButton.textContent = 'Remove';
+    removeButton.className = 'px-4 py-1 text-sm text-red-500 hover:text-red-700';
+    removeButton.onclick = () => removeFromInventory(item.name);
+
+    const actionCell = row.insertCell(4);
+    actionCell.appendChild(removeButton);
+    actionCell.className = cellClassnames;
+
     totalWeight += item.weightLbs * item.quantity;
     totalCost += item.cost * item.quantity;
   });
 
+  // Assume a placeholder for a carry modifier, which should be part of character's stats
+  const carryModifier = 0; // This value would typically come from character data
+  const baseMovementRate = getBaseMovementRate(totalWeight, carryModifier);
+
   document.getElementById('total-weight').textContent = totalWeight.toFixed(2);
   document.getElementById('total-cost').textContent = totalCost.toFixed(2);
+  document.getElementById('base-movement-rate').textContent = baseMovementRate;
+
+  updateSpeedDisplay(baseMovementRate)
 }
 
 function setupInventoryTable() {
@@ -126,11 +147,73 @@ function setupInventoryTable() {
                     <th class="px-4 py-2">Quantity</th>
                     <th class="px-4 py-2">Total Weight</th>
                     <th class="px-4 py-2">Total Cost</th>
+                    <th class="px-4 py-2">Actions</th>
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
     `));
+}
+
+/**
+ * Determines the base movement rate based on the total weight carried and a carry modifier.
+ * @param {number} totalWeight The total weight of equipment being carried.
+ * @param {number} carryModifier The carry modifier from character's strength or other attributes.
+ * @returns {number} The base movement rate.
+ */
+function getBaseMovementRate(totalWeight, carryModifier) {
+  // Adjust the total weight with the carry modifier.
+  const adjustedWeight = totalWeight + carryModifier;
+
+  // Determine the base movement rate based on the adjusted weight.
+  if (adjustedWeight <= 75) {
+    return 12;
+  } else if (adjustedWeight <= 100) {
+    return 9;
+  } else if (adjustedWeight <= 150) {
+    return 6;
+  } else if (adjustedWeight <= 300) {
+    return 3;
+  } else {
+    // If weight exceeds the maximum limit defined, consider movement severely restricted or zero.
+    return 0; // Adjust accordingly if there's a different rule for weights above 300 pounds.
+  }
+}
+
+/**
+ * Calculates speeds for walking, running, and combat based on the base movement rate.
+ * @param {number} baseMovementRate The base movement rate of a character.
+ * @returns {Object} An object containing the speeds for walking, running, and combat.
+ */
+function getSpeed(baseMovementRate) {
+  return {
+    walking: baseMovementRate * 20,
+    running: baseMovementRate * 40,
+    combat: Math.floor(baseMovementRate / 3) * 10
+  };
+}
+
+/**
+ * Updates the HTML element with speeds for walking, running, and combat based on the base movement rate.
+ * @param {number} baseMovementRate The base movement rate of a character.
+ */
+function updateSpeedDisplay(baseMovementRate) {
+  const speeds = getSpeed(baseMovementRate);
+  document.getElementById('speed-feet-per-turn').textContent = `Walking: ${speeds.walking} | Running: ${speeds.running} | Combat: ${speeds.combat}`;
+}
+
+/**
+ * Decreases the quantity of an item in the inventory or removes it entirely if quantity reaches zero.
+ * @param {string} itemName The name of the item to remove.
+ */
+function removeFromInventory(itemName) {
+  if (inventory[itemName]) {
+    inventory[itemName].quantity -= 1;
+    if (inventory[itemName].quantity <= 0) {
+      delete inventory[itemName];  // Remove the item entirely if quantity is zero
+    }
+    updateInventoryUI();  // Update the UI to reflect the change
+  }
 }
 
 function main() {

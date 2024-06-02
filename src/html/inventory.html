@@ -8,27 +8,95 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 p-4">
-<h1 class="text-3xl font-bold text-center mb-3">Swords & Wizardry: Equipment & Inventory</h1>
-<h2 class="text-lg text-gray text-center mb-3">Complete/Revised</h2>
+<main class="mx-auto w-full max-w-screen-2xl flex-grow px-2.5 sm:px-6 lg:px-8 mb-4"> <!-- Centered container with max-width -->
+  <h1 class="text-3xl font-bold text-center mb-3">Swords & Wizardry: Equipment & Inventory</h1>
+  <h2 class="text-lg text-gray-700 text-center mb-3">Complete/Revised</h2>
 
-<div class="flex flex-row justify-between">
-  <!-- Equipment Container -->
-  <div id="equipment-container" class="w-1/2 p-4 bg-white shadow-lg rounded-lg mr-2">
-    <!-- Dynamically generated content will go here -->
-  </div>
-
-  <!-- Inventory Container -->
-  <div id="inventory-container" class="w-1/2 p-4 bg-white shadow-lg rounded-lg">
-    <h2 class="text-2xl font-bold mb-4">Inventory</h2>
-    <div id="inventory-table-container">
-      <!-- Dynamically generated table will be inserted here -->
+  <div class="flex flex-row justify-between gap-4">
+    <!-- Equipment Container -->
+    <div id="equipment-container" class="flex-1 p-4 bg-white shadow-lg rounded-lg">
+      <!-- Dynamically generated content will go here -->
     </div>
-    <h3 class="text-xl mt-4">Total Weight: <span id="total-weight" class="font-semibold">0</span> pounds</h3>
-    <h3 class="text-xl">Total Cost: <span id="total-cost" class="font-semibold">0</span> gold pieces</h3>
-  </div>
-</div>
 
-<script src="../js/data/equipment.js" type="module"></script>
+    <!-- Inventory Container -->
+    <div id="inventory-container" class="flex-1 p-4 bg-white shadow-lg rounded-lg">
+      <h2 class="text-2xl font-bold mb-4">Inventory</h2>
+      <div id="inventory-table-container">
+        <!-- Dynamically generated table will be inserted here -->
+      </div>
+
+      <div class="mt-4 mb-8">
+        <p class="text-lg">Total Weight: <span id="total-weight" class="font-semibold">0</span> pounds</p>
+        <p class="text-lg">Total Cost: <span id="total-cost" class="font-semibold">0</span> gold pieces</p>
+        <p class="text-lg">Base movement rate: <span id="base-movement-rate" class="font-semibold">0</span></p>
+        <p class="text-lg">Speed, feet per turn: <span id="speed-feet-per-turn">...</span></p>
+      </div>
+
+      <div id="movement-container">
+        <h2 class="text-2xl font-bold text-left mb-6">Base Movement Rate</h2>
+        <table class="table-auto w-full mb-4 bg-white rounded shadow-md">
+          <thead class="bg-gray-200">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Weight Carried</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Base Movement Rate</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="px-6 py-2">Up to 75 pounds</td>
+            <td class="px-6 py-2">12</td>
+          </tr>
+          <tr class="bg-gray-50">
+            <td class="px-6 py-2">76–100 pounds</td>
+            <td class="px-6 py-2">9</td>
+          </tr>
+          <tr>
+            <td class="px-6 py-2">101–150 pounds</td>
+            <td class="px-6 py-2">6</td>
+          </tr>
+          <tr class="bg-gray-50">
+            <td class="px-6 py-2">151–300 pounds (300-pound maximum)</td>
+            <td class="px-6 py-2">3</td>
+          </tr>
+          </tbody>
+        </table>
+
+        <table class="min-w-full table-auto bg-white shadow-md rounded">
+          <thead class="bg-gray-200 text-left">
+          <tr>
+            <th class="px-4 py-2 text-sm font-semibold">Description</th>
+            <th class="px-4 py-2 text-sm font-semibold">Speed</th>
+            <th class="px-4 py-2 text-sm font-semibold">Results</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr class="bg-gray-50">
+            <td class="px-4 py-2">Walking</td>
+            <td class="px-4 py-2">Base movement rate times 20 feet/turn</td>
+            <td class="px-4 py-2">Mapping and careful observation of the surroundings are possible.</td>
+          </tr>
+          <tr>
+            <td class="px-4 py-2">Running</td>
+            <td class="px-4 py-2">Base movement rate times 40 feet/turn</td>
+            <td class="px-4 py-2">No mapping permitted. Characters are automatically surprised and have no chance to
+              surprise others. The sound of running may attract the attention of enemies.
+            </td>
+          </tr>
+          <tr class="bg-gray-50">
+            <td class="px-4 py-2">Combat</td>
+            <td class="px-4 py-2">Base movement rate divided by 3, times ten feet, is how far the character can move in
+              one round. Thus: Base movement of 6 = 20ft, Base movement of 9 = 30ft, Base movement of 12 = 40ft.
+            </td>
+            <td class="px-4 py-2">Dashing around, battling your foes. Alternatively, running for your life.</td>
+          </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</>
+
 <script src="../js/inventory.js" type="module"></script>
 </body>
 </html>
