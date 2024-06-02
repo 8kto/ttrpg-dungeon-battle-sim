@@ -1,4 +1,4 @@
-## A tabletop RPG inventory generator for Swords & Wizardry.
+## A tabletop RPG inventory generator for Swords & Wizardry (Complete/Revised)
 
 ```
                            _                         _                  _
