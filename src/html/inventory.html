@@ -3,14 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Equipment Inventory</title>
+    <title>Swords & Wizardry: Equipment & Inventory</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/inventory.js" type="module"></script>
   </head>
   <body class="bg-gray-100 p-4">
+    <div class="flex items-center justify-center">
+      <pre title="Swords & Wizardry logo">
+                           _                         _                  _
+                          | |       ___             (_)                | |
+ _____      _____  _ __ __| |___   ( _ )   __      ___ ______ _ _ __ __| |_ __ _   _
+/ __\ \ /\ / / _ \| '__/ _` / __|  / _ \/\ \ \ /\ / / |_  / _` | '__/ _` | '__| | | |
+\__ \\ V  V / (_) | | | (_| \__ \ | (_>  <  \ V  V /| |/ / (_| | | | (_| | |  | |_| |
+|___/ \_/\_/ \___/|_|  \__,_|___/  \___/\/   \_/\_/ |_/___\__,_|_|  \__,_|_|   \__, |
+                                                                                __/ |
+                                                                               |___/
+    </pre
+      >
+    </div>
     <main class="mx-auto w-full max-w-screen-2xl flex-grow px-2.5 sm:px-6 lg:px-8 mb-4">
       <!-- Centered container with max-width -->
-      <h1 class="text-3xl font-bold text-center mb-3">Swords & Wizardry: Equipment & Inventory</h1>
+      <h1 class="text-3xl font-bold text-center mb-3">Equipment & Inventory</h1>
       <h2 class="text-lg text-gray-700 text-center mb-3">Complete/Revised</h2>
 
       <div class="flex flex-row justify-between gap-4">
@@ -36,7 +50,7 @@
           </div>
 
           <div id="movement-container">
-            <h2 class="text-2xl font-bold text-left mb-6">Base Movement Rate</h2>
+            <h2 class="text-2xl font-bold text-left mb-6">ℹ️ Base Movement Rate</h2>
             <table class="table-auto w-full mb-4 bg-white rounded shadow-md">
               <thead class="bg-gray-200">
                 <tr>
@@ -113,8 +127,39 @@
           </div>
         </div>
       </div>
+      <footer class="text-base text-gray-700">
+        <div class="mx-auto max-w-screen-2xl px-4 py-6 sm:px-6 lg:px-8">
+          <div class="flex flex-col items-center justify-between">
+            <div class="mb-4 max-w-full whitespace-normal break-words text-base">
+              <a
+                href="https://github.com/8kto/ttrpg-snw-generator"
+                target="_blank"
+                class="whitespace-nowrap underline-offset-4 hover:underline decoration-gray-400 ph-color-accent decoration-amber-700"
+              >
+                Project page on GitHub
+              </a>
+            </div>
+            <div>
+              <p class="text-center text-sm text-gray-600">
+                Disclaimer: This is an unofficial tool for "Swords and Wizardry" and is not endorsed by the game's
+                publishers. All related trademarks belong to their respective owners.
+              </p>
+            </div>
+            <div class="flex items-center">
+              <div class="inline-block text-sm text-gray-600">
+                <span class="ml-4">&copy; 2024 </span>
+                <a
+                  href="https://ivlev.blog/"
+                  class="whitespace-nowrap underline-offset-4 hover:underline decoration-gray-400 whitespace-nowrap underline-offset-4 hover:underline decoration-gray-400"
+                  target="_blank"
+                >
+                  Igor Okto (undefined)
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </main>
-
-    <script src="../js/inventory.js" type="module"></script>
   </body>
 </html>
