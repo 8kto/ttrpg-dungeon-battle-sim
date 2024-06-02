@@ -12,11 +12,11 @@
 
 /** @type {ArmorList} */
 export const Armor = [
-  { name: 'Shield', weightCoins: 100, weightLbs: 10, cost: 15 },
-  { name: 'Leather', weightCoins: 250, weightLbs: 25, cost: 5 },
-  { name: 'Ring', weightCoins: 400, weightLbs: 40, cost: 30 },
-  { name: 'Chain', weightCoins: 500, weightLbs: 50, cost: 75 },
-  { name: 'Plate', weightCoins: 700, weightLbs: 70, cost: 100 },
+  { cost: 15, name: 'Shield', weightLbs: 10 },
+  { cost: 5, name: 'Leather', weightLbs: 25 },
+  { cost: 30, name: 'Ring', weightLbs: 40 },
+  { cost: 75, name: 'Chain', weightLbs: 50 },
+  { cost: 100, name: 'Plate', weightLbs: 70 },
 ]
 
 /**
@@ -25,58 +25,58 @@ export const Armor = [
 
 /** @type {ItemList} */
 export const Equipment = [
-  { name: 'Backpack', weightCoins: 20, weightLbs: 2, cost: 5 },
-  { name: 'Barrel', weightCoins: 0, weightLbs: 25, cost: 2 }, // estimated weight in pounds: 25
-  { name: 'Bedroll', weightCoins: 30, weightLbs: 3, cost: 1 },
-  { name: 'Bell', weightCoins: 0, weightLbs: 1, cost: 1 }, // estimated weight in pounds: 1
-  { name: 'Block and tackle', weightCoins: 0, weightLbs: 5, cost: 5 }, // estimated weight in pounds: 5
-  { name: 'Bottle or Flagon', weightCoins: 60, weightLbs: 6, cost: 2 },
-  { name: 'Candle', weightCoins: 5, weightLbs: 0.5, cost: 0.01 },
-  { name: 'Canvas (per square yard)', weightCoins: 0, weightLbs: 0.5, cost: 0.1 }, // estimated weight in pounds: 0.5
-  { name: 'Case (map or scroll)', weightCoins: 10, weightLbs: 1, cost: 1 },
-  { name: 'Chain (10 feet)', weightCoins: 0, weightLbs: 20, cost: 30 }, // estimated weight in pounds: 10
-  { name: 'Chalk, 1 piece', weightCoins: 0, weightLbs: 0.1, cost: 0.05 }, // estimated weight in pounds: 0.1
-  { name: 'Chest', weightCoins: 0, weightLbs: 25, cost: 2 }, // estimated weight in pounds: 25
-  { name: 'Fishing net (25 square feet)', weightCoins: 0, weightLbs: 5, cost: 4 }, // estimated weight in pounds: 5
-  { name: 'Flask, Empty', weightCoins: 5, weightLbs: 0.5, cost: 0.03 },
-  { name: 'Flask, Full', weightCoins: 20, weightLbs: 2, cost: 0.1 },
-  { name: 'Garlic, charmed', weightCoins: 0, weightLbs: 0.1, cost: 10 }, // estimated weight in pounds: 0.1
-  { name: 'Grappling Hook', weightCoins: 100, weightLbs: 10, cost: 1 },
-  { name: 'Hammer', weightCoins: 0, weightLbs: 3, cost: 0.5 }, // estimated weight in pounds: 3
-  { name: 'Holy symbol, wooden', weightCoins: 0, weightLbs: 0.2, cost: 1 }, // estimated weight in pounds: 0.2
-  { name: 'Holy symbol, silver', weightCoins: 0, weightLbs: 0.5, cost: 25 }, // estimated weight in pounds: 0.5
-  { name: 'Holy water (flask)', weightCoins: 0, weightLbs: 1, cost: 25 }, // estimated weight in pounds: 1
-  { name: 'Ink (1-ounce bottle)', weightCoins: 0, weightLbs: 0.1, cost: 1 }, // estimated weight in pounds: 0.1
-  { name: 'Ladder (10 foot)', weightCoins: 0, weightLbs: 20, cost: 0.05 }, // estimated weight in pounds: 20
-  { name: 'Lamp, bronze', weightCoins: 0, weightLbs: 2, cost: 0.1 }, // estimated weight in pounds: 2
-  { name: 'Lantern, bullseye', weightCoins: 50, weightLbs: 5, cost: 12 },
-  { name: 'Lantern, hooded', weightCoins: 50, weightLbs: 5, cost: 7 },
-  { name: 'Lock', weightCoins: 0, weightLbs: 1, cost: 20 }, // estimated weight in pounds: 1
-  { name: 'Manacles', weightCoins: 0, weightLbs: 2, cost: 15 }, // estimated weight in pounds: 2
-  { name: 'Mirror', weightCoins: 5, weightLbs: 0.5, cost: 20 },
-  { name: 'Musical instrument', weightCoins: 0, weightLbs: 3, cost: 5 }, // estimated weight in pounds: 3
-  { name: 'Oil, lamp (1 pint)', weightCoins: 10, weightLbs: 1, cost: 0.1 },
-  { name: 'Parchment (sheet)', weightCoins: 0, weightLbs: 0.5, cost: 0.2 }, // estimated weight in pounds: 0.05
-  { name: 'Pole (10 foot)', weightCoins: 0, weightLbs: 10, cost: 0.2 }, // estimated weight in pounds: 7
-  { name: 'Pot, iron', weightCoins: 0, weightLbs: 5, cost: 0.5 }, // estimated weight in pounds: 5
-  { name: 'Rations, Iron', weightCoins: 75, weightLbs: 1, cost: 1 },
-  { name: 'Rations, Standard', weightCoins: 200, weightLbs: 1, cost: 0.5 },
-  { name: 'Rod', weightCoins: 60, weightLbs: 6, cost: 1 },
-  { name: 'Rope, hemp (50 feet)', weightCoins: 100, weightLbs: 10, cost: 1 },
-  { name: 'Rope, silk (50 feet)', weightCoins: 50, weightLbs: 5, cost: 10 },
-  { name: 'Sack, Large', weightCoins: 20, weightLbs: 2, cost: 0.1 },
-  { name: 'Sack, Small', weightCoins: 5, weightLbs: 0.5, cost: 0.05 },
-  { name: 'Scroll Case', weightCoins: 10, weightLbs: 1, cost: 1 },
-  { name: 'Shovel', weightCoins: 50, weightLbs: 5, cost: 2 },
-  { name: 'Signal whistle', weightCoins: 0, weightLbs: 0.1, cost: 0.5 }, // estimated weight in pounds: 0.1
-  { name: 'Spike, iron', weightCoins: 20, weightLbs: 2, cost: 0.05 },
-  { name: 'Spellbook, blank', weightCoins: 0, weightLbs: 5, cost: 25 }, // estimated weight in pounds: 3
-  { name: 'Tent', weightCoins: 0, weightLbs: 20, cost: 10 }, // estimated weight in pounds: 20
-  { name: 'Tinderbox (Flint & Steel)', weightCoins: 2, weightLbs: 0.2, cost: 0.25 },
-  { name: 'Torch', weightCoins: 25, weightLbs: 2.5, cost: 0.01 },
-  { name: 'Waterskin, Empty', weightCoins: 5, weightLbs: 0.5, cost: 0.2 },
-  { name: 'Waterskin, Full', weightCoins: 50, weightLbs: 5, cost: 0.5 },
-  { name: 'Wolfsbane', weightCoins: 0, weightLbs: 0.5, cost: 0.1 }, // estimated weight in pounds: 0.1
+  { cost: 5, name: 'Backpack', weightLbs: 2 },
+  { cost: 2, name: 'Barrel', weightLbs: 25 },
+  { cost: 1, name: 'Bedroll', weightLbs: 3 },
+  { cost: 1, name: 'Bell', weightLbs: 1 },
+  { cost: 5, name: 'Block and tackle', weightLbs: 5 },
+  { cost: 2, name: 'Bottle or Flagon', weightLbs: 6 },
+  { cost: 0.01, name: 'Candle', weightLbs: 0.5 },
+  { cost: 0.1, name: 'Canvas (per square yard)', weightLbs: 0.5 },
+  { cost: 1, name: 'Case (map or scroll)', weightLbs: 1 },
+  { cost: 30, name: 'Chain (10 feet)', weightLbs: 20 },
+  { cost: 0.05, name: 'Chalk, 1 piece', weightLbs: 0.1 },
+  { cost: 2, name: 'Chest', weightLbs: 25 },
+  { cost: 4, name: 'Fishing net (25 square feet)', weightLbs: 5 },
+  { cost: 0.03, name: 'Flask, Empty', weightLbs: 0.5 },
+  { cost: 0.1, name: 'Flask, Full', weightLbs: 2 },
+  { cost: 10, name: 'Garlic, charmed', weightLbs: 0.1 },
+  { cost: 1, name: 'Grappling Hook', weightLbs: 10 },
+  { cost: 0.5, name: 'Hammer', weightLbs: 3 },
+  { cost: 1, name: 'Holy symbol, wooden', weightLbs: 0.2 },
+  { cost: 25, name: 'Holy symbol, silver', weightLbs: 0.5 },
+  { cost: 25, name: 'Holy water (flask)', weightLbs: 1 },
+  { cost: 1, name: 'Ink (1-ounce bottle)', weightLbs: 0.1 },
+  { cost: 0.05, name: 'Ladder (10 foot)', weightLbs: 20 },
+  { cost: 0.1, name: 'Lamp, bronze', weightLbs: 2 },
+  { cost: 12, name: 'Lantern, bullseye', weightLbs: 5 },
+  { cost: 7, name: 'Lantern, hooded', weightLbs: 5 },
+  { cost: 20, name: 'Lock', weightLbs: 1 },
+  { cost: 15, name: 'Manacles', weightLbs: 2 },
+  { cost: 20, name: 'Mirror', weightLbs: 0.5 },
+  { cost: 5, name: 'Musical instrument', weightLbs: 3 },
+  { cost: 0.1, name: 'Oil, lamp (1 pint)', weightLbs: 1 },
+  { cost: 0.2, name: 'Parchment (sheet)', weightLbs: 0.5 },
+  { cost: 0.2, name: 'Pole (10 foot)', weightLbs: 10 },
+  { cost: 0.5, name: 'Pot, iron', weightLbs: 5 },
+  { cost: 1, name: 'Rations, Iron', weightLbs: 1 },
+  { cost: 0.5, name: 'Rations, Standard', weightLbs: 1 },
+  { cost: 1, name: 'Rod', weightLbs: 6 },
+  { cost: 1, name: 'Rope, hemp (50 feet)', weightLbs: 10 },
+  { cost: 10, name: 'Rope, silk (50 feet)', weightLbs: 5 },
+  { cost: 0.1, name: 'Sack, Large', weightLbs: 2 },
+  { cost: 0.05, name: 'Sack, Small', weightLbs: 0.5 },
+  { cost: 1, name: 'Scroll Case', weightLbs: 1 },
+  { cost: 2, name: 'Shovel', weightLbs: 5 },
+  { cost: 0.5, name: 'Signal whistle', weightLbs: 0.1 },
+  { cost: 0.05, name: 'Spike, iron', weightLbs: 2 },
+  { cost: 25, name: 'Spellbook, blank', weightLbs: 5 },
+  { cost: 10, name: 'Tent', weightLbs: 20 },
+  { cost: 0.25, name: 'Tinderbox (Flint & Steel)', weightLbs: 0.2 },
+  { cost: 0.01, name: 'Torch', weightLbs: 2.5 },
+  { cost: 0.2, name: 'Waterskin, Empty', weightLbs: 0.5 },
+  { cost: 0.5, name: 'Waterskin, Full', weightLbs: 5 },
+  { cost: 0.1, name: 'Wolfsbane', weightLbs: 0.5 },
 ]
 
 /**
@@ -85,27 +85,27 @@ export const Equipment = [
 
 /** @type {WeaponList} */
 export const Weapons = [
-  { name: 'Arrows (20)', weightCoins: 10, weightLbs: 1, cost: 2 },
-  { name: 'Arrow or Quarrel', weightCoins: 5, weightLbs: 0.5, cost: 0.1 },
-  { name: 'Axe, Battle', weightCoins: 150, weightLbs: 15, cost: 5 },
-  { name: 'Axe, Hand', weightCoins: 50, weightLbs: 5, cost: 1 },
-  { name: 'Bow, Long', weightCoins: 50, weightLbs: 5, cost: 60 },
-  { name: 'Bow, Short', weightCoins: 50, weightLbs: 5, cost: 15 },
-  { name: 'Club', weightCoins: 100, weightLbs: 10, cost: 0 },
-  { name: 'Crossbow, Heavy', weightCoins: 50, weightLbs: 5, cost: 20 },
-  { name: 'Crossbow, Light', weightCoins: 50, weightLbs: 5, cost: 12 },
-  { name: 'Dagger', weightCoins: 20, weightLbs: 2, cost: 2 },
-  { name: 'Javelin', weightCoins: 50, weightLbs: 5, cost: 0.5 },
-  { name: 'Mace', weightCoins: 100, weightLbs: 10, cost: 10 },
-  { name: 'Sling Stone', weightCoins: 4, weightLbs: 0.4, cost: 0 },
-  { name: 'Sling Stones (20)', weightCoins: 50, weightLbs: 5, cost: 0 },
-  { name: 'Spear', weightCoins: 100, weightLbs: 10, cost: 1 },
-  { name: 'Staff', weightCoins: 0, weightLbs: 10, cost: 0 },
-  { name: 'Sword, Bastard', weightCoins: 100, weightLbs: 10, cost: 20 },
-  { name: 'Sword, Short', weightCoins: 50, weightLbs: 5, cost: 8 },
-  { name: 'Sword, Long', weightCoins: 100, weightLbs: 10, cost: 15 },
-  { name: 'Sword, Two-Handed', weightCoins: 150, weightLbs: 15, cost: 30 },
-  { name: 'Hammer, war', weightCoins: 100, weightLbs: 10, cost: 1 },
+  { cost: 2, name: 'Arrows (20)', weightLbs: 1 },
+  { cost: 0.1, name: 'Arrow or Quarrel', weightLbs: 0.5 },
+  { cost: 5, name: 'Axe, Battle', weightLbs: 15 },
+  { cost: 1, name: 'Axe, Hand', weightLbs: 5 },
+  { cost: 60, name: 'Bow, Long', weightLbs: 5 },
+  { cost: 15, name: 'Bow, Short', weightLbs: 5 },
+  { cost: 0, name: 'Club', weightLbs: 10 },
+  { cost: 20, name: 'Crossbow, Heavy', weightLbs: 5 },
+  { cost: 12, name: 'Crossbow, Light', weightLbs: 5 },
+  { cost: 2, name: 'Dagger', weightLbs: 2 },
+  { cost: 0.5, name: 'Javelin', weightLbs: 5 },
+  { cost: 10, name: 'Mace', weightLbs: 10 },
+  { cost: 0, name: 'Sling Stone', weightLbs: 0.4 },
+  { cost: 0, name: 'Sling Stones (20)', weightLbs: 5 },
+  { cost: 1, name: 'Spear', weightLbs: 10 },
+  { cost: 0, name: 'Staff', weightLbs: 10 },
+  { cost: 20, name: 'Sword, Bastard', weightLbs: 10 },
+  { cost: 8, name: 'Sword, Short', weightLbs: 5 },
+  { cost: 15, name: 'Sword, Long', weightLbs: 10 },
+  { cost: 30, name: 'Sword, Two-Handed', weightLbs: 15 },
+  { cost: 1, name: 'Hammer, war', weightLbs: 10 },
 ]
 
 /** @type {Array<EquipItem>} */
