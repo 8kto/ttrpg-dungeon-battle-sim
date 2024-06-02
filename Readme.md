@@ -16,6 +16,9 @@ A tool built super quickly for my fellow OSR players.
 
 Contributions are welcome!
 
+## Demo
+Current (tmp) URL: https://swords-and-wizardry.ivlev.blog/html/inventory.html
+
 ## TODO
 - [ ] Double check items in lists
 - [ ] Equipments set
