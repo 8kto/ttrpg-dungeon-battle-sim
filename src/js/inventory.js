@@ -30,8 +30,8 @@ function createTableHTML(categoryName) {
                 <thead class="bg-gray-200 text-left">
                     <tr>
                         <th class="px-4 py-2">Name</th>
-                        <th class="px-4 py-2">Weight lbs.</th>
-                        <th class="px-4 py-2">Cost</th>
+                        <th class="px-4 py-2">Weight</th>
+                        <th class="px-4 py-2">Cost, gp</th>
                         <th class="px-4 py-2">Actions</th>
                     </tr>
                 </thead>
