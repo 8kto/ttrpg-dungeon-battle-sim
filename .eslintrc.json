@@ -1,0 +1,32 @@
+{
+  "extends": ["plugin:import/recommended", "prettier"],
+  "plugins": ["import", "simple-import-sort", "sort-keys-fix", "sort-destructure-keys"],
+  "parserOptions": {
+    "ecmaVersion": 2020
+  },
+  "rules": {
+    "semi": ["error", "never"],
+    "comma-dangle": ["error", "always-multiline"],
+    "curly": ["error", "all"],
+    "import/order": "off",
+    "prefer-template": "error",
+    "padding-line-between-statements": ["error", { "blankLine": "always", "prev": "*", "next": "return" }],
+    "sort-keys": "off",
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "no-console": ["error", { "allow": ["error"] }],
+    "no-debugger": "error",
+    "sort-keys-fix/sort-keys-fix": ["error", "asc", { "natural": true }],
+    "sort-destructure-keys/sort-destructure-keys": ["error", { "caseSensitive": false }],
+    "no-implicit-coercion": [
+      "error",
+      {
+        "boolean": true,
+        "string": true,
+        "number": true,
+        "disallowTemplateShorthand": true,
+        "allow": ["!!"]
+      }
+    ]
+  }
+}
