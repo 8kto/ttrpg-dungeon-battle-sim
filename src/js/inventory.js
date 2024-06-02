@@ -1,4 +1,4 @@
-import {Armor, Equipment, Weapons} from './data/equipment.js';
+import {AllEquipment, Armor, Equipment, Weapons} from './data/equipment.js';
 
 /**
  * @typedef {Object} InventoryItem
@@ -218,14 +218,45 @@ function removeFromInventory(itemName) {
   }
 }
 
+function bindConversionControls() {
+  document.getElementById('convert-button').addEventListener('click', function() {
+    const input = document.getElementById('equipment-input').value;
+    const itemList = input.split('\n'); // Split input by new lines to get individual items
+    const notFoundItems = []; // To store items not found in the lists
+
+    itemList.forEach(itemName => {
+      const cleanedItemName = itemName.trim().toLowerCase(); // Clean and case insensitive match
+
+      const item = AllEquipment.find(i => i.name.toLowerCase() === cleanedItemName);
+      if (item) {
+        addToInventory({...item, quantity: 1}); // Assume adding one item at a time
+      }
+      else {
+        notFoundItems.push(itemName);
+      }
+    });
+
+    // Update the error output
+    if (notFoundItems.length > 0) {
+      document.getElementById('error-output').textContent = 'Items not found: ' + notFoundItems.join(', ');
+    } else {
+      document.getElementById('error-output').textContent = '';
+    }
+
+    updateInventoryUI(); // Update UI to reflect changes in inventory
+  });
+}
+
 function main() {
   const equipmentContainer = document.getElementById('equipment-container');
-  setupInventoryTable();
-  updateInventoryUI()
 
   createCategorySection(equipmentContainer, 'Armor', Armor);
   createCategorySection(equipmentContainer, 'Weapons', Weapons);
   createCategorySection(equipmentContainer, 'Equipment', Equipment);
+
+  setupInventoryTable()
+  bindConversionControls()
+  updateInventoryUI()
 }
 
 document.addEventListener('DOMContentLoaded', main);

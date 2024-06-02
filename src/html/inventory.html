@@ -29,7 +29,7 @@
         <p class="text-lg">Total Weight: <span id="total-weight" class="font-semibold">0</span> pounds</p>
         <p class="text-lg">Total Cost: <span id="total-cost" class="font-semibold">0</span> gold pieces</p>
         <p class="text-lg">Base movement rate: <span id="base-movement-rate" class="font-semibold">0</span></p>
-        <p class="text-lg">Speed, feet per turn: <span id="speed-feet-per-turn">...</span></p>
+        <p class="text-lg"><span class="text-underline">Speed</span>, feet per turn: <span id="speed-feet-per-turn">...</span></p>
       </div>
 
       <div id="movement-container">
@@ -91,11 +91,17 @@
           </tr>
           </tbody>
         </table>
+      </div>
 
+      <div class="mt-4 mb-8">
+        <h2 class="text-2xl font-bold mb-4">Add Equipment by Name</h2>
+        <textarea id="equipment-input" class="w-full p-2 border-2 border-gray-300 rounded mb-4" rows="6" placeholder="Enter each item on a new line"></textarea>
+        <button id="convert-button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Convert</button>
+        <div id="error-output" class="mt-4 text-red-500"></div>
       </div>
     </div>
   </div>
-</>
+</main>
 
 <script src="../js/inventory.js" type="module"></script>
 </body>
