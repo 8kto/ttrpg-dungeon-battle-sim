@@ -1,4 +1,4 @@
-import {Armor, Equipment} from './data/equipment.js';
+import {Armor, Equipment, Weapons} from './data/equipment.js';
 
 /**
  * @typedef {Object} InventoryItem
@@ -11,7 +11,9 @@ import {Armor, Equipment} from './data/equipment.js';
 /**
  * @type {Object.<string, InventoryItem>}
  */
-const inventory = {};
+const inventory = {
+  'Basic accessories': { name: 'Basic accessories', cost: 0, quantity: 1, weightLbs: 5 }
+};
 
 function createElementFromHTML(htmlString) {
   const div = document.createElement('div');
@@ -219,8 +221,10 @@ function removeFromInventory(itemName) {
 function main() {
   const equipmentContainer = document.getElementById('equipment-container');
   setupInventoryTable();
+  updateInventoryUI()
 
   createCategorySection(equipmentContainer, 'Armor', Armor);
+  createCategorySection(equipmentContainer, 'Weapons', Weapons);
   createCategorySection(equipmentContainer, 'Equipment', Equipment);
 }
 

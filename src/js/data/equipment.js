@@ -57,8 +57,37 @@ export const Equipment = [
   {"name": "Waterskin, Full", "weightCoins": 50, "weightLbs": 5, cost: 0}
 ]
 
+
+/**
+ * @typedef {Array<EquipItem>} WeaponList
+ */
+
+/** @type {WeaponList} */
+export const Weapons = [
+  {"name": "Arrow or Quarrel", "weightCoins": 2, "weightLbs": 0.2, "cost": 0},
+  {"name": "Axe, Battle", "weightCoins": 75, "weightLbs": 7.5, "cost": 0},
+  {"name": "Axe, Hand", "weightCoins": 50, "weightLbs": 5, "cost": 0},
+  {"name": "Bow, Long", "weightCoins": 100, "weightLbs": 10, "cost": 0},
+  {"name": "Bow, Short", "weightCoins": 50, "weightLbs": 5, "cost": 0},
+  {"name": "Club", "weightCoins": 30, "weightLbs": 3, "cost": 0},
+  {"name": "Crossbow, Heavy", "weightCoins": 80, "weightLbs": 8, "cost": 0},
+  {"name": "Crossbow, Light", "weightCoins": 50, "weightLbs": 5, "cost": 0},
+  {"name": "Dagger", "weightCoins": 10, "weightLbs": 1, "cost": 0},
+  {"name": "Javelin", "weightCoins": 20, "weightLbs": 2, "cost": 0},
+  {"name": "Mace", "weightCoins": 75, "weightLbs": 7.5, "cost": 0},
+  {"name": "Sling Stone", "weightCoins": 2, "weightLbs": 0.2, "cost": 0},
+  {"name": "Spear", "weightCoins": 40, "weightLbs": 4, "cost": 0},
+  {"name": "Staff", "weightCoins": 50, "weightLbs": 5, "cost": 0},
+  {"name": "Sword, Bastard", "weightCoins": 100, "weightLbs": 10, "cost": 0},
+  {"name": "Sword, Short", "weightCoins": 30, "weightLbs": 3, "cost": 0},
+  {"name": "Sword, Long", "weightCoins": 60, "weightLbs": 6, "cost": 0},
+  {"name": "Sword, Two-Handed", "weightCoins": 250, "weightLbs": 25, "cost": 0},
+  {"name": "Warhammer", "weightCoins": 60, "weightLbs": 6, "cost": 0}
+];
+
 /** @type {Array<EquipItem>} */
 export const AllEquipment = [
   ...Armor,
-  ...Equipment
+  ...Weapons,
+  ...Equipment,
 ]
