@@ -29,3 +29,4 @@ Current (tmp) URL: https://swords-and-wizardry.ivlev.blog/html/index.html
 - [ ] Add custom item
 - [ ] Filter by name
 - [ ] Extend equipment lists (?)
+- [ ] Multiple inventories

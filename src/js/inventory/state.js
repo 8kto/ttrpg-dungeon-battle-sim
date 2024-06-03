@@ -66,3 +66,4 @@ export const getInventory = (inventoryId) => {
 }
 
 // TODO rename inventory
+// TODO remove inventory
