@@ -1,4 +1,4 @@
-## A tabletop RPG inventory generator for Swords & Wizardry (Complete/Revised)
+## A tabletop RPG index generator for Swords & Wizardry (Complete/Revised)
 
 ```
                            _                         _                  _
@@ -17,7 +17,7 @@ Contributions are welcome!
 
 ## Demo
 
-Current (tmp) URL: https://swords-and-wizardry.ivlev.blog/html/inventory.html
+Current (tmp) URL: https://swords-and-wizardry.ivlev.blog/html/index.html
 
 ## TODO
 
@@ -25,3 +25,5 @@ Current (tmp) URL: https://swords-and-wizardry.ivlev.blog/html/inventory.html
 - [ ] Equipments set
 - [ ] Languages support (?)
 - [ ] Random character generation
+- [ ] Add coins
+- [ ] Add custom item
