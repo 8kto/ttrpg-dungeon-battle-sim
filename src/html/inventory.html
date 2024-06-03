@@ -23,39 +23,53 @@
       >
     </div>
     <main class="mx-auto w-full max-w-screen-2xl flex-grow px-2.5 sm:px-6 lg:px-8 mb-4">
-      <!-- Centered container with max-width -->
-      <h1 class="text-3xl font-bold text-center mb-3">Equipment & Inventory</h1>
-      <h2 class="text-lg text-gray-700 text-center mb-3">Complete/Revised</h2>
+      <header>
+        <!-- Centered container with max-width -->
+        <h1 class="text-3xl font-bold text-center mb-3">Equipment & Inventory</h1>
+        <h2 class="text-lg text-gray-700 text-center mb-3">Complete/Revised</h2>
+      </header>
 
       <div class="flex flex-row justify-between gap-4">
         <!-- Equipment Container -->
-        <div id="equipment-container" class="flex-1 p-4 bg-white shadow-lg rounded-lg">
-          <!-- Dynamically generated content will go here -->
-        </div>
+        <section id="equipment-container" class="flex-1 p-4 bg-white shadow-lg rounded-lg"></section>
 
         <!-- Inventory Container -->
-        <div id="inventory-container" class="flex-1 p-4 bg-white shadow-lg rounded-lg">
+        <section id="inventory-container" class="flex-1 p-4 bg-white shadow-lg rounded-lg">
           <h2 class="text-2xl font-bold mb-4">Inventory</h2>
-          <div id="inventory-table-container">
-            <!-- Dynamically generated table will be inserted here -->
+
+          <!-- Inventory Containers dynamically managed -->
+          <div id="inventories-container" class="flex flex-col justify-between gap-4">
+            <!-- Inventories will be dynamically inserted here -->
           </div>
 
-          <div class="mt-4 mb-8">
-            <p>Total Weight: <span id="total-weight" class="font-semibold">0</span> pounds</p>
-            <p>Total Cost: <span id="total-cost" class="font-semibold">0</span> gold pieces</p>
-            <p>Base movement rate: <span id="base-movement-rate" class="font-semibold">0</span></p>
-            <p>
-              <span class="">Speed</span>, feet per turn: <span id="speed-feet-per-turn" class="text-red-800">...</span>
-            </p>
+          <!-- Section to Add or Remove Inventories -->
+          <section class="mt-4">
+            <h2 class="text-2xl font-bold mb-4">Manage Inventories</h2>
+            <input
+              id="new-inventory-name"
+              type="text"
+              placeholder="Inventory Name"
+              pattern="^[A-Za-z_][A-Za-z0-9\-_ ]*$"
+              required
+              class="input bg-gray-200 p-2 border border-gray-400 rounded"
+            />
+            <button
+              id="add-inventory-button"
+              class="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Add Inventory
+            </button>
+          </section>
 
+          <section class="mt-4 mb-8">
             <ul class="text-sm mt-4">
               <li><span class="text-red-800">*</span> When wielded two-handed, gain +1 damage bonus</li>
               <li><span class="text-red-800">†</span> Can be used as either a one-handed or two-handed weapon</li>
               <li><span class="text-red-800">‡</span> Can be used as either a melee or missile weapon</li>
             </ul>
-          </div>
+          </section>
 
-          <div id="movement-container">
+          <section id="movement-container">
             <h2 class="text-2xl font-bold text-left mb-6">
               <span class="text-gray-300">( i )</span>️ Base Movement Rate
             </h2>
@@ -118,9 +132,9 @@
                 </tr>
               </tbody>
             </table>
-          </div>
+          </section>
 
-          <div class="mt-4 mb-8">
+          <section class="mt-4 mb-8">
             <h2 class="text-2xl font-bold mb-4">Add Equipment by Name</h2>
             <textarea
               id="equipment-input"
@@ -132,8 +146,8 @@
               Convert
             </button>
             <div id="error-output" class="mt-4 text-red-500"></div>
-          </div>
-        </div>
+          </section>
+        </section>
       </div>
       <footer class="text-base text-gray-700">
         <div class="mx-auto max-w-screen-2xl px-4 py-6 sm:px-6 lg:px-8">
