@@ -98,7 +98,7 @@ function addToInventory(item) {
 
 function updateInventoryUI() {
   const cellClassnames = 'px-4 py-1'
-  const inventoryTableBody = document.querySelector('#index-table-container table tbody')
+  const inventoryTableBody = document.querySelector('#inventory-table-container table tbody')
   inventoryTableBody.innerHTML = ''
 
   let totalWeight = 0,
@@ -149,7 +149,7 @@ function updateInventoryUI() {
 }
 
 function setupInventoryTable() {
-  const inventoryTableContainer = document.getElementById('index-table-container')
+  const inventoryTableContainer = document.getElementById('inventory-table-container')
   inventoryTableContainer.appendChild(
     createElementFromHTML(`
         <table class="min-w-full bg-white shadow-md rounded">
