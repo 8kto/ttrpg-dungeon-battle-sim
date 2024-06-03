@@ -21,9 +21,11 @@ Current (tmp) URL: https://swords-and-wizardry.ivlev.blog/html/index.html
 
 ## TODO
 
-- [ ] Double check items in lists
+- [*] Double check items in lists
 - [ ] Equipments set
 - [ ] Languages support (?)
 - [ ] Random character generation
 - [ ] Add coins
 - [ ] Add custom item
+- [ ] Filter by name
+- [ ] Extend equipment lists (?)
