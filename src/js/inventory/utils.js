@@ -61,3 +61,38 @@ export const getEquipNameSuffix = (flags) => {
 
   return sfx ? `<span class="text-red-800 ml-3">${sfx}</span>` : ''
 }
+
+/**
+ * @param {string} id
+ * @param {string} name
+ */
+export const renderInitialInventory = (id, name) => {
+  const inventoryTableContainer = document.getElementById('inventories-container')
+  inventoryTableContainer.appendChild(
+    createElementFromHtml(`
+        <section>
+          <h3 class="text-lg font-bold mb-4">${name}</h3>
+          <table id="${id}-table-container" class="min-w-full bg-white shadow-md rounded">
+              <thead class="bg-gray-200 text-left">
+                  <tr>
+                      <th class="px-4 py-2">Name</th>
+                      <th class="px-4 py-2">Quantity</th>
+                      <th class="px-4 py-2">Total Weight</th>
+                      <th class="px-4 py-2">Total Cost</th>
+                      <th class="px-4 py-2">Actions</th>
+                  </tr>
+              </thead>
+              <tbody></tbody>
+          </table>
+          <section class="mt-4 mb-8">
+            <p>Total Weight: <span id="${id}-total-weight" class="font-semibold">0</span> pounds</p>
+            <p>Total Cost: <span id="${id}-total-cost" class="font-semibold">0</span> gold pieces</p>
+            <p>Base movement rate: <span id="${id}-base-movement-rate" class="font-semibold">0</span></p>
+            <p>
+              <span class="">Speed</span>, feet per turn: <span id="${id}-speed-feet-per-turn" class="text-red-800">...</span>
+            </p>
+          </section>
+        </section>
+    `),
+  )
+}
