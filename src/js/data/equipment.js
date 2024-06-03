@@ -2,7 +2,6 @@
 /**
  * @typedef {Object} EquipItem
  * @property {string} name - The name of the armor.
- * @property {number} weightCoins - The weight of the armor in coins.
  * @property {number} weightLbs - The weight of the armor in pounds.
  * @property {number} cost - The cost in golden pieces
  * @property {InventoryItemFlag} [flags] - Optional binary flags to describe item capabilities.
