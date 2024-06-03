@@ -1,10 +1,24 @@
+/* eslint-disable sort-keys-fix/sort-keys-fix */
 /**
  * @typedef {Object} EquipItem
  * @property {string} name - The name of the armor.
  * @property {number} weightCoins - The weight of the armor in coins.
  * @property {number} weightLbs - The weight of the armor in pounds.
  * @property {number} cost - The cost in golden pieces
+ * @property {InventoryItemFlag} [flags] - Optional binary flags to describe item capabilities.
  */
+
+/**
+ * @typedef {number} InventoryItemFlag
+ * @description Flags for special properties of inventory items.
+ */
+
+/** @type {InventoryItemFlag} */
+export const TWO_HANDED = 0b000001
+/** @type {InventoryItemFlag} */
+export const VAR_HANDED = 0b000010
+/** @type {InventoryItemFlag} */
+export const MELEE_AND_MISSILE = 0b000100
 
 /**
  * @typedef {Array<EquipItem>} ArmorList
@@ -83,20 +97,20 @@ export const Equipment = [
 /** @type {WeaponList} */
 export const Weapons = [
   { cost: 2, name: 'Arrows (20)', weightLbs: 1 },
-  { cost: 5, name: 'Axe, Battle', weightLbs: 15 },
-  { cost: 1, name: 'Axe, Hand', weightLbs: 5 },
+  { cost: 5, name: 'Axe, Battle', weightLbs: 15, flags: VAR_HANDED | TWO_HANDED },
+  { cost: 1, name: 'Axe, Hand', weightLbs: 5, flags: MELEE_AND_MISSILE },
   { cost: 60, name: 'Bow, Long', weightLbs: 5 },
   { cost: 15, name: 'Bow, Short', weightLbs: 5 },
   { cost: 0, name: 'Club', weightLbs: 10 },
   { cost: 20, name: 'Crossbow, Heavy', weightLbs: 5 },
   { cost: 12, name: 'Crossbow, Light', weightLbs: 5 },
-  { cost: 2, name: 'Dagger', weightLbs: 2 },
+  { cost: 2, name: 'Dagger', weightLbs: 2, flags: MELEE_AND_MISSILE },
   { cost: 0.5, name: 'Javelin', weightLbs: 5 },
   { cost: 10, name: 'Mace', weightLbs: 10 },
   { cost: 0, name: 'Sling Stones (20)', weightLbs: 5 },
-  { cost: 1, name: 'Spear', weightLbs: 10 },
+  { cost: 1, name: 'Spear', weightLbs: 10, flags: VAR_HANDED | MELEE_AND_MISSILE | TWO_HANDED },
   { cost: 0, name: 'Staff', weightLbs: 10 },
-  { cost: 20, name: 'Sword, Bastard', weightLbs: 10 },
+  { cost: 20, name: 'Sword, Bastard', weightLbs: 10, flags: VAR_HANDED | TWO_HANDED },
   { cost: 8, name: 'Sword, Short', weightLbs: 5 },
   { cost: 15, name: 'Sword, Long', weightLbs: 10 },
   { cost: 30, name: 'Sword, Two-Handed', weightLbs: 15 },

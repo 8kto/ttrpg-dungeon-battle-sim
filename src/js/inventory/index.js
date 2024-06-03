@@ -1,17 +1,19 @@
-import { AllEquipment, Armor, Equipment, Weapons } from './data/equipment.js'
+import { AllEquipment, Armor, Equipment, Weapons } from '../data/equipment.js'
+import { getEquipNameSuffix } from './utils.js'
 
 /**
  * @typedef {Object} InventoryItem
  * @property {string} name - The name of the item.
  * @property {number} weightLbs - The weight of the item in pounds.
  * @property {number} cost - The cost of the item in gold pieces.
- * @property {number} quantity - The quantity of the item in the inventory.
+ * @property {number} quantity - The quantity of the item in the index.
+ * @property {InventoryItemFlag} flags - Binary flags
  */
 
 /**
  * @type {Object.<string, InventoryItem>}
  */
-const inventory = {
+const index = {
   'Basic accessories': { cost: 0, name: 'Basic accessories', quantity: 1, weightLbs: 10 },
 }
 
@@ -40,6 +42,10 @@ function createTableHTML(categoryName) {
         </section>`
 }
 
+/**
+ * @param tableBody
+ * @param {EquipItem} item
+ */
 function addEquipmentToTable(tableBody, item) {
   const row = tableBody.insertRow()
   row.className = 'hover:bg-gray-100' // Add hover style
@@ -48,7 +54,8 @@ function addEquipmentToTable(tableBody, item) {
 
   // Create and set properties for the name cell
   const nameCell = row.insertCell(0)
-  nameCell.textContent = item.name
+
+  nameCell.innerHTML = item.name + getEquipNameSuffix(item.flags)
   nameCell.className = cellClassnames
 
   // Create and set properties for the weight cell
@@ -82,39 +89,39 @@ function createCategorySection(container, categoryName, items) {
 }
 
 function addToInventory(item) {
-  if (!inventory[item.name]) {
-    inventory[item.name] = { ...item, quantity: 0 }
+  if (!index[item.name]) {
+    index[item.name] = { ...item, quantity: 0 }
   }
-  inventory[item.name].quantity++
+  index[item.name].quantity++
   updateInventoryUI()
 }
 
 function updateInventoryUI() {
   const cellClassnames = 'px-4 py-1'
-  const inventoryTableBody = document.querySelector('#inventory-table-container table tbody')
+  const inventoryTableBody = document.querySelector('#index-table-container table tbody')
   inventoryTableBody.innerHTML = ''
 
   let totalWeight = 0,
     totalCost = 0
-  Object.values(inventory).forEach((item) => {
+  Object.values(index).forEach((item) => {
     const row = inventoryTableBody.insertRow()
     row.className = 'hover:bg-gray-100' // Add hover style
 
-    const cell1 = row.insertCell(0)
-    cell1.textContent = item.name
-    cell1.className = cellClassnames
+    const nameCell = row.insertCell(0)
+    nameCell.textContent = item.name
+    nameCell.className = cellClassnames
 
-    const cell2 = row.insertCell(1)
-    cell2.textContent = item.quantity
-    cell2.className = cellClassnames
+    const qtyCell = row.insertCell(1)
+    qtyCell.textContent = item.quantity
+    qtyCell.className = cellClassnames
 
-    const cell3 = row.insertCell(2)
-    cell3.textContent = item.weightLbs * item.quantity
-    cell3.className = cellClassnames
+    const weightCell = row.insertCell(2)
+    weightCell.textContent = item.weightLbs * item.quantity
+    weightCell.className = cellClassnames
 
-    const cell4 = row.insertCell(3)
-    cell4.textContent = item.cost * item.quantity
-    cell4.className = cellClassnames
+    const costCell = row.insertCell(3)
+    costCell.textContent = item.cost * item.quantity
+    costCell.className = cellClassnames
 
     // Create and append the Remove button
     const removeButton = document.createElement('button')
@@ -122,9 +129,9 @@ function updateInventoryUI() {
     removeButton.className = 'px-4 py-1 text-sm text-red-500 hover:text-red-700'
     removeButton.onclick = () => removeFromInventory(item.name)
 
-    const actionCell = row.insertCell(4)
-    actionCell.appendChild(removeButton)
-    actionCell.className = cellClassnames
+    const actionsCell = row.insertCell(4)
+    actionsCell.appendChild(removeButton)
+    actionsCell.className = cellClassnames
 
     totalWeight += item.weightLbs * item.quantity
     totalCost += item.cost * item.quantity
@@ -142,7 +149,7 @@ function updateInventoryUI() {
 }
 
 function setupInventoryTable() {
-  const inventoryTableContainer = document.getElementById('inventory-table-container')
+  const inventoryTableContainer = document.getElementById('index-table-container')
   inventoryTableContainer.appendChild(
     createElementFromHTML(`
         <table class="min-w-full bg-white shadow-md rounded">
@@ -210,14 +217,14 @@ function updateSpeedDisplay(baseMovementRate) {
 }
 
 /**
- * Decreases the quantity of an item in the inventory or removes it entirely if quantity reaches zero.
+ * Decreases the quantity of an item in the index or removes it entirely if quantity reaches zero.
  * @param {string} itemName The name of the item to remove.
  */
 function removeFromInventory(itemName) {
-  if (inventory[itemName]) {
-    inventory[itemName].quantity -= 1
-    if (inventory[itemName].quantity <= 0) {
-      delete inventory[itemName] // Remove the item entirely if quantity is zero
+  if (index[itemName]) {
+    index[itemName].quantity -= 1
+    if (index[itemName].quantity <= 0) {
+      delete index[itemName] // Remove the item entirely if quantity is zero
     }
     updateInventoryUI() // Update the UI to reflect the change
   }
@@ -247,7 +254,7 @@ function bindConversionControls() {
       document.getElementById('error-output').textContent = ''
     }
 
-    updateInventoryUI() // Update UI to reflect changes in inventory
+    updateInventoryUI() // Update UI to reflect changes in index
   })
 }
 
