@@ -5,17 +5,20 @@
  * @property {Object.<string, InventoryItem>} items - The items in this inventory.
  */
 
+export const DEFAULT_INVENTORY_ID = 'MainCharacter'
+export const DEFAULT_INVENTORY_ITEMS = {
+  'Basic accessories': { cost: 0, name: 'Basic accessories', quantity: 1, weightLbs: 10 },
+}
+
 /** @type {Object.<string, Inventory>} */
 const inventories = {
-  default: {
+  [DEFAULT_INVENTORY_ID]: {
     name: 'Default',
-    items: {
-      'Basic accessories': { cost: 0, name: 'Basic accessories', quantity: 1, weightLbs: 10 },
-    },
+    items: { ...DEFAULT_INVENTORY_ITEMS },
   },
 }
 
-let currentInventoryId = 'default'
+let currentInventoryId = DEFAULT_INVENTORY_ID
 
 export const getCurrentInventoryId = () => {
   return currentInventoryId
@@ -61,3 +64,5 @@ export const getInventories = () => {
 export const getInventory = (inventoryId) => {
   return inventories[inventoryId]
 }
+
+// TODO rename inventory

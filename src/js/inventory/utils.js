@@ -1,4 +1,5 @@
 import { MELEE_AND_MISSILE, TWO_HANDED, VAR_HANDED } from '../data/equipment.js'
+import { setCurrentInventoryId } from './state.js'
 
 export const createElementFromHtml = (htmlString) => {
   const div = document.createElement('div')
@@ -70,8 +71,8 @@ export const renderInitialInventory = (id, name) => {
   const inventoryTableContainer = document.getElementById('inventories-container')
   inventoryTableContainer.appendChild(
     createElementFromHtml(`
-        <section>
-          <h3 class="text-lg font-bold mb-4">${name}</h3>
+        <section id="${id}-container" class="inventory-container px-2 py-4 border">
+          <h3 id="${id}-header" class="inventory-header text-lg font-semibold mb-4 hover:text-red-700 hover:cursor-pointer">${name ?? id}</h3>
           <table id="${id}-table-container" class="min-w-full bg-white shadow-md rounded">
               <thead class="bg-gray-200 text-left">
                   <tr>
@@ -95,4 +96,36 @@ export const renderInitialInventory = (id, name) => {
         </section>
     `),
   )
+
+  document.getElementById(`${id}-header`).addEventListener('click', () => {
+    setCurrentInventoryId(id)
+    markSelectedInventory(id)
+  })
+}
+
+/**
+ * Marks the selected inventory by updating the inventory headers.
+ * @param {string} selectedId - The ID of the inventory to mark as selected.
+ */
+export const markSelectedInventory = (selectedId) => {
+  // Remove any existing 'selected' markers from all inventory headers
+  document.querySelectorAll('.inventory-header .selected').forEach((element) => {
+    element.remove()
+  })
+  document.querySelectorAll('.inventory-container.selected').forEach((element) => {
+    element.classList.remove('selected')
+  })
+
+  // Get the header element of the currently selected inventory
+  const headerElement = document.getElementById(`${selectedId}-header`)
+  if (headerElement) {
+    // Create a new span element to show as 'selected'
+    const selectedSpan = createElementFromHtml(`<span class="selected text-gray-400 ml-2">[selected]</span>`)
+
+    // Append the 'selected' marker to the header
+    headerElement.appendChild(selectedSpan)
+  }
+
+  const sectionElement = document.getElementById(`${selectedId}-container`)
+  sectionElement.classList.add('selected')
 }

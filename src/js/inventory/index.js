@@ -1,10 +1,19 @@
 import { AllEquipment, Armor, Equipment, Weapons } from '../data/equipment.js'
-import { addToInventory, getCurrentInventoryId, getInventories, getInventory, removeFromInventory } from './state.js'
+import {
+  addToInventory,
+  DEFAULT_INVENTORY_ID,
+  DEFAULT_INVENTORY_ITEMS,
+  getCurrentInventoryId,
+  getInventories,
+  getInventory,
+  removeFromInventory,
+} from './state.js'
 import {
   createElementFromHtml,
   getBaseMovementRate,
   getEquipNameSuffix,
   getSpeed,
+  markSelectedInventory,
   renderInitialInventory,
 } from './utils.js'
 
@@ -213,7 +222,7 @@ const addInventory = (name) => {
   const inventoryId = name.toLowerCase().replace(/\s+/g, '-')
   const inventory = getInventory(inventoryId)
   if (!inventory) {
-    getInventories()[inventoryId] = { items: {}, name }
+    getInventories()[inventoryId] = { items: { ...DEFAULT_INVENTORY_ITEMS }, name }
     renderInventory(inventoryId, name)
   }
 }
@@ -237,7 +246,7 @@ const removeInventory = (inventoryId) => {
  */
 const setupInventoryUi = () => {
   document.getElementById('add-inventory-button').addEventListener('click', () => {
-    const inventoryName = document.getElementById('new-inventory-name')?.value.trim() || 'default'
+    const inventoryName = document.getElementById('new-inventory-name')?.value.trim() || DEFAULT_INVENTORY_ID
     addInventory(inventoryName)
   })
 
@@ -253,9 +262,10 @@ const main = () => {
   createCategorySection(equipmentContainer, 'Weapons', Weapons)
   createCategorySection(equipmentContainer, 'Equipment', Equipment)
 
-  renderInitialInventory(getCurrentInventoryId())
+  renderInitialInventory(getCurrentInventoryId(), 'Main Character')
   bindConversionControls()
   setupInventoryUi()
+  markSelectedInventory(getCurrentInventoryId())
 }
 
 document.addEventListener('DOMContentLoaded', main)

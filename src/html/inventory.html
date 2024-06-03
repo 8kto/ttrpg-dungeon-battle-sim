@@ -7,6 +7,14 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="../js/inventory/index.js?what-is-the-hash-$VERSION$" type="module"></script>
+    <style>
+      .inventory-container {
+        border-color: #e5e7eb;
+      }
+      .inventory-container.selected {
+        border-color: #777;
+      }
+    </style>
   </head>
   <body class="bg-gray-200 p-4">
     <div class="flex items-center justify-center">
@@ -48,10 +56,11 @@
             <input
               id="new-inventory-name"
               type="text"
-              placeholder="Inventory Name"
+              placeholder="Name for inventory"
               pattern="^[A-Za-z_][A-Za-z0-9\-_ ]*$"
               required
               class="input bg-gray-200 p-2 border border-gray-400 rounded"
+              value="Character Name"
             />
             <button
               id="add-inventory-button"
