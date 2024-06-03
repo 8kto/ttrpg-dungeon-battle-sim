@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="../js/inventory/index.js?what-is-the-hash-$VERSION$" type="module"></script>
   </head>
-  <body class="bg-gray-100 p-4">
+  <body class="bg-gray-200 p-4">
     <div class="flex items-center justify-center">
       <pre title="Swords & Wizardry logo">
                            _                         _                  _
@@ -41,12 +41,18 @@
           </div>
 
           <div class="mt-4 mb-8">
-            <p class="text-lg">Total Weight: <span id="total-weight" class="font-semibold">0</span> pounds</p>
-            <p class="text-lg">Total Cost: <span id="total-cost" class="font-semibold">0</span> gold pieces</p>
-            <p class="text-lg">Base movement rate: <span id="base-movement-rate" class="font-semibold">0</span></p>
-            <p class="text-lg">
-              <span class="underline">Speed</span>, feet per turn: <span id="speed-feet-per-turn">...</span>
+            <p>Total Weight: <span id="total-weight" class="font-semibold">0</span> pounds</p>
+            <p>Total Cost: <span id="total-cost" class="font-semibold">0</span> gold pieces</p>
+            <p>Base movement rate: <span id="base-movement-rate" class="font-semibold">0</span></p>
+            <p>
+              <span class="">Speed</span>, feet per turn: <span id="speed-feet-per-turn" class="text-red-800">...</span>
             </p>
+
+            <ul class="text-sm mt-4">
+              <li><span class="text-red-800">*</span> Two-handed weapon</li>
+              <li><span class="text-red-800">†</span> Can be used as either a one-handed or two-handed weapon</li>
+              <li><span class="text-red-800">‡</span> Can be used as either a melee or missile weapon</li>
+            </ul>
           </div>
 
           <div id="movement-container">

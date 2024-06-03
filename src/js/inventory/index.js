@@ -108,7 +108,7 @@ function updateInventoryUI() {
     row.className = 'hover:bg-gray-100' // Add hover style
 
     const nameCell = row.insertCell(0)
-    nameCell.textContent = item.name
+    nameCell.innerHTML = item.name + getEquipNameSuffix(item.flags)
     nameCell.className = cellClassnames
 
     const qtyCell = row.insertCell(1)
@@ -141,7 +141,7 @@ function updateInventoryUI() {
   const carryModifier = 0 // This value would typically come from character data
   const baseMovementRate = getBaseMovementRate(totalWeight, carryModifier)
 
-  document.getElementById('total-weight').textContent = totalWeight.toFixed(2)
+  document.getElementById('total-weight').textContent = totalWeight.toFixed(1)
   document.getElementById('total-cost').textContent = totalCost.toFixed(2)
   document.getElementById('base-movement-rate').textContent = baseMovementRate
 
@@ -213,7 +213,7 @@ function getSpeed(baseMovementRate) {
 function updateSpeedDisplay(baseMovementRate) {
   const speeds = getSpeed(baseMovementRate)
   document.getElementById('speed-feet-per-turn').textContent =
-    `Walking: ${speeds.walking} | Running: ${speeds.running} | Combat: ${speeds.combat}`
+    `Walking: ${speeds.walking} • Running: ${speeds.running} • Combat: ${speeds.combat}`
 }
 
 /**
