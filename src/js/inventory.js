@@ -12,7 +12,7 @@ import { AllEquipment, Armor, Equipment, Weapons } from './data/equipment.js'
  * @type {Object.<string, InventoryItem>}
  */
 const inventory = {
-  'Basic accessories': { cost: 0, name: 'Basic accessories', quantity: 1, weightLbs: 5 },
+  'Basic accessories': { cost: 0, name: 'Basic accessories', quantity: 1, weightLbs: 10 },
 }
 
 function createElementFromHTML(htmlString) {
