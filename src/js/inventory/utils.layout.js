@@ -73,7 +73,7 @@ const getInventoryControlsSection = (id) => {
             </p>
             <div class="flex justify-end">
               <button id="${id}-reset-inventory" class="text-xs bg-gray-200 text-white rounded-l hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
-                <span role="img" aria-label="Reset inventory" class="block px-4 py-2">🔴️</span>
+                <span role="img" title="Reset inventory items" aria-label="Reset inventory items" class="block px-4 py-2">🔴️</span>
               </button>
               <button id="${id}-remove-inventory" class="text-xs bg-gray-200 text-white rounded-r hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
                 <span role="img" title="Remove inventory" aria-label="Remove inventory" class="block px-4 py-2">❌</span>
