@@ -1,4 +1,4 @@
-import { setCurrentInventoryId } from './state.js'
+import { getInventory, setCurrentInventoryId } from './state.js'
 import { getIdFromName } from './utils.js'
 
 /**
@@ -68,6 +68,16 @@ const getInventoryControlsSection = (id) => {
 
 /**
  * @param {string} id
+ */
+export const bindInventoryControls = (id) => {
+  document.getElementById(`${id}-header`).addEventListener('click', () => {
+    setCurrentInventoryId(id)
+    markSelectedInventory(id)
+  })
+}
+
+/**
+ * @param {string} id
  * @param {string} name
  */
 export const renderInitialInventory = (id, name) => {
@@ -83,10 +93,7 @@ export const renderInitialInventory = (id, name) => {
     `),
   )
 
-  document.getElementById(`${id}-header`).addEventListener('click', () => {
-    setCurrentInventoryId(id)
-    markSelectedInventory(id)
-  })
+  bindInventoryControls(id)
 }
 
 /**
@@ -109,4 +116,7 @@ export const markSelectedInventory = (inventoryId) => {
 
   const sectionElement = document.getElementById(`${inventoryId}-container`)
   sectionElement.classList.add('selected')
+
+  const containerTitle = document.getElementById('inventory-container-title')
+  containerTitle.textContent = getInventory(inventoryId).name
 }
