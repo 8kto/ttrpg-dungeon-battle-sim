@@ -31,3 +31,4 @@ Current (tmp) URL: https://swords-and-wizardry.ivlev.blog/html/index.html
 - [ ] Filter by name
 - [ ] Extend equipment lists (?)
 - [ ] Multiple inventories
+- [ ] Import & Export
