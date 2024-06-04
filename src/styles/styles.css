@@ -1,0 +1,13 @@
+.inventory-container {
+  border-radius: 5px;
+  border-color: #e5e7eb;
+}
+.inventory-container.selected {
+  border-color: #bbb;
+}
+h1,
+h2,
+h3 {
+  font-family: serif;
+  letter-spacing: 1px;
+}
