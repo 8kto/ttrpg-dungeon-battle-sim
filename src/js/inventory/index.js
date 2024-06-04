@@ -61,7 +61,7 @@ const renderInventory = (id, name) => {
 
   Object.values(inventory.items).forEach((item) => {
     const row = inventoryTableBody.insertRow()
-    row.className = 'hover:bg-gray-100' // Add hover style
+    row.className = 'even:bg-gray-50 hover:bg-gray-100'
 
     const nameCell = row.insertCell(0)
     nameCell.innerHTML = item.name + getEquipNameSuffix(item.flags)
@@ -112,14 +112,14 @@ const renderInventory = (id, name) => {
  */
 const createEquipTableHtml = (categoryName) => `
         <section id="${categoryName.toLowerCase().replace(/\s/g, '-')}-section" class="mb-8">
-            <h2 class="text-xl font-bold mb-2">${categoryName}</h2>
+            <h2 class="text-2xl font-bold mb-4">${categoryName}</h2>
             <table class="min-w-full bg-white shadow-md rounded">
                 <thead class="bg-gray-200 text-left">
                     <tr>
-                        <th class="px-4 py-2">Name</th>
-                        <th class="px-4 py-2">Weight</th>
-                        <th class="px-4 py-2">Cost, gp</th>
-                        <th class="px-4 py-2">Actions</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Weight</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cost, gp</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -132,7 +132,7 @@ const createEquipTableHtml = (categoryName) => `
  */
 const addEquipmentToTable = (tableBody, item) => {
   const row = tableBody.insertRow()
-  row.className = 'hover:bg-gray-100'
+  row.className = 'even:bg-gray-50 hover:bg-gray-100'
 
   const cellClassnames = 'px-4 py-1'
 

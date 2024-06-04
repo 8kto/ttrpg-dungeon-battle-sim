@@ -15,6 +15,12 @@
       .inventory-container.selected {
         border-color: #bbb;
       }
+      h1,
+      h2,
+      h3 {
+        font-family: serif;
+        letter-spacing: 1px;
+      }
     </style>
   </head>
   <body class="bg-gray-200 p-4">
@@ -35,7 +41,7 @@
       <header>
         <!-- Centered container with max-width -->
         <h1 class="text-3xl font-bold text-center mb-3">Equipment & Inventory</h1>
-        <h2 class="text-lg text-gray-700 text-center mb-3">Complete/Revised</h2>
+        <div class="text-lg text-gray-700 text-center mb-3">Complete/Revised</div>
       </header>
 
       <div class="flex flex-row justify-between gap-4">
@@ -77,82 +83,104 @@
           </section>
 
           <section id="movement-container">
-            <h2 class="text-2xl font-bold text-left mb-6">
-              <span class="text-gray-300">( i )</span>️ Base Movement Rate
-            </h2>
-            <table class="table-auto w-full mb-4 bg-white rounded shadow-md">
-              <thead class="bg-gray-200">
-                <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Weight Carried</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Base Movement Rate</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="px-6 py-2">Up to 75 pounds</td>
-                  <td class="px-6 py-2">12</td>
-                </tr>
-                <tr class="bg-gray-50">
-                  <td class="px-6 py-2">76–100 pounds</td>
-                  <td class="px-6 py-2">9</td>
-                </tr>
-                <tr>
-                  <td class="px-6 py-2">101–150 pounds</td>
-                  <td class="px-6 py-2">6</td>
-                </tr>
-                <tr class="bg-gray-50">
-                  <td class="px-6 py-2">151–300 pounds (300-pound maximum)</td>
-                  <td class="px-6 py-2">3</td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="max-w-auto">
+              <!-- Accordion Item 1 -->
+              <details class="mb-4 border-b border-gray-200">
+                <summary class="cursor-pointer px-4 py-2 text-gray-800 bg-gray-50 hover:bg-gray-100">
+                  ℹ️ Base Movement Rate
+                </summary>
+                <div class="">
+                  <table class="table-auto w-full mb-4 bg-white rounded shadow-md text-sm">
+                    <thead class="bg-gray-200">
+                      <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Weight Carried</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                          Base Movement Rate
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="px-6 py-2">Up to 75 pounds</td>
+                        <td class="px-6 py-2">12</td>
+                      </tr>
+                      <tr class="bg-gray-50">
+                        <td class="px-6 py-2">76–100 pounds</td>
+                        <td class="px-6 py-2">9</td>
+                      </tr>
+                      <tr>
+                        <td class="px-6 py-2">101–150 pounds</td>
+                        <td class="px-6 py-2">6</td>
+                      </tr>
+                      <tr class="bg-gray-50">
+                        <td class="px-6 py-2">151–300 pounds (300-pound maximum)</td>
+                        <td class="px-6 py-2">3</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <table class="min-w-full table-auto bg-white shadow-md rounded text-sm">
+                    <thead class="bg-gray-200 text-left">
+                      <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Speed</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Results</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="bg-gray-50">
+                        <td class="px-4 py-2">Walking</td>
+                        <td class="px-4 py-2">Base movement rate * 20 feet/turn</td>
+                        <td class="px-4 py-2">Mapping and careful observation of the surroundings are possible.</td>
+                      </tr>
+                      <tr>
+                        <td class="px-4 py-2">Running</td>
+                        <td class="px-4 py-2">Base movement rate * 40 feet/turn</td>
+                        <td class="px-4 py-2">
+                          No mapping permitted. <br />
+                          Characters are automatically surprised and have no chance to surprise others. <br />
+                          The sound of running may attract the attention of enemies.
+                        </td>
+                      </tr>
+                      <tr class="bg-gray-50">
+                        <td class="px-4 py-2">Combat</td>
+                        <td class="px-4 py-2">
+                          (Base movement rate / 3) * 10 feet <br />
+                          [6] = 20ft<br />
+                          [9] = 30ft<br />
+                          [12] = 40ft
+                        </td>
+                        <td class="px-4 py-2">
+                          Dashing around, battling your foes. Alternatively, running for your life.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </details>
 
-            <table class="min-w-full table-auto bg-white shadow-md rounded">
-              <thead class="bg-gray-200 text-left">
-                <tr>
-                  <th class="px-4 py-2 text-sm font-semibold">Description</th>
-                  <th class="px-4 py-2 text-sm font-semibold">Speed</th>
-                  <th class="px-4 py-2 text-sm font-semibold">Results</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="bg-gray-50">
-                  <td class="px-4 py-2">Walking</td>
-                  <td class="px-4 py-2">Base movement rate times 20 feet/turn</td>
-                  <td class="px-4 py-2">Mapping and careful observation of the surroundings are possible.</td>
-                </tr>
-                <tr>
-                  <td class="px-4 py-2">Running</td>
-                  <td class="px-4 py-2">Base movement rate times 40 feet/turn</td>
-                  <td class="px-4 py-2">
-                    No mapping permitted. Characters are automatically surprised and have no chance to surprise others.
-                    The sound of running may attract the attention of enemies.
-                  </td>
-                </tr>
-                <tr class="bg-gray-50">
-                  <td class="px-4 py-2">Combat</td>
-                  <td class="px-4 py-2">
-                    Base movement rate divided by 3, times ten feet, is how far the character can move in one round.
-                    Thus: Base movement of 6 = 20ft, Base movement of 9 = 30ft, Base movement of 12 = 40ft.
-                  </td>
-                  <td class="px-4 py-2">Dashing around, battling your foes. Alternatively, running for your life.</td>
-                </tr>
-              </tbody>
-            </table>
-          </section>
-
-          <section class="mt-4 mb-8">
-            <h2 class="text-2xl font-bold mb-4">Add Equipment by Name</h2>
-            <textarea
-              id="equipment-input"
-              class="w-full p-2 border-2 border-gray-300 rounded mb-4"
-              rows="6"
-              placeholder="Enter each item on a new line"
-            ></textarea>
-            <button id="convert-button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              Convert
-            </button>
-            <div id="error-output" class="mt-4 text-red-500"></div>
+              <!-- Accordion Item 2 -->
+              <details class="mb-4 border-b border-gray-200">
+                <summary class="cursor-pointer px-4 py-2 text-gray-800 bg-gray-50 hover:bg-gray-100">
+                  Add Equipment by Name
+                </summary>
+                <div class="">
+                  <p class="py-2 text-gray-600 text-sm">Items will be searched and added to the selected Inventory.</p>
+                  <textarea
+                    id="equipment-input"
+                    class="w-full p-2 border-2 border-gray-300 rounded mb-4"
+                    rows="6"
+                    placeholder="Enter each item on a new line"
+                  ></textarea>
+                  <button
+                    id="convert-button"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Add items
+                  </button>
+                  <div id="error-output" class="mt-4 text-red-500"></div>
+                </div>
+              </details>
+            </div>
           </section>
         </section>
       </div>
