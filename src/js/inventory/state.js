@@ -84,5 +84,17 @@ export const setInventory = (id, inventory) => {
   inventories[id] = inventory
 }
 
+/**
+ * @param {string} id
+ */
+export const removeInventory = (id) => {
+  delete inventories[id]
+}
+
+/**
+ * @param {string} id
+ */
+export const resetInventoryItems = (id) => {
+  inventories[id].items = { ...DEFAULT_INVENTORY_ITEMS }
+}
 // TODO rename inventory
-// TODO remove inventory

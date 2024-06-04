@@ -1,5 +1,13 @@
-import { getInventory, setCurrentInventoryId } from './state.js'
-import { getIdFromName } from './utils.js'
+import {
+  getCurrentInventoryId,
+  getInventories,
+  getInventory,
+  removeInventory,
+  resetInventoryItems,
+  setCurrentInventoryId,
+  setInventory,
+} from './state.js'
+import { dispatchEvent, getIdFromName } from './utils.js'
 
 /**
  * @param {string} htmlString Should enclose the layout with one element (div, span etc.)
@@ -63,6 +71,14 @@ const getInventoryControlsSection = (id) => {
             <p>
               <span class="">Speed</span>, feet per turn: <span id="${id}-speed-feet-per-turn" class="text-red-800">...</span>
             </p>
+            <div class="flex justify-end">
+              <button id="${id}-reset-inventory" class="text-xs bg-gray-200 text-white rounded-l hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+                <span role="img" aria-label="Reset inventory" class="block px-4 py-2">🔴️</span>
+              </button>
+              <button id="${id}-remove-inventory" class="text-xs bg-gray-200 text-white rounded-r hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+                <span role="img" title="Remove inventory" aria-label="Remove inventory" class="block px-4 py-2">❌</span>
+              </button>
+            </div>
           </section>`
 }
 
@@ -73,6 +89,23 @@ export const bindInventoryControls = (id) => {
   document.getElementById(`${id}-header`).addEventListener('click', () => {
     setCurrentInventoryId(id)
     markSelectedInventory(id)
+  })
+
+  document.getElementById(`${id}-remove-inventory`).addEventListener('click', () => {
+    const inventories = getInventories()
+    if (inventories.length > 1) {
+      removeInventory(id)
+      setCurrentInventoryId(inventories[0].id)
+      markSelectedInventory(inventories[0].id)
+      dispatchEvent('RenderInventories')
+    }
+  })
+
+  document.getElementById(`${id}-reset-inventory`).addEventListener('click', () => {
+    resetInventoryItems(id)
+    setCurrentInventoryId(id)
+    markSelectedInventory(id)
+    dispatchEvent('RenderInventories')
   })
 }
 

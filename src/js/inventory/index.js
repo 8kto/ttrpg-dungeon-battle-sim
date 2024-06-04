@@ -10,7 +10,7 @@ import {
   setCurrentInventoryId,
   setInventory,
 } from './state.js'
-import { getBaseMovementRate, getEquipNameSuffix, getIdFromName, getSpeed } from './utils.js'
+import { dispatchEvent, getBaseMovementRate, getEquipNameSuffix, getIdFromName, getSpeed } from './utils.js'
 import { createElementFromHtml, getEquipTable, markSelectedInventory, renderInitialInventory } from './utils.layout.js'
 
 /**
@@ -216,7 +216,6 @@ const addInventory = (name) => {
  */
 const removeInventory = (inventoryId) => {
   if (getInventory(inventoryId)) {
-    delete inventories[inventoryId]
     const section = document.getElementById(`${inventoryId}-table-container`)
     if (section) {
       section.parentNode.removeChild(section) // Remove the section from UI
@@ -227,18 +226,26 @@ const removeInventory = (inventoryId) => {
 /**
  * Initializes the UI for managing multiple inventories.
  */
-const setupInventoryUi = () => {
+const bindInventoryControls = () => {
   document.getElementById('add-inventory-button').addEventListener('click', () => {
     const inventoryName = document.getElementById('new-inventory-name')?.value.trim() || DEFAULT_INVENTORY_ID
     const inventoryId = addInventory(inventoryName)
     setCurrentInventoryId(inventoryId)
     markSelectedInventory(inventoryId)
   })
+}
 
-  getInventories().forEach((inventory) => renderInventory(inventory.id))
+const subscribeToEvents = () => {
+  document.addEventListener('RenderInventories', () => {
+    const inventoryTableContainer = document.getElementById('inventories-container')
+    inventoryTableContainer.innerHTML = ''
+    getInventories().forEach((inventory) => renderInventory(inventory.id))
+  })
 }
 
 const main = () => {
+  subscribeToEvents()
+
   const currentInventoryId = getCurrentInventoryId()
   const equipmentContainer = document.getElementById('equipment-container')
 
@@ -246,9 +253,9 @@ const main = () => {
   createCategorySection(equipmentContainer, 'Weapons', Weapons)
   createCategorySection(equipmentContainer, 'Equipment', Equipment)
 
-  renderInitialInventory(currentInventoryId, 'Main Character')
   bindConversionControls()
-  setupInventoryUi()
+  bindInventoryControls()
+  dispatchEvent('RenderInventories')
   markSelectedInventory(currentInventoryId)
 }
 

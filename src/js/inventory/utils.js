@@ -63,3 +63,10 @@ export const getEquipNameSuffix = (flags) => {
 export const getIdFromName = (name) => {
   return name.toLowerCase().replace(/\s+/g, '-')
 }
+
+/**
+ * @param {string} name
+ */
+export const dispatchEvent = (name) => {
+  document.dispatchEvent(new Event(name))
+}
