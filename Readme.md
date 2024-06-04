@@ -12,6 +12,7 @@
 ```
 
 A tool built super quickly for my fellow OSR players.
+I sourced the equipment lists, along with their weights and costs, from the rulebook and used the **BFRPG Equipment Emporium** to fill in any missing weights.
 
 Contributions are welcome!
 
