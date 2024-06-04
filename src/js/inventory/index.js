@@ -7,15 +7,11 @@ import {
   getInventories,
   getInventory,
   removeFromInventory,
+  setCurrentInventoryId,
+  setInventory,
 } from './state.js'
-import {
-  createElementFromHtml,
-  getBaseMovementRate,
-  getEquipNameSuffix,
-  getSpeed,
-  markSelectedInventory,
-  renderInitialInventory,
-} from './utils.js'
+import { getBaseMovementRate, getEquipNameSuffix, getSpeed } from './utils.js'
+import { createElementFromHtml, markSelectedInventory, renderInitialInventory } from './utils.layout.js'
 
 /**
  * @typedef {Object} InventoryItem
@@ -23,7 +19,7 @@ import {
  * @property {number} weightLbs - The weight of the item in pounds.
  * @property {number} cost - The cost of the item in gold pieces.
  * @property {number} quantity - The quantity of the item in the index.
- * @property {InventoryItemFlag} flags - Binary flags
+ * @property {InventoryItemFlag} [flags] - Binary flags
  */
 
 /**
@@ -217,14 +213,21 @@ const bindConversionControls = () => {
 /**
  * Adds a new inventory with a given name.
  * @param {string} name - The name for the new inventory.
+ * @returns {string} inventoryId
  */
 const addInventory = (name) => {
   const inventoryId = name.toLowerCase().replace(/\s+/g, '-')
-  const inventory = getInventory(inventoryId)
-  if (!inventory) {
-    getInventories()[inventoryId] = { items: { ...DEFAULT_INVENTORY_ITEMS }, name }
+
+  if (!getInventory(inventoryId)) {
+    setInventory(inventoryId, {
+      id: inventoryId,
+      items: { ...DEFAULT_INVENTORY_ITEMS },
+      name,
+    })
     renderInventory(inventoryId, name)
   }
+
+  return inventoryId
 }
 
 /**
@@ -232,7 +235,7 @@ const addInventory = (name) => {
  * @param {string} inventoryId - The ID of the inventory to remove.
  */
 const removeInventory = (inventoryId) => {
-  if (inventories[inventoryId]) {
+  if (getInventory(inventoryId)) {
     delete inventories[inventoryId]
     const section = document.getElementById(`${inventoryId}-table-container`)
     if (section) {
@@ -247,25 +250,26 @@ const removeInventory = (inventoryId) => {
 const setupInventoryUi = () => {
   document.getElementById('add-inventory-button').addEventListener('click', () => {
     const inventoryName = document.getElementById('new-inventory-name')?.value.trim() || DEFAULT_INVENTORY_ID
-    addInventory(inventoryName)
+    const inventoryId = addInventory(inventoryName)
+    setCurrentInventoryId(inventoryId)
+    markSelectedInventory(inventoryId)
   })
 
-  Object.keys(getInventories()).forEach((inventoryId) => {
-    renderInventory(inventoryId)
-  })
+  getInventories().forEach((inventory) => renderInventory(inventory.id))
 }
 
 const main = () => {
+  const currentInventoryId = getCurrentInventoryId()
   const equipmentContainer = document.getElementById('equipment-container')
 
   createCategorySection(equipmentContainer, 'Armor', Armor)
   createCategorySection(equipmentContainer, 'Weapons', Weapons)
   createCategorySection(equipmentContainer, 'Equipment', Equipment)
 
-  renderInitialInventory(getCurrentInventoryId(), 'Main Character')
+  renderInitialInventory(currentInventoryId, 'Main Character')
   bindConversionControls()
   setupInventoryUi()
-  markSelectedInventory(getCurrentInventoryId())
+  markSelectedInventory(currentInventoryId)
 }
 
 document.addEventListener('DOMContentLoaded', main)
