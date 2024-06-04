@@ -10,8 +10,8 @@ import {
   setCurrentInventoryId,
   setInventory,
 } from './state.js'
-import { getBaseMovementRate, getEquipNameSuffix, getSpeed } from './utils.js'
-import { createElementFromHtml, markSelectedInventory, renderInitialInventory } from './utils.layout.js'
+import { getBaseMovementRate, getEquipNameSuffix, getIdFromName, getSpeed } from './utils.js'
+import { createElementFromHtml, getEquipTable, markSelectedInventory, renderInitialInventory } from './utils.layout.js'
 
 /**
  * @typedef {Object} InventoryItem
@@ -107,26 +107,6 @@ const renderInventory = (id, name) => {
 }
 
 /**
- * @param {string} categoryName
- * @returns {string}
- */
-const createEquipTableHtml = (categoryName) => `
-        <section id="${categoryName.toLowerCase().replace(/\s/g, '-')}-section" class="mb-8">
-            <h2 class="text-2xl font-bold mb-4">${categoryName}</h2>
-            <table class="min-w-full bg-white shadow-md rounded">
-                <thead class="bg-gray-200 text-left">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Weight</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cost, gp</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </section>`
-
-/**
  * @param {HTMLTableSectionElement} tableBody
  * @param {EquipItem} item
  */
@@ -173,7 +153,7 @@ const addEquipmentToTable = (tableBody, item) => {
  * @param {Array<EquipItem>} items
  */
 const createCategorySection = (container, categoryName, items) => {
-  const sectionHtml = createEquipTableHtml(categoryName)
+  const sectionHtml = getEquipTable(categoryName)
   const section = createElementFromHtml(sectionHtml)
   container.appendChild(section)
 
@@ -216,7 +196,7 @@ const bindConversionControls = () => {
  * @returns {string} inventoryId
  */
 const addInventory = (name) => {
-  const inventoryId = name.toLowerCase().replace(/\s+/g, '-')
+  const inventoryId = getIdFromName(name)
 
   if (!getInventory(inventoryId)) {
     setInventory(inventoryId, {

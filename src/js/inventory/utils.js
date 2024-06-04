@@ -55,3 +55,11 @@ export const getEquipNameSuffix = (flags) => {
 
   return sfx ? `<span class="text-red-800 ml-3">${sfx}</span>` : ''
 }
+
+/**
+ * @param {string} name
+ * @returns {string}
+ */
+export const getIdFromName = (name) => {
+  return name.toLowerCase().replace(/\s+/g, '-')
+}

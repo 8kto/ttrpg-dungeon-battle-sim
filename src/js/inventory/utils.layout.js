@@ -1,4 +1,5 @@
 import { setCurrentInventoryId } from './state.js'
+import { getIdFromName } from './utils.js'
 
 /**
  * @param {string} htmlString Should enclose the layout with one element (div, span etc.)
@@ -19,16 +20,36 @@ const getInventoryTable = (id) => {
   return `<table id="${id}-table-container" class="min-w-full bg-white shadow-md rounded">
               <thead class="bg-gray-200 text-left">
                   <tr>
-                      <th class="px-4 py-2">Name</th>
-                      <th class="px-4 py-2">Quantity</th>
-                      <th class="px-4 py-2">Total Weight</th>
-                      <th class="px-4 py-2">Total Cost</th>
-                      <th class="px-4 py-2">Actions</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Weight</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Cost</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
               </thead>
               <tbody></tbody>
           </table>`
 }
+
+/**
+ * @param {string} categoryName
+ * @returns {string}
+ */
+export const getEquipTable = (categoryName) => `
+        <section id="${getIdFromName(categoryName)}-section" class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">${categoryName}</h2>
+            <table class="min-w-full bg-white shadow-md rounded">
+                <thead class="bg-gray-200 text-left">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Weight</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cost, gp</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>`
 
 /**
  * @param {string} id
