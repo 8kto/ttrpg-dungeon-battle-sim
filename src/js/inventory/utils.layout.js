@@ -24,7 +24,7 @@ const getInventoryTable = (id) => {
                       <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
                       <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Weight</th>
                       <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Cost</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-16">Actions</th>
                   </tr>
               </thead>
               <tbody></tbody>
@@ -44,7 +44,7 @@ export const getEquipTable = (categoryName) => `
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Weight</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cost, gp</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-16">Actions</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
