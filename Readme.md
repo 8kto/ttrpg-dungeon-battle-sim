@@ -18,7 +18,7 @@ Contributions are welcome!
 
 ## Demo
 
-Current (tmp) URL: https://swords-and-wizardry.ivlev.blog/html/index.html
+Current URL: https://swords-and-wizardry.ivlev.blog/
 
 ## TODO
 
