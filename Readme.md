@@ -32,3 +32,4 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 - [ ] Extend equipment lists (?)
 - [x] Multiple inventories
 - [ ] Import & Export
+- [x] Save data in local storage
