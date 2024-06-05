@@ -34,6 +34,7 @@ export class State {
     const serializedInventories = this.getSerializedInventories()
     if (serializedInventories) {
       this.#inventories = serializedInventories
+      this.#currentInventoryId = Object.values(serializedInventories)[0].id
     }
   }
 
