@@ -82,6 +82,9 @@ export const importEquipSet = (inventory, equipSet) => {
       throw new Error(`Original equip item not found for ${item.name}`)
     }
 
-    inventory.items[item.name] = { ...originalItem, quantity: item.quantity }
+    inventory.items[item.name] = {
+      ...originalItem,
+      quantity: item.quantity + (inventory.items[item.name]?.quantity || 0),
+    }
   })
 }

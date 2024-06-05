@@ -276,7 +276,7 @@ const renderEquipSets = () => {
 const bindEquipSetImportControls = () => {
   const dropdown = document.getElementById('equip-set-dropdown')
 
-  document.getElementById('import-quip-set-button').addEventListener('click', () => {
+  document.getElementById('import-equip-set-button').addEventListener('click', () => {
     const equipSet = dropdown.value
     if (equipSet in EquipSets) {
       importEquipSet(state.getInventory(state.getCurrentInventoryId()), EquipSets[equipSet])
