@@ -1,8 +1,12 @@
 {
-  "extends": ["plugin:import/recommended", "prettier"],
+  "extends": ["eslint:recommended", "plugin:import/recommended", "prettier"],
   "plugins": ["import", "simple-import-sort", "sort-keys-fix", "sort-destructure-keys"],
   "parserOptions": {
-    "ecmaVersion": 2020
+    "ecmaVersion": 2022
+  },
+  "env": {
+    "browser": true,
+    "node": false
   },
   "rules": {
     "semi": ["error", "never"],
@@ -16,6 +20,8 @@
     "simple-import-sort/exports": "error",
     "no-console": ["error", { "allow": ["error"] }],
     "no-debugger": "error",
+    "no-undefined": "error",
+    "no-undef": "error",
     "sort-keys-fix/sort-keys-fix": ["error", "asc", { "natural": true }],
     "sort-destructure-keys/sort-destructure-keys": ["error", { "caseSensitive": false }],
     "no-implicit-coercion": [
