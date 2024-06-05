@@ -1,17 +1,9 @@
 import { AllEquipment, Armor, Equipment, Weapons } from '../data/equipment.js'
-import {
-  addToInventory,
-  DEFAULT_INVENTORY_ID,
-  DEFAULT_INVENTORY_ITEMS,
-  getCurrentInventoryId,
-  getInventories,
-  getInventory,
-  removeFromInventory,
-  setCurrentInventoryId,
-  setInventory,
-} from './state.js'
+import { DEFAULT_INVENTORY_ID, getState, State } from './State.js'
 import { dispatchEvent, getBaseMovementRate, getEquipNameSuffix, getIdFromName, getSpeed } from './utils.js'
 import { createElementFromHtml, getEquipTable, markSelectedInventory, renderInitialInventory } from './utils.layout.js'
+
+const state = getState()
 
 /**
  * @typedef {Object} InventoryItem
@@ -39,7 +31,7 @@ const updateSpeedDisplay = (inventoryId, baseMovementRate) => {
  * @param {string} [name]
  */
 const renderInventory = (id, name) => {
-  const inventory = getInventory(id)
+  const inventory = state.getInventory(id)
   if (!inventory) {
     console.error('Inventory not found:', id)
 
@@ -84,7 +76,7 @@ const renderInventory = (id, name) => {
     removeButton.textContent = 'Remove'
     removeButton.className = 'px-4 py-1 text-sm text-red-500 hover:text-red-700'
     removeButton.onclick = () => {
-      removeFromInventory(id, item.name)
+      state.removeFromInventory(id, item.name)
       renderInventory(id, name)
     }
 
@@ -137,8 +129,8 @@ const addEquipmentToTable = (tableBody, item) => {
   addButton.textContent = 'Add'
   addButton.className = 'px-4 text-sm text-left font-medium text-blue-900 hover:text-red-800'
   addButton.onclick = () => {
-    const inventoryId = getCurrentInventoryId()
-    addToInventory(inventoryId, item)
+    const inventoryId = state.getCurrentInventoryId()
+    state.addToInventory(inventoryId, item)
     renderInventory(inventoryId, inventoryId)
   }
 
@@ -163,7 +155,7 @@ const createCategorySection = (container, categoryName, items) => {
 
 const bindConversionControls = () => {
   document.getElementById('convert-button').addEventListener('click', function () {
-    const currentInventoryId = getCurrentInventoryId()
+    const currentInventoryId = state.getCurrentInventoryId()
     const input = document.getElementById('equipment-input').value
     const itemList = input.split('\n') // Split input by new lines to get individual items
     const notFoundItems = [] // To store items not found in the lists
@@ -173,7 +165,7 @@ const bindConversionControls = () => {
 
       const item = AllEquipment.find((i) => i.name.toLowerCase() === cleanedItemName)
       if (item) {
-        addToInventory(currentInventoryId, { ...item, quantity: 1 }) // Assume adding one item at a time
+        state.addToInventory(currentInventoryId, { ...item, quantity: 1 }) // Assume adding one item at a time
       } else {
         notFoundItems.push(itemName)
       }
@@ -198,29 +190,12 @@ const bindConversionControls = () => {
 const addInventory = (name) => {
   const inventoryId = getIdFromName(name)
 
-  if (!getInventory(inventoryId)) {
-    setInventory(inventoryId, {
-      id: inventoryId,
-      items: { ...DEFAULT_INVENTORY_ITEMS },
-      name,
-    })
+  if (!state.getInventory(inventoryId)) {
+    state.setInventory(inventoryId, State.getNewInventory(inventoryId, name))
     renderInventory(inventoryId, name)
   }
 
   return inventoryId
-}
-
-/**
- * Removes an existing inventory.
- * @param {string} inventoryId - The ID of the inventory to remove.
- */
-const removeInventory = (inventoryId) => {
-  if (getInventory(inventoryId)) {
-    const section = document.getElementById(`${inventoryId}-table-container`)
-    if (section) {
-      section.parentNode.removeChild(section) // Remove the section from UI
-    }
-  }
 }
 
 /**
@@ -230,7 +205,7 @@ const bindInventoryControls = () => {
   document.getElementById('add-inventory-button').addEventListener('click', () => {
     const inventoryName = document.getElementById('new-inventory-name')?.value.trim() || DEFAULT_INVENTORY_ID
     const inventoryId = addInventory(inventoryName)
-    setCurrentInventoryId(inventoryId)
+    state.setCurrentInventoryId(inventoryId)
     markSelectedInventory(inventoryId)
   })
 }
@@ -239,14 +214,14 @@ const subscribeToEvents = () => {
   document.addEventListener('RenderInventories', () => {
     const inventoryTableContainer = document.getElementById('inventories-container')
     inventoryTableContainer.innerHTML = ''
-    getInventories().forEach((inventory) => renderInventory(inventory.id))
+    state.getInventories().forEach((inventory) => renderInventory(inventory.id))
   })
 }
 
 const main = () => {
   subscribeToEvents()
 
-  const currentInventoryId = getCurrentInventoryId()
+  const currentInventoryId = state.getCurrentInventoryId()
   const equipmentContainer = document.getElementById('equipment-container')
 
   createCategorySection(equipmentContainer, 'Armor', Armor)

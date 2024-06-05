@@ -1,12 +1,4 @@
-import {
-  getCurrentInventoryId,
-  getInventories,
-  getInventory,
-  removeInventory,
-  resetInventoryItems,
-  setCurrentInventoryId,
-  setInventory,
-} from './state.js'
+import { getState } from './State.js'
 import { dispatchEvent, getIdFromName } from './utils.js'
 
 /**
@@ -87,23 +79,26 @@ const getInventoryControlsSection = (id) => {
  */
 export const bindInventoryControls = (id) => {
   document.getElementById(`${id}-header`).addEventListener('click', () => {
-    setCurrentInventoryId(id)
+    getState().setCurrentInventoryId(id)
     markSelectedInventory(id)
   })
 
   document.getElementById(`${id}-remove-inventory`).addEventListener('click', () => {
-    const inventories = getInventories()
+    const state = getState()
+    const inventories = state.getInventories()
     if (inventories.length > 1) {
-      removeInventory(id)
-      setCurrentInventoryId(inventories[0].id)
+      state.removeInventory(id)
+      state.setCurrentInventoryId(inventories[0].id)
       markSelectedInventory(inventories[0].id)
       dispatchEvent('RenderInventories')
     }
   })
 
   document.getElementById(`${id}-reset-inventory`).addEventListener('click', () => {
-    resetInventoryItems(id)
-    setCurrentInventoryId(id)
+    const state = getState()
+
+    state.resetInventoryItems(id)
+    state.setCurrentInventoryId(id)
     markSelectedInventory(id)
     dispatchEvent('RenderInventories')
   })
@@ -151,5 +146,5 @@ export const markSelectedInventory = (inventoryId) => {
   sectionElement.classList.add('selected')
 
   const containerTitle = document.getElementById('inventory-container-title')
-  containerTitle.textContent = getInventory(inventoryId).name
+  containerTitle.textContent = getState().getInventory(inventoryId).name
 }
