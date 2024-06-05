@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "deploy": "scripts/deploy.sh",
-    "dev": "npx serve src",
+    "dev": "npx live-server src",
     "format": "prettier . --check",
     "format:fix": "yarn eslint -- --fix && prettier --write ."
   },
