@@ -210,6 +210,32 @@ const bindInventoryControls = () => {
   })
 }
 
+const bindDumpingControls = () => {
+  const container = document.getElementById('dump-data-container--json-container')
+
+  document.getElementById('dump-json-button').addEventListener('click', () => {
+    container.textContent = state.getSerializeInventories()
+  })
+
+  document.getElementById('copy-json-button').addEventListener('click', function () {
+    const textToCopy = container.textContent
+
+    // Create a temporary textarea element to hold the text
+    const tempTextArea = document.createElement('textarea')
+    tempTextArea.value = textToCopy
+    document.body.appendChild(tempTextArea)
+
+    // Select the text and copy it to the clipboard
+    tempTextArea.select()
+    document.execCommand('copy')
+
+    // Remove the temporary textarea element
+    document.body.removeChild(tempTextArea)
+
+    alert('Copied to clipboard!')
+  })
+}
+
 const subscribeToEvents = () => {
   document.addEventListener('RenderInventories', () => {
     const inventoryTableContainer = document.getElementById('inventories-container')
@@ -232,6 +258,7 @@ const main = () => {
   bindInventoryControls()
   dispatchEvent('RenderInventories')
   markSelectedInventory(currentInventoryId)
+  bindDumpingControls()
 }
 
 document.addEventListener('DOMContentLoaded', main)

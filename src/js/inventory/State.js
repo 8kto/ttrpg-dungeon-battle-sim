@@ -41,6 +41,10 @@ export class State {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.#inventories))
   }
 
+  getSerializeInventories() {
+    return JSON.stringify(this.#inventories, null, 2)
+  }
+
   /**
    * @returns {Record<string, Inventory>|null}
    */

@@ -61,7 +61,7 @@
             />
             <button
               id="add-inventory-button"
-              class="btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r"
+              class="btn bg-blue-400 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-r"
             >
               Add Inventory
             </button>
@@ -73,6 +73,48 @@
               <li><span class="text-red-800">†</span> Can be used as either a one-handed or two-handed weapon</li>
               <li><span class="text-red-800">‡</span> Can be used as either a melee or missile weapon</li>
             </ul>
+          </section>
+
+          <section id="equip-sets-container">
+            <div class="max-w-auto">
+              <details class="mb-4 border-b border-gray-200">
+                <summary class="cursor-pointer px-4 py-2 text-gray-800 bg-gray-50 hover:bg-gray-100">
+                  Import Equipment set
+                </summary>
+                <div class="">Test</div>
+              </details>
+            </div>
+          </section>
+
+          <section id="dump-data-container">
+            <div class="max-w-auto">
+              <details class="mb-4 border-b border-gray-200">
+                <summary class="cursor-pointer px-4 py-2 text-gray-800 bg-gray-50 hover:bg-gray-100">
+                  Dump inventory
+                </summary>
+                <div class="text-sm">
+                  <p>
+                    JSON can be used for sharing the inventories and for manual importing (check the
+                    <code>localStorage</code>)
+                  </p>
+                  <button
+                    id="dump-json-button"
+                    class="text-xs btn bg-gray-400 hover:bg-gray-600 text-white py-2 px-2 m-2 mr-0 rounded"
+                    type="button"
+                  >
+                    Dump JSON
+                  </button>
+                  <button
+                    id="copy-json-button"
+                    class="text-xs btn bg-gray-400 hover:bg-gray-600 text-white py-2 px-2 m-2 ml-0 rounded"
+                    type="button"
+                  >
+                    Copy to clipboard
+                  </button>
+                  <pre id="dump-data-container--json-container" class="m-2 max-h-40 overflow-auto"></pre>
+                </div>
+              </details>
+            </div>
           </section>
 
           <section id="movement-container">
