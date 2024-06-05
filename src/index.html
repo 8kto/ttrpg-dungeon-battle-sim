@@ -75,13 +75,29 @@
             </ul>
           </section>
 
-          <section id="equip-sets-container">
+          <section id="equip-sets-section">
             <div class="max-w-auto">
-              <details class="mb-4 border-b border-gray-200">
+              <details class="mb-4 border-b border-gray-200" open>
                 <summary class="cursor-pointer px-4 py-2 text-gray-800 bg-gray-50 hover:bg-gray-100">
                   Import Equipment set
                 </summary>
-                <div class="">Test</div>
+
+                <div class="flex items-center mb-4 w-full py-2">
+                  <select
+                    id="equip-set-dropdown"
+                    class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-l-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  >
+                    <option value="">Select a set</option>
+                  </select>
+                  <button
+                    id="import-equip-set-button"
+                    class="sm:text-sm bg-gray-400 hover:bg-gray-600 text-white py-2 px-4 rounded-r-md h-full"
+                    type="button"
+                  >
+                    Import
+                  </button>
+                </div>
+                <div id="equip-sets-container" class="p-2 text-sm"></div>
               </details>
             </div>
           </section>

@@ -2,11 +2,22 @@
   border-radius: 5px;
   border-color: #e5e7eb;
 }
+
 .inventory-container.selected {
   border-color: #bbb;
 }
+
 h1,
 h2 {
   font-family: serif;
   /*letter-spacing: 1px;*/
+}
+
+.two-columns {
+  column-count: 2;
+  column-gap: 1rem; /* Adjust the gap between columns if needed */
+}
+
+div:empty {
+  display: none;
 }
