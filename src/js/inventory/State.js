@@ -167,5 +167,3 @@ export class State {
 export const getState = () => {
   return State.getInstance()
 }
-
-// TODO rename inventory

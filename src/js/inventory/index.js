@@ -214,7 +214,7 @@ const subscribeToEvents = () => {
   document.addEventListener('RenderInventories', () => {
     const inventoryTableContainer = document.getElementById('inventories-container')
     inventoryTableContainer.innerHTML = ''
-    state.getInventories().forEach((inventory) => renderInventory(inventory.id))
+    state.getInventories().forEach((inventory) => renderInventory(inventory.id, inventory.name))
   })
 }
 

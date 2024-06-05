@@ -57,18 +57,23 @@ export const getEquipTable = (categoryName) => `
  */
 const getInventoryControlsSection = (id) => {
   return `<section class="mt-4">
-            <p>Total Weight: <span id="${id}-total-weight" class="font-semibold">0</span> pounds</p>
-            <p>Total Cost: <span id="${id}-total-cost" class="font-semibold">0</span> gold pieces</p>
-            <p>Base movement rate: <span id="${id}-base-movement-rate" class="font-semibold">0</span></p>
-            <p>
-              <span class="">Speed</span>, feet per turn: <span id="${id}-speed-feet-per-turn" class="text-red-800">...</span>
-            </p>
+            <div class="mb-4">
+              <p>Total Weight: <span id="${id}-total-weight" class="font-semibold">0</span> pounds</p>
+              <p>Total Cost: <span id="${id}-total-cost" class="font-semibold">0</span> gold pieces</p>
+              <p>Base movement rate: <span id="${id}-base-movement-rate" class="font-semibold">0</span></p>
+              <p>
+                <span class="">Speed</span>, feet per turn: <span id="${id}-speed-feet-per-turn" class="text-red-800">...</span>
+              </p>
+            </div>
             <div class="flex justify-end">
-              <button id="${id}-reset-inventory" class="text-xs bg-gray-200 text-white rounded-l hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
-                <span role="img" title="Reset inventory items" aria-label="Reset inventory items" class="block px-4 py-2">🔴️</span>
+              <button id="${id}-rename-inventory" class="text-xs bg-gray-100 text-white rounded-l hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+                <span role="img" title="Rename inventory" aria-label="Rename inventory" class="block px-2 py-1 text-gray-500">Rename</span>
               </button>
-              <button id="${id}-remove-inventory" class="text-xs bg-gray-200 text-white rounded-r hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
-                <span role="img" title="Remove inventory" aria-label="Remove inventory" class="block px-4 py-2">❌</span>
+              <button id="${id}-reset-inventory" class="text-xs bg-gray-100 text-white hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+                <span role="img" title="Reset inventory items" aria-label="Reset inventory items" class="block px-2 py-1 text-gray-500">Reset</span>
+              </button>
+              <button id="${id}-remove-inventory" class="text-xs bg-gray-100 text-white rounded-r hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+                <span role="img" title="Remove inventory" aria-label="Remove inventory" class="block px-3 py-1.5">❌</span>
               </button>
             </div>
           </section>`
@@ -85,22 +90,42 @@ export const bindInventoryControls = (id) => {
 
   document.getElementById(`${id}-remove-inventory`).addEventListener('click', () => {
     const state = getState()
-    const inventories = state.getInventories()
-    if (inventories.length > 1) {
-      state.removeInventory(id)
-      state.setCurrentInventoryId(inventories[0].id)
-      markSelectedInventory(inventories[0].id)
-      dispatchEvent('RenderInventories')
+    const inventory = state.getInventory(id)
+
+    if (confirm(`Remove inventory for ${inventory.name}?`)) {
+      const inventories = state.getInventories()
+      if (inventories.length > 1) {
+        state.removeInventory(id)
+        state.setCurrentInventoryId(inventories[0].id)
+        markSelectedInventory(inventories[0].id)
+        dispatchEvent('RenderInventories')
+      }
     }
   })
 
   document.getElementById(`${id}-reset-inventory`).addEventListener('click', () => {
     const state = getState()
+    const inventory = state.getInventory(id)
 
-    state.resetInventoryItems(id)
-    state.setCurrentInventoryId(id)
-    markSelectedInventory(id)
-    dispatchEvent('RenderInventories')
+    if (confirm(`Reset inventory items for ${inventory.name}?`)) {
+      state.resetInventoryItems(id)
+      state.setCurrentInventoryId(id)
+      markSelectedInventory(id)
+      dispatchEvent('RenderInventories')
+    }
+  })
+
+  document.getElementById(`${id}-rename-inventory`).addEventListener('click', () => {
+    const state = getState()
+    const inventory = state.getInventory(id)
+    const name = prompt(`Enter new name`, inventory.name)
+
+    if (name) {
+      inventory.name = name
+      state.setInventory(id, inventory)
+      markSelectedInventory(id)
+      dispatchEvent('RenderInventories')
+    }
   })
 }
 
