@@ -6,8 +6,7 @@
   border-color: #bbb;
 }
 h1,
-h2,
-h3 {
+h2 {
   font-family: serif;
-  letter-spacing: 1px;
+  /*letter-spacing: 1px;*/
 }

@@ -139,7 +139,11 @@ export const renderInitialInventory = (id, name) => {
   inventoryTableContainer.appendChild(
     createElementFromHtml(`
         <section id="${id}-container" class="inventory-container px-4 py-2 border">
-          <h3 id="${id}-header" class="inventory-header text-lg mb-4 hover:text-red-700 hover:cursor-pointer">${name ?? id}</h3>
+          <h3
+            id="${id}-header"
+            class="inventory-header text-lg mb-4 hover:text-red-700 hover:cursor-pointer"
+            title="Click to select"
+          >${name ?? id}</h3>
           ${getInventoryTable(id)}
           ${getInventoryControlsSection(id)}
         </section>
