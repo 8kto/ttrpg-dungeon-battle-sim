@@ -1,5 +1,4 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
-// import { serializeProxy } from './serialize.js'
 
 /**
  * @typedef {Object} Inventory
@@ -12,6 +11,7 @@ export const DEFAULT_INVENTORY_ID = 'MainCharacter'
 export const DEFAULT_INVENTORY_ITEMS = Object.freeze({
   'Basic accessories': { cost: 0, name: 'Basic accessories', quantity: 1, weightLbs: 10 },
 })
+const LOCAL_STORAGE_KEY = 's&w-generator'
 
 export class State {
   /** @type {Record<string, Inventory>} */
@@ -30,6 +30,30 @@ export class State {
     if (State.#instance) {
       throw new Error('Instance of State already created, use State.getInstance()')
     }
+
+    const serializedInventories = this.getSerializedInventories()
+    if (serializedInventories) {
+      this.#inventories = serializedInventories
+    }
+  }
+
+  serializeInventories() {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.#inventories))
+  }
+
+  /**
+   * @returns {Record<string, Inventory>|null}
+   */
+  getSerializedInventories() {
+    try {
+      const json = localStorage.getItem(LOCAL_STORAGE_KEY)
+
+      return JSON.parse(json)
+    } catch (err) {
+      console.error('Cannot restore serialized inventories', err)
+    }
+
+    return null
   }
 
   static getInstance() {
@@ -46,6 +70,7 @@ export class State {
 
   setCurrentInventoryId(id) {
     this.#currentInventoryId = id
+    this.serializeInventories()
   }
 
   /**
@@ -60,7 +85,7 @@ export class State {
       inventoryItems[item.name] = { ...item, quantity: 0 }
     }
     inventoryItems[item.name].quantity++
-    // serializeProxy(inventories)
+    this.serializeInventories()
   }
 
   /**
@@ -77,6 +102,8 @@ export class State {
       if (inventoryItems[itemName].quantity <= 0) {
         delete inventoryItems[itemName]
       }
+
+      this.serializeInventories()
     }
   }
 
@@ -101,6 +128,7 @@ export class State {
    */
   setInventory(id, inventory) {
     this.#inventories[id] = inventory
+    this.serializeInventories()
   }
 
   /**
@@ -108,6 +136,7 @@ export class State {
    */
   removeInventory(id) {
     delete this.#inventories[id]
+    this.serializeInventories()
   }
 
   /**
@@ -115,7 +144,7 @@ export class State {
    */
   resetInventoryItems(id) {
     this.#inventories[id].items = { ...DEFAULT_INVENTORY_ITEMS }
-    // serializeProxy(inventories)
+    this.serializeInventories()
   }
 
   /**
