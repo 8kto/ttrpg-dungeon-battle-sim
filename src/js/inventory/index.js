@@ -1,6 +1,13 @@
-import { AllEquipment, Armor, Equipment, Weapons } from '../data/equipment.js'
+import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../data/equipment.js'
 import { DEFAULT_INVENTORY_ID, getState, State } from './State.js'
-import { dispatchEvent, getBaseMovementRate, getEquipNameSuffix, getIdFromName, getSpeed } from './utils.js'
+import {
+  dispatchEvent,
+  getBaseMovementRate,
+  getEquipNameSuffix,
+  getIdFromName,
+  getSpeed,
+  importEquipSet,
+} from './utils.js'
 import { createElementFromHtml, getEquipTable, markSelectedInventory, renderInitialInventory } from './utils.layout.js'
 
 const state = getState()
@@ -64,11 +71,11 @@ const renderInventory = (id, name) => {
     qtyCell.className = cellClassnames
 
     const weightCell = row.insertCell(2)
-    weightCell.textContent = item.weightLbs * item.quantity
+    weightCell.textContent = (item.weightLbs * item.quantity).toFixed(2).replace(/\.0+$/g, '')
     weightCell.className = cellClassnames
 
     const costCell = row.insertCell(3)
-    costCell.textContent = item.cost * item.quantity
+    costCell.textContent = (item.cost * item.quantity).toFixed(2).replace(/\.0+$/g, '')
     costCell.className = cellClassnames
 
     // Create and append the Remove button
@@ -236,6 +243,52 @@ const bindDumpingControls = () => {
   })
 }
 
+const renderEquipSets = () => {
+  const dropdown = document.getElementById('equip-set-dropdown')
+  for (const key in EquipSets) {
+    const option = document.createElement('option')
+    option.value = key
+    option.textContent = EquipSets[key].name
+    dropdown.appendChild(option)
+  }
+
+  dropdown.addEventListener('change', function () {
+    const selectedSetKey = this.value
+    const equipSetsContainer = document.getElementById('equip-sets-container')
+    equipSetsContainer.innerHTML = ''
+
+    if (selectedSetKey) {
+      const selectedSet = EquipSets[selectedSetKey]
+      const itemList = document.createElement('ul')
+      itemList.className = 'list-disc list-inside two-columns'
+
+      selectedSet.items.forEach((item) => {
+        const listItem = document.createElement('li')
+        listItem.textContent = item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name
+        itemList.appendChild(listItem)
+      })
+
+      equipSetsContainer.appendChild(itemList)
+    }
+  })
+}
+
+const bindEquipSetImportControls = () => {
+  const dropdown = document.getElementById('equip-set-dropdown')
+
+  document.getElementById('import-quip-set-button').addEventListener('click', () => {
+    const equipSet = dropdown.value
+    if (equipSet in EquipSets) {
+      importEquipSet(state.getInventory(state.getCurrentInventoryId()), EquipSets[equipSet])
+      state.serializeInventories()
+      dispatchEvent('RenderInventories')
+    }
+
+    dropdown.value = ''
+    dropdown.dispatchEvent(new Event('change'))
+  })
+}
+
 const subscribeToEvents = () => {
   document.addEventListener('RenderInventories', () => {
     const inventoryTableContainer = document.getElementById('inventories-container')
@@ -259,6 +312,9 @@ const main = () => {
   dispatchEvent('RenderInventories')
   markSelectedInventory(currentInventoryId)
   bindDumpingControls()
+
+  renderEquipSets()
+  bindEquipSetImportControls()
 }
 
 document.addEventListener('DOMContentLoaded', main)

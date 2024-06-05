@@ -1,4 +1,4 @@
-import { MELEE_AND_MISSILE, TWO_HANDED, VAR_HANDED } from '../data/equipment.js'
+import { AllEquipment, MELEE_AND_MISSILE, TWO_HANDED, VAR_HANDED } from '../data/equipment.js'
 
 /**
  * Determines the base movement rate based on the total weight carried and a carry modifier.
@@ -69,4 +69,19 @@ export const getIdFromName = (name) => {
  */
 export const dispatchEvent = (name) => {
   document.dispatchEvent(new Event(name))
+}
+
+/**
+ * @param {Inventory} inventory
+ * @param {EquipSet} equipSet
+ */
+export const importEquipSet = (inventory, equipSet) => {
+  equipSet.items.forEach((item) => {
+    const originalItem = AllEquipment.find((i) => i.name === item.name)
+    if (!originalItem) {
+      throw new Error(`Original equip item not found for ${item.name}`)
+    }
+
+    inventory.items[item.name] = { ...originalItem, quantity: item.quantity }
+  })
 }
