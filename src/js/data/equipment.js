@@ -38,6 +38,7 @@ export const Armor = [
 
 /** @type {ItemList} */
 export const Equipment = [
+  { cost: 0, name: 'Basic accessories', weightLbs: 10 },
   { cost: 5, name: 'Backpack', weightLbs: 2 },
   { cost: 2, name: 'Barrel', weightLbs: 25 },
   { cost: 1, name: 'Bedroll', weightLbs: 5 },
@@ -66,7 +67,7 @@ export const Equipment = [
   { cost: 12, name: 'Lantern, bullseye', weightLbs: 3 },
   { cost: 7, name: 'Lantern, hooded', weightLbs: 2 },
   { cost: 20, name: 'Lock', weightLbs: 1 },
-  { cost: 15, name: 'Manacles', weightLbs: 10 },
+  { cost: 15, name: 'Manacles', weightLbs: 5 },
   { cost: 20, name: 'Mirror, small still', weightLbs: 0.5 },
   { cost: 5, name: 'Musical instrument', weightLbs: 3 },
   { cost: 0.1, name: 'Oil, lamp (1 pint)', weightLbs: 1 },
@@ -106,6 +107,7 @@ export const Weapons = [
   { cost: 2, name: 'Dagger', weightLbs: 2, flags: MELEE_AND_MISSILE },
   { cost: 0.5, name: 'Javelin', weightLbs: 5 },
   { cost: 10, name: 'Mace', weightLbs: 10 },
+  { cost: 1, name: 'Sling', weightLbs: 0 },
   { cost: 0, name: 'Sling Stones (20)', weightLbs: 5 },
   { cost: 1, name: 'Spear', weightLbs: 10, flags: VAR_HANDED | MELEE_AND_MISSILE | TWO_HANDED },
   { cost: 0, name: 'Staff', weightLbs: 10 },
@@ -118,3 +120,181 @@ export const Weapons = [
 
 /** @type {Array<EquipItem>} */
 export const AllEquipment = [...Armor, ...Weapons, ...Equipment]
+
+/**
+ * @typedef {Object} EquipSet
+ * @property {string} name
+ * @property {Array<{ name: string; quantity: number }>} items
+ */
+
+/**
+ * @type {EquipSet}
+ */
+export const AssassinEquipmentSet = {
+  name: 'Assassin',
+  items: [
+    {
+      name: 'Basic accessories',
+      quantity: 1,
+    },
+    {
+      name: 'Leather',
+      quantity: 1,
+    },
+    {
+      name: 'Shield',
+      quantity: 1,
+    },
+    {
+      name: 'Sword, Long',
+      quantity: 1,
+    },
+    {
+      name: 'Sling Stones (20)',
+      quantity: 1,
+    },
+    {
+      name: 'Backpack',
+      quantity: 1,
+    },
+    {
+      name: 'Bedroll',
+      quantity: 1,
+    },
+    {
+      name: 'Candle',
+      quantity: 10,
+    },
+    {
+      name: 'Flask, leather',
+      quantity: 1,
+    },
+    {
+      name: 'Flint & steel',
+      quantity: 1,
+    },
+    {
+      name: 'Grappling Hook',
+      quantity: 1,
+    },
+    {
+      name: 'Lantern, hooded',
+      quantity: 1,
+    },
+    {
+      name: 'Manacles',
+      quantity: 1,
+    },
+    {
+      name: 'Oil, lamp (1 pint)',
+      quantity: 2,
+    },
+    {
+      name: 'Rations, dried',
+      quantity: 7,
+    },
+    {
+      name: 'Rope, silk (50 feet)',
+      quantity: 1,
+    },
+    {
+      name: 'Shovel',
+      quantity: 1,
+    },
+    {
+      name: 'Waterskin',
+      quantity: 1,
+    },
+  ],
+}
+
+const ClericEquipSet = {
+  name: 'Cleric',
+  items: [
+    {
+      name: 'Basic accessories',
+      quantity: 1,
+    },
+    {
+      name: 'Ring',
+      quantity: 1,
+    },
+    {
+      name: 'Mace',
+      quantity: 1,
+    },
+    {
+      name: 'Sling',
+      quantity: 1,
+    },
+    {
+      name: 'Sling Stones (20)',
+      quantity: 1,
+    },
+    {
+      name: 'Backpack',
+      quantity: 1,
+    },
+    {
+      name: 'Bedroll',
+      quantity: 1,
+    },
+    {
+      name: 'Bell',
+      quantity: 1,
+    },
+    {
+      name: 'Flask, leather',
+      quantity: 1,
+    },
+    {
+      name: 'Flint & steel',
+      quantity: 1,
+    },
+    {
+      name: 'Holy symbol, wooden',
+      quantity: 1,
+    },
+    {
+      name: 'Lantern, hooded',
+      quantity: 1,
+    },
+    {
+      name: 'Waterskin',
+      quantity: 1,
+    },
+    {
+      name: 'Candle',
+      quantity: 10,
+    },
+    {
+      name: 'Holy water (flask)',
+      quantity: 1,
+    },
+    {
+      name: 'Oil, lamp (1 pint)',
+      quantity: 3,
+    },
+    {
+      name: 'Pole (10 foot)',
+      quantity: 1,
+    },
+    {
+      name: 'Rations, trail',
+      quantity: 7,
+    },
+    {
+      name: 'Rope, hemp (50 feet)',
+      quantity: 1,
+    },
+    {
+      name: 'Spike, iron',
+      quantity: 6,
+    },
+  ],
+}
+
+export const EquipSets = {
+  AssassinEquipmentSet,
+  ClericEquipSet,
+}
