@@ -30,5 +30,5 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 - [ ] Add custom item
 - [ ] Filter by name
 - [ ] Extend equipment lists (?)
-- [ ] Multiple inventories
+- [x] Multiple inventories
 - [ ] Import & Export
