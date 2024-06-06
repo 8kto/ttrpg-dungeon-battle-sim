@@ -4,6 +4,8 @@
  * @property {string} name - The name of the armor.
  * @property {number} weight - The weight of the armor in pounds.
  * @property {number} cost - The cost in golden pieces
+ * @property {string} [armorClass] - AC for Armor
+ * @property {string} [damage] - Damage for Weapons
  * @property {InventoryItemFlag} [flags] - Optional binary flags to describe item capabilities.
  */
 
@@ -25,11 +27,42 @@ export const MELEE_AND_MISSILE = 0b000100
 
 /** @type {ArmorList} */
 export const Armor = [
-  { cost: 15, name: 'Shield', weight: 10 },
-  { cost: 5, name: 'Leather', weight: 25 },
-  { cost: 30, name: 'Ring', weight: 40 },
-  { cost: 75, name: 'Chain', weight: 50 },
-  { cost: 100, name: 'Plate', weight: 70 },
+  { cost: 15, name: 'Shield', weight: 10, armorClass: '+1 [-1]' },
+  { cost: 5, name: 'Leather', weight: 25, armorClass: '+2 [-2]' },
+  { cost: 30, name: 'Ring', weight: 40, armorClass: '+3 [-3]' },
+  { cost: 75, name: 'Chain', weight: 50, armorClass: '+4 [-4]' },
+  { cost: 100, name: 'Plate', weight: 70, armorClass: '+6 [-6]' },
+]
+
+/**
+ * @typedef {Array<EquipItem>} WeaponList
+ */
+
+/** @type {WeaponList} */
+export const Weapons = [
+  { cost: 2, name: 'Arrows (20)', weight: 1, damage: 'd6' },
+  { cost: 2, name: 'Bolts, heavy (20)', weight: 1, damage: 'd6+1' },
+  { cost: 2, name: 'Bolts, light (20)', weight: 1, damage: 'd4+1' },
+  { cost: 5, name: 'Axe, Battle', weight: 15, flags: VAR_HANDED | TWO_HANDED, damage: 'd8' },
+  { cost: 1, name: 'Axe, Hand', weight: 5, flags: MELEE_AND_MISSILE, damage: 'd6' },
+  { cost: 60, name: 'Bow, Long', weight: 5, damage: '' },
+  { cost: 15, name: 'Bow, Short', weight: 5, damage: '' },
+  { cost: 0, name: 'Club', weight: 10, damage: 'd4' },
+  { cost: 20, name: 'Crossbow, Heavy', weight: 5, damage: '' },
+  { cost: 12, name: 'Crossbow, Light', weight: 5, damage: '' },
+  { cost: 2, name: 'Dagger', weight: 2, flags: MELEE_AND_MISSILE, damage: 'd4' },
+  { cost: 0.2, name: 'Dart', weight: 1, damage: 'd3' },
+  { cost: 0.5, name: 'Javelin', weight: 5, damage: 'd6' },
+  { cost: 10, name: 'Mace', weight: 10, damage: 'd6' },
+  { cost: 1, name: 'Sling', weight: 0, damage: 'd4' },
+  { cost: 0, name: 'Sling Stones (20)', weight: 5, damage: 'd4' },
+  { cost: 1, name: 'Spear', weight: 10, flags: VAR_HANDED | MELEE_AND_MISSILE | TWO_HANDED, damage: 'd6' },
+  { cost: 0, name: 'Staff', weight: 10, damage: 'd6' },
+  { cost: 8, name: 'Sword, Short', weight: 5, damage: 'd6' },
+  { cost: 20, name: 'Sword, Bastard', weight: 10, flags: VAR_HANDED | TWO_HANDED, damage: 'd8' },
+  { cost: 15, name: 'Sword, Long', weight: 10, damage: 'd8' },
+  { cost: 30, name: 'Sword, Two-Handed', weight: 15, damage: 'd10' },
+  { cost: 1, name: 'Hammer, war', weight: 10, damage: 'd4+1' },
 ]
 
 /**
@@ -88,34 +121,6 @@ export const Equipment = [
   { cost: 0.01, name: 'Torch', weight: 1 },
   { cost: 1, name: 'Waterskin', weight: 2 },
   { cost: 0.1, name: 'Wolfsbane', weight: 0.5 },
-]
-
-/**
- * @typedef {Array<EquipItem>} WeaponList
- */
-
-/** @type {WeaponList} */
-export const Weapons = [
-  { cost: 2, name: 'Arrows (20)', weight: 1 },
-  { cost: 5, name: 'Axe, Battle', weight: 15, flags: VAR_HANDED | TWO_HANDED },
-  { cost: 1, name: 'Axe, Hand', weight: 5, flags: MELEE_AND_MISSILE },
-  { cost: 60, name: 'Bow, Long', weight: 5 },
-  { cost: 15, name: 'Bow, Short', weight: 5 },
-  { cost: 0, name: 'Club', weight: 10 },
-  { cost: 20, name: 'Crossbow, Heavy', weight: 5 },
-  { cost: 12, name: 'Crossbow, Light', weight: 5 },
-  { cost: 2, name: 'Dagger', weight: 2, flags: MELEE_AND_MISSILE },
-  { cost: 0.5, name: 'Javelin', weight: 5 },
-  { cost: 10, name: 'Mace', weight: 10 },
-  { cost: 1, name: 'Sling', weight: 0 },
-  { cost: 0, name: 'Sling Stones (20)', weight: 5 },
-  { cost: 1, name: 'Spear', weight: 10, flags: VAR_HANDED | MELEE_AND_MISSILE | TWO_HANDED },
-  { cost: 0, name: 'Staff', weight: 10 },
-  { cost: 20, name: 'Sword, Bastard', weight: 10, flags: VAR_HANDED | TWO_HANDED },
-  { cost: 8, name: 'Sword, Short', weight: 5 },
-  { cost: 15, name: 'Sword, Long', weight: 10 },
-  { cost: 30, name: 'Sword, Two-Handed', weight: 15 },
-  { cost: 1, name: 'Hammer, war', weight: 10 },
 ]
 
 /** @type {Array<EquipItem>} */
