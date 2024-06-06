@@ -68,7 +68,7 @@ export const Equipment = [
   { cost: 7, name: 'Lantern, hooded', weightLbs: 2 },
   { cost: 20, name: 'Lock', weightLbs: 1 },
   { cost: 15, name: 'Manacles', weightLbs: 5 },
-  { cost: 20, name: 'Mirror, small still', weightLbs: 0.5 },
+  { cost: 20, name: 'Mirror', weightLbs: 0.5 },
   { cost: 5, name: 'Musical instrument', weightLbs: 3 },
   { cost: 0.1, name: 'Oil, lamp (1 pint)', weightLbs: 1 },
   { cost: 0.2, name: 'Parchment (sheet)', weightLbs: 0.5 },
@@ -127,174 +127,194 @@ export const AllEquipment = [...Armor, ...Weapons, ...Equipment]
  * @property {Array<{ name: string; quantity: number }>} items
  */
 
-/**
- * @type {EquipSet}
- */
-export const AssassinEquipmentSet = {
-  name: 'Assassin',
+const BaseAdventurerEquipSet = {
+  name: 'Base Adventurer',
   items: [
-    {
-      name: 'Basic accessories',
-      quantity: 1,
-    },
-    {
-      name: 'Leather',
-      quantity: 1,
-    },
-    {
-      name: 'Shield',
-      quantity: 1,
-    },
-    {
-      name: 'Sword, Long',
-      quantity: 1,
-    },
-    {
-      name: 'Sling Stones (20)',
-      quantity: 1,
-    },
-    {
-      name: 'Backpack',
-      quantity: 1,
-    },
-    {
-      name: 'Bedroll',
-      quantity: 1,
-    },
-    {
-      name: 'Candle',
-      quantity: 10,
-    },
-    {
-      name: 'Flask, leather',
-      quantity: 1,
-    },
-    {
-      name: 'Flint & steel',
-      quantity: 1,
-    },
-    {
-      name: 'Grappling Hook',
-      quantity: 1,
-    },
-    {
-      name: 'Lantern, hooded',
-      quantity: 1,
-    },
-    {
-      name: 'Manacles',
-      quantity: 1,
-    },
-    {
-      name: 'Oil, lamp (1 pint)',
-      quantity: 2,
-    },
-    {
-      name: 'Rations, dried',
-      quantity: 7,
-    },
-    {
-      name: 'Rope, silk (50 feet)',
-      quantity: 1,
-    },
-    {
-      name: 'Shovel',
-      quantity: 1,
-    },
-    {
-      name: 'Waterskin',
-      quantity: 1,
-    },
+    { name: 'Basic accessories', quantity: 1 },
+    { name: 'Arrows (20)', quantity: 1 },
+    { name: 'Bow, Short', quantity: 1 },
+    { name: 'Dagger', quantity: 1 },
+    { name: 'Sword, Long', quantity: 1 },
+    { name: 'Backpack', quantity: 1 },
+    { name: 'Bedroll', quantity: 1 },
+    { name: 'Block and tackle', quantity: 1 },
+    { name: 'Case (map or scroll)', quantity: 1 },
+    { name: 'Chalk, 1 piece', quantity: 1 },
+    { name: 'Crowbar', quantity: 1 },
+    { name: 'Fishing net (25 square feet)', quantity: 1 },
+    { name: 'Flint & steel', quantity: 1 },
+    { name: 'Grappling Hook', quantity: 1 },
+    { name: 'Ink (1-ounce bottle)', quantity: 1 },
+    { name: 'Ladder (10 foot)', quantity: 1 },
+    { name: 'Lantern, bullseye', quantity: 1 },
+    { name: 'Leather', quantity: 1 },
+    { name: 'Mirror', quantity: 1 },
+    { name: 'Oil, lamp (1 pint)', quantity: 3 },
+    { name: 'Parchment (sheet)', quantity: 1 },
+    { name: 'Pole (10 foot)', quantity: 1 },
+    { name: 'Rations, trail', quantity: 5 },
+    { name: 'Rope, hemp (50 feet)', quantity: 1 },
+    { name: 'Sack (15 pounds capacity)', quantity: 1 },
+    { name: 'Waterskin', quantity: 1 },
   ],
 }
 
+/** @type {EquipSet} */
+const AssassinEquipSet = {
+  name: 'Assassin',
+  items: [
+    { name: 'Basic accessories', quantity: 1 },
+    { name: 'Leather', quantity: 1 },
+    { name: 'Shield', quantity: 1 },
+    { name: 'Sword, Long', quantity: 1 },
+    { name: 'Sling Stones (20)', quantity: 1 },
+    { name: 'Backpack', quantity: 1 },
+    { name: 'Bedroll', quantity: 1 },
+    { name: 'Candle', quantity: 10 },
+    { name: 'Flask, leather', quantity: 1 },
+    { name: 'Flint & steel', quantity: 1 },
+    { name: 'Grappling Hook', quantity: 1 },
+    { name: 'Lantern, hooded', quantity: 1 },
+    { name: 'Manacles', quantity: 1 },
+    { name: 'Oil, lamp (1 pint)', quantity: 2 },
+    { name: 'Rations, dried', quantity: 7 },
+    { name: 'Rope, silk (50 feet)', quantity: 1 },
+    { name: 'Shovel', quantity: 1 },
+    { name: 'Waterskin', quantity: 1 },
+  ],
+}
+
+/** @type {EquipSet} */
 const ClericEquipSet = {
   name: 'Cleric',
   items: [
-    {
-      name: 'Basic accessories',
-      quantity: 1,
-    },
-    {
-      name: 'Ring',
-      quantity: 1,
-    },
-    {
-      name: 'Mace',
-      quantity: 1,
-    },
-    {
-      name: 'Sling',
-      quantity: 1,
-    },
-    {
-      name: 'Sling Stones (20)',
-      quantity: 1,
-    },
-    {
-      name: 'Backpack',
-      quantity: 1,
-    },
-    {
-      name: 'Bedroll',
-      quantity: 1,
-    },
-    {
-      name: 'Bell',
-      quantity: 1,
-    },
-    {
-      name: 'Flask, leather',
-      quantity: 1,
-    },
-    {
-      name: 'Flint & steel',
-      quantity: 1,
-    },
-    {
-      name: 'Holy symbol, wooden',
-      quantity: 1,
-    },
-    {
-      name: 'Lantern, hooded',
-      quantity: 1,
-    },
-    {
-      name: 'Waterskin',
-      quantity: 1,
-    },
-    {
-      name: 'Candle',
-      quantity: 10,
-    },
-    {
-      name: 'Holy water (flask)',
-      quantity: 1,
-    },
-    {
-      name: 'Oil, lamp (1 pint)',
-      quantity: 3,
-    },
-    {
-      name: 'Pole (10 foot)',
-      quantity: 1,
-    },
-    {
-      name: 'Rations, trail',
-      quantity: 7,
-    },
-    {
-      name: 'Rope, hemp (50 feet)',
-      quantity: 1,
-    },
-    {
-      name: 'Spike, iron',
-      quantity: 6,
-    },
+    { name: 'Basic accessories', quantity: 1 },
+    { name: 'Ring', quantity: 1 },
+    { name: 'Mace', quantity: 1 },
+    { name: 'Sling', quantity: 1 },
+    { name: 'Sling Stones (20)', quantity: 1 },
+    { name: 'Backpack', quantity: 1 },
+    { name: 'Bedroll', quantity: 1 },
+    { name: 'Bell', quantity: 1 },
+    { name: 'Flask, leather', quantity: 1 },
+    { name: 'Flint & steel', quantity: 1 },
+    { name: 'Holy symbol, wooden', quantity: 1 },
+    { name: 'Lantern, hooded', quantity: 1 },
+    { name: 'Waterskin', quantity: 1 },
+    { name: 'Candle', quantity: 10 },
+    { name: 'Holy water (flask)', quantity: 1 },
+    { name: 'Oil, lamp (1 pint)', quantity: 3 },
+    { name: 'Rations, trail', quantity: 7 },
+    { name: 'Rope, hemp (50 feet)', quantity: 1 },
+    { name: 'Spike, iron', quantity: 6 },
+  ],
+}
+
+/** @type {EquipSet} */
+const FighterArcherEquipSet = {
+  name: 'Fighter / Archer',
+  items: [
+    { name: 'Basic accessories', quantity: 1 },
+    { name: 'Ring', quantity: 1 },
+    { name: 'Spear', quantity: 1 },
+    { name: 'Sword, Long', quantity: 1 },
+    { name: 'Bow, Short', quantity: 1 },
+    { name: 'Arrows (20)', quantity: 1 },
+    { name: 'Backpack', quantity: 1 },
+    { name: 'Bedroll', quantity: 1 },
+    { name: 'Flask, leather', quantity: 1 },
+    { name: 'Flint & steel', quantity: 1 },
+    { name: 'Lantern, bullseye', quantity: 1 },
+    { name: 'Waterskin', quantity: 1 },
+    { name: 'Chalk, 1 piece', quantity: 1 },
+    { name: 'Oil, lamp (1 pint)', quantity: 3 },
+    { name: 'Rations, trail', quantity: 7 },
+    { name: 'Rope, hemp (50 feet)', quantity: 1 },
+    { name: 'Sack (15 pounds capacity)', quantity: 1 },
+  ],
+}
+
+/** @type {EquipSet} */
+const FighterHeavyEquipSet = {
+  name: 'Fighter / Heavy',
+  items: [
+    { name: 'Basic accessories', quantity: 1 },
+    { name: 'Chain', quantity: 1 },
+    { name: 'Sling', quantity: 1 },
+    { name: 'Sling Stones (20)', quantity: 1 },
+    { name: 'Spear', quantity: 1 },
+    { name: 'Sword, Long', quantity: 1 },
+    { name: 'Dagger', quantity: 1 },
+    { name: 'Bedroll', quantity: 1 },
+    { name: 'Flint & steel', quantity: 1 },
+    { name: 'Rations, trail', quantity: 7 },
+    { name: 'Sack (15 pounds capacity)', quantity: 1 },
+    { name: 'Torch', quantity: 5 },
+    { name: 'Waterskin', quantity: 1 },
+  ],
+}
+
+const MagicUserEquipSet = {
+  name: 'Magic User',
+  items: [
+    { name: 'Basic accessories', quantity: 1 },
+    { name: 'Dagger', quantity: 1 },
+    { name: 'Staff', quantity: 1 },
+    { name: 'Spellbook, blank', quantity: 1 },
+    { name: 'Backpack', quantity: 1 },
+    { name: 'Bedroll', quantity: 1 },
+    { name: 'Candle', quantity: 5 },
+    { name: 'Case (map or scroll)', quantity: 1 },
+    { name: 'Flask, leather', quantity: 1 },
+    { name: 'Flint & steel', quantity: 1 },
+    { name: 'Ink (1-ounce bottle)', quantity: 1 },
+    { name: 'Lantern, bullseye', quantity: 1 },
+    { name: 'Mirror', quantity: 1 },
+    { name: 'Oil, lamp (1 pint)', quantity: 1 },
+    { name: 'Parchment (sheet)', quantity: 5 },
+    { name: 'Rations, trail', quantity: 7 },
+    { name: 'Waterskin', quantity: 1 },
+  ],
+}
+
+const ThiefEquipSet = {
+  name: 'Thief',
+  items: [
+    { name: 'Basic accessories', quantity: 1 },
+    { name: 'Leather', quantity: 1 },
+    { name: 'Arrows (20)', quantity: 1 },
+    { name: 'Bow, Short', quantity: 1 },
+    { name: 'Dagger', quantity: 1 },
+    { name: 'Sword, Long', quantity: 1 },
+    { name: 'Backpack', quantity: 1 },
+    { name: 'Bedroll', quantity: 1 },
+    { name: 'Block and tackle', quantity: 1 },
+    { name: 'Crowbar', quantity: 1 },
+    { name: 'Case (map or scroll)', quantity: 1 },
+    { name: 'Chalk, 1 piece', quantity: 1 },
+    { name: 'Fishing net (25 square feet)', quantity: 1 },
+    { name: 'Flint & steel', quantity: 1 },
+    { name: 'Grappling Hook', quantity: 1 },
+    { name: 'Ink (1-ounce bottle)', quantity: 1 },
+    { name: 'Ladder (10 foot)', quantity: 1 },
+    { name: 'Lantern, bullseye', quantity: 1 },
+    { name: 'Mirror', quantity: 1 },
+    { name: 'Oil, lamp (1 pint)', quantity: 3 },
+    { name: 'Parchment (sheet)', quantity: 1 },
+    { name: 'Pole (10 foot)', quantity: 1 },
+    { name: 'Waterskin', quantity: 1 },
+    { name: 'Rations, trail', quantity: 5 },
+    { name: 'Rope, hemp (50 feet)', quantity: 1 },
+    { name: 'Sack (15 pounds capacity)', quantity: 1 },
   ],
 }
 
 export const EquipSets = {
-  AssassinEquipmentSet,
+  BaseAdventurerEquipSet,
+  AssassinEquipSet,
   ClericEquipSet,
+  FighterArcherEquipSet,
+  FighterHeavyEquipSet,
+  MagicUserEquipSet,
+  ThiefEquipSet,
 }
