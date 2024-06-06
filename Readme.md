@@ -23,7 +23,7 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 ## TODO
 
 - [x] Double check items in lists
-- [ ] Equipments set
+- [x] Equipments set
 - [ ] Languages support (?)
 - [ ] Random character generation
 - [ ] Add coins
