@@ -37,23 +37,34 @@ export const getSpeed = (baseMovementRate) => ({
 })
 
 /**
- * @param {number} flags
+ * @param {EquipItem} item
  * @returns {string}
  */
-export const getEquipNameSuffix = (flags) => {
+export const getEquipNameSuffix = (item) => {
   let sfx = ''
 
-  if (flags & VAR_HANDED) {
+  if (item.armorClass) {
+    sfx += `AC ${item.armorClass}`
+  }
+
+  if (item.damage) {
+    sfx += `${item.damage} `
+  }
+
+  if (item.flags & VAR_HANDED) {
     sfx += '†'
   }
-  if (flags & TWO_HANDED) {
+  if (item.flags & TWO_HANDED) {
     sfx += '*'
   }
-  if (flags & MELEE_AND_MISSILE) {
+  if (item.flags & MELEE_AND_MISSILE) {
     sfx += '‡'
   }
 
-  return sfx ? `<span class="text-red-800 ml-3">${sfx}</span>` : ''
+  // Line breaks not allowed
+  sfx = sfx.replaceAll(' ', '&nbsp;')
+
+  return sfx ? `<span class="text-red-800 ml-3 text-xs">${sfx}</span>` : ''
 }
 
 /**

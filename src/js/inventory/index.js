@@ -63,7 +63,7 @@ const renderInventory = (id, name) => {
     row.className = 'even:bg-gray-50 hover:bg-gray-100'
 
     const nameCell = row.insertCell(0)
-    nameCell.innerHTML = item.name + getEquipNameSuffix(item.flags)
+    nameCell.innerHTML = item.name + getEquipNameSuffix(item)
     nameCell.className = cellClassnames
 
     const qtyCell = row.insertCell(1)
@@ -81,7 +81,7 @@ const renderInventory = (id, name) => {
     // Create and append the Remove button
     const removeButton = document.createElement('button')
     removeButton.textContent = 'Remove'
-    removeButton.className = 'px-4 py-1 text-sm text-red-500 hover:text-red-700'
+    removeButton.className = 'px-4 py-1 text-sm text-red-800 hover:text-red-500'
     removeButton.onclick = () => {
       state.removeFromInventory(id, item.name)
       renderInventory(id, name)
@@ -118,7 +118,7 @@ const addEquipmentToTable = (tableBody, item) => {
   // Create and set properties for the name cell
   const nameCell = row.insertCell(0)
 
-  nameCell.innerHTML = item.name + getEquipNameSuffix(item.flags)
+  nameCell.innerHTML = item.name + getEquipNameSuffix(item)
   nameCell.className = cellClassnames
 
   // Create and set properties for the weight cell
