@@ -15,7 +15,7 @@ const state = getState()
 /**
  * @typedef {Object} InventoryItem
  * @property {string} name - The name of the item.
- * @property {number} weightLbs - The weight of the item in pounds.
+ * @property {number} weight - The weight of the item in pounds.
  * @property {number} cost - The cost of the item in gold pieces.
  * @property {number} quantity - The quantity of the item in the index.
  * @property {InventoryItemFlag} [flags] - Binary flags
@@ -71,7 +71,7 @@ const renderInventory = (id, name) => {
     qtyCell.className = cellClassnames
 
     const weightCell = row.insertCell(2)
-    weightCell.textContent = (item.weightLbs * item.quantity).toFixed(2).replace(/\.0+$/g, '')
+    weightCell.textContent = (item.weight * item.quantity).toFixed(2).replace(/\.0+$/g, '')
     weightCell.className = cellClassnames
 
     const costCell = row.insertCell(3)
@@ -91,7 +91,7 @@ const renderInventory = (id, name) => {
     actionsCell.appendChild(removeButton)
     actionsCell.className = cellClassnames
 
-    totalWeight += item.weightLbs * item.quantity
+    totalWeight += item.weight * item.quantity
     totalCost += item.cost * item.quantity
   })
 
@@ -123,7 +123,7 @@ const addEquipmentToTable = (tableBody, item) => {
 
   // Create and set properties for the weight cell
   const weightCell = row.insertCell(1)
-  weightCell.textContent = item.weightLbs
+  weightCell.textContent = item.weight
   weightCell.className = cellClassnames
 
   // Create and set properties for the cost cell
