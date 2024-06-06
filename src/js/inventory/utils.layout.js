@@ -94,11 +94,17 @@ export const bindInventoryControls = (id) => {
 
     if (confirm(`Remove inventory for ${inventory.name}?`)) {
       const inventories = state.getInventories()
+
       if (inventories.length > 1) {
         state.removeInventory(id)
-        state.setCurrentInventoryId(inventories[0].id)
-        markSelectedInventory(inventories[0].id)
+
+        const selected = state.getInventories()[0]
+        state.setCurrentInventoryId(selected.id)
+
         dispatchEvent('RenderInventories')
+        markSelectedInventory(selected.id)
+      } else {
+        alert('Cannot remove the only inventory')
       }
     }
   })
@@ -109,9 +115,8 @@ export const bindInventoryControls = (id) => {
 
     if (confirm(`Reset inventory items for ${inventory.name}?`)) {
       state.resetInventoryItems(id)
-      state.setCurrentInventoryId(id)
-      markSelectedInventory(id)
       dispatchEvent('RenderInventories')
+      markSelectedInventory(state.getCurrentInventoryId())
     }
   })
 
@@ -123,8 +128,8 @@ export const bindInventoryControls = (id) => {
     if (name) {
       inventory.name = name
       state.setInventory(id, inventory)
-      markSelectedInventory(id)
       dispatchEvent('RenderInventories')
+      markSelectedInventory(id)
     }
   })
 }
