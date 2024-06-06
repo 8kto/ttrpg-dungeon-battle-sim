@@ -72,7 +72,7 @@ export const getEquipNameSuffix = (item) => {
  * @returns {string}
  */
 export const getIdFromName = (name) => {
-  return name.toLowerCase().replace(/\s+/g, '-')
+  return name.toLowerCase().replace(/\s+/g, '-') + new Date().getTime()
 }
 
 /**

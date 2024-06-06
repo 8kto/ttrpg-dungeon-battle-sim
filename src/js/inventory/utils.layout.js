@@ -20,11 +20,11 @@ const getInventoryTable = (id) => {
   return `<table id="${id}-table-container" class="min-w-full bg-white shadow-md rounded">
               <thead class="bg-gray-200 text-left">
                   <tr>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-1/3">Name</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Weight</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Cost</th>
-                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-16">Actions</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-1/3">Name</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Weight</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Cost</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-16">Actions</th>
                   </tr>
               </thead>
               <tbody></tbody>
@@ -41,10 +41,10 @@ export const getEquipTable = (categoryName) => `
             <table class="min-w-full bg-white shadow-md rounded">
                 <thead class="bg-gray-200 text-left">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Weight</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cost, gp</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-16">Actions</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-1/3">Name</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-16">Weight</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-16">Cost, gp</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-16">Actions</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
