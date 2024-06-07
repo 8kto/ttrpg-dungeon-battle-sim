@@ -66,7 +66,7 @@ const renderInventory = (id, name) => {
 
   Object.values(inventory.items).forEach((item) => {
     const row = inventoryTableBody.insertRow()
-    row.className = 'even:bg-gray-50 hover:bg-gray-100'
+    row.className = 'even:bg-gray-50 hover:bg-gen-50'
 
     const nameCell = row.insertCell(0)
     nameCell.innerHTML = item.name + getEquipNameSuffix(item)
@@ -117,7 +117,7 @@ const renderInventory = (id, name) => {
  */
 const addEquipmentToTable = (tableBody, item) => {
   const row = tableBody.insertRow()
-  row.className = 'even:bg-gray-50 hover:bg-gray-100'
+  row.className = 'even:bg-gray-50 hover:bg-gen-50'
 
   const cellClassnames = 'px-4 py-1'
 
@@ -140,7 +140,7 @@ const addEquipmentToTable = (tableBody, item) => {
   // Create and set properties for the button cell
   const addButton = document.createElement('button')
   addButton.textContent = 'Add'
-  addButton.className = 'px-4 text-sm text-left font-medium text-blue-400 hover:text-red-800'
+  addButton.className = 'px-4 text-sm text-left font-medium text-sub hover:text-red-800'
   addButton.onclick = () => {
     const inventoryId = state.getCurrentInventoryId()
     state.addToInventory(inventoryId, item)
@@ -258,6 +258,7 @@ const renderEquipSets = () => {
     const option = document.createElement('option')
     option.value = key
     option.textContent = EquipSets[key].name
+    option.classList.add('text-base')
     dropdown.appendChild(option)
   }
 
@@ -298,6 +299,36 @@ const bindEquipSetImportControls = () => {
   })
 }
 
+const bindNewItemControl = () => {
+  document.getElementById('add-new-item-button').addEventListener('click', () => {
+    const itemName = document.getElementById('new-item-name').value.trim()
+    const itemWeight = Math.max(parseInt(document.getElementById('new-item-weight').value) || 0, 0)
+
+    if (!itemName) {
+      console.error('No item name provided')
+
+      return
+    }
+
+    const inventory = state.getInventory(state.getCurrentInventoryId())
+
+    if (!inventory.items[itemName]) {
+      inventory.items[itemName] = {
+        cost: 0,
+        name: itemName,
+        quantity: 1,
+        weight: itemWeight,
+      }
+    } else {
+      inventory.items[itemName].quantity++
+      inventory.items[itemName].weight = itemWeight
+    }
+
+    state.serializeInventories()
+    dispatchEvent('RenderInventories')
+  })
+}
+
 const subscribeToEvents = () => {
   document.addEventListener('RenderInventories', () => {
     const inventoryTableContainer = document.getElementById('inventories-container')
@@ -324,6 +355,7 @@ const main = () => {
 
   renderEquipSets()
   bindEquipSetImportControls()
+  bindNewItemControl()
 }
 
 document.addEventListener('DOMContentLoaded', main)

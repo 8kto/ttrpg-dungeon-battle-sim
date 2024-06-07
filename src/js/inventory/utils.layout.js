@@ -17,14 +17,14 @@ export const createElementFromHtml = (htmlString) => {
  * @returns {string}
  */
 const getInventoryTable = (id) => {
-  return `<table id="${id}-table-container" class="min-w-full bg-white shadow-md rounded">
-              <thead class="bg-gray-200 text-left">
+  return `<table id="${id}-table-container" class="min-w-full bg-white shadow-md rounded my-4">
+              <thead class="bg-gen-100 text-left">
                   <tr>
-                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-1/3">Name</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Weight</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Cost</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-16">Actions</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/3">Name</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium uppercase">Quantity</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium uppercase">Total Weight</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium uppercase">Total Cost</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-16">Actions</th>
                   </tr>
               </thead>
               <tbody></tbody>
@@ -37,14 +37,14 @@ const getInventoryTable = (id) => {
  */
 export const getEquipTable = (categoryName) => `
         <section id="${getIdFromName(categoryName)}-section" class="mb-8">
-            <h2 class="text-2xl font-bold mb-4">${categoryName}</h2>
+            <h2 class="text-2xl text-gen-700 font-bold mb-4">${categoryName}</h2>
             <table class="min-w-full bg-white shadow-md rounded">
-                <thead class="bg-gray-200 text-left">
+                <thead class="bg-gen-100 text-left">
                     <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-1/3">Name</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-16">Weight</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-16">Cost, gp</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-16">Actions</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/3">Name</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-16">Weight</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-16">Cost, gp</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-16">Actions</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -56,23 +56,23 @@ export const getEquipTable = (categoryName) => `
  * @returns {string}
  */
 const getInventoryControlsSection = (id) => {
-  return `<section class="mt-4">
+  return `<section class="mt-4 text-gen-800 text-sm">
             <div class="mb-4">
               <p>Total Weight: <span id="${id}-total-weight" class="font-semibold">0</span> pounds</p>
               <p>Total Cost: <span id="${id}-total-cost" class="font-semibold">0</span> gold pieces</p>
               <p>Base movement rate: <span id="${id}-base-movement-rate" class="font-semibold">0</span></p>
               <p>
-                <span class="">Speed</span>, feet per turn: <span id="${id}-speed-feet-per-turn" class="text-red-800">...</span>
+                <span class="">Speed</span>, feet per turn: <span id="${id}-speed-feet-per-turn" class="text-gen-800">...</span>
               </p>
             </div>
             <div class="flex justify-end">
-              <button id="${id}-rename-inventory" class="text-xs bg-gray-100 text-white rounded-l hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
-                <span role="img" title="Rename inventory" aria-label="Rename inventory" class="block px-2 py-1 text-gray-500">Rename</span>
+              <button id="${id}-rename-inventory" class="text-xs bg-gen-100 text-gen-400 hover:text-white rounded-l hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+                <span role="img" title="Rename inventory" aria-label="Rename inventory" class="block px-2 py-1">Rename</span>
               </button>
-              <button id="${id}-reset-inventory" class="text-xs bg-gray-100 text-white hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
-                <span role="img" title="Reset inventory items" aria-label="Reset inventory items" class="block px-2 py-1 text-gray-500">Reset</span>
+              <button id="${id}-reset-inventory" class="text-xs bg-gen-100 text-gen-400 hover:text-white hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+                <span role="img" title="Reset inventory items" aria-label="Reset inventory items" class="block px-2 py-1">Reset</span>
               </button>
-              <button id="${id}-remove-inventory" class="text-xs bg-gray-100 text-white rounded-r hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+              <button id="${id}-remove-inventory" class="text-xs bg-gen-100 text-gen-400 hover:text-white rounded-r hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
                 <span role="img" title="Remove inventory" aria-label="Remove inventory" class="block px-3 py-1.5">❌</span>
               </button>
             </div>
@@ -146,7 +146,7 @@ export const renderInitialInventory = (id, name) => {
         <section id="${id}-container" class="inventory-container px-4 py-2 border">
           <h3
             id="${id}-header"
-            class="inventory-header text-lg mb-4 hover:text-red-700 hover:cursor-pointer"
+            class="inventory-header text-lg text-alt mb-4 hover:text-red-700 hover:cursor-pointer"
             title="Click to select"
           >${name ?? id}</h3>
           ${getInventoryTable(id)}
@@ -171,7 +171,7 @@ export const markSelectedInventory = (inventoryId) => {
   if (headerElement) {
     headerElement.appendChild(
       createElementFromHtml(
-        `<span class="selected text-sm text-gray-400 ml-2" title="Currently selected inventory">🎒</span>`,
+        `<span class="text-alt selected text-sm ml-2" title="Currently selected inventory">🎒</span>`,
       ),
     )
   }

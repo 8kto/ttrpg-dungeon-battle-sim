@@ -11,6 +11,7 @@ h1,
 h2 {
   font-family: serif;
   /*letter-spacing: 1px;*/
+  color: #77899e;
 }
 
 .two-columns {
@@ -20,4 +21,16 @@ h2 {
 
 div:empty {
   display: none;
+}
+
+.text-alt {
+  color: #a13d68;
+}
+
+.text-sub {
+  color: #cea181;
+}
+
+#inventory-container-title {
+  font-family: sans-serif;
 }

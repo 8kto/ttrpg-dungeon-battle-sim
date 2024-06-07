@@ -64,7 +64,7 @@ export const getEquipNameSuffix = (item) => {
   // Line breaks not allowed
   sfx = sfx.replaceAll(' ', '&nbsp;')
 
-  return sfx ? `<span class="text-red-800 ml-3 text-xs">${sfx}</span>` : ''
+  return sfx ? `<span class="text-alt ml-3 text-xs">${sfx}</span>` : ''
 }
 
 /**
