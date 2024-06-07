@@ -16,7 +16,7 @@
   </head>
   <body class="bg-gray-200 p-4">
     <div class="flex items-center justify-center">
-      <pre title="Swords & Wizardry logo" class="overflow-auto overflow-hidden">
+      <pre title="Swords & Wizardry logo" class="overflow-auto overflow-hidden text-red-800">
                            _                         _                  _
                           | |       ___             (_)                | |
  _____      _____  _ __ __| |___   ( _ )   __      ___ ______ _ _ __ __| |_ __ _   _
@@ -45,28 +45,54 @@
             Inventory<span id="inventory-container-title" class="ml-2 text-sm text-red-800"></span>
           </h2>
 
-          <!-- Inventory Containers dynamically managed -->
-          <div id="inventories-container" class="flex flex-col justify-between gap-4"></div>
-
           <!-- Section to Add or Remove Inventories -->
-          <section class="mt-4 flex text-sm">
+          <section class="my-4 flex flex-col sm:flex-row text-sm w-full sm:w-2/3">
             <input
               id="new-inventory-name"
               type="text"
               placeholder="Name for inventory"
               pattern="^[A-Za-z_][A-Za-z0-9\-_ ]*$"
               required
-              class="input bg-gray-200 p-2 border border-gray-300 rounded-l text-gray-600"
+              class="input bg-gray-200 p-2 border border-gray-300 rounded-t sm:rounded-l sm:rounded-t-none text-gray-600 flex-grow"
               value="Character Name"
             />
             <button
               id="add-inventory-button"
-              class="btn bg-blue-400 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-r"
+              class="btn bg-blue-400 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-b sm:rounded-r sm:rounded-b-none"
             >
-              Add Inventory
+              Add&nbsp;Inventory
             </button>
           </section>
 
+          <!-- Add custom item -->
+          <section class="my-4 flex flex-col sm:flex-row text-sm w-full sm:w-2/3">
+            <input
+              id="new-item-name"
+              type="text"
+              placeholder="Item name"
+              required
+              class="input bg-gray-200 p-2 border border-gray-300 rounded-t sm:rounded-l sm:rounded-t-none text-gray-600 flex-grow"
+              value=""
+            />
+            <input
+              id="new-item-weight"
+              type="number"
+              min="0"
+              max="300"
+              placeholder="Weight, lbs."
+              required
+              class="input bg-gray-200 p-2 border border-gray-300 text-gray-600 w-full sm:w-28"
+              value=""
+            />
+            <button
+              id="add-new-item-button"
+              class="btn bg-blue-400 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-b sm:rounded-r sm:rounded-b-none"
+            >
+              Add&nbsp;Item
+            </button>
+          </section>
+
+          <!-- Weapons help -->
           <section class="mt-4 mb-8">
             <ul class="text-sm mt-4">
               <li><span class="text-red-800">*</span> When wielded two-handed, gain +1 damage bonus</li>
@@ -75,6 +101,10 @@
             </ul>
           </section>
 
+          <!-- Inventory Containers dynamically managed -->
+          <div id="inventories-container" class="flex flex-col justify-between gap-4"></div>
+
+          <!-- Equipment sets -->
           <section id="equip-sets-section">
             <div class="max-w-auto">
               <details class="mb-4 border-b border-gray-200">
@@ -102,6 +132,7 @@
             </div>
           </section>
 
+          <!-- Export/import -->
           <section id="dump-data-container">
             <div class="max-w-auto">
               <details class="mb-4 border-b border-gray-200">
@@ -133,9 +164,9 @@
             </div>
           </section>
 
+          <!-- Movement/speed help -->
           <section id="movement-container">
             <div class="max-w-auto">
-              <!-- Accordion Item 1 -->
               <details class="mb-4 border-b border-gray-200">
                 <summary class="cursor-pointer px-4 py-2 text-gray-800 bg-gray-50 hover:bg-gray-100">
                   ℹ️ Base Movement Rate
@@ -209,7 +240,6 @@
                 </div>
               </details>
 
-              <!-- Accordion Item 2 -->
               <details class="mb-4 border-b border-gray-200">
                 <summary class="cursor-pointer px-4 py-2 text-gray-800 bg-gray-50 hover:bg-gray-100">
                   Add Equipment by Name

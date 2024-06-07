@@ -182,3 +182,19 @@ export const markSelectedInventory = (inventoryId) => {
   const containerTitle = document.getElementById('inventory-container-title')
   containerTitle.textContent = getState().getInventory(inventoryId).name
 }
+
+/**
+ * Scrolls the window to the passed HTML element.
+ * @param {HTMLElement} element - The element to scroll to.
+ */
+export const scrollToElement = (element) => {
+  if (element instanceof HTMLElement) {
+    element.scrollIntoView({
+      behavior: 'smooth', // Smooth scrolling
+      block: 'start', // Aligns the top of the element to the top of the visible part of the scrollable ancestor
+      inline: 'nearest', // Aligns the nearest edge of the element to the nearest edge of the scrollable ancestor
+    })
+  } else {
+    console.error('Invalid element passed to scrollToElement function.')
+  }
+}

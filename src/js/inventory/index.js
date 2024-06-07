@@ -8,7 +8,13 @@ import {
   getSpeed,
   importEquipSet,
 } from './utils.js'
-import { createElementFromHtml, getEquipTable, markSelectedInventory, renderInitialInventory } from './utils.layout.js'
+import {
+  createElementFromHtml,
+  getEquipTable,
+  markSelectedInventory,
+  renderInitialInventory,
+  scrollToElement,
+} from './utils.layout.js'
 
 const state = getState()
 
@@ -134,7 +140,7 @@ const addEquipmentToTable = (tableBody, item) => {
   // Create and set properties for the button cell
   const addButton = document.createElement('button')
   addButton.textContent = 'Add'
-  addButton.className = 'px-4 text-sm text-left font-medium text-blue-900 hover:text-red-800'
+  addButton.className = 'px-4 text-sm text-left font-medium text-blue-400 hover:text-red-800'
   addButton.onclick = () => {
     const inventoryId = state.getCurrentInventoryId()
     state.addToInventory(inventoryId, item)
@@ -172,7 +178,7 @@ const bindConversionControls = () => {
 
       const item = AllEquipment.find((i) => i.name.toLowerCase() === cleanedItemName)
       if (item) {
-        state.addToInventory(currentInventoryId, { ...item, quantity: 1 }) // Assume adding one item at a time
+        state.addToInventory(currentInventoryId, { ...item, quantity: 1 })
       } else {
         notFoundItems.push(itemName)
       }
@@ -200,6 +206,9 @@ const addInventory = (name) => {
   if (!state.getInventory(inventoryId)) {
     state.setInventory(inventoryId, State.getNewInventory(inventoryId, name))
     renderInventory(inventoryId, name)
+
+    const element = document.getElementById(`${inventoryId}-container`)
+    scrollToElement(element)
   }
 
   return inventoryId
