@@ -20,16 +20,21 @@ Contributions are welcome!
 
 Current URL: https://swords-and-wizardry.ivlev.blog/
 
-## TODO
+## Features
 
-- [x] Double check items in lists
-- [x] Equipments set
+- [x] Lists of equipment, weapons, and armor with weight and cost
+- [x] Inventory management, calculating total weight, cost, and speed
+- [x] Multiple inventories that can be renamed. For example: "Zsusza, the thief", "Zoltan, the mercenary", "Solomon, the donkey", etc.
+- [x] Quick equipment sets that can be selected to save time when generating a new character
+- [x] Saves inventory in the browser's local storage, meaning the selected items will persist after a page reload
+- [x] Displays help on encumbrance and speed
+- [x] Converts text (which can be copied from other sources) into equipment and adds it to the inventory
+- [x] Exports inventories as JSON, which can be manually added to the browser's storage (dev tools). I didn’t have time yet to write a more convenient import feature.
+- [x] Custom items
+- [ ] Mobiles support (?)
 - [ ] Languages support (?)
 - [ ] Random character generation
 - [ ] Add coins
-- [ ] Add custom item
 - [ ] Filter by name
 - [ ] Extend equipment lists (?)
-- [x] Multiple inventories
-- [ ] Import & Export
-- [x] Save data in local storage
+- [ ] More convenient Import
