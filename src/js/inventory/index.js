@@ -167,7 +167,11 @@ const createCategorySection = (container, categoryName, items) => {
 }
 
 const bindConversionControls = () => {
+  /** @type {HTMLInputElement} */
+  const allowOnlyExistingCheckbox = document.getElementById('equip-import-allow-only-existing')
+
   document.getElementById('convert-button').addEventListener('click', function () {
+    const isStrictEquality = !!allowOnlyExistingCheckbox.checked
     const currentInventoryId = state.getCurrentInventoryId()
     const input = document.getElementById('equipment-input').value
     const itemList = input.split('\n') // Split input by new lines to get individual items
@@ -179,8 +183,16 @@ const bindConversionControls = () => {
       const item = AllEquipment.find((i) => i.name.toLowerCase() === cleanedItemName)
       if (item) {
         state.addToInventory(currentInventoryId, { ...item, quantity: 1 })
-      } else {
+      } else if (isStrictEquality) {
         notFoundItems.push(itemName)
+      } else {
+        // TODO some qty/weight modifiers?
+        state.addToInventory(currentInventoryId, {
+          cost: 0,
+          name: itemName,
+          quantity: 1,
+          weight: 0,
+        })
       }
     })
 

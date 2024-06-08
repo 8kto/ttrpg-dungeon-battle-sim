@@ -279,13 +279,22 @@
                   Add Equipment by Name
                 </summary>
                 <div class="">
-                  <p class="py-2 text-gen-400 text-sm">Items will be searched and added to the selected Inventory.</p>
+                  <p class="py-2 text-gen-600 text-sm">Items will be added to the selected Inventory.</p>
+
+                  <div class="mb-2">
+                    <input type="checkbox" id="equip-import-allow-only-existing" class="mr-2" checked />
+                    <label for="equip-import-allow-only-existing" class="text-gen-400 text-sm"
+                      >Allow only existing</label
+                    >
+                  </div>
+
                   <textarea
                     id="equipment-input"
                     class="w-full p-2 border-2 border-gray-300 rounded mb-4"
                     rows="6"
                     placeholder="Enter each item on a new line"
                   ></textarea>
+
                   <button
                     id="convert-button"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
