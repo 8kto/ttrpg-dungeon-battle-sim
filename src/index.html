@@ -39,7 +39,9 @@
     </script>
   </head>
   <body class="bg-gen-50 p-4">
-    <div class="flex items-center justify-center">
+    <noscript> Sorry, JS should be enabled </noscript>
+
+    <header class="flex items-center justify-center">
       <pre title="Swords & Wizardry logo" class="overflow-auto overflow-hidden text-alt">
                            _                         _                  _
                           | |       ___             (_)                | |
@@ -51,7 +53,7 @@
                                                                                |___/
     </pre
       >
-    </div>
+    </header>
     <main class="mx-auto w-full max-w-screen-2xl flex-grow px-2.5 sm:px-6 lg:px-8 mb-4">
       <header>
         <!-- Centered container with max-width -->
@@ -59,7 +61,7 @@
         <div class="text-lg text-gen-600 text-center mb-3">Complete/Revised</div>
       </header>
 
-      <div class="flex flex-row justify-between gap-4">
+      <div class="page-content flex flex-row justify-between gap-4">
         <!-- Equipment Container -->
         <section id="equipment-container" class="flex-1 p-4 bg-white shadow-lg rounded-lg"></section>
 
@@ -131,7 +133,7 @@
           <!-- Equipment sets -->
           <section id="equip-sets-section">
             <div class="max-w-auto">
-              <details class="mb-4 border-b border-gray-200" open>
+              <details class="mb-4 border-b border-gray-200">
                 <summary class="cursor-pointer px-4 py-2 text-gen-800 bg-gen-50 hover:bg-gen-100">
                   Import Equipment set
                 </summary>
@@ -171,14 +173,14 @@
                   </p>
                   <button
                     id="dump-json-button"
-                    class="text-xs btn bg-gray-400 hover:bg-gray-600 text-white py-2 px-2 m-2 mr-0 rounded"
+                    class="text-xs btn bg-gen-500 hover:bg-gen-600 text-white py-2 px-2 m-2 mr-0 rounded"
                     type="button"
                   >
                     Dump JSON
                   </button>
                   <button
                     id="copy-json-button"
-                    class="text-xs btn bg-gray-400 hover:bg-gray-600 text-white py-2 px-2 m-2 ml-0 rounded"
+                    class="text-xs btn bg-gen-500 hover:bg-gen-600 text-white py-2 px-2 m-2 ml-0 rounded"
                     type="button"
                   >
                     Copy to clipboard
