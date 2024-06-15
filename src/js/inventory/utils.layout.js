@@ -1,5 +1,5 @@
-import { getState } from './State.js'
-import { dispatchEvent, getIdFromName } from './utils.js'
+import { getState } from './State.js?v=$VERSION$'
+import { dispatchEvent, getIdFromName } from './utils.js?v=$VERSION$'
 
 /**
  * @param {string} htmlString Should enclose the layout with one element (div, span etc.)

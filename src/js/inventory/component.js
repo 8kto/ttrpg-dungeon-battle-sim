@@ -351,7 +351,6 @@ const bindNewItemControl = () => {
   })
 }
 
-
 const renderInventories = () => {
   const inventoryTableContainer = document.getElementById('inventories-container')
   inventoryTableContainer.innerHTML = ''
