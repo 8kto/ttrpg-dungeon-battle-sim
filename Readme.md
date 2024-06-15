@@ -38,3 +38,4 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 - [ ] Filter by name
 - [ ] Extend equipment lists (?)
 - [ ] More convenient Import
+- [ ] Production Tailwind version
