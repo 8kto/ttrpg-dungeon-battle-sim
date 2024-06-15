@@ -1,5 +1,5 @@
-import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../data/equipment.js'
-import { DEFAULT_INVENTORY_ID, getState, State } from './State.js'
+import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../data/equipment.js?v=$VERSION$'
+import { DEFAULT_INVENTORY_ID, getState, State } from './State.js?v=$VERSION$'
 import {
   dispatchEvent,
   getBaseMovementRate,
@@ -8,14 +8,14 @@ import {
   getSpeed,
   importEquipSet,
   renderErrorMessage,
-} from './utils.js'
+} from './utils.js?v=$VERSION$'
 import {
   createElementFromHtml,
   getEquipTable,
   markSelectedInventory,
   renderInitialInventory,
   scrollToElement,
-} from './utils.layout.js'
+} from './utils.layout.js?v=$VERSION$'
 
 const state = getState()
 
