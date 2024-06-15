@@ -33,6 +33,12 @@
         "disallowTemplateShorthand": true,
         "allow": ["!!"]
       }
+    ],
+    "import/no-unresolved": [
+      "error",
+      {
+        "ignore": ["\\.js\\?v=\\$VERSION\\$"]
+      }
     ]
   }
 }
