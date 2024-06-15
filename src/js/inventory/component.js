@@ -351,16 +351,17 @@ const bindNewItemControl = () => {
   })
 }
 
-const subscribeToEvents = () => {
-  document.addEventListener('RenderInventories', () => {
-    renderInventories()
-  })
-}
 
 const renderInventories = () => {
   const inventoryTableContainer = document.getElementById('inventories-container')
   inventoryTableContainer.innerHTML = ''
   state.getInventories().forEach((inventory) => renderInventory(inventory.id, inventory.name))
+}
+
+const subscribeToEvents = () => {
+  document.addEventListener('RenderInventories', () => {
+    renderInventories()
+  })
 }
 
 const main = () => {
