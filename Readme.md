@@ -16,6 +16,17 @@ I sourced the equipment lists, along with their weights and costs, from the rule
 
 Contributions are welcome!
 
+## Disclaimer I
+
+This is an unofficial tool for "Swords and Wizardry" and is not endorsed by the game's publishers.
+All related trademarks belong to their respective owners.
+
+## Disclaimer II
+
+This is a quick and dirty code; I spent only a little time making it "clean". You can read the sources at your own risk.
+
+To see a better approach I took on a similar project, check out my other TTRPG helper and [generator for the Lamentation of the Flame Princess](https://github.com/8kto/ttrpg-lotfp-helpers) system.
+
 ## Demo
 
 Current URL: https://swords-and-wizardry.ivlev.blog/
