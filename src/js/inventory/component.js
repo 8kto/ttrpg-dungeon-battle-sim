@@ -74,7 +74,7 @@ const renderInventory = (id, name) => {
     nameCell.className = cellClassnames
 
     const qtyCell = row.insertCell(1)
-    qtyCell.textContent = item.quantity
+    qtyCell.textContent = item.quantity.toString()
     qtyCell.className = cellClassnames
 
     const weightCell = row.insertCell(2)
@@ -102,12 +102,12 @@ const renderInventory = (id, name) => {
     totalCost += item.cost * item.quantity
   })
 
-  const carryModifier = 0 // Placeholder for a carry modifier
+  const carryModifier = 0 // FIXME Placeholder for a carry modifier
   const baseMovementRate = getBaseMovementRate(totalWeight, carryModifier)
 
   document.getElementById(`${id}-total-weight`).textContent = totalWeight.toFixed(1)
   document.getElementById(`${id}-total-cost`).textContent = totalCost.toFixed(2)
-  document.getElementById(`${id}-base-movement-rate`).textContent = baseMovementRate
+  document.getElementById(`${id}-base-movement-rate`).textContent = baseMovementRate.toString()
 
   updateSpeedDisplay(id, baseMovementRate)
 }
@@ -267,6 +267,8 @@ const bindDumpingControls = () => {
 
 const renderEquipSets = () => {
   const dropdown = document.getElementById('equip-set-dropdown')
+  const equipSetsContainer = document.getElementById('equip-sets-container')
+
   for (const key in EquipSets) {
     const option = document.createElement('option')
     option.value = key
@@ -277,23 +279,30 @@ const renderEquipSets = () => {
 
   dropdown.addEventListener('change', function () {
     const selectedSetKey = this.value
-    const equipSetsContainer = document.getElementById('equip-sets-container')
     equipSetsContainer.innerHTML = ''
 
     if (selectedSetKey) {
-      const selectedSet = EquipSets[selectedSetKey]
-      const itemList = document.createElement('ul')
-      itemList.className = 'list-disc list-inside two-columns'
-
-      selectedSet.items.forEach((item) => {
-        const listItem = document.createElement('li')
-        listItem.textContent = item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name
-        itemList.appendChild(listItem)
-      })
-
-      equipSetsContainer.appendChild(itemList)
+      renderEquipSetTable(equipSetsContainer, selectedSetKey)
     }
   })
+}
+
+/**
+ * @param {HTMLElement} container
+ * @param {string} selectedKey
+ */
+const renderEquipSetTable = (container, selectedKey) => {
+  const selectedSet = EquipSets[selectedKey]
+  const itemList = document.createElement('ul')
+  itemList.className = 'list-disc list-inside two-columns'
+
+  selectedSet.items.forEach((item) => {
+    const listItem = document.createElement('li')
+    listItem.textContent = item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name
+    itemList.appendChild(listItem)
+  })
+
+  container.appendChild(itemList)
 }
 
 const bindEquipSetImportControls = () => {
@@ -344,10 +353,14 @@ const bindNewItemControl = () => {
 
 const subscribeToEvents = () => {
   document.addEventListener('RenderInventories', () => {
-    const inventoryTableContainer = document.getElementById('inventories-container')
-    inventoryTableContainer.innerHTML = ''
-    state.getInventories().forEach((inventory) => renderInventory(inventory.id, inventory.name))
+    renderInventories()
   })
+}
+
+const renderInventories = () => {
+  const inventoryTableContainer = document.getElementById('inventories-container')
+  inventoryTableContainer.innerHTML = ''
+  state.getInventories().forEach((inventory) => renderInventory(inventory.id, inventory.name))
 }
 
 const main = () => {
