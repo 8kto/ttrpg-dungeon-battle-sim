@@ -1,4 +1,5 @@
 import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../data/equipment.js?v=$VERSION$'
+import { getNewCharacterModifiers } from '../shared/character.js?v=$VERSION$'
 import { DEFAULT_INVENTORY_ID, getState, State } from './State.js?v=$VERSION$'
 import {
   dispatchEvent,
@@ -385,6 +386,13 @@ const main = () => {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // FIXME
+  console.log(JSON.stringify(
+    getNewCharacterModifiers(),
+    null,
+    2,
+  ))
+
   try {
     main()
   } catch (err) {
