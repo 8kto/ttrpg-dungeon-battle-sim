@@ -1,6 +1,17 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 
 /**
+ * @typedef CharacterStats
+ * @property {StrengthModifierDef} Strength
+ * @property {DexterityModifierDef} Dexterity
+ * @property {ConstitutionModifierDef} Constitution
+ * @property {IntelligenceModifierDef} Intelligence
+ * @property {{ Score: number }} Wisdom
+ * @property {CharismaModifierDef} Charisma
+ * @property {number} Gold
+ */
+
+/**
  * @typedef StrengthModifierDef
  * @property {number} Damage
  * @property {number} ToHit
@@ -89,7 +100,7 @@ export const dexterityModifiers = {
 /**
  * @typedef ConstitutionModifierDef
  * @property {number} HitPoints
- * @property {string} RaiseDeadSurvival
+ * @property {string} RaiseDeadSurvivalChance
  */
 
 /**
@@ -98,15 +109,15 @@ export const dexterityModifiers = {
 export const constitutionModifiers = {
   8: {
     HitPoints: -1,
-    RaiseDeadSurvival: '50%',
+    RaiseDeadSurvivalChance: '50%',
   },
   12: {
     HitPoints: 0,
-    RaiseDeadSurvival: '75%',
+    RaiseDeadSurvivalChance: '75%',
   },
   18: {
     HitPoints: 1,
-    RaiseDeadSurvival: '100%',
+    RaiseDeadSurvivalChance: '100%',
   },
 }
 
@@ -114,7 +125,7 @@ export const constitutionModifiers = {
  * @typedef IntelligenceModifierDef
  * @property {number} MaxAdditionalLanguages
  * @property {number} MaxSpellLevel
- * @property {string} NewSpellUnderstanding
+ * @property {string} NewSpellUnderstandingChance
  * @property {string} SpellsPerLevel
  */
 
@@ -125,73 +136,73 @@ export const intelligenceModifiers = {
   7: {
     MaxAdditionalLanguages: 0,
     MaxSpellLevel: 4,
-    NewSpellUnderstanding: '30%',
+    NewSpellUnderstandingChance: '30%',
     SpellsPerLevel: '2/4',
   },
   8: {
     MaxAdditionalLanguages: 1,
     MaxSpellLevel: 5,
-    NewSpellUnderstanding: '40%',
+    NewSpellUnderstandingChance: '40%',
     SpellsPerLevel: '3/5',
   },
   9: {
     MaxAdditionalLanguages: 1,
     MaxSpellLevel: 5,
-    NewSpellUnderstanding: '45%',
+    NewSpellUnderstandingChance: '45%',
     SpellsPerLevel: '3/5',
   },
   10: {
     MaxAdditionalLanguages: 2,
     MaxSpellLevel: 5,
-    NewSpellUnderstanding: '50%',
+    NewSpellUnderstandingChance: '50%',
     SpellsPerLevel: '4/6',
   },
   11: {
     MaxAdditionalLanguages: 2,
     MaxSpellLevel: 6,
-    NewSpellUnderstanding: '50%',
+    NewSpellUnderstandingChance: '50%',
     SpellsPerLevel: '4/6',
   },
   12: {
     MaxAdditionalLanguages: 3,
     MaxSpellLevel: 6,
-    NewSpellUnderstanding: '55%',
+    NewSpellUnderstandingChance: '55%',
     SpellsPerLevel: '4/6',
   },
   13: {
     MaxAdditionalLanguages: 3,
     MaxSpellLevel: 7,
-    NewSpellUnderstanding: '65%',
+    NewSpellUnderstandingChance: '65%',
     SpellsPerLevel: '5/8',
   },
   14: {
     MaxAdditionalLanguages: 4,
     MaxSpellLevel: 7,
-    NewSpellUnderstanding: '65%',
+    NewSpellUnderstandingChance: '65%',
     SpellsPerLevel: '5/8',
   },
   15: {
     MaxAdditionalLanguages: 4,
     MaxSpellLevel: 8,
-    NewSpellUnderstanding: '75%',
+    NewSpellUnderstandingChance: '75%',
     SpellsPerLevel: '6/10',
   },
   16: {
     MaxAdditionalLanguages: 5,
     MaxSpellLevel: 8,
-    NewSpellUnderstanding: '75%',
+    NewSpellUnderstandingChance: '75%',
     SpellsPerLevel: '6/10',
   },
   17: {
     MaxAdditionalLanguages: 5,
     MaxSpellLevel: 9,
-    NewSpellUnderstanding: '85%',
+    NewSpellUnderstandingChance: '85%',
     SpellsPerLevel: '7/All',
   },
   18: {
     MaxAdditionalLanguages: 6,
     MaxSpellLevel: 9,
-    NewSpellUnderstanding: '95%',
+    NewSpellUnderstandingChance: '95%',
     SpellsPerLevel: '8/All',
   },
 }
