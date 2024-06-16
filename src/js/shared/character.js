@@ -1,4 +1,4 @@
-import { CharacterAttrScore, characterClasses, PRIME_ATTR_MIN } from '../data/classes.js?v=$VERSION$'
+import { AttrScore, characterClasses, PRIME_ATTR_MIN } from '../data/classes.js?v=$VERSION$'
 import {
   charismaModifiers,
   constitutionModifiers,
@@ -6,7 +6,7 @@ import {
   intelligenceModifiers,
   strengthModifiers,
 } from '../data/modifiers.js?v=$VERSION$'
-import { rollDiceFormula } from './dice.js?v=$VERSION$'
+import { roll, rollDiceFormula, secureRandomInteger } from './dice.js?v=$VERSION$'
 
 /**
  * @param {Record<number, unknown>} keyedStorage
@@ -52,12 +52,12 @@ export const getNewCharacterModifiers = () => {
 
   /* eslint-disable sort-keys-fix/sort-keys-fix */
   return {
-    [CharacterAttrScore.Strength]: getModifier(strengthModifiers, roll()),
-    [CharacterAttrScore.Dexterity]: getModifier(dexterityModifiers, roll()),
-    [CharacterAttrScore.Constitution]: getModifier(constitutionModifiers, roll()),
-    [CharacterAttrScore.Intelligence]: getModifier(intelligenceModifiers, roll()),
-    [CharacterAttrScore.Wisdom]: getModifier({}, roll()),
-    [CharacterAttrScore.Charisma]: getModifier(charismaModifiers, roll()),
+    [AttrScore.Strength]: getModifier(strengthModifiers, roll()),
+    [AttrScore.Dexterity]: getModifier(dexterityModifiers, roll()),
+    [AttrScore.Constitution]: getModifier(constitutionModifiers, roll()),
+    [AttrScore.Intelligence]: getModifier(intelligenceModifiers, roll()),
+    [AttrScore.Wisdom]: getModifier({}, roll()),
+    [AttrScore.Charisma]: getModifier(charismaModifiers, roll()),
     Gold: roll() * 10,
   }
 }
@@ -74,7 +74,7 @@ export const getClassSuggestionsXXX = (stats, kind) => {
   const validAttrs = []
   const matchingClasses = []
 
-  Object.values(CharacterAttrScore).forEach((attrName) => {
+  Object.values(AttrScore).forEach((attrName) => {
     if (stats[attrName].Score >= PRIME_ATTR_MIN) {
       validAttrs.push(attrName)
     }
@@ -94,6 +94,8 @@ export const getClassSuggestionsXXX = (stats, kind) => {
 }
 
 /**
+ * TODO sort attrs, choose the highest
+ * TODO if all below 13, suggest a class for the highest attr
  * @param {CharacterStats} stats
  * @param {'PrimeAttr' | 'StrictAttr'} kind
  * @returns {string[]} Matching class names
@@ -114,7 +116,7 @@ export const getClassSuggestions = (stats, kind) => {
  * @returns {string[]} Valid attribute names
  */
 const getValidAttributes = (stats, minScore) => {
-  return Object.values(CharacterAttrScore).filter((attrName) => stats[attrName].Score >= minScore)
+  return Object.values(AttrScore).filter((attrName) => stats[attrName].Score >= minScore)
 }
 
 /**
@@ -135,6 +137,34 @@ const getMatchingClasses = (validAttrs) => {
   }, [])
 }
 
+/**
+ * @param {Array<CharacterClass>} suggestedClasses
+ * @returns {CharacterClass|null}
+ */
+export const getRandomClass = (suggestedClasses) => {
+  if (!suggestedClasses.length) {
+    return null
+  }
+
+  return characterClasses[suggestedClasses[secureRandomInteger(0, suggestedClasses.length - 1)]]
+}
+
+/**
+ * @param {CharacterClassDef} charClass
+ * @param {CharacterStats} stats
+ * @returns {number}
+ */
+export const getCharHitPoints = (charClass, stats) => {
+  if (!charClass) {
+    return null
+  }
+  const baseHp = roll(charClass.HitDice)
+  const bonusHp = stats.Constitution.HitPoints
+
+  // Return at least 1 HP
+  return Math.max(baseHp + bonusHp, 1)
+}
+
 // TODO HP + special handling for Rangers
 // TODO Class (HD, available races)
 // TODO Race
@@ -144,4 +174,6 @@ const getMatchingClasses = (validAttrs) => {
 // TODO class Armor/Shield/Weapons
 // TODO char AC
 // TODO char To Hit
-// TODO saving Throw
+// TODO saving Throw / num + details
+// TODO generate with strict 0e attrs
+// TODO Fighter Parrying Ability

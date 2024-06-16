@@ -1,5 +1,10 @@
 import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../data/equipment.js?v=$VERSION$'
-import { getNewCharacterModifiers } from '../shared/character.js?v=$VERSION$'
+import {
+  getCharHitPoints,
+  getClassSuggestions,
+  getNewCharacterModifiers,
+  getRandomClass,
+} from '../shared/character.js?v=$VERSION$'
 import { DEFAULT_INVENTORY_ID, getState, State } from './State.js?v=$VERSION$'
 import {
   dispatchEvent,
@@ -399,8 +404,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // FIXME
   const stats = getNewCharacterModifiers()
+  const suggestions = getClassSuggestions(stats, 'PrimeAttr')
+  const charClass = getRandomClass(suggestions)
+
+  console.log({ charClass, suggestions })
+
   const container = document.querySelector(`#${state.getCurrentInventoryId()}-container .char-stats`)
   console.log(JSON.stringify(stats, null, 2))
 
-  renderStatsContainer(container, stats)
+  renderStatsContainer(container, stats, charClass)
 })

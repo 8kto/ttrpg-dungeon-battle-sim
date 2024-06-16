@@ -1,3 +1,4 @@
+import { getCharHitPoints } from '../shared/character.js?v=$VERSION$'
 import { getState } from './State.js?v=$VERSION$'
 import { dispatchEvent, getIdFromName } from './utils.js?v=$VERSION$'
 
@@ -203,8 +204,9 @@ export const scrollToElement = (element) => {
 /**
  * @param {HTMLElement} container
  * @param {CharacterStats} stats
+ * @param {CharacterClassDef} charClass
  */
-export const renderStatsContainer = (container, stats) => {
+export const renderStatsContainer = (container, stats, charClass) => {
   const template = document.getElementById('template-stats')
   const clone = document.importNode(template.content, true)
 
@@ -213,11 +215,14 @@ export const renderStatsContainer = (container, stats) => {
 
   Object.entries(stats).forEach(([statName, stat]) => {
     const { Score, ...bonuses } = stat
+
+    // Attribute scores
     const statCell = tableStats.querySelector(`.col-stat-${statName} td:nth-child(2)`)
     if (statCell) {
       statCell.textContent = Score
     }
 
+    // Attribute bonuses
     Object.entries(bonuses).forEach(([bonusName, bonus]) => {
       const bonusCell = tableBonuses.querySelector(`.col-bonus-${bonusName} td:nth-child(2)`)
 
@@ -226,6 +231,13 @@ export const renderStatsContainer = (container, stats) => {
       }
     })
   })
+
+  // Other details
+  const charHp = getCharHitPoints(charClass, stats)
+  clone.querySelector('.char-gold').textContent = stats.Gold.toString()
+  clone.querySelector('.char-hp').textContent = (charHp || 'NA').toString()
+  clone.querySelector('.char-hd').textContent = charClass.HitDice
+  clone.querySelector('.char-class').textContent = charClass.name
 
   container.appendChild(clone)
 }

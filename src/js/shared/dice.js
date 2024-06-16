@@ -22,7 +22,7 @@ export const Dice = {
  * @param {number} max - The maximum integer value
  * @returns {number} - A random integer between min and max
  */
-const secureRandomInteger = (min, max) => {
+export const secureRandomInteger = (min, max) => {
   const range = max - min + 1
   const maxUint32 = 0xffffffff
   const limit = maxUint32 - (maxUint32 % range)
@@ -37,7 +37,7 @@ const secureRandomInteger = (min, max) => {
 
 /**
  * Rolls a die of the specified type
- * @param {number} dice - The type of dice to roll (default is d100)
+ * @param {DiceKind} dice - The type of dice to roll (default is d100)
  * @returns {number} - The result of the dice roll
  */
 export const roll = (dice = Dice.d100) => secureRandomInteger(1, dice)
