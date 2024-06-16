@@ -1,68 +1,63 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 
-export const strengthModifiers = [
-  {
-    min: 3,
-    max: 4,
-    'To-Hit': -2,
+/**
+ * @typedef StrengthModifierDef
+ * @property {number} Damage
+ * @property {number} ToHit
+ * @property {string} Doors
+ * @property {number} Carry
+ */
+
+/**
+ * @type {Array<StrengthModifierDef>}
+ */
+export const strengthModifiers = {
+  4: {
+    ToHit: -2,
     Damage: -1,
-    'Open Doors': '1',
+    Doors: '1',
     Carry: -10,
   },
-  {
-    min: 5,
-    max: 6,
-    'To-Hit': -1,
+  6: {
+    ToHit: -1,
     Damage: 0,
-    'Open Doors': '1',
+    Doors: '1',
     Carry: -5,
   },
-  {
-    min: 7,
-    max: 8,
-    'To-Hit': 0,
+  8: {
+    ToHit: 0,
     Damage: 0,
-    'Open Doors': '1-2',
+    Doors: '1-2',
     Carry: 0,
   },
-  {
-    min: 9,
-    max: 12,
-    'To-Hit': 0,
+  12: {
+    ToHit: 0,
     Damage: 0,
-    'Open Doors': '1-2',
+    Doors: '1-2',
     Carry: 5,
   },
-  {
-    min: 13,
-    max: 15,
-    'To-Hit': 1,
+  15: {
+    ToHit: 1,
     Damage: 0,
-    'Open Doors': '1-2',
+    Doors: '1-2',
     Carry: 10,
   },
-  {
-    min: 16,
-    max: 16,
-    'To-Hit': 1,
+  16: {
+    ToHit: 1,
     Damage: 1,
-    'Open Doors': '1-3',
+    Doors: '1-3',
     Carry: 15,
   },
-  {
-    min: 17,
-    max: 17,
-    'To-Hit': 2,
+  17: {
+    ToHit: 2,
     Damage: 2,
-    'Open Doors': '1-4',
+    Doors: '1-4',
     Carry: 30,
   },
-  {
-    min: 18,
-    max: 18,
-    'To-Hit': 2,
+  18: {
+    ToHit: 2,
     Damage: 3,
-    'Open Doors': '1-5',
+    Doors: '1-5',
     Carry: 50,
   },
-]
+}
