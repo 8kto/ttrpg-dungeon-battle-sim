@@ -1,3 +1,4 @@
+import { strengthModifiers } from '../../data/modifiers'
 import { getMatchingScore } from '../character.js'
 
 describe('character utils', () => {
@@ -20,7 +21,7 @@ describe('character utils', () => {
       [17, 17],
       [18, 18],
     ])('should match the expected scores %d => %d', (score, expected) => {
-      expect(getMatchingScore(score)).toEqual(expected)
+      expect(getMatchingScore(strengthModifiers, score)).toEqual(expected)
     })
   })
 })
