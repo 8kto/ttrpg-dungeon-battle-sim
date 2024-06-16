@@ -195,3 +195,21 @@ export const intelligenceModifiers = {
     SpellsPerLevel: '8/All',
   },
 }
+
+/**
+ * @typedef CharismaModifierDef
+ * @property {number} MaxNumberOfSpecialHirelings
+ */
+
+/**
+ * @type {Record<number, CharismaModifierDef>}
+ */
+export const charismaModifiers = {
+  4: { MaxNumberOfSpecialHirelings: 1 },
+  6: { MaxNumberOfSpecialHirelings: 2 },
+  8: { MaxNumberOfSpecialHirelings: 3 },
+  12: { MaxNumberOfSpecialHirelings: 4 },
+  15: { MaxNumberOfSpecialHirelings: 5 },
+  17: { MaxNumberOfSpecialHirelings: 6 },
+  18: { MaxNumberOfSpecialHirelings: 7 },
+}
