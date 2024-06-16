@@ -2,7 +2,8 @@
 import { Dice } from '../shared/dice.js?v=$VERSION$'
 
 /**
- * @typedef {Object} CharacterClassDef
+ * @typedef CharacterClassDef
+ * @property {CharacterClass} name
  * @property {Array<PrimeAttribute>} PrimeAttr
  * @property {Array<PrimeAttribute>} [StrictAttr]
  * @property {DiceKind} HitDice
@@ -10,16 +11,16 @@ import { Dice } from '../shared/dice.js?v=$VERSION$'
  * @property {string} WeaponsPermitted
  * @property {Array<CharacterRace>} Race
  * @property {Array<Alignment>} Alignment
- * @property {boolean} isCaster
+ * @property {boolean} $isCaster
  * @property {string} $meta
  */
 
 /**
  * @typedef {'Assassin' | 'Cleric' | 'Druid' | 'Fighter' | 'MagicUser' | 'Monk' | 'Paladin' | 'Ranger' | 'Thief'} CharacterClass
  * @typedef {'Human' | 'Dwarf' | 'Elf' | 'HalfElf' | 'Hobbit'} CharacterRace
- * @typedef {'Strength' | 'Dexterity' | 'Constitution' | 'Intelligence' | 'Wisdom' | 'Charisma'} CharacterAttrScore
+ * @typedef {'Strength' | 'Dexterity' | 'Constitution' | 'Intelligence' | 'Wisdom' | 'Charisma'} AttrScore
  * @typedef {'Chaos' | 'Neutral' | 'Lawful'} Alignment
- * @typedef {[CharacterAttrScore, number]} PrimeAttribute
+ * @typedef {[AttrScore, number]} PrimeAttribute
  */
 
 /**
@@ -49,9 +50,9 @@ export const CharacterRace = {
 }
 
 /**
- * @type {Record<CharacterAttrScore, CharacterAttrScore>}
+ * @type {Record<AttrScore, AttrScore>}
  */
-export const CharacterAttrScore = {
+export const AttrScore = {
   Strength: 'Strength',
   Dexterity: 'Dexterity',
   Constitution: 'Constitution',
@@ -76,16 +77,17 @@ export const PRIME_ATTR_MIN = 13
  */
 export const characterClasses = {
   [CharacterClass.Assassin]: {
+    name: CharacterClass.Assassin,
     PrimeAttr: [
-      [CharacterAttrScore.Strength, PRIME_ATTR_MIN],
-      [CharacterAttrScore.Dexterity, PRIME_ATTR_MIN],
-      [CharacterAttrScore.Intelligence, PRIME_ATTR_MIN],
+      [AttrScore.Strength, PRIME_ATTR_MIN],
+      [AttrScore.Dexterity, PRIME_ATTR_MIN],
+      [AttrScore.Intelligence, PRIME_ATTR_MIN],
     ],
     // wait...
     StrictAttr: [
-      [CharacterAttrScore.Strength, 12],
-      [CharacterAttrScore.Dexterity, 12],
-      [CharacterAttrScore.Intelligence, 12],
+      [AttrScore.Strength, 12],
+      [AttrScore.Dexterity, 12],
+      [AttrScore.Intelligence, 12],
     ],
     HitDice: Dice.d6,
     ArmorPermitted: 'Leather armor only, shield permitted.',
@@ -94,32 +96,36 @@ export const characterClasses = {
     Alignment: [Alignment.Neutral, Alignment.Chaotic],
   },
   [CharacterClass.Cleric]: {
-    PrimeAttr: [[CharacterAttrScore.Wisdom, PRIME_ATTR_MIN]],
+    name: CharacterClass.Cleric,
+    PrimeAttr: [[AttrScore.Wisdom, PRIME_ATTR_MIN]],
     HitDice: Dice.d6,
     ArmorPermitted:
       'Blunt weapons only (club, flail, hammer, mace, staff, etc.). No missile weapons, other than oil or slings if the Referee permits.',
     WeaponsPermitted: 'All',
     Race: [CharacterRace.Human, CharacterRace.HalfElf],
     Alignment: [Alignment.Lawful, Alignment.Chaotic],
+    $isCaster: true,
   },
   [CharacterClass.Druid]: {
+    name: CharacterClass.Druid,
     PrimeAttr: [
-      [CharacterAttrScore.Wisdom, PRIME_ATTR_MIN],
-      [CharacterAttrScore.Charisma, PRIME_ATTR_MIN],
+      [AttrScore.Wisdom, PRIME_ATTR_MIN],
+      [AttrScore.Charisma, PRIME_ATTR_MIN],
     ],
     StrictAttr: [
-      [CharacterAttrScore.Wisdom, 12],
-      [CharacterAttrScore.Charisma, 14],
+      [AttrScore.Wisdom, 12],
+      [AttrScore.Charisma, 14],
     ],
     HitDice: Dice.d6,
     ArmorPermitted: 'Leather armor, wooden shield',
     WeaponsPermitted: 'Dagger, sickle-shaped sword (treat as short sword), spear, sling, oil',
     Race: [CharacterRace.Human],
     Alignment: [Alignment.Neutral],
-    isCaster: true,
+    $isCaster: true,
   },
   [CharacterClass.Fighter]: {
-    PrimeAttr: [[CharacterAttrScore.Strength, PRIME_ATTR_MIN]],
+    name: CharacterClass.Fighter,
+    PrimeAttr: [[AttrScore.Strength, PRIME_ATTR_MIN]],
     HitDice: Dice.d8,
     ArmorPermitted: 'All',
     WeaponsPermitted: 'All',
@@ -127,19 +133,22 @@ export const characterClasses = {
     Alignment: ANY_ALIGNMENT,
   },
   [CharacterClass.MagicUser]: {
-    PrimeAttr: [[CharacterAttrScore.Intelligence, PRIME_ATTR_MIN]],
+    name: CharacterClass.MagicUser,
+    PrimeAttr: [[AttrScore.Intelligence, PRIME_ATTR_MIN]],
     HitDice: Dice.d4,
     ArmorPermitted: 'None',
     WeaponsPermitted: 'Dagger, staff, and darts',
     Race: [CharacterRace.Elf, CharacterRace.HalfElf, CharacterRace.Human],
     Alignment: ANY_ALIGNMENT,
+    $isCaster: true,
   },
   [CharacterClass.Monk]: {
-    PrimeAttr: [[CharacterAttrScore.Wisdom, PRIME_ATTR_MIN]],
+    name: CharacterClass.Monk,
+    PrimeAttr: [[AttrScore.Wisdom, PRIME_ATTR_MIN]],
     StrictAttr: [
-      [CharacterAttrScore.Strength, 12],
-      [CharacterAttrScore.Dexterity, 15],
-      [CharacterAttrScore.Wisdom, 15],
+      [AttrScore.Strength, 12],
+      [AttrScore.Dexterity, 15],
+      [AttrScore.Wisdom, 15],
     ],
     HitDice: Dice.d4,
     ArmorPermitted: 'None',
@@ -148,8 +157,9 @@ export const characterClasses = {
     Alignment: ANY_ALIGNMENT,
   },
   [CharacterClass.Paladin]: {
-    PrimeAttr: [[CharacterAttrScore.Strength, PRIME_ATTR_MIN]],
-    StrictAttr: [[CharacterAttrScore.Charisma, 17]],
+    name: CharacterClass.Paladin,
+    PrimeAttr: [[AttrScore.Strength, PRIME_ATTR_MIN]],
+    StrictAttr: [[AttrScore.Charisma, 17]],
     HitDice: Dice.d8,
     ArmorPermitted: 'All',
     WeaponsPermitted: 'All',
@@ -157,11 +167,12 @@ export const characterClasses = {
     Alignment: [Alignment.Lawful],
   },
   [CharacterClass.Ranger]: {
-    PrimeAttr: [[CharacterAttrScore.Strength, PRIME_ATTR_MIN]],
+    name: CharacterClass.Ranger,
+    PrimeAttr: [[AttrScore.Strength, PRIME_ATTR_MIN]],
     StrictAttr: [
-      [CharacterAttrScore.Constitution, 15],
-      [CharacterAttrScore.Intelligence, 12],
-      [CharacterAttrScore.Wisdom, 12],
+      [AttrScore.Constitution, 15],
+      [AttrScore.Intelligence, 12],
+      [AttrScore.Wisdom, 12],
     ],
     HitDice: Dice.d8,
     ArmorPermitted: 'All',
@@ -171,7 +182,8 @@ export const characterClasses = {
     $meta: '2d8 at first level, 1d8/level thereafter',
   },
   [CharacterClass.Thief]: {
-    PrimeAttr: [[CharacterAttrScore.Dexterity, PRIME_ATTR_MIN]],
+    name: CharacterClass.Thief,
+    PrimeAttr: [[AttrScore.Dexterity, PRIME_ATTR_MIN]],
     HitDice: Dice.d4,
     ArmorPermitted: 'Leather armor only; no shield',
     WeaponsPermitted: 'All, but magical weapons are limited to daggers and swords',
