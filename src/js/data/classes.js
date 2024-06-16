@@ -3,12 +3,13 @@ import { Dice } from '../shared/dice.js?v=$VERSION$'
 
 /**
  * @typedef {Object} CharacterClassDef
- * @property {PrimeAttribute[]} PrimeAttr
- * @property {PrimeAttribute[]} [StrictAttr]
+ * @property {Array<PrimeAttribute>} PrimeAttr
+ * @property {Array<PrimeAttribute>} [StrictAttr]
  * @property {DiceKind} HitDice
  * @property {string} ArmorPermitted
  * @property {string} WeaponsPermitted
- * @property {CharacterRace[]} Race
+ * @property {Array<CharacterRace>} Race
+ * @property {Array<Alignment>} Alignment
  * @property {boolean} isCaster
  * @property {string} $meta
  */
@@ -17,6 +18,7 @@ import { Dice } from '../shared/dice.js?v=$VERSION$'
  * @typedef {'Assassin' | 'Cleric' | 'Druid' | 'Fighter' | 'MagicUser' | 'Monk' | 'Paladin' | 'Ranger' | 'Thief'} CharacterClass
  * @typedef {'Human' | 'Dwarf' | 'Elf' | 'HalfElf' | 'Hobbit'} CharacterRace
  * @typedef {'Strength' | 'Dexterity' | 'Constitution' | 'Intelligence' | 'Wisdom' | 'Charisma'} CharacterAttrScore
+ * @typedef {'Chaos' | 'Neutral' | 'Lawful'} Alignment
  * @typedef {[CharacterAttrScore, number]} PrimeAttribute
  */
 
@@ -58,7 +60,14 @@ export const CharacterAttrScore = {
   Charisma: 'Charisma',
 }
 
+export const Alignment = {
+  Lawful: 'Lawful',
+  Neutral: 'Neutral',
+  Chaotic: 'Chaotic',
+}
+
 export const ANY_RACE = Object.values(CharacterRace)
+export const ANY_ALIGNMENT = Object.values(Alignment)
 
 export const PRIME_ATTR_MIN = 13
 
@@ -82,6 +91,7 @@ export const characterClasses = {
     ArmorPermitted: 'Leather armor only, shield permitted.',
     WeaponsPermitted: 'All',
     Race: [CharacterRace.Human],
+    Alignment: [Alignment.Neutral, Alignment.Chaotic],
   },
   [CharacterClass.Cleric]: {
     PrimeAttr: [[CharacterAttrScore.Wisdom, PRIME_ATTR_MIN]],
@@ -90,6 +100,7 @@ export const characterClasses = {
       'Blunt weapons only (club, flail, hammer, mace, staff, etc.). No missile weapons, other than oil or slings if the Referee permits.',
     WeaponsPermitted: 'All',
     Race: [CharacterRace.Human, CharacterRace.HalfElf],
+    Alignment: [Alignment.Lawful, Alignment.Chaotic],
   },
   [CharacterClass.Druid]: {
     PrimeAttr: [
@@ -104,6 +115,8 @@ export const characterClasses = {
     ArmorPermitted: 'Leather armor, wooden shield',
     WeaponsPermitted: 'Dagger, sickle-shaped sword (treat as short sword), spear, sling, oil',
     Race: [CharacterRace.Human],
+    Alignment: [Alignment.Neutral],
+    isCaster: true,
   },
   [CharacterClass.Fighter]: {
     PrimeAttr: [[CharacterAttrScore.Strength, PRIME_ATTR_MIN]],
@@ -111,6 +124,7 @@ export const characterClasses = {
     ArmorPermitted: 'All',
     WeaponsPermitted: 'All',
     Race: ANY_RACE,
+    Alignment: ANY_ALIGNMENT,
   },
   [CharacterClass.MagicUser]: {
     PrimeAttr: [[CharacterAttrScore.Intelligence, PRIME_ATTR_MIN]],
@@ -118,6 +132,7 @@ export const characterClasses = {
     ArmorPermitted: 'None',
     WeaponsPermitted: 'Dagger, staff, and darts',
     Race: [CharacterRace.Elf, CharacterRace.HalfElf, CharacterRace.Human],
+    Alignment: ANY_ALIGNMENT,
   },
   [CharacterClass.Monk]: {
     PrimeAttr: [[CharacterAttrScore.Wisdom, PRIME_ATTR_MIN]],
@@ -130,6 +145,7 @@ export const characterClasses = {
     ArmorPermitted: 'None',
     WeaponsPermitted: 'All',
     Race: [CharacterRace.Human],
+    Alignment: ANY_ALIGNMENT,
   },
   [CharacterClass.Paladin]: {
     PrimeAttr: [[CharacterAttrScore.Strength, PRIME_ATTR_MIN]],
@@ -138,6 +154,7 @@ export const characterClasses = {
     ArmorPermitted: 'All',
     WeaponsPermitted: 'All',
     Race: [CharacterRace.Human],
+    Alignment: [Alignment.Lawful],
   },
   [CharacterClass.Ranger]: {
     PrimeAttr: [[CharacterAttrScore.Strength, PRIME_ATTR_MIN]],
@@ -150,6 +167,7 @@ export const characterClasses = {
     ArmorPermitted: 'All',
     WeaponsPermitted: 'All',
     Race: [CharacterRace.Human],
+    Alignment: [Alignment.Lawful],
     $meta: '2d8 at first level, 1d8/level thereafter',
   },
   [CharacterClass.Thief]: {
@@ -158,5 +176,6 @@ export const characterClasses = {
     ArmorPermitted: 'Leather armor only; no shield',
     WeaponsPermitted: 'All, but magical weapons are limited to daggers and swords',
     Race: ANY_RACE,
+    Alignment: [Alignment.Neutral, Alignment.Chaotic],
   },
 }

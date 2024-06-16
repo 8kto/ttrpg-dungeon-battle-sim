@@ -145,4 +145,3 @@ const getMatchingClasses = (validAttrs) => {
 // TODO char AC
 // TODO char To Hit
 // TODO saving Throw
-// TODO Alignment
