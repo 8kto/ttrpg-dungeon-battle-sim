@@ -43,6 +43,9 @@ const getModifier = (modifiers, score) => {
   }
 }
 
+/**
+ * @returns {CharacterStats}
+ */
 export const getNewCharacterModifiers = () => {
   const roll = rollDiceFormula.bind(null, '3d6')
 

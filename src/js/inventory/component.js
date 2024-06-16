@@ -15,6 +15,7 @@ import {
   getEquipTable,
   markSelectedInventory,
   renderInitialInventory,
+  renderStatsContainer,
   scrollToElement,
 } from './utils.layout.js?v=$VERSION$'
 
@@ -97,7 +98,7 @@ const renderInventory = (id, name) => {
 
     const actionsCell = row.insertCell(4)
     actionsCell.appendChild(removeButton)
-    actionsCell.className = cellClassnames
+    actionsCell.className = `${cellClassnames} text-center px-2 w-16`
 
     totalWeight += item.weight * item.quantity
     totalCost += item.cost * item.quantity
@@ -149,9 +150,9 @@ const addEquipmentToTable = (tableBody, item) => {
     renderInventory(inventoryId, inventoryId)
   }
 
-  const addCell = row.insertCell(3)
-  addCell.appendChild(addButton)
-  addCell.className = cellClassnames
+  const actionsCell = row.insertCell(3)
+  actionsCell.appendChild(addButton)
+  actionsCell.className = `${cellClassnames} text-center px-2 w-16`
 }
 
 /**
@@ -386,13 +387,6 @@ const main = () => {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // FIXME
-  console.log(JSON.stringify(
-    getNewCharacterModifiers(),
-    null,
-    2,
-  ))
-
   try {
     main()
   } catch (err) {
@@ -402,4 +396,11 @@ document.addEventListener('DOMContentLoaded', () => {
       'Error during page initialization. Try refreshing, clearing the cache, or using a different browser.',
     )
   }
+
+  // FIXME
+  const stats = getNewCharacterModifiers()
+  const container = document.querySelector(`#${state.getCurrentInventoryId()}-container .char-stats`)
+  console.log(JSON.stringify(stats, null, 2))
+
+  renderStatsContainer(container, stats)
 })

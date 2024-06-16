@@ -20,11 +20,11 @@ const getInventoryTable = (id) => {
   return `<table id="${id}-table-container" class="min-w-full bg-white shadow-md rounded my-4">
               <thead class="bg-gen-100 text-left">
                   <tr>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/3">Name</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase">Quantity</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase">Total Weight</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase">Total Cost</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-16">Actions</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/2">Name</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Quantity</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Total Weight</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Total Cost</th>
+                      <th class="px-2 py-3 text-center text-xs font-medium uppercase w-1/6">Actions</th>
                   </tr>
               </thead>
               <tbody></tbody>
@@ -41,10 +41,10 @@ export const getEquipTable = (categoryName) => `
             <table class="min-w-full bg-white shadow-md rounded">
                 <thead class="bg-gen-100 text-left">
                     <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/3">Name</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-16">Weight</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-16">Cost, gp</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-16">Actions</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/2">Name</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Weight</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Cost, gp</th>
+                        <th class="px-2 py-3 text-center text-xs font-medium uppercase w-1/6">Actions</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -143,12 +143,13 @@ export const renderInitialInventory = (id, name) => {
 
   inventoryTableContainer.appendChild(
     createElementFromHtml(`
-        <section id="${id}-container" class="inventory-container px-4 py-2 border">
+        <section id="${id}-container" class="inventory-container px-4 py-2 border shadow-lg">
           <h3
             id="${id}-header"
             class="inventory-header text-lg text-alt mb-4 hover:text-red-700 hover:cursor-pointer"
             title="Click to select"
           >${name ?? id}</h3>
+          <div class="char-stats"></div>
           ${getInventoryTable(id)}
           ${getInventoryControlsSection(id)}
         </section>
@@ -197,4 +198,34 @@ export const scrollToElement = (element) => {
   } else {
     console.error('Invalid element passed to scrollToElement function.')
   }
+}
+
+/**
+ * @param {HTMLElement} container
+ * @param {CharacterStats} stats
+ */
+export const renderStatsContainer = (container, stats) => {
+  const template = document.getElementById('template-stats')
+  const clone = document.importNode(template.content, true)
+
+  const tableStats = clone.querySelector('table.table-stats')
+  const tableBonuses = clone.querySelector('table.table-bonuses')
+
+  Object.entries(stats).forEach(([statName, stat]) => {
+    const { Score, ...bonuses } = stat
+    const statCell = tableStats.querySelector(`.col-stat-${statName} td:nth-child(2)`)
+    if (statCell) {
+      statCell.textContent = Score
+    }
+
+    Object.entries(bonuses).forEach(([bonusName, bonus]) => {
+      const bonusCell = tableBonuses.querySelector(`.col-bonus-${bonusName} td:nth-child(2)`)
+
+      if (bonusCell) {
+        bonusCell.textContent = bonus.toString()
+      }
+    })
+  })
+
+  container.appendChild(clone)
 }
