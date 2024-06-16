@@ -1,4 +1,5 @@
 import {
+  charismaModifiers,
   constitutionModifiers,
   dexterityModifiers,
   intelligenceModifiers,
@@ -13,17 +14,17 @@ import { rollDiceFormula } from './dice.js?v=$VERSION$'
  */
 export const getMatchingScore = (keyedStorage, num) => {
   const scores = Object.keys(keyedStorage).map(Number)
-  let searchScore = scores[0]
+  let matched = scores[0]
 
-  for (const s of scores) {
-    searchScore = s
+  for (const score of scores) {
+    matched = score
 
-    if (num <= s) {
+    if (num <= score) {
       break
     }
   }
 
-  return searchScore
+  return matched
 }
 
 /**
@@ -34,11 +35,7 @@ export const getMatchingScore = (keyedStorage, num) => {
 const getModifier = (modifiers, score) => {
   const matched = getMatchingScore(modifiers, score)
 
-  if (!matched) {
-    throw new Error('Score is out of range')
-  }
-
-  const modifierData = modifiers[matched]
+  const modifierData = modifiers[matched] || {}
 
   return {
     Score: score,
@@ -55,5 +52,8 @@ export const getNewCharacterModifiers = () => {
     Dexterity: getModifier(dexterityModifiers, roll()),
     Constitution: getModifier(constitutionModifiers, roll()),
     Intelligence: getModifier(intelligenceModifiers, roll()),
+    Wisdom: getModifier({}, roll()),
+    Charisma: getModifier(charismaModifiers, roll()),
+    Gold: roll() * 10,
   }
 }
