@@ -6,7 +6,7 @@ import {
   intelligenceModifiers,
   strengthModifiers,
 } from '../data/modifiers.js?v=$VERSION$'
-import { roll, rollDiceFormula, secureRandomInteger } from './dice.js?v=$VERSION$'
+import { getRandomArrayItem, roll, rollDiceFormula } from './dice.js?v=$VERSION$'
 
 /**
  * @param {Record<number, unknown>} keyedStorage
@@ -104,7 +104,7 @@ export const getClassSuggestions = (stats, kind) => {
   if (kind !== 'PrimeAttr') {
     throw new Error('Not implemented')
   }
-
+  console.log(stats)
   const validAttrs = getValidAttributes(stats, PRIME_ATTR_MIN)
 
   return getMatchingClasses(validAttrs)
@@ -115,8 +115,11 @@ export const getClassSuggestions = (stats, kind) => {
  * @param {number} minScore
  * @returns {string[]} Valid attribute names
  */
-const getValidAttributes = (stats, minScore) => {
-  return Object.values(AttrScore).filter((attrName) => stats[attrName].Score >= minScore)
+export const getValidAttributes = (stats, minScore) => {
+  return Object.entries(stats)
+    .filter(([key, val]) => !!val.Score && !!AttrScore[key] && val.Score >= minScore)
+    .sort((a, b) => b[1].Score - a[1].Score)
+    .map(([key]) => key)
 }
 
 /**
@@ -146,7 +149,7 @@ export const getRandomClass = (suggestedClasses) => {
     return null
   }
 
-  return characterClasses[suggestedClasses[secureRandomInteger(0, suggestedClasses.length - 1)]]
+  return characterClasses[getRandomArrayItem(suggestedClasses)]
 }
 
 /**

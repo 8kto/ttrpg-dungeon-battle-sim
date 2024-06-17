@@ -1,6 +1,6 @@
-import { characterClasses } from '../../data/classes'
+import { characterClasses, PRIME_ATTR_MIN } from '../../data/classes'
 import { strengthModifiers } from '../../data/modifiers'
-import { getClassSuggestions, getMatchingScore } from '../character.js'
+import { getClassSuggestions, getMatchingScore, getValidAttributes } from '../character.js'
 
 describe('character utils', () => {
   describe('getMatchingScore', () => {
@@ -119,6 +119,93 @@ describe('character utils', () => {
       const stats = getStatsWithScores({ Strength: 13, Wisdom: 14 })
       const expectedClasses = ['Cleric', 'Paladin']
       expect(getClassSuggestions(stats, 'PrimeAttr')).toEqual(expect.arrayContaining(expectedClasses))
+    })
+  })
+
+  describe('getValidAttributes', () => {
+    it('should return only valid attrs', () => {
+      expect(
+        getValidAttributes(
+          {
+            Charisma: { Score: 5 },
+            Constitution: { Score: 13 },
+            Dexterity: { Score: 4 },
+            Intelligence: { Score: 13 },
+            Strength: { Score: 8 },
+            Wisdom: { Score: 13 },
+          },
+          PRIME_ATTR_MIN,
+        ),
+      ).toEqual(['Constitution', 'Intelligence', 'Wisdom'])
+    })
+
+    it('should return sorted valid attrs', () => {
+      expect(
+        getValidAttributes(
+          {
+            Charisma: { Score: 5 },
+            Constitution: { Score: 15 },
+            Dexterity: { Score: 4 },
+            Intelligence: { Score: 13 },
+            Strength: { Score: 8 },
+            Wisdom: { Score: 18 },
+          },
+          PRIME_ATTR_MIN,
+        ),
+      ).toEqual(['Wisdom', 'Constitution', 'Intelligence'])
+    })
+
+    it('should return an empty array if no attributes meet the minimum score', () => {
+      expect(
+        getValidAttributes(
+          {
+            Charisma: { Score: 5 },
+            Constitution: { Score: 12 },
+            Dexterity: { Score: 4 },
+            Intelligence: { Score: 10 },
+            Strength: { Score: 8 },
+            Wisdom: { Score: 11 },
+          },
+          PRIME_ATTR_MIN,
+        ),
+      ).toEqual([])
+    })
+
+    it('should handle empty stats object', () => {
+      expect(getValidAttributes({}, PRIME_ATTR_MIN)).toEqual([])
+    })
+
+    it('should handle missing scores in stats', () => {
+      expect(
+        getValidAttributes(
+          {
+            Charisma: {},
+            Constitution: { Score: 15 },
+            Dexterity: { Score: null },
+            Intelligence: { Score: 13 },
+            // eslint-disable-next-line no-undefined
+            Strength: { Score: undefined },
+            Wisdom: { Score: 18 },
+          },
+          PRIME_ATTR_MIN,
+        ),
+      ).toEqual(['Wisdom', 'Constitution', 'Intelligence'])
+    })
+
+    it('should return correct attributes when all scores are equal and above min score', () => {
+      expect(
+        getValidAttributes(
+          {
+            Charisma: { Score: 14 },
+            Constitution: { Score: 14 },
+            Dexterity: { Score: 14 },
+            Intelligence: { Score: 14 },
+            Strength: { Score: 14 },
+            Wisdom: { Score: 14 },
+          },
+          PRIME_ATTR_MIN,
+        ),
+      ).toEqual(['Charisma', 'Constitution', 'Dexterity', 'Intelligence', 'Strength', 'Wisdom'])
     })
   })
 })
