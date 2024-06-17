@@ -3,7 +3,7 @@ module.exports = {
   moduleFileExtensions: ['js'],
   resolver: '<rootDir>/jest.custom-resolver.js',
   roots: ['<rootDir>/src/js'],
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   testMatch: ['**/*.test.js'],
   transform: {
     '^.+\\.js$': 'babel-jest',
