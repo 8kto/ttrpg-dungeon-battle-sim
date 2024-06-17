@@ -19,7 +19,7 @@
     "sort-keys": "off",
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
-    "no-console": ["error", { "allow": ["error"] }],
+    "no-console": ["error", { "allow": ["error", "info"] }],
     "no-debugger": "error",
     "no-undefined": "error",
     "no-undef": "error",
