@@ -1,10 +1,5 @@
 import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../data/equipment.js?v=$VERSION$'
-import {
-  getCharHitPoints,
-  getClassSuggestions,
-  getNewCharacterModifiers,
-  getRandomClass,
-} from '../shared/character.js?v=$VERSION$'
+import { getClassSuggestions, getNewCharacterModifiers, getRandomClass } from '../shared/character.js?v=$VERSION$'
 import { DEFAULT_INVENTORY_ID, getState, State } from './State.js?v=$VERSION$'
 import {
   dispatchEvent,

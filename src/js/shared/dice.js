@@ -61,3 +61,19 @@ export const rollDiceFormula = (formula) => {
 
   return total
 }
+
+/**
+ * Returns a random item from the provided array.
+ *
+ * @template T
+ * @param {T[]} arr - The array to select a random item from.
+ * @returns {T} A random item from the array.
+ * @throws {Error} If the array is empty.
+ */
+export const getRandomArrayItem = (arr) => {
+  if (!arr.length) {
+    throw new Error('Empty array')
+  }
+
+  return arr[secureRandomInteger(0, arr.length - 1)]
+}
