@@ -1,5 +1,11 @@
+import { characterClasses } from '../data/classes.js?v=$VERSION$'
 import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../data/equipment.js?v=$VERSION$'
-import { getClassSuggestions, getNewCharacterModifiers, getRandomClass } from '../shared/character.js?v=$VERSION$'
+import {
+  getBestClass,
+  getClassSuggestions,
+  getNewCharacterModifiers,
+  getRandomClass,
+} from '../shared/character.js?v=$VERSION$'
 import { DEFAULT_INVENTORY_ID, getState, State } from './State.js?v=$VERSION$'
 import {
   dispatchEvent,
@@ -400,12 +406,20 @@ document.addEventListener('DOMContentLoaded', () => {
   // FIXME
   const stats = getNewCharacterModifiers()
   const suggestions = getClassSuggestions(stats, 'PrimeAttr')
-  const charClass = getRandomClass(suggestions)
+  const matched = getBestClass(suggestions)
 
-  console.log({ charClass, suggestions })
+  let charClass
+  if (matched) {
+    charClass = characterClasses[matched]
+  } else {
+    console.info('No matching classes. Choosing random')
+    charClass = getRandomClass()
+  }
+
+  // console.log({ charClass, suggestions })
 
   const container = document.querySelector(`#${state.getCurrentInventoryId()}-container .char-stats`)
-  console.log(JSON.stringify(stats, null, 2))
+  // console.log(JSON.stringify(stats, null, 2))
 
   renderStatsContainer(container, stats, charClass)
 })
