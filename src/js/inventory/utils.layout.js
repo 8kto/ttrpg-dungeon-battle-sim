@@ -192,13 +192,34 @@ export const markSelectedInventory = (inventoryId) => {
 export const scrollToElement = (element) => {
   if (element instanceof HTMLElement) {
     element.scrollIntoView({
-      behavior: 'smooth', // Smooth scrolling
-      block: 'start', // Aligns the top of the element to the top of the visible part of the scrollable ancestor
-      inline: 'nearest', // Aligns the nearest edge of the element to the nearest edge of the scrollable ancestor
+      behavior: 'smooth',
+      block: 'start',
+      inline: 'nearest',
     })
   } else {
     console.error('Invalid element passed to scrollToElement function.')
   }
+}
+
+/**
+ * @param {HTMLElement} container
+ * @param {IntelligenceModifierDef} intelligenceAttr
+ */
+export const renderCasterDetails = (container, intelligenceAttr) => {
+  Object.entries(intelligenceAttr).forEach(([key, value]) => {
+    if (key === 'Score') {
+      return false
+    }
+
+    const elem = document.createElement('p')
+    const formatted = key.replace(/([A-Z])/g, ' $1').trim()
+
+    elem.innerHTML = `${formatted}: <span class="text-alt">${value}</span>`
+
+    container.appendChild(elem)
+  })
+
+  container.removeAttribute('hidden')
 }
 
 /**
@@ -231,6 +252,11 @@ export const renderStatsContainer = (container, stats, charClass) => {
       }
     })
   })
+
+  if (charClass.$isCaster) {
+    const casterDetailsContainer = clone.querySelector('.char-stats--caster-details')
+    renderCasterDetails(casterDetailsContainer, stats.Intelligence)
+  }
 
   // Other details
   const charHp = getCharHitPoints(charClass, stats)

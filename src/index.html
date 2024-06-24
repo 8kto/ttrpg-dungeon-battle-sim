@@ -66,6 +66,12 @@
         <!-- Centered container with max-width -->
         <h1 class="text-3xl text-gen-900 font-bold text-center mb-3">Equipment & Inventory</h1>
         <div class="text-lg text-gen-600 text-center mb-3">Complete/Revised</div>
+        <div class="text-lg text-gen-600 text-center mb-3">
+          Check the
+          <a class="text-alt hover:underline underline-offset-4" href="https://swords-and-wizardry.ivlev.blog/beta/"
+            ><strong>beta</strong> character generator</a
+          >.
+        </div>
       </header>
 
       <div class="page-content flex flex-row justify-between gap-4">
@@ -352,11 +358,12 @@
     <!-- Character Stats -->
     <template id="template-stats">
       <p class="mb-2 text-gray-600"><span class="char-class text-alt"></span>, level 1</p>
-      <div class="flex gap-x-2">
+      <div class="flex gap-x-2 mb-2">
         <div class="text-gen-800 text-sm"><span class="font-bold">HP</span>: <span class="char-hp"></span></div>
         <div class="text-gen-800 text-sm"><span class="font-bold">Hit Die</span>: d<span class="char-hd"></span></div>
         <div class="text-gen-800 text-sm"><span class="font-bold">Gold</span>: <span class="char-gold"></span> GP</div>
       </div>
+      <div class="char-stats--caster-details text-sm" hidden></div>
       <div class="grid md:grid-cols-3 gap-4 bg-white my-4">
         <div class="flex flex-col md:col-span-1">
           <table class="table-stats table-fixed border border-gray-300 flex-grow shadow-md">

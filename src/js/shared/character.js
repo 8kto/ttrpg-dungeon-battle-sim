@@ -47,7 +47,7 @@ const getModifier = (modifiers, score) => {
 /**
  * @returns {CharacterStats}
  */
-export const getNewCharacterModifiers = () => {
+export const getRandomAttributes = () => {
   const roll = rollDiceFormula.bind(null, '3d6')
 
   /* eslint-disable sort-keys-fix/sort-keys-fix */
