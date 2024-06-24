@@ -1,6 +1,6 @@
 import { characterClasses, PRIME_ATTR_MIN } from '../../data/classes'
 import { strengthModifiers } from '../../data/modifiers'
-import { getClassSuggestions, getMatchingScore, getValidAttributes } from '../character.js'
+import { getBestClass, getClassSuggestions, getMatchingScore, getValidAttributes } from '../character.js'
 
 describe('character utils', () => {
   describe('getMatchingScore', () => {
@@ -206,6 +206,144 @@ describe('character utils', () => {
           PRIME_ATTR_MIN,
         ),
       ).toEqual(['Charisma', 'Constitution', 'Dexterity', 'Intelligence', 'Strength', 'Wisdom'])
+    })
+  })
+
+  describe('getBestClass', () => {
+    const data = [
+      [
+        'Fighter',
+        [['Strength', 13]],
+        {
+          Intelligence: 14,
+          Strength: 13,
+        },
+      ],
+      [
+        'MagicUser',
+        [['Intelligence', 13]],
+        {
+          Intelligence: 14,
+          Strength: 13,
+        },
+      ],
+      [
+        'Paladin',
+        [['Strength', 13]],
+        {
+          Intelligence: 14,
+          Strength: 13,
+        },
+      ],
+      [
+        'Ranger',
+        [['Strength', 13]],
+        {
+          Intelligence: 14,
+          Strength: 13,
+        },
+      ],
+      [
+        'Assassin',
+        [
+          ['Strength', 13],
+          ['Dexterity', 13],
+          ['Intelligence', 13],
+        ],
+        {
+          Dexterity: 15,
+          Intelligence: 14,
+          Strength: 13,
+        },
+      ],
+    ]
+
+    it('should return the best matching class based on the longest classPrimeAttrs and highest characterAttrScores', () => {
+      const result = getBestClass(data)
+      expect(result).toBe('Assassin')
+    })
+
+    it('should handle data with multiple records with same max length and score, returning a random one', () => {
+      const similarData = [
+        [
+          'Warrior',
+          [
+            ['Strength', 13],
+            ['Dexterity', 13],
+          ],
+          {
+            Dexterity: 15,
+            Intelligence: 14,
+            Strength: 13,
+          },
+        ],
+        [
+          'Knight',
+          [
+            ['Strength', 13],
+            ['Dexterity', 13],
+          ],
+          {
+            Dexterity: 15,
+            Intelligence: 14,
+            Strength: 13,
+          },
+        ],
+      ]
+
+      const result = getBestClass(similarData)
+      expect(result).toBe('Warrior')
+    })
+
+    it('should return null for an empty data array', () => {
+      const result = getBestClass([])
+      expect(result).toBeNull()
+    })
+
+    it('should prioritize longer classPrimeAttrs even if scores are higher in shorter one', () => {
+      const mixedData = [
+        [
+          'Mage',
+          [['Intelligence', 13]],
+          {
+            Intelligence: 18,
+            Strength: 10,
+          },
+        ],
+        [
+          'Sorcerer',
+          [
+            ['Intelligence', 13],
+            ['Wisdom', 13],
+          ],
+          {
+            Intelligence: 16,
+            Wisdom: 14,
+          },
+        ],
+      ]
+
+      const result = getBestClass(mixedData)
+      expect(result).toBe('Sorcerer')
+    })
+
+    it('should handle single entry data array', () => {
+      const singleData = [
+        [
+          'Barbarian',
+          [
+            ['Strength', 13],
+            ['Constitution', 13],
+          ],
+          {
+            Constitution: 14,
+            Strength: 15,
+          },
+        ],
+      ]
+
+      const result = getBestClass(singleData)
+      expect(result).toBe('Barbarian')
     })
   })
 })
