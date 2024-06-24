@@ -3,7 +3,7 @@ import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../data/equi
 import {
   getBestClass,
   getClassSuggestions,
-  getNewCharacterModifiers,
+  getRandomAttributes,
   getRandomClass,
 } from '../shared/character.js?v=$VERSION$'
 import { DEFAULT_INVENTORY_ID, getState, State } from './State.js?v=$VERSION$'
@@ -404,9 +404,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // FIXME
-  const stats = getNewCharacterModifiers()
+  const stats = getRandomAttributes()
   const suggestions = getClassSuggestions(stats, 'PrimeAttr')
   const matched = getBestClass(suggestions)
+  // FIXME debug
+  // const matched = getBestClass([['Cleric', [['Wisdom', 13]], { Constitution: 14, Wisdom: 16 }]])
 
   let charClass
   if (matched) {
