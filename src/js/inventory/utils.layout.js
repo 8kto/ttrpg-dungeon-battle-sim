@@ -203,21 +203,37 @@ export const scrollToElement = (element) => {
 
 /**
  * @param {HTMLElement} container
- * @param {IntelligenceModifierDef} intelligenceAttr
+ * @param {CharacterClassDef} classDef
+ * @param {CharacterStats} stats
  */
-export const renderCasterDetails = (container, intelligenceAttr) => {
-  Object.entries(intelligenceAttr).forEach(([key, value]) => {
-    if (key === 'Score') {
-      return false
-    }
+export const renderCasterDetails = (container, classDef, stats) => {
+  const intelligenceAttr = stats.Intelligence
+  const magicUserProps = ['NewSpellUnderstandingChance', 'SpellsPerLevel']
+  const ignoredProps = ['MaxAdditionalLanguages', 'Score']
 
+  const getDetailsItem = (key, value) => {
     const elem = document.createElement('p')
     const formatted = key.replace(/([A-Z])/g, ' $1').trim()
 
     elem.innerHTML = `${formatted}: <span class="text-alt">${value}</span>`
 
-    container.appendChild(elem)
+    return elem
+  }
+
+  Object.entries(intelligenceAttr).forEach(([key, value]) => {
+    if (ignoredProps.includes(key)) {
+      return false
+    }
+    if (classDef.name !== 'MagicUser' && magicUserProps.includes(key)) {
+      return false
+    }
+
+    container.appendChild(getDetailsItem(key, value))
   })
+
+  if (classDef.name === 'Cleric' && stats.Wisdom.Score >= 15) {
+    container.appendChild(getDetailsItem('Additional first-level spell', '1'))
+  }
 
   container.removeAttribute('hidden')
 }
@@ -255,7 +271,7 @@ export const renderStatsContainer = (container, stats, charClass) => {
 
   if (charClass.$isCaster) {
     const casterDetailsContainer = clone.querySelector('.char-stats--caster-details')
-    renderCasterDetails(casterDetailsContainer, stats.Intelligence)
+    renderCasterDetails(casterDetailsContainer, charClass, stats)
   }
 
   // Other details
