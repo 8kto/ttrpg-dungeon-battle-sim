@@ -231,9 +231,8 @@ export const renderCasterDetails = (container, classDef, stats) => {
     container.appendChild(getDetailsItem(key, value))
   })
 
-  if (classDef.name === 'Cleric' && stats.Wisdom.Score >= 15) {
-    container.appendChild(getDetailsItem('Additional first-level spell', '1'))
-  }
+  const spellsNum = classDef.name === 'Cleric' && stats.Wisdom.Score >= 15 ? 1 : classDef.$spellsAtTheFirstLevel
+  container.appendChild(getDetailsItem('Spells at the 1st level', spellsNum))
 
   container.removeAttribute('hidden')
 }
