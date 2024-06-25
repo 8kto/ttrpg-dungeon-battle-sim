@@ -36,7 +36,7 @@ const getInventoryTable = (id) => {
  * @param {string} categoryName
  * @returns {string}
  */
-export const getEquipTable = (categoryName) => `
+export const getEquipTableSection = (categoryName) => `
         <section id="${getIdFromName(categoryName)}-section" class="mb-8">
             <h2 class="text-2xl text-gen-700 font-bold mb-4">${categoryName}</h2>
             <table class="min-w-full bg-white shadow-md rounded">
@@ -56,7 +56,25 @@ export const getEquipTable = (categoryName) => `
  * @param {string} id
  * @returns {string}
  */
-const getInventoryControlsSection = (id) => {
+const getInventoryControlsTopSection = (id) => {
+  return `<section class="inventory-controls-top-section mt-4 text-gen-800 text-sm flex gap-x-1">
+            <button id="${id}-add-new-random-char" class="text-xs border rounded bg-white text-black-400 hover:text-white rounded-l hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0 flex items-center">
+              <span class="block px-2 py-1">♻ Generate random character</span>
+            </button>
+            <button
+              id="${id}-save-char"
+              class="text-xs border rounded bg-white text-alt hover:text-white rounded-l hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0 flex items-center hidden"
+            >
+              <span class="block px-2 py-1">Save</span>
+            </button>
+          </section>`
+}
+
+/**
+ * @param {string} id
+ * @returns {string}
+ */
+const getInventoryControlsBottomSection = (id) => {
   return `<section class="mt-4 text-gen-800 text-sm">
             <div class="mb-4">
               <p>Total Weight: <span id="${id}-total-weight" class="font-semibold">0</span> pounds</p>
@@ -85,8 +103,7 @@ const getInventoryControlsSection = (id) => {
  */
 export const bindInventoryControls = (id) => {
   document.getElementById(`${id}-header`).addEventListener('click', () => {
-    getState().setCurrentInventoryId(id)
-    markSelectedInventory(id)
+    dispatchEvent('SelectInventory', { id })
   })
 
   document.getElementById(`${id}-remove-inventory`).addEventListener('click', () => {
@@ -103,7 +120,7 @@ export const bindInventoryControls = (id) => {
         state.setCurrentInventoryId(selected.id)
 
         dispatchEvent('RenderInventories')
-        markSelectedInventory(selected.id)
+        dispatchEvent('SelectInventory', { id: selected.id })
       } else {
         alert('Cannot remove the only inventory')
       }
@@ -117,7 +134,7 @@ export const bindInventoryControls = (id) => {
     if (confirm(`Reset inventory items for ${inventory.name}?`)) {
       state.resetInventoryItems(id)
       dispatchEvent('RenderInventories')
-      markSelectedInventory(state.getCurrentInventoryId())
+      dispatchEvent('SelectInventory', { id })
     }
   })
 
@@ -130,8 +147,20 @@ export const bindInventoryControls = (id) => {
       inventory.name = name
       state.setInventory(id, inventory)
       dispatchEvent('RenderInventories')
-      markSelectedInventory(id)
+      dispatchEvent('SelectInventory', { id })
     }
+  })
+
+  document.getElementById(`${id}-add-new-random-char`).addEventListener('click', () => {
+    dispatchEvent('RenderNewRandomCharacter')
+    document.getElementById(`${id}-save-char`).classList.remove('hidden')
+    dispatchEvent('SelectInventory', { id })
+  })
+
+  document.getElementById(`${id}-save-char`).addEventListener('click', (event) => {
+    dispatchEvent('SerializeState')
+    event.target.closest('.inventory-controls-top-section').classList.add('hidden')
+    dispatchEvent('SelectInventory', { id })
   })
 }
 
@@ -150,9 +179,10 @@ export const renderInitialInventory = (id, name) => {
             class="inventory-header text-lg text-alt mb-4 hover:text-red-700 hover:cursor-pointer"
             title="Click to select"
           >${name ?? id}</h3>
-          <div class="char-stats"></div>
+          ${getInventoryControlsTopSection(id)}
+          <div class="char-stats my-2"></div>
           ${getInventoryTable(id)}
-          ${getInventoryControlsSection(id)}
+          ${getInventoryControlsBottomSection(id)}
         </section>
     `),
   )

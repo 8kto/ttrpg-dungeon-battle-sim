@@ -18,7 +18,7 @@ import {
 } from './utils.js?v=$VERSION$'
 import {
   createElementFromHtml,
-  getEquipTable,
+  getEquipTableSection,
   markSelectedInventory,
   renderInitialInventory,
   renderStatsContainer,
@@ -167,7 +167,7 @@ const addEquipmentToTable = (tableBody, item) => {
  * @param {Array<EquipItem>} items
  */
 const createCategorySection = (container, categoryName, items) => {
-  const sectionHtml = getEquipTable(categoryName)
+  const sectionHtml = getEquipTableSection(categoryName)
   const section = createElementFromHtml(sectionHtml)
   container.appendChild(section)
 
@@ -362,12 +362,65 @@ const bindNewItemControl = () => {
 const renderInventories = () => {
   const inventoryTableContainer = document.getElementById('inventories-container')
   inventoryTableContainer.innerHTML = ''
-  state.getInventories().forEach((inventory) => renderInventory(inventory.id, inventory.name))
+  state.getInventories().forEach((inventory) => {
+    renderInventory(inventory.id, inventory.name)
+
+    if (inventory.character) {
+      // FIXME diff hp??
+      renderCharacterSection(inventory.character.stats, inventory.character.classDef)
+      document.querySelector('.inventory-controls-top-section').classList.add('hidden')
+    }
+  })
+}
+
+/**
+ * @param {CharacterStats} charStats
+ * @param {CharacterClass} charClass
+ */
+const renderCharacterSection = (charStats, charClass) => {
+  const currentInventoryId = state.getCurrentInventoryId()
+  const container = document.querySelector(`#${currentInventoryId}-container .char-stats`)
+
+  container.innerHTML = ''
+  renderStatsContainer(container, charStats, charClass)
+}
+
+const handleNewRandomCharInit = () => {
+  const charStats = getRandomAttributes()
+  const suggestions = getClassSuggestions(charStats, 'PrimeAttr')
+  const matched = getBestClass(suggestions)
+
+  // FIXME debug
+  // const matched = getBestClass([['Cleric', [['Wisdom', 13]], { Constitution: 14, Wisdom: 16 }]])
+
+  let charClass
+  if (matched) {
+    charClass = characterClasses[matched]
+  } else {
+    console.info('No matching classes. Choosing random')
+    charClass = getRandomClass()
+  }
+
+  state.setCharacter(state.getCurrentInventoryId(), charStats, charClass)
+  renderCharacterSection(charStats, charClass)
 }
 
 const subscribeToEvents = () => {
+  document.addEventListener('SelectInventory', (event) => {
+    if (!event.detail.id) {
+      throw new Error('No inventory ID passed')
+    }
+    getState().setCurrentInventoryId(event.detail.id)
+    markSelectedInventory(event.detail.id)
+  })
   document.addEventListener('RenderInventories', () => {
     renderInventories()
+  })
+  document.addEventListener('RenderNewRandomCharacter', () => {
+    handleNewRandomCharInit()
+  })
+  document.addEventListener('SerializeState', () => {
+    state.serializeInventories()
   })
 }
 
@@ -402,26 +455,4 @@ document.addEventListener('DOMContentLoaded', () => {
       'Error during page initialization. Try refreshing, clearing the cache, or using a different browser.',
     )
   }
-
-  // FIXME
-  const stats = getRandomAttributes()
-  const suggestions = getClassSuggestions(stats, 'PrimeAttr')
-  const matched = getBestClass(suggestions)
-  // FIXME debug
-  // const matched = getBestClass([['Cleric', [['Wisdom', 13]], { Constitution: 14, Wisdom: 16 }]])
-
-  let charClass
-  if (matched) {
-    charClass = characterClasses[matched]
-  } else {
-    console.info('No matching classes. Choosing random')
-    charClass = getRandomClass()
-  }
-
-  // console.log({ charClass, suggestions })
-
-  const container = document.querySelector(`#${state.getCurrentInventoryId()}-container .char-stats`)
-  // console.log(JSON.stringify(stats, null, 2))
-
-  renderStatsContainer(container, stats, charClass)
 })
