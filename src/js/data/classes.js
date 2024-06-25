@@ -11,8 +11,9 @@ import { Dice } from '../shared/dice.js?v=$VERSION$'
  * @property {string} WeaponsPermitted
  * @property {Array<CharacterRace>} Race
  * @property {Array<Alignment>} Alignment
- * @property {boolean} $isCaster
- * @property {string} $meta
+ * @property {boolean} [$isCaster]
+ * @property {number} [$spellsAtTheFirstLevel]
+ * @property {string} [$meta]
  */
 
 /**
@@ -105,6 +106,7 @@ export const characterClasses = {
     Race: [CharacterRace.Human, CharacterRace.HalfElf],
     Alignment: [Alignment.Lawful, Alignment.Chaotic],
     $isCaster: true,
+    $spellsAtTheFirstLevel: 0,
   },
   [CharacterClass.Druid]: {
     name: CharacterClass.Druid,
@@ -122,6 +124,7 @@ export const characterClasses = {
     Race: [CharacterRace.Human],
     Alignment: [Alignment.Neutral],
     $isCaster: true,
+    $spellsAtTheFirstLevel: 1,
   },
   [CharacterClass.Fighter]: {
     name: CharacterClass.Fighter,
@@ -141,6 +144,7 @@ export const characterClasses = {
     Race: [CharacterRace.Elf, CharacterRace.HalfElf, CharacterRace.Human],
     Alignment: ANY_ALIGNMENT,
     $isCaster: true,
+    $spellsAtTheFirstLevel: 1,
   },
   [CharacterClass.Monk]: {
     name: CharacterClass.Monk,
