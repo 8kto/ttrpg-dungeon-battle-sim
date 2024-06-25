@@ -35,6 +35,10 @@ div:empty {
   color: #cea181;
 }
 
+.border-alt {
+  border: 1px solid #a13d68;
+}
+
 /* Hide scrollbar for Firefox */
 .no-scrollbar {
   scrollbar-width: none;
