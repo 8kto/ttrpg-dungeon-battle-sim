@@ -77,9 +77,10 @@ export const getIdFromName = (name) => {
 
 /**
  * @param {string} name
+ * @param {Object} [payload] - Optional payload to include with the event
  */
-export const dispatchEvent = (name) => {
-  document.dispatchEvent(new Event(name))
+export const dispatchEvent = (name, payload = {}) => {
+  document.dispatchEvent(new CustomEvent(name, { detail: payload }))
 }
 
 /**
