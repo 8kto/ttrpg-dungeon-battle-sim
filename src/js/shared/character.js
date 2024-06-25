@@ -112,7 +112,8 @@ export const getSortedAttributes = (stats) => {
  */
 export const getMatchingClasses = (validAttrs) => {
   const targetAttrs = Object.fromEntries(validAttrs)
-  const matching = Object.entries(characterClasses).reduce((matchingClasses, [className, classDef]) => {
+
+  return Object.entries(characterClasses).reduce((matchingClasses, [className, classDef]) => {
     const isMatching = classDef.PrimeAttr.every(([primeAttrName]) => {
       return !!targetAttrs[primeAttrName]
     })
@@ -123,8 +124,6 @@ export const getMatchingClasses = (validAttrs) => {
 
     return matchingClasses
   }, [])
-
-  return matching
 }
 
 /**
