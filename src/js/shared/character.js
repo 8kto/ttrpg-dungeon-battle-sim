@@ -48,17 +48,17 @@ const getModifier = (modifiers, score) => {
  * @returns {CharacterStats}
  */
 export const getRandomAttributes = () => {
-  const roll = rollDiceFormula.bind(null, '3d6')
+  const roll3d6 = rollDiceFormula.bind(null, '3d6')
 
   /* eslint-disable sort-keys-fix/sort-keys-fix */
   return {
-    [AttrScore.Strength]: getModifier(strengthModifiers, roll()),
-    [AttrScore.Dexterity]: getModifier(dexterityModifiers, roll()),
-    [AttrScore.Constitution]: getModifier(constitutionModifiers, roll()),
-    [AttrScore.Intelligence]: getModifier(intelligenceModifiers, roll()),
-    [AttrScore.Wisdom]: getModifier({}, roll()),
-    [AttrScore.Charisma]: getModifier(charismaModifiers, roll()),
-    Gold: roll() * 10,
+    [AttrScore.Strength]: getModifier(strengthModifiers, roll3d6()),
+    [AttrScore.Dexterity]: getModifier(dexterityModifiers, roll3d6()),
+    [AttrScore.Constitution]: getModifier(constitutionModifiers, roll3d6()),
+    [AttrScore.Intelligence]: getModifier(intelligenceModifiers, roll3d6()),
+    [AttrScore.Wisdom]: getModifier({}, roll3d6()),
+    [AttrScore.Charisma]: getModifier(charismaModifiers, roll3d6()),
+    Gold: roll3d6() * 10,
   }
 }
 
@@ -72,23 +72,25 @@ export const getClassSuggestions = (stats, kind) => {
   if (kind !== 'PrimeAttr') {
     throw new Error('Not implemented')
   }
-  const validAttrs = getValidAttributes(stats, PRIME_ATTR_MIN)
+  const validAttrs = getMatchedPrimaryAttributes(stats, PRIME_ATTR_MIN)
   const res = getMatchingClasses(validAttrs)
 
   if (!res.length) {
-    const sortedAttrs = getSortedAttributes(stats)
-    console.log(sortedAttrs)
+    // TODO pick up highest
+    // const sortedAttrs = getSortedAttributes(stats)
+    // console.log(sortedAttrs)
   }
 
   return res
 }
 
 /**
+ * Return a list of attributes matching the min score value
  * @param {CharacterStats} stats
  * @param {number} minScore
- * @returns {Array<[AttrScore, number]>} Valid attribute names
+ * @returns {Array<[AttrScore, number]>}
  */
-export const getValidAttributes = (stats, minScore) => {
+export const getMatchedPrimaryAttributes = (stats, minScore) => {
   return Object.entries(stats)
     .filter(([key, val]) => !!val.Score && !!AttrScore[key] && val.Score >= minScore)
     .sort((a, b) => b[1].Score - a[1].Score)
@@ -107,11 +109,11 @@ export const getSortedAttributes = (stats) => {
 }
 
 /**
- * @param {Array<[AttrScore, number]>} validAttrs
+ * @param {Array<[AttrScore, number]>} attrs
  * @returns {Array<[CharacterClass, number]>} Matching class names
  */
-export const getMatchingClasses = (validAttrs) => {
-  const targetAttrs = Object.fromEntries(validAttrs)
+export const getMatchingClasses = (attrs) => {
+  const targetAttrs = Object.fromEntries(attrs)
 
   return Object.entries(characterClasses).reduce((matchingClasses, [className, classDef]) => {
     const isMatching = classDef.PrimeAttr.every(([primeAttrName]) => {
@@ -150,10 +152,8 @@ export const getCharHitPoints = (charClass, stats) => {
   return Math.max(baseHp + bonusHp, 1)
 }
 
-// TODO HP + special handling for Rangers
 // TODO Class (HD, available races)
 // TODO Race
-// TODO Spells for 1st level casters
 // TODO get EXP bonuses
 // TODO apply to Carry modifier to encumbrance
 // TODO class Armor/Shield/Weapons
@@ -170,7 +170,7 @@ export const getCharHitPoints = (charClass, stats) => {
 
 /**
  * @param {SuggestedClassData} data
- * @returns {CharacterClass}
+ * @returns {CharacterClass|null}
  */
 export const getBestClass = (data) => {
   if (data.length === 0) {
@@ -200,42 +200,3 @@ export const getBestClass = (data) => {
 
   return bestMatches[0][0]
 }
-
-//
-// // Example usage with the provided data structure
-// const data = [
-//   [
-//     'Fighter',
-//     [['Strength', 13]],
-//     {
-//       Intelligence: 14,
-//       Strength: 13,
-//     },
-//   ],
-//   [
-//     'MagicUser',
-//     [['Intelligence', 13]],
-//     {
-//       Intelligence: 14,
-//       Strength: 13,
-//     },
-//   ],
-//   [
-//     'Paladin',
-//     [['Strength', 13]],
-//     {
-//       Intelligence: 14,
-//       Strength: 13,
-//     },
-//   ],
-//   [
-//     'Ranger',
-//     [['Strength', 13]],
-//     {
-//       Intelligence: 14,
-//       Strength: 13,
-//     },
-//   ],
-// ]
-//
-// console.log(getBestClass(data))
