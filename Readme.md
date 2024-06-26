@@ -33,7 +33,7 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 
 ## Features
 
-- [x] Random character generation
+- [x] Random character generation (basic, check TODO)
 - [x] Lists of equipment, weapons, and armor with weight and cost
 - [x] Inventory management, calculating total weight, cost, and speed
 - [x] Multiple inventories that can be renamed. For example: "Zsusza, the thief", "Zoltan, the mercenary", "Solomon, the donkey", etc.
@@ -55,3 +55,13 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 - [ ] More convenient Import
 - [ ] Production Tailwind version
 - [ ] New random character: adjust heuristics (drop hopeless, pick random properly)
+- [ ] Available races per class
+- [ ] Race
+- [ ] Get EXP bonuses
+- [ ] Apply to Carry modifier to encumbrance
+- [ ] Class Armor/Shield/Weapons
+- [ ] Char AC
+- [ ] Char To Hit
+- [ ] Saving Throw / num + details
+- [ ] Generate with strict 0e attrs
+- [ ] Fighter Parrying Ability

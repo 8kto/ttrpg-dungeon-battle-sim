@@ -195,16 +195,3 @@ export const characterClasses = {
     Alignment: [Alignment.Neutral, Alignment.Chaotic],
   },
 }
-
-// console.log(
-//   JSON.stringify(
-//     Object.values(characterClasses).map(({ name, PrimeAttr }) => {
-//       return {
-//         name,
-//         PrimeAttr: PrimeAttr.map(([k, v]) => String(k)).join(', '),
-//       }
-//     }),
-//     null,
-//     2,
-//   ),
-// )

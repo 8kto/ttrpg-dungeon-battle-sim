@@ -151,17 +151,6 @@ export const getCharHitPoints = (charClass, bonusHp) => {
   return Math.max(baseHp + bonusHp, 1)
 }
 
-// TODO Class (HD, available races)
-// TODO Race
-// TODO get EXP bonuses
-// TODO apply to Carry modifier to encumbrance
-// TODO class Armor/Shield/Weapons
-// TODO char AC
-// TODO char To Hit
-// TODO saving Throw / num + details
-// TODO generate with strict 0e attrs
-// TODO Fighter Parrying Ability
-
 /**
  * @typedef {[CharacterClass, [AttrScore, number][], Record<AttrScore, number>]} SuggestedClassRecord
  * @typedef {SuggestedClassRecord[]} SuggestedClassData
