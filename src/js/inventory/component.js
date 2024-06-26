@@ -2,6 +2,7 @@ import { characterClasses } from '../data/classes.js?v=$VERSION$'
 import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../data/equipment.js?v=$VERSION$'
 import {
   getBestClass,
+  getCharHitPoints,
   getClassSuggestions,
   getRandomAttributes,
   getRandomClass,
@@ -43,8 +44,10 @@ const state = getState()
  */
 const updateSpeedDisplay = (inventoryId, baseMovementRate) => {
   const speeds = getSpeed(baseMovementRate)
-  document.getElementById(`${inventoryId}-speed-feet-per-turn`).textContent =
-    `Walking: ${speeds.walking} • Running: ${speeds.running} • Combat: ${speeds.combat}`
+  document.getElementById(`${inventoryId}-speed-feet-per-turn`).innerHTML =
+    `Walking: <span class="text-alt">${speeds.walking}</span>` +
+    ` • Running: <span class="text-alt">${speeds.running}</span>` +
+    ` • Combat: <span class="text-alt">${speeds.combat}</span>`
 }
 
 /**
@@ -366,7 +369,6 @@ const renderInventories = () => {
     renderInventory(inventory.id, inventory.name)
 
     if (inventory.character) {
-      // FIXME diff hp??
       renderCharacterSection(inventory.id, inventory.character.stats, inventory.character.classDef)
       document.querySelector(`#${inventory.id}-inventory-controls-top-section`).classList.add('hidden')
     }
@@ -401,6 +403,7 @@ const handleNewRandomCharInit = () => {
     charClass = getRandomClass()
   }
 
+  charStats.HitPoints = getCharHitPoints(charClass, charStats.Constitution.HitPoints)
   const currentInventoryId = state.getCurrentInventoryId()
   state.setCharacter(currentInventoryId, charStats, charClass)
   renderCharacterSection(currentInventoryId, charStats, charClass)

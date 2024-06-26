@@ -138,15 +138,14 @@ export const getRandomClass = () => {
 
 /**
  * @param {CharacterClassDef} charClass
- * @param {CharacterStats} stats
+ * @param {number} bonusHp
  * @returns {number}
  */
-export const getCharHitPoints = (charClass, stats) => {
+export const getCharHitPoints = (charClass, bonusHp) => {
   if (!charClass) {
     return null
   }
   const baseHp = roll(charClass.HitDice)
-  const bonusHp = stats.Constitution.HitPoints
 
   // Return at least 1 HP
   return Math.max(baseHp + bonusHp, 1)

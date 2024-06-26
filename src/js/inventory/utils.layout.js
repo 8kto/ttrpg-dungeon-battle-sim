@@ -1,4 +1,3 @@
-import { getCharHitPoints } from '../shared/character.js?v=$VERSION$'
 import { getState } from './State.js?v=$VERSION$'
 import { dispatchEvent, getIdFromName } from './utils.js?v=$VERSION$'
 
@@ -304,9 +303,8 @@ export const renderStatsContainer = (container, stats, charClass) => {
   }
 
   // Other details
-  const charHp = getCharHitPoints(charClass, stats)
   clone.querySelector('.char-gold').textContent = stats.Gold.toString()
-  clone.querySelector('.char-hp').textContent = (charHp || 'NA').toString()
+  clone.querySelector('.char-hp').textContent = stats.HitPoints.toString()
   clone.querySelector('.char-hd').textContent = charClass.HitDice
   clone.querySelector('.char-class').textContent = charClass.name
 

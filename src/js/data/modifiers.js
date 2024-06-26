@@ -9,6 +9,7 @@
  * @property {{ Score: number }} Wisdom
  * @property {CharismaModifierDef} Charisma
  * @property {number} Gold
+ * @property {number} HitPoints
  */
 
 /**
