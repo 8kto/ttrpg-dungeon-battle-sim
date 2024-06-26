@@ -14,6 +14,10 @@ h2 {
   color: #77899e;
 }
 
+.font-serif {
+  font-family: serif;
+}
+
 .two-columns {
   column-count: 2;
   column-gap: 1rem; /* Adjust the gap between columns if needed */
@@ -31,8 +35,8 @@ div:empty {
   color: #cea181;
 }
 
-#inventory-container-title {
-  font-family: sans-serif;
+.border-alt {
+  border: 1px solid #a13d68;
 }
 
 /* Hide scrollbar for Firefox */

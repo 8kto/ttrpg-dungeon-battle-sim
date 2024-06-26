@@ -2,14 +2,15 @@
 
 /**
  * @typedef {Object} Inventory
- * @property {string} id - The ID of the inventory.
- * @property {string} name - The name of the inventory.
- * @property {Record<string, InventoryItem>} items - The items in this inventory.
+ * @property {string} id
+ * @property {string} name
+ * @property {Record<string, InventoryItem>} items
+ * @property {{ stats: CharacterStats; classDef: CharacterClass }} [character]
  */
 
 export const DEFAULT_INVENTORY_ID = 'MainCharacter'
 export const DEFAULT_INVENTORY_ITEMS = Object.freeze({
-  'Basic accessories': { cost: 0, name: 'Basic accessories', quantity: 1, weight: 10 },
+  'Basic accessories': { cost: 0, name: 'Basic accessories', quantity: 1, weight: 8 },
 })
 const LOCAL_STORAGE_KEY = 's&w-generator'
 
@@ -20,6 +21,7 @@ export class State {
       id: DEFAULT_INVENTORY_ID,
       name: 'Main Character',
       items: { ...DEFAULT_INVENTORY_ITEMS },
+      character: null,
     },
   }
 
@@ -32,12 +34,13 @@ export class State {
     }
 
     const serializedInventories = this.getSerializedInventories()
-    if (serializedInventories) {
+    if (Object.keys(serializedInventories).length) {
       this.#inventories = serializedInventories
       this.#currentInventoryId = Object.values(serializedInventories)[0].id
     }
   }
 
+  // TODO rename
   serializeInventories() {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.#inventories))
   }
@@ -163,6 +166,15 @@ export class State {
       name,
       items: { ...DEFAULT_INVENTORY_ITEMS },
     }
+  }
+
+  /**
+   * @param {string} id
+   * @param {CharacterStats} stats
+   * @param {CharacterClass} classDef
+   */
+  setCharacter(id, stats, classDef) {
+    this.#inventories[id].character = { stats: { ...stats }, classDef: { ...classDef } }
   }
 }
 

@@ -33,6 +33,7 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 
 ## Features
 
+- [x] Random character generation (basic, check TODO)
 - [x] Lists of equipment, weapons, and armor with weight and cost
 - [x] Inventory management, calculating total weight, cost, and speed
 - [x] Multiple inventories that can be renamed. For example: "Zsusza, the thief", "Zoltan, the mercenary", "Solomon, the donkey", etc.
@@ -42,11 +43,25 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 - [x] Converts text (which can be copied from other sources) into equipment and adds it to the inventory
 - [x] Exports inventories as JSON, which can be manually added to the browser's storage (dev tools). I didn’t have time yet to write a more convenient import feature.
 - [x] Custom items
+
+### TODO
+
+- [ ] Build scripts to decrease amount of includes
 - [ ] Mobiles support (?)
 - [ ] Languages support (?)
-- [ ] Random character generation
 - [ ] Add coins
 - [ ] Filter by name
 - [ ] Extend equipment lists (?)
 - [ ] More convenient Import
 - [ ] Production Tailwind version
+- [ ] New random character: adjust heuristics (drop hopeless, pick random properly)
+- [ ] Available races per class
+- [ ] Race
+- [ ] Get EXP bonuses
+- [ ] Apply to Carry modifier to encumbrance
+- [ ] Class Armor/Shield/Weapons
+- [ ] Char AC
+- [ ] Char To Hit
+- [ ] Saving Throw / num + details
+- [ ] Generate with strict 0e attrs
+- [ ] Fighter Parrying Ability

@@ -20,11 +20,11 @@ const getInventoryTable = (id) => {
   return `<table id="${id}-table-container" class="min-w-full bg-white shadow-md rounded my-4">
               <thead class="bg-gen-100 text-left">
                   <tr>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/3">Name</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase">Quantity</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase">Total Weight</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase">Total Cost</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-16">Actions</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/2">Name</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Quantity</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Total Weight</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Total Cost</th>
+                      <th class="px-2 py-3 text-center text-xs font-medium uppercase w-1/6">Actions</th>
                   </tr>
               </thead>
               <tbody></tbody>
@@ -35,16 +35,16 @@ const getInventoryTable = (id) => {
  * @param {string} categoryName
  * @returns {string}
  */
-export const getEquipTable = (categoryName) => `
+export const getEquipTableSection = (categoryName) => `
         <section id="${getIdFromName(categoryName)}-section" class="mb-8">
             <h2 class="text-2xl text-gen-700 font-bold mb-4">${categoryName}</h2>
             <table class="min-w-full bg-white shadow-md rounded">
                 <thead class="bg-gen-100 text-left">
                     <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/3">Name</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-16">Weight</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-16">Cost, gp</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-16">Actions</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/2">Name</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Weight</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Cost, gp</th>
+                        <th class="px-2 py-3 text-center text-xs font-medium uppercase w-1/6">Actions</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -55,7 +55,25 @@ export const getEquipTable = (categoryName) => `
  * @param {string} id
  * @returns {string}
  */
-const getInventoryControlsSection = (id) => {
+const getInventoryControlsTopSection = (id) => {
+  return `<section id="${id}-inventory-controls-top-section" class="inventory-controls-top-section mt-4 text-gen-800 text-sm flex gap-x-1">
+            <button id="${id}-add-new-random-char" class="text-xs border rounded bg-white text-black-400 hover:text-white rounded-l hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0 flex items-center">
+              <span class="block px-2 py-1">♻ Generate random character</span>
+            </button>
+            <button
+              id="${id}-save-char"
+              class="text-xs border rounded bg-white text-alt hover:text-white rounded-l hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0 flex items-center hidden"
+            >
+              <span class="block px-2 py-1">Save</span>
+            </button>
+          </section>`
+}
+
+/**
+ * @param {string} id
+ * @returns {string}
+ */
+const getInventoryControlsBottomSection = (id) => {
   return `<section class="mt-4 text-gen-800 text-sm">
             <div class="mb-4">
               <p>Total Weight: <span id="${id}-total-weight" class="font-semibold">0</span> pounds</p>
@@ -84,8 +102,7 @@ const getInventoryControlsSection = (id) => {
  */
 export const bindInventoryControls = (id) => {
   document.getElementById(`${id}-header`).addEventListener('click', () => {
-    getState().setCurrentInventoryId(id)
-    markSelectedInventory(id)
+    dispatchEvent('SelectInventory', { id })
   })
 
   document.getElementById(`${id}-remove-inventory`).addEventListener('click', () => {
@@ -93,18 +110,16 @@ export const bindInventoryControls = (id) => {
     const inventory = state.getInventory(id)
 
     if (confirm(`Remove inventory for ${inventory.name}?`)) {
-      const inventories = state.getInventories()
+      state.removeInventory(id)
 
-      if (inventories.length > 1) {
-        state.removeInventory(id)
-
-        const selected = state.getInventories()[0]
+      const selected = state.getInventories()[0]
+      if (selected) {
         state.setCurrentInventoryId(selected.id)
 
         dispatchEvent('RenderInventories')
-        markSelectedInventory(selected.id)
+        dispatchEvent('SelectInventory', { id: selected.id })
       } else {
-        alert('Cannot remove the only inventory')
+        dispatchEvent('RenderInventories')
       }
     }
   })
@@ -116,7 +131,7 @@ export const bindInventoryControls = (id) => {
     if (confirm(`Reset inventory items for ${inventory.name}?`)) {
       state.resetInventoryItems(id)
       dispatchEvent('RenderInventories')
-      markSelectedInventory(state.getCurrentInventoryId())
+      dispatchEvent('SelectInventory', { id })
     }
   })
 
@@ -129,8 +144,20 @@ export const bindInventoryControls = (id) => {
       inventory.name = name
       state.setInventory(id, inventory)
       dispatchEvent('RenderInventories')
-      markSelectedInventory(id)
+      dispatchEvent('SelectInventory', { id })
     }
+  })
+
+  document.getElementById(`${id}-add-new-random-char`).addEventListener('click', () => {
+    dispatchEvent('RenderNewRandomCharacter')
+    document.getElementById(`${id}-save-char`).classList.remove('hidden')
+    dispatchEvent('SelectInventory', { id })
+  })
+
+  document.getElementById(`${id}-save-char`).addEventListener('click', (event) => {
+    dispatchEvent('SerializeState')
+    event.target.closest('.inventory-controls-top-section').classList.add('hidden')
+    dispatchEvent('SelectInventory', { id })
   })
 }
 
@@ -143,14 +170,16 @@ export const renderInitialInventory = (id, name) => {
 
   inventoryTableContainer.appendChild(
     createElementFromHtml(`
-        <section id="${id}-container" class="inventory-container px-4 py-2 border">
+        <section id="${id}-container" class="inventory-container px-4 py-2 border shadow-lg">
           <h3
             id="${id}-header"
             class="inventory-header text-lg text-alt mb-4 hover:text-red-700 hover:cursor-pointer"
             title="Click to select"
           >${name ?? id}</h3>
+          ${getInventoryControlsTopSection(id)}
+          <div class="char-stats my-2"></div>
           ${getInventoryTable(id)}
-          ${getInventoryControlsSection(id)}
+          ${getInventoryControlsBottomSection(id)}
         </section>
     `),
   )
@@ -190,11 +219,92 @@ export const markSelectedInventory = (inventoryId) => {
 export const scrollToElement = (element) => {
   if (element instanceof HTMLElement) {
     element.scrollIntoView({
-      behavior: 'smooth', // Smooth scrolling
-      block: 'start', // Aligns the top of the element to the top of the visible part of the scrollable ancestor
-      inline: 'nearest', // Aligns the nearest edge of the element to the nearest edge of the scrollable ancestor
+      behavior: 'smooth',
+      block: 'start',
+      inline: 'nearest',
     })
   } else {
     console.error('Invalid element passed to scrollToElement function.')
   }
+}
+
+/**
+ * @param {HTMLElement} container
+ * @param {CharacterClassDef} classDef
+ * @param {CharacterStats} stats
+ */
+export const renderCasterDetails = (container, classDef, stats) => {
+  const intelligenceAttr = stats.Intelligence
+  const magicUserProps = ['NewSpellUnderstandingChance', 'SpellsPerLevel']
+  const ignoredProps = ['MaxAdditionalLanguages', 'Score']
+
+  const getDetailsItem = (key, value) => {
+    const elem = document.createElement('p')
+    const formatted = key.replace(/([A-Z])/g, ' $1').trim()
+
+    elem.innerHTML = `${formatted}: <span class="text-alt">${value}</span>`
+
+    return elem
+  }
+
+  Object.entries(intelligenceAttr).forEach(([key, value]) => {
+    if (ignoredProps.includes(key)) {
+      return false
+    }
+    if (classDef.name !== 'MagicUser' && magicUserProps.includes(key)) {
+      return false
+    }
+
+    container.appendChild(getDetailsItem(key, value))
+  })
+
+  const spellsNum = classDef.name === 'Cleric' && stats.Wisdom.Score >= 15 ? 1 : classDef.$spellsAtTheFirstLevel
+  container.appendChild(getDetailsItem('Spells at the 1st level', spellsNum))
+
+  container.removeAttribute('hidden')
+}
+
+/**
+ * @param {HTMLElement} container
+ * @param {CharacterStats} stats
+ * @param {CharacterClassDef} charClass
+ */
+export const renderStatsContainer = (container, stats, charClass) => {
+  const template = document.getElementById('template-stats')
+  const clone = document.importNode(template.content, true)
+
+  const tableStats = clone.querySelector('table.table-stats')
+  const tableBonuses = clone.querySelector('table.table-bonuses')
+
+  Object.entries(stats).forEach(([statName, stat]) => {
+    const { Score, ...bonuses } = stat
+
+    // Attribute scores
+    const statCell = tableStats.querySelector(`.col-stat-${statName} td:nth-child(2)`)
+    if (statCell) {
+      statCell.textContent = Score
+    }
+
+    // Attribute bonuses
+    Object.entries(bonuses).forEach(([bonusName, bonus]) => {
+      const bonusCell = tableBonuses.querySelector(`.col-bonus-${bonusName} td:nth-child(2)`)
+
+      if (bonusCell) {
+        bonusCell.textContent = bonus.toString()
+      }
+    })
+  })
+
+  if (charClass.$isCaster) {
+    const casterDetailsContainer = clone.querySelector('.char-stats--caster-details')
+    renderCasterDetails(casterDetailsContainer, charClass, stats)
+  }
+
+  // Other details
+  clone.querySelector('.char-gold').textContent = stats.Gold.toString()
+  clone.querySelector('.char-hp').textContent = stats.HitPoints.toString()
+  clone.querySelector('.char-hd').textContent = charClass.HitDice
+  clone.querySelector('.char-class').textContent = charClass.name
+
+  container.appendChild(clone)
 }

@@ -1,4 +1,12 @@
+import { characterClasses } from '../data/classes.js?v=$VERSION$'
 import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../data/equipment.js?v=$VERSION$'
+import {
+  getBestClass,
+  getCharHitPoints,
+  getClassSuggestions,
+  getRandomAttributes,
+  getRandomClass,
+} from '../shared/character.js?v=$VERSION$'
 import { DEFAULT_INVENTORY_ID, getState, State } from './State.js?v=$VERSION$'
 import {
   dispatchEvent,
@@ -11,9 +19,10 @@ import {
 } from './utils.js?v=$VERSION$'
 import {
   createElementFromHtml,
-  getEquipTable,
+  getEquipTableSection,
   markSelectedInventory,
   renderInitialInventory,
+  renderStatsContainer,
   scrollToElement,
 } from './utils.layout.js?v=$VERSION$'
 
@@ -35,8 +44,10 @@ const state = getState()
  */
 const updateSpeedDisplay = (inventoryId, baseMovementRate) => {
   const speeds = getSpeed(baseMovementRate)
-  document.getElementById(`${inventoryId}-speed-feet-per-turn`).textContent =
-    `Walking: ${speeds.walking} • Running: ${speeds.running} • Combat: ${speeds.combat}`
+  document.getElementById(`${inventoryId}-speed-feet-per-turn`).innerHTML =
+    `Walking: <span class="text-alt">${speeds.walking}</span>` +
+    ` • Running: <span class="text-alt">${speeds.running}</span>` +
+    ` • Combat: <span class="text-alt">${speeds.combat}</span>`
 }
 
 /**
@@ -96,7 +107,7 @@ const renderInventory = (id, name) => {
 
     const actionsCell = row.insertCell(4)
     actionsCell.appendChild(removeButton)
-    actionsCell.className = cellClassnames
+    actionsCell.className = `${cellClassnames} text-center px-2 w-16`
 
     totalWeight += item.weight * item.quantity
     totalCost += item.cost * item.quantity
@@ -148,9 +159,9 @@ const addEquipmentToTable = (tableBody, item) => {
     renderInventory(inventoryId, inventoryId)
   }
 
-  const addCell = row.insertCell(3)
-  addCell.appendChild(addButton)
-  addCell.className = cellClassnames
+  const actionsCell = row.insertCell(3)
+  actionsCell.appendChild(addButton)
+  actionsCell.className = `${cellClassnames} text-center px-2 w-16`
 }
 
 /**
@@ -159,7 +170,7 @@ const addEquipmentToTable = (tableBody, item) => {
  * @param {Array<EquipItem>} items
  */
 const createCategorySection = (container, categoryName, items) => {
-  const sectionHtml = getEquipTable(categoryName)
+  const sectionHtml = getEquipTableSection(categoryName)
   const section = createElementFromHtml(sectionHtml)
   container.appendChild(section)
 
@@ -354,12 +365,66 @@ const bindNewItemControl = () => {
 const renderInventories = () => {
   const inventoryTableContainer = document.getElementById('inventories-container')
   inventoryTableContainer.innerHTML = ''
-  state.getInventories().forEach((inventory) => renderInventory(inventory.id, inventory.name))
+  state.getInventories().forEach((inventory) => {
+    renderInventory(inventory.id, inventory.name)
+
+    if (inventory.character) {
+      renderCharacterSection(inventory.id, inventory.character.stats, inventory.character.classDef)
+      document.querySelector(`#${inventory.id}-inventory-controls-top-section`).classList.add('hidden')
+    }
+  })
+}
+
+/**
+ * @param {string} inventoryId
+ * @param {CharacterStats} charStats
+ * @param {CharacterClass} charClass
+ */
+const renderCharacterSection = (inventoryId, charStats, charClass) => {
+  const container = document.querySelector(`#${inventoryId}-container .char-stats`)
+
+  container.innerHTML = ''
+  renderStatsContainer(container, charStats, charClass)
+}
+
+const handleNewRandomCharInit = () => {
+  const charStats = getRandomAttributes()
+  const suggestions = getClassSuggestions(charStats, 'PrimeAttr')
+  const matched = getBestClass(suggestions)
+
+  // FIXME debug
+  // const matched = getBestClass([['Cleric', [['Wisdom', 13]], { Constitution: 14, Wisdom: 16 }]])
+
+  let charClass
+  if (matched) {
+    charClass = characterClasses[matched]
+  } else {
+    console.info('No matching classes. Choosing random')
+    charClass = getRandomClass()
+  }
+
+  charStats.HitPoints = getCharHitPoints(charClass, charStats.Constitution.HitPoints)
+  const currentInventoryId = state.getCurrentInventoryId()
+  state.setCharacter(currentInventoryId, charStats, charClass)
+  renderCharacterSection(currentInventoryId, charStats, charClass)
 }
 
 const subscribeToEvents = () => {
+  document.addEventListener('SelectInventory', (event) => {
+    if (!event.detail.id) {
+      throw new Error('No inventory ID passed')
+    }
+    getState().setCurrentInventoryId(event.detail.id)
+    markSelectedInventory(event.detail.id)
+  })
   document.addEventListener('RenderInventories', () => {
     renderInventories()
+  })
+  document.addEventListener('RenderNewRandomCharacter', () => {
+    handleNewRandomCharInit()
+  })
+  document.addEventListener('SerializeState', () => {
+    state.serializeInventories()
   })
 }
 

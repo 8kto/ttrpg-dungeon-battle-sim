@@ -71,7 +71,7 @@ export const Weapons = [
 
 /** @type {ItemList} */
 export const Equipment = [
-  { cost: 0, name: 'Basic accessories', weight: 10 },
+  { cost: 0, name: 'Basic accessories', weight: 8 },
   { cost: 5, name: 'Backpack', weight: 2 },
   { cost: 2, name: 'Barrel', weight: 25 },
   { cost: 1, name: 'Bedroll', weight: 5 },
