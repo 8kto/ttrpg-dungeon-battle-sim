@@ -57,7 +57,7 @@ export const getEquipTableSection = (categoryName) => `
  * @returns {string}
  */
 const getInventoryControlsTopSection = (id) => {
-  return `<section class="inventory-controls-top-section mt-4 text-gen-800 text-sm flex gap-x-1">
+  return `<section id="${id}-inventory-controls-top-section" class="inventory-controls-top-section mt-4 text-gen-800 text-sm flex gap-x-1">
             <button id="${id}-add-new-random-char" class="text-xs border rounded bg-white text-black-400 hover:text-white rounded-l hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0 flex items-center">
               <span class="block px-2 py-1">♻ Generate random character</span>
             </button>

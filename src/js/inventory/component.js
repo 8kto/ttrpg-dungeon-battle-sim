@@ -367,19 +367,19 @@ const renderInventories = () => {
 
     if (inventory.character) {
       // FIXME diff hp??
-      renderCharacterSection(inventory.character.stats, inventory.character.classDef)
-      document.querySelector('.inventory-controls-top-section').classList.add('hidden')
+      renderCharacterSection(inventory.id, inventory.character.stats, inventory.character.classDef)
+      document.querySelector(`#${inventory.id}-inventory-controls-top-section`).classList.add('hidden')
     }
   })
 }
 
 /**
+ * @param {string} inventoryId
  * @param {CharacterStats} charStats
  * @param {CharacterClass} charClass
  */
-const renderCharacterSection = (charStats, charClass) => {
-  const currentInventoryId = state.getCurrentInventoryId()
-  const container = document.querySelector(`#${currentInventoryId}-container .char-stats`)
+const renderCharacterSection = (inventoryId, charStats, charClass) => {
+  const container = document.querySelector(`#${inventoryId}-container .char-stats`)
 
   container.innerHTML = ''
   renderStatsContainer(container, charStats, charClass)
@@ -401,8 +401,9 @@ const handleNewRandomCharInit = () => {
     charClass = getRandomClass()
   }
 
-  state.setCharacter(state.getCurrentInventoryId(), charStats, charClass)
-  renderCharacterSection(charStats, charClass)
+  const currentInventoryId = state.getCurrentInventoryId()
+  state.setCharacter(currentInventoryId, charStats, charClass)
+  renderCharacterSection(currentInventoryId, charStats, charClass)
 }
 
 const subscribeToEvents = () => {
