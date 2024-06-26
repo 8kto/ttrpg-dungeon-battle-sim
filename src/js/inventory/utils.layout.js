@@ -110,18 +110,16 @@ export const bindInventoryControls = (id) => {
     const inventory = state.getInventory(id)
 
     if (confirm(`Remove inventory for ${inventory.name}?`)) {
-      const inventories = state.getInventories()
+      state.removeInventory(id)
 
-      if (inventories.length > 1) {
-        state.removeInventory(id)
-
-        const selected = state.getInventories()[0]
+      const selected = state.getInventories()[0]
+      if (selected) {
         state.setCurrentInventoryId(selected.id)
 
         dispatchEvent('RenderInventories')
         dispatchEvent('SelectInventory', { id: selected.id })
       } else {
-        alert('Cannot remove the only inventory')
+        dispatchEvent('RenderInventories')
       }
     }
   })
