@@ -10,7 +10,7 @@
 
 export const DEFAULT_INVENTORY_ID = 'MainCharacter'
 export const DEFAULT_INVENTORY_ITEMS = Object.freeze({
-  'Basic accessories': { cost: 0, name: 'Basic accessories', quantity: 1, weight: 10 },
+  'Basic accessories': { cost: 0, name: 'Basic accessories', quantity: 1, weight: 8 },
 })
 const LOCAL_STORAGE_KEY = 's&w-generator'
 
