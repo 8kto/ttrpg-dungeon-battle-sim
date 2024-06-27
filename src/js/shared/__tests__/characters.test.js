@@ -1,5 +1,5 @@
-import { characterClasses, PRIME_ATTR_MIN } from '../../data/classes'
-import { strengthModifiers } from '../../data/modifiers'
+import { characterClasses, PRIME_ATTR_MIN } from '../../domain/classes'
+import { strengthModifiers } from '../../domain/modifiers'
 import { getBestClass, getClassSuggestions, getMatchedPrimaryAttributes, getMatchingScore } from '../character'
 
 describe('character utils', () => {

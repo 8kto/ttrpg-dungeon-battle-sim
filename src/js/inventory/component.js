@@ -1,5 +1,5 @@
-import { characterClasses } from '../data/classes'
-import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../data/equipment'
+import { characterClasses } from '../domain/classes'
+import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../domain/equipment'
 import {
   getBestClass,
   getCharHitPoints,
@@ -252,7 +252,7 @@ const bindInventoryControls = () => {
 }
 
 const bindDumpingControls = () => {
-  const container = document.getElementById('dump-data-container--json-container')
+  const container = document.getElementById('dump-domain-container--json-container')
 
   document.getElementById('dump-json-button').addEventListener('click', () => {
     container.textContent = getState().getSerializeInventories()

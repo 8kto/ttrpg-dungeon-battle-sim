@@ -1,4 +1,4 @@
-import { AllEquipment, MELEE_AND_MISSILE, TWO_HANDED, VAR_HANDED } from '../data/equipment'
+import { AllEquipment, MELEE_AND_MISSILE, TWO_HANDED, VAR_HANDED } from '../domain/equipment'
 
 /**
  * Determines the base movement rate based on the total weight carried and a carry modifier.

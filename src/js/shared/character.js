@@ -1,11 +1,11 @@
-import { AttrScore, characterClasses, PRIME_ATTR_MIN } from '../data/classes'
+import { AttrScore, characterClasses, PRIME_ATTR_MIN } from '../domain/classes'
 import {
   charismaModifiers,
   constitutionModifiers,
   dexterityModifiers,
   intelligenceModifiers,
   strengthModifiers,
-} from '../data/modifiers'
+} from '../domain/modifiers'
 import { getRandomArrayItem, roll, rollDiceFormula } from './dice'
 
 /**
