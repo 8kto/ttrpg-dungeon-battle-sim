@@ -1,10 +1,11 @@
-// eslint-disable-next-line no-undef
+// jest.config.js
 module.exports = {
-  moduleFileExtensions: ['js'],
+  moduleFileExtensions: ['js', 'ts', 'tsx'],
   roots: ['<rootDir>/src/js'],
   testEnvironment: 'jsdom',
-  testMatch: ['**/*.test.js'],
+  testMatch: ['**/*.test.(ts|tsx|js)'],
   transform: {
+    '^.+\\.(ts|tsx)$': ['ts-jest', { tsconfig: 'tsconfig.json' }],
     '^.+\\.js$': 'babel-jest',
   },
 }
