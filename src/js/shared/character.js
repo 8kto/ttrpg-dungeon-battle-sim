@@ -1,12 +1,12 @@
-import { AttrScore, characterClasses, PRIME_ATTR_MIN } from '../data/classes.js?v=$VERSION$'
+import { AttrScore, characterClasses, PRIME_ATTR_MIN } from '../data/classes'
 import {
   charismaModifiers,
   constitutionModifiers,
   dexterityModifiers,
   intelligenceModifiers,
   strengthModifiers,
-} from '../data/modifiers.js?v=$VERSION$'
-import { getRandomArrayItem, roll, rollDiceFormula } from './dice.js?v=$VERSION$'
+} from '../data/modifiers'
+import { getRandomArrayItem, roll, rollDiceFormula } from './dice'
 
 /**
  * @param {Record<number, unknown>} keyedStorage

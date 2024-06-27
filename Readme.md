@@ -43,10 +43,10 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 - [x] Converts text (which can be copied from other sources) into equipment and adds it to the inventory
 - [x] Exports inventories as JSON, which can be manually added to the browser's storage (dev tools). I didn’t have time yet to write a more convenient import feature.
 - [x] Custom items
+- [x] Builds with WMR
 
 ### TODO
 
-- [ ] Build scripts to decrease amount of includes
 - [ ] Mobiles support (?)
 - [ ] Languages support (?)
 - [ ] Add coins

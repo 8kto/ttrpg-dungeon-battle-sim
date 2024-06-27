@@ -1,5 +1,5 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
-import { Dice } from '../shared/dice.js?v=$VERSION$'
+import { Dice } from '../shared/dice'
 
 /**
  * @typedef CharacterClassDef

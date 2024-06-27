@@ -65,7 +65,7 @@ export class State {
   }
 
   static getInstance() {
-    if (State.#instance === null) {
+    if (!State.#instance) {
       State.#instance = new State()
     }
 

@@ -4291,6 +4291,11 @@ typed-array-length@^1.0.6:
     is-typed-array "^1.1.13"
     possible-typed-array-names "^1.0.0"
 
+typescript@^5.5.2:
+  version "5.5.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.5.2.tgz#c26f023cb0054e657ce04f72583ea2d85f8d0507"
+  integrity sha512-NcRtPEOsPFFWjobJEtfihkLCZCXZt/os3zf8nTxjVH3RvTSxjrCamJpbExGvYOF+tFHc3pA65qpdwPbzjohhew==
+
 unbox-primitive@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/unbox-primitive/-/unbox-primitive-1.0.2.tgz#29032021057d5e6cdbd08c5129c226dff8ed6f9e"
@@ -4433,6 +4438,11 @@ which@^2.0.1:
   integrity sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==
   dependencies:
     isexe "^2.0.0"
+
+wmr@^3.8.0:
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/wmr/-/wmr-3.8.0.tgz#f816b54f2be60d831861994bf983c3b8e8e1f021"
+  integrity sha512-W3f2nB80C9Y0uNZXWMoxINkz4HdBRxt5MvxmcFcMlO87Ybsf6ny23kVUUzU8RA2LX86CpReMHl2Y0BTMLezLRg==
 
 word-wrap@^1.2.5:
   version "1.2.5"

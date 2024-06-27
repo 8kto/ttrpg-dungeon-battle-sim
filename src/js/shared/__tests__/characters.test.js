@@ -1,6 +1,6 @@
 import { characterClasses, PRIME_ATTR_MIN } from '../../data/classes'
 import { strengthModifiers } from '../../data/modifiers'
-import { getBestClass, getClassSuggestions, getMatchedPrimaryAttributes, getMatchingScore } from '../character.js'
+import { getBestClass, getClassSuggestions, getMatchedPrimaryAttributes, getMatchingScore } from '../character'
 
 describe('character utils', () => {
   describe('getMatchingScore', () => {
