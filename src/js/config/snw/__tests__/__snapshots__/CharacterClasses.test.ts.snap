@@ -1,0 +1,265 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`characterClasses should match the snapshot 1`] = `
+{
+  "Assassin": {
+    "Alignment": [
+      "Neutral",
+      "Chaotic",
+    ],
+    "ArmorPermitted": "Leather armor only, shield permitted.",
+    "HitDice": 6,
+    "PrimeAttr": [
+      [
+        "Strength",
+        13,
+      ],
+      [
+        "Dexterity",
+        13,
+      ],
+      [
+        "Intelligence",
+        13,
+      ],
+    ],
+    "Race": [
+      "Human",
+    ],
+    "StrictAttr": [
+      [
+        "Strength",
+        12,
+      ],
+      [
+        "Dexterity",
+        12,
+      ],
+      [
+        "Intelligence",
+        12,
+      ],
+    ],
+    "WeaponsPermitted": "All",
+    "name": "Assassin",
+  },
+  "Cleric": {
+    "$isCaster": true,
+    "$spellsAtTheFirstLevel": 0,
+    "Alignment": [
+      "Lawful",
+      "Chaotic",
+    ],
+    "ArmorPermitted": "Blunt weapons only (club, flail, hammer, mace, staff, etc.). No missile weapons, other than oil or slings if the Referee permits.",
+    "HitDice": 6,
+    "PrimeAttr": [
+      [
+        "Wisdom",
+        13,
+      ],
+    ],
+    "Race": [
+      "Human",
+      "HalfElf",
+    ],
+    "WeaponsPermitted": "All",
+    "name": "Cleric",
+  },
+  "Druid": {
+    "$isCaster": true,
+    "$spellsAtTheFirstLevel": 1,
+    "Alignment": [
+      "Neutral",
+    ],
+    "ArmorPermitted": "Leather armor, wooden shield",
+    "HitDice": 6,
+    "PrimeAttr": [
+      [
+        "Wisdom",
+        13,
+      ],
+      [
+        "Charisma",
+        13,
+      ],
+    ],
+    "Race": [
+      "Human",
+    ],
+    "StrictAttr": [
+      [
+        "Wisdom",
+        12,
+      ],
+      [
+        "Charisma",
+        14,
+      ],
+    ],
+    "WeaponsPermitted": "Dagger, sickle-shaped sword (treat as short sword), spear, sling, oil",
+    "name": "Druid",
+  },
+  "Fighter": {
+    "Alignment": [
+      "Chaotic",
+      "Neutral",
+      "Lawful",
+    ],
+    "ArmorPermitted": "All",
+    "HitDice": 8,
+    "PrimeAttr": [
+      [
+        "Strength",
+        13,
+      ],
+    ],
+    "Race": [
+      "Human",
+      "Dwarf",
+      "Elf",
+      "HalfElf",
+      "Hobbit",
+    ],
+    "WeaponsPermitted": "All",
+    "name": "Fighter",
+  },
+  "MagicUser": {
+    "$isCaster": true,
+    "$spellsAtTheFirstLevel": 1,
+    "Alignment": [
+      "Chaotic",
+      "Neutral",
+      "Lawful",
+    ],
+    "ArmorPermitted": "None",
+    "HitDice": 4,
+    "PrimeAttr": [
+      [
+        "Intelligence",
+        13,
+      ],
+    ],
+    "Race": [
+      "Elf",
+      "HalfElf",
+      "Human",
+    ],
+    "WeaponsPermitted": "Dagger, staff, and darts",
+    "name": "MagicUser",
+  },
+  "Monk": {
+    "Alignment": [
+      "Chaotic",
+      "Neutral",
+      "Lawful",
+    ],
+    "ArmorPermitted": "None",
+    "HitDice": 4,
+    "PrimeAttr": [
+      [
+        "Wisdom",
+        13,
+      ],
+    ],
+    "Race": [
+      "Human",
+    ],
+    "StrictAttr": [
+      [
+        "Strength",
+        12,
+      ],
+      [
+        "Dexterity",
+        15,
+      ],
+      [
+        "Wisdom",
+        15,
+      ],
+    ],
+    "WeaponsPermitted": "All",
+    "name": "Monk",
+  },
+  "Paladin": {
+    "Alignment": [
+      "Lawful",
+    ],
+    "ArmorPermitted": "All",
+    "HitDice": 8,
+    "PrimeAttr": [
+      [
+        "Strength",
+        13,
+      ],
+    ],
+    "Race": [
+      "Human",
+    ],
+    "StrictAttr": [
+      [
+        "Charisma",
+        17,
+      ],
+    ],
+    "WeaponsPermitted": "All",
+    "name": "Paladin",
+  },
+  "Ranger": {
+    "$meta": "2d8 at first level, 1d8/level thereafter",
+    "Alignment": [
+      "Lawful",
+    ],
+    "ArmorPermitted": "All",
+    "HitDice": 8,
+    "PrimeAttr": [
+      [
+        "Strength",
+        13,
+      ],
+    ],
+    "Race": [
+      "Human",
+    ],
+    "StrictAttr": [
+      [
+        "Constitution",
+        15,
+      ],
+      [
+        "Intelligence",
+        12,
+      ],
+      [
+        "Wisdom",
+        12,
+      ],
+    ],
+    "WeaponsPermitted": "All",
+    "name": "Ranger",
+  },
+  "Thief": {
+    "Alignment": [
+      "Neutral",
+      "Chaotic",
+    ],
+    "ArmorPermitted": "Leather armor only; no shield",
+    "HitDice": 4,
+    "PrimeAttr": [
+      [
+        "Dexterity",
+        13,
+      ],
+    ],
+    "Race": [
+      "Human",
+      "Dwarf",
+      "Elf",
+      "HalfElf",
+      "Hobbit",
+    ],
+    "WeaponsPermitted": "All, but magical weapons are limited to daggers and swords",
+    "name": "Thief",
+  },
+}
+`;
