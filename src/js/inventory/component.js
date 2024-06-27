@@ -368,14 +368,16 @@ const bindNewItemControl = () => {
 const renderInventories = () => {
   const inventoryTableContainer = document.getElementById('inventories-container')
   inventoryTableContainer.innerHTML = ''
-  getState().getInventories().forEach((inventory) => {
-    renderInventory(inventory.id, inventory.name)
+  getState()
+    .getInventories()
+    .forEach((inventory) => {
+      renderInventory(inventory.id, inventory.name)
 
-    if (inventory.character) {
-      renderCharacterSection(inventory.id, inventory.character.stats, inventory.character.classDef)
-      document.querySelector(`#${inventory.id}-inventory-controls-top-section`).classList.add('hidden')
-    }
-  })
+      if (inventory.character) {
+        renderCharacterSection(inventory.id, inventory.character.stats, inventory.character.classDef)
+        document.querySelector(`#${inventory.id}-inventory-controls-top-section`).classList.add('hidden')
+      }
+    })
 }
 
 /**
