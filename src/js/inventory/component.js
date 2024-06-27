@@ -1,13 +1,13 @@
-import { characterClasses } from '../data/classes.js?v=$VERSION$'
-import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../data/equipment.js?v=$VERSION$'
+import { characterClasses } from '../data/classes.js'
+import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../data/equipment.js'
 import {
   getBestClass,
   getCharHitPoints,
   getClassSuggestions,
   getRandomAttributes,
   getRandomClass,
-} from '../shared/character.js?v=$VERSION$'
-import { DEFAULT_INVENTORY_ID, getState, State } from './State.js?v=$VERSION$'
+} from '../shared/character.js'
+import { DEFAULT_INVENTORY_ID, getState, State } from './State.js'
 import {
   dispatchEvent,
   getBaseMovementRate,
@@ -16,7 +16,7 @@ import {
   getSpeed,
   importEquipSet,
   renderErrorMessage,
-} from './utils.js?v=$VERSION$'
+} from './utils.js'
 import {
   createElementFromHtml,
   getEquipTableSection,
@@ -24,9 +24,7 @@ import {
   renderInitialInventory,
   renderStatsContainer,
   scrollToElement,
-} from './utils.layout.js?v=$VERSION$'
-
-const state = getState()
+} from './utils.layout.js'
 
 /**
  * @typedef {Object} InventoryItem
@@ -56,7 +54,7 @@ const updateSpeedDisplay = (inventoryId, baseMovementRate) => {
  * @param {string} [name]
  */
 const renderInventory = (id, name) => {
-  const inventory = state.getInventory(id)
+  const inventory = getState().getInventory(id)
   if (!inventory) {
     console.error('Inventory not found:', id)
 
@@ -101,7 +99,7 @@ const renderInventory = (id, name) => {
     removeButton.textContent = 'Remove'
     removeButton.className = 'px-4 py-1 text-sm text-red-800 hover:text-red-500'
     removeButton.onclick = () => {
-      state.removeFromInventory(id, item.name)
+      getState().removeFromInventory(id, item.name)
       renderInventory(id, name)
     }
 
@@ -154,6 +152,7 @@ const addEquipmentToTable = (tableBody, item) => {
   addButton.textContent = 'Add'
   addButton.className = 'px-4 text-sm text-left font-medium text-sub hover:text-red-800'
   addButton.onclick = () => {
+    const state = getState()
     const inventoryId = state.getCurrentInventoryId()
     state.addToInventory(inventoryId, item)
     renderInventory(inventoryId, inventoryId)
@@ -183,6 +182,7 @@ const bindConversionControls = () => {
   const allowOnlyExistingCheckbox = document.getElementById('equip-import-allow-only-existing')
 
   document.getElementById('convert-button').addEventListener('click', function () {
+    const state = getState()
     const isStrictEquality = !!allowOnlyExistingCheckbox.checked
     const currentInventoryId = state.getCurrentInventoryId()
     const input = document.getElementById('equipment-input').value
@@ -226,6 +226,7 @@ const bindConversionControls = () => {
  */
 const addInventory = (name) => {
   const inventoryId = getIdFromName(name)
+  const state = getState()
 
   if (!state.getInventory(inventoryId)) {
     state.setInventory(inventoryId, State.getNewInventory(inventoryId, name))
@@ -245,7 +246,7 @@ const bindInventoryControls = () => {
   document.getElementById('add-inventory-button').addEventListener('click', () => {
     const inventoryName = document.getElementById('new-inventory-name')?.value.trim() || DEFAULT_INVENTORY_ID
     const inventoryId = addInventory(inventoryName)
-    state.setCurrentInventoryId(inventoryId)
+    getState().setCurrentInventoryId(inventoryId)
     markSelectedInventory(inventoryId)
   })
 }
@@ -254,7 +255,7 @@ const bindDumpingControls = () => {
   const container = document.getElementById('dump-data-container--json-container')
 
   document.getElementById('dump-json-button').addEventListener('click', () => {
-    container.textContent = state.getSerializeInventories()
+    container.textContent = getState().getSerializeInventories()
   })
 
   document.getElementById('copy-json-button').addEventListener('click', function () {
@@ -318,6 +319,7 @@ const renderEquipSetTable = (container, selectedKey) => {
 
 const bindEquipSetImportControls = () => {
   const dropdown = document.getElementById('equip-set-dropdown')
+  const state = getState()
 
   document.getElementById('import-equip-set-button').addEventListener('click', () => {
     const equipSet = dropdown.value
@@ -343,6 +345,7 @@ const bindNewItemControl = () => {
       return
     }
 
+    const state = getState()
     const inventory = state.getInventory(state.getCurrentInventoryId())
 
     if (!inventory.items[itemName]) {
@@ -365,7 +368,7 @@ const bindNewItemControl = () => {
 const renderInventories = () => {
   const inventoryTableContainer = document.getElementById('inventories-container')
   inventoryTableContainer.innerHTML = ''
-  state.getInventories().forEach((inventory) => {
+  getState().getInventories().forEach((inventory) => {
     renderInventory(inventory.id, inventory.name)
 
     if (inventory.character) {
@@ -388,6 +391,7 @@ const renderCharacterSection = (inventoryId, charStats, charClass) => {
 }
 
 const handleNewRandomCharInit = () => {
+  const state = getState()
   const charStats = getRandomAttributes()
   const suggestions = getClassSuggestions(charStats, 'PrimeAttr')
   const matched = getBestClass(suggestions)
@@ -424,14 +428,14 @@ const subscribeToEvents = () => {
     handleNewRandomCharInit()
   })
   document.addEventListener('SerializeState', () => {
-    state.serializeInventories()
+    getState().serializeInventories()
   })
 }
 
 const main = () => {
   subscribeToEvents()
 
-  const currentInventoryId = state.getCurrentInventoryId()
+  const currentInventoryId = getState().getCurrentInventoryId()
   const equipmentContainer = document.getElementById('equipment-container')
 
   createCategorySection(equipmentContainer, 'Armor', Armor)
