@@ -1,13 +1,13 @@
-import { characterClasses } from '../data/classes.js'
-import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../data/equipment.js'
+import { characterClasses } from '../data/classes'
+import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../data/equipment'
 import {
   getBestClass,
   getCharHitPoints,
   getClassSuggestions,
   getRandomAttributes,
   getRandomClass,
-} from '../shared/character.js'
-import { DEFAULT_INVENTORY_ID, getState, State } from './State.js'
+} from '../shared/character'
+import { DEFAULT_INVENTORY_ID, getState, State } from './State'
 import {
   dispatchEvent,
   getBaseMovementRate,
@@ -16,7 +16,7 @@ import {
   getSpeed,
   importEquipSet,
   renderErrorMessage,
-} from './utils.js'
+} from './utils'
 import {
   createElementFromHtml,
   getEquipTableSection,
@@ -24,7 +24,7 @@ import {
   renderInitialInventory,
   renderStatsContainer,
   scrollToElement,
-} from './utils.layout.js'
+} from './utils.layout'
 
 /**
  * @typedef {Object} InventoryItem
