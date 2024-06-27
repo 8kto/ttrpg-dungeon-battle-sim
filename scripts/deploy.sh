@@ -10,18 +10,22 @@ fi
 
 # Get the current git branch
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-CURRENT_TIMESTAMP=$(date +%s)
 
 # Check if current branch is 'main'
 if [ "$CURRENT_BRANCH" != "main" ]; then
-    DEPLOY_SSH_HOST="$DEPLOY_SSH_HOST"beta
+  DEPLOY_SSH_HOST="$DEPLOY_SSH_HOST"beta
+  PUBLIC_PATH=/beta
+else
+  PUBLIC_PATH=/
 fi
 
+yarn build -- --publicPath "$PUBLIC_PATH"
 mkdir -p /tmp/snw-to-be-deployed
-cp -r src/* /tmp/snw-to-be-deployed
+cp -r build/* /tmp/snw-to-be-deployed
 
 # Find all HTML files in /tmp/snw-to-be-deployed and replace $VERSION$ with current timestamp
-find /tmp/snw-to-be-deployed \( -name '*.html' -or -name '*.js' \) -exec sed -i "s/\$VERSION\\$/$CURRENT_TIMESTAMP/g" {} +
+#CURRENT_TIMESTAMP=$(date +%s)
+#find /tmp/snw-to-be-deployed \( -name '*.html' -or -name '*.js' \) -exec sed -i "s/\$VERSION\\$/$CURRENT_TIMESTAMP/g" {} +
 
 # Deploy to remote server
 echo "DEPLOY_SSH_PORT: $DEPLOY_SSH_PORT"
