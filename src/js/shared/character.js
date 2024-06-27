@@ -1,4 +1,4 @@
-import { AttrScore, characterClasses, PRIME_ATTR_MIN } from '../domain/classes'
+import { AttrScore } from '../domain/classes'
 import {
   charismaModifiers,
   constitutionModifiers,
@@ -7,6 +7,7 @@ import {
   strengthModifiers,
 } from '../domain/modifiers'
 import { getRandomArrayItem, roll, rollDiceFormula } from './dice'
+import { CharacterClasses, PRIME_ATTR_MIN } from '../config/snw/CharacterClasses'
 
 /**
  * @param {Record<number, unknown>} keyedStorage
@@ -115,7 +116,7 @@ export const getSortedAttributes = (stats) => {
 export const getMatchingClasses = (attrs) => {
   const targetAttrs = Object.fromEntries(attrs)
 
-  return Object.entries(characterClasses).reduce((matchingClasses, [className, classDef]) => {
+  return Object.entries(CharacterClasses).reduce((matchingClasses, [className, classDef]) => {
     const isMatching = classDef.PrimeAttr.every(([primeAttrName]) => {
       return !!targetAttrs[primeAttrName]
     })
@@ -133,7 +134,7 @@ export const getMatchingClasses = (attrs) => {
  * @returns {CharacterClass}
  */
 export const getRandomClass = () => {
-  return getRandomArrayItem(Object.values(characterClasses))
+  return getRandomArrayItem(Object.values(CharacterClasses))
 }
 
 /**

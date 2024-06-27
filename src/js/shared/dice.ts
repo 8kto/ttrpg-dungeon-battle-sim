@@ -8,9 +8,6 @@ export enum Dice {
   d100 = 100,
 }
 
-export type DiceKind = keyof typeof Dice
-export type DiceSides = (typeof Dice)[DiceKind]
-
 /**
  * Generates a cryptographically secure random integer between min (inclusive) and max (inclusive)
  */

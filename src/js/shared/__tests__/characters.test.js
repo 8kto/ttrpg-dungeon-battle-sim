@@ -1,6 +1,6 @@
-import { characterClasses, PRIME_ATTR_MIN } from '../../domain/classes'
 import { strengthModifiers } from '../../domain/modifiers'
 import { getBestClass, getClassSuggestions, getMatchedPrimaryAttributes, getMatchingScore } from '../character'
+import { CharacterClasses, PRIME_ATTR_MIN } from '../../config/snw/CharacterClasses'
 
 describe('character utils', () => {
   describe('getMatchingScore', () => {
@@ -91,7 +91,7 @@ describe('character utils', () => {
         Strength: 13,
         Wisdom: 13,
       })
-      expect(getClassSuggestions(stats, 'PrimeAttr').map((c) => c[0])).toEqual(Object.keys(characterClasses))
+      expect(getClassSuggestions(stats, 'PrimeAttr').map((c) => c[0])).toEqual(Object.keys(CharacterClasses))
     })
 
     // Edge case: Only one attribute meets the minimum

@@ -1,4 +1,3 @@
-import { characterClasses } from '../domain/classes'
 import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../domain/equipment'
 import {
   getBestClass,
@@ -25,6 +24,7 @@ import {
   renderStatsContainer,
   scrollToElement,
 } from './utils.layout'
+import { CharacterClasses } from '../config/snw/CharacterClasses'
 
 /**
  * @typedef {Object} InventoryItem
@@ -403,7 +403,7 @@ const handleNewRandomCharInit = () => {
 
   let charClass
   if (matched) {
-    charClass = characterClasses[matched]
+    charClass = CharacterClasses[matched]
   } else {
     console.info('No matching classes. Choosing random')
     charClass = getRandomClass()
