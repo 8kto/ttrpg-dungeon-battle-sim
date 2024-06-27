@@ -47,6 +47,12 @@
       "rules": {
         "no-undef": "off"
       }
+    },
+    {
+      "files": ["src/js/domain/*.ts", "src/js/config/**/*.ts"],
+      "rules": {
+        "sort-keys-fix/sort-keys-fix": "off"
+      }
     }
   ],
   "settings": {
