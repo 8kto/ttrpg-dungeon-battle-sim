@@ -1,25 +1,3 @@
-/* eslint-disable sort-keys-fix/sort-keys-fix */
-
-/**
- * @typedef CharacterStats
- * @property {StrengthModifierDef} Strength
- * @property {DexterityModifierDef} Dexterity
- * @property {ConstitutionModifierDef} Constitution
- * @property {IntelligenceModifierDef} Intelligence
- * @property {{ Score: number }} Wisdom
- * @property {CharismaModifierDef} Charisma
- * @property {number} Gold
- * @property {number} HitPoints
- */
-
-/**
- * @typedef StrengthModifierDef
- * @property {number} Damage
- * @property {number} ToHit
- * @property {string} Doors
- * @property {number} Carry
- */
-
 /**
  * @type {Record<number, StrengthModifierDef>}
  */
