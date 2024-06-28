@@ -1,4 +1,6 @@
-import { AllEquipment, Armor, Equip, EquipSets, Weapons } from '../config/snw/Equip'
+import { CharacterClasses } from '../config/snw/CharacterClasses'
+import { AllEquipment, Armor, Equip, Weapons } from '../config/snw/Equip'
+import { EquipSets } from '../config/snw/EquipSets'
 import {
   getBestClass,
   getCharHitPoints,
@@ -24,7 +26,6 @@ import {
   renderStatsContainer,
   scrollToElement,
 } from './utils.layout'
-import { CharacterClasses } from '../config/snw/CharacterClasses'
 
 /**
  * @typedef {Object} InventoryItem

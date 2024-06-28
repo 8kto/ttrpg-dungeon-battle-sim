@@ -1,4 +1,5 @@
-import { AllEquipment, MELEE_AND_MISSILE, TWO_HANDED, VAR_HANDED } from '../config/snw/Equip'
+import { AllEquipment } from '../config/snw/Equip'
+import { InventoryItemFlag } from '../domain/Equipment'
 
 /**
  * Determines the base movement rate based on the total weight carried and a carry modifier.
@@ -51,13 +52,13 @@ export const getEquipNameSuffix = (item) => {
     sfx += `${item.damage} `
   }
 
-  if (item.flags & VAR_HANDED) {
+  if (item.flags & InventoryItemFlag.VAR_HANDED) {
     sfx += '†'
   }
-  if (item.flags & TWO_HANDED) {
+  if (item.flags & InventoryItemFlag.TWO_HANDED) {
     sfx += '*'
   }
-  if (item.flags & MELEE_AND_MISSILE) {
+  if (item.flags & InventoryItemFlag.MELEE_AND_MISSILE) {
     sfx += '‡'
   }
 

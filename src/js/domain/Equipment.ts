@@ -1,10 +1,10 @@
 export type EquipItem = {
-  name: string;
-  weight: number;
-  cost: number;
-  armorClass?: string;
-  damage?: string;
-  flags?: InventoryItemFlag;
+  name: string
+  weight: number
+  cost: number
+  armorClass?: string
+  damage?: string
+  flags?: InventoryItemFlag
 }
 
 /**
@@ -17,6 +17,6 @@ export enum InventoryItemFlag {
 }
 
 export type EquipSet = {
-  name: string;
-  items: Array<{ name: string; quantity: number }>;
+  name: string
+  items: Array<{ name: string; quantity: number }>
 }

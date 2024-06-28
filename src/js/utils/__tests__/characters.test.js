@@ -1,4 +1,4 @@
-import { strengthModifiers } from '../../domain/modifiers'
+import { strengthModifiers } from '../../domain/Modifiers'
 import { getBestClass, getClassSuggestions, getMatchedPrimaryAttributes, getMatchingScore } from '../character'
 import { CharacterClasses, PRIME_ATTR_MIN } from '../../config/snw/CharacterClasses'
 
