@@ -1,11 +1,11 @@
-import { AllEquipment, Armor, Equipment, EquipSets, Weapons } from '../domain/equipment'
+import { AllEquipment, Armor, Equip, EquipSets, Weapons } from '../config/snw/Equip'
 import {
   getBestClass,
   getCharHitPoints,
   getClassSuggestions,
   getRandomAttributes,
   getRandomClass,
-} from '../shared/character'
+} from '../utils/character'
 import { DEFAULT_INVENTORY_ID, getState, State } from './State'
 import {
   dispatchEvent,
@@ -442,7 +442,7 @@ const main = () => {
 
   createCategorySection(equipmentContainer, 'Armor', Armor)
   createCategorySection(equipmentContainer, 'Weapons', Weapons)
-  createCategorySection(equipmentContainer, 'Equipment', Equipment)
+  createCategorySection(equipmentContainer, 'Equipment', Equip)
 
   bindConversionControls()
   bindInventoryControls()

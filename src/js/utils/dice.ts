@@ -1,4 +1,4 @@
-import { Dice } from '../domain/dice'
+import { Dice } from '../domain/Dice'
 
 /**
  * Generates a cryptographically secure random integer between min (inclusive) and max (inclusive)

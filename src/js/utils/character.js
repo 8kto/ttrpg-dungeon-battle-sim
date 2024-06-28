@@ -1,4 +1,4 @@
-import { AttrScore } from '../domain/classes'
+import { AttrScore } from '../domain/CharacterClass'
 import {
   charismaModifiers,
   constitutionModifiers,

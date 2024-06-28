@@ -1,4 +1,4 @@
-import { AllEquipment, MELEE_AND_MISSILE, TWO_HANDED, VAR_HANDED } from '../domain/equipment'
+import { AllEquipment, MELEE_AND_MISSILE, TWO_HANDED, VAR_HANDED } from '../config/snw/Equip'
 
 /**
  * Determines the base movement rate based on the total weight carried and a carry modifier.
