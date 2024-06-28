@@ -1,6 +1,4 @@
-/* eslint-disable sort-keys-fix/sort-keys-fix */
-
-import { Dice } from './dice'
+import { Dice } from './Dice'
 
 /**
  * Enum for Character Classes

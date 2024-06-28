@@ -1,6 +1,6 @@
-import { Alignment, AttrScore, CharacterClass, CharacterClassDef, CharacterRace } from '../../domain/classes'
+import { Alignment, AttrScore, CharacterClass, CharacterClassDef, CharacterRace } from '../../domain/CharacterClass'
 
-import { Dice } from '../../domain/dice'
+import { Dice } from '../../domain/Dice'
 
 export const ANY_RACE = Object.values(CharacterRace) as CharacterRace[]
 
