@@ -21,7 +21,7 @@
       "*": ["*", "src/*"]
     }
   },
-  "include": ["node_modules/wmr/types.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["node_modules/wmr/types.d.ts", "**/*.ts", "**/*.tsx", "**/*.js"],
   "typeAcquisition": {
     "enable": true
   }
