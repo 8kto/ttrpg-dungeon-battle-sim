@@ -1,22 +1,18 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 
-/**
- * @typedef {Object} Inventory
- * @property {string} id
- * @property {string} name
- * @property {Record<string, InventoryItem>} items
- * @property {{ stats: CharacterStats; classDef: CharacterClass }} [character]
- */
+import { CharacterClass } from '../domain/CharacterClass'
+import { CharacterStats } from '../domain/CharacterStats'
+import { EquipItem } from '../domain/Equipment'
+import { Inventory, InventoryItem } from '../domain/Inventory'
 
 export const DEFAULT_INVENTORY_ID = 'MainCharacter'
 export const DEFAULT_INVENTORY_ITEMS = Object.freeze({
   'Basic accessories': { cost: 0, name: 'Basic accessories', quantity: 1, weight: 8 },
-})
+}) as Record<string, InventoryItem>
 const LOCAL_STORAGE_KEY = 's&w-generator'
 
 export class State {
-  /** @type {Record<string, Inventory>} */
-  #inventories = {
+  #inventories: Record<string, Inventory> = {
     [DEFAULT_INVENTORY_ID]: {
       id: DEFAULT_INVENTORY_ID,
       name: 'Main Character',
@@ -26,7 +22,7 @@ export class State {
   }
 
   #currentInventoryId = DEFAULT_INVENTORY_ID
-  static #instance = null
+  static #instance: State | null = null
 
   constructor() {
     if (State.#instance) {
@@ -45,14 +41,11 @@ export class State {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.#inventories))
   }
 
-  getSerializeInventories() {
+  getSerializeInventories(): string {
     return JSON.stringify(this.#inventories, null, 2)
   }
 
-  /**
-   * @returns {Record<string, Inventory>|null}
-   */
-  getSerializedInventories() {
+  getSerializedInventories(): Record<string, Inventory> | null {
     try {
       const json = localStorage.getItem(LOCAL_STORAGE_KEY)
 
@@ -64,29 +57,27 @@ export class State {
     return null
   }
 
-  static getInstance() {
+  static getInstance(): State {
     if (!State.#instance) {
       State.#instance = new State()
     }
 
-    return State.#instance
+    return State.#instance!
   }
 
-  getCurrentInventoryId() {
+  getCurrentInventoryId(): string {
     return this.#currentInventoryId
   }
 
-  setCurrentInventoryId(id) {
+  setCurrentInventoryId(id: string) {
     this.#currentInventoryId = id
     this.serializeInventories()
   }
 
   /**
    * Adds an item to a specified inventory.
-   * @param {string} inventoryId
-   * @param {EquipItem} item - The item to add.
    */
-  addToInventory(inventoryId, item) {
+  addToInventory(inventoryId: string, item: EquipItem) {
     const inventoryItems = this.#inventories[inventoryId].items
 
     if (!inventoryItems[item.name]) {
@@ -98,10 +89,8 @@ export class State {
 
   /**
    * Removes an item from a specified inventory or decreases its quantity.
-   * @param {string} inventoryId - The ID of the inventory to remove from.
-   * @param {string} itemName - The name of the item to remove.
    */
-  removeFromInventory(inventoryId, itemName) {
+  removeFromInventory(inventoryId: string, itemName: string) {
     const inventoryItems = this.#inventories[inventoryId].items
 
     if (inventoryItems[itemName]) {
@@ -115,72 +104,46 @@ export class State {
     }
   }
 
-  /**
-   * @returns {Array<Inventory>}
-   */
-  getInventories() {
+  getInventories(): Array<Inventory> {
     return Object.values(this.#inventories).filter(Boolean)
   }
 
-  /**
-   * @param {string} inventoryId
-   * @returns {Inventory}
-   */
-  getInventory(inventoryId) {
+  getInventory(inventoryId: string): Inventory {
     return this.#inventories[inventoryId]
   }
 
-  /**
-   * @param {string} id
-   * @param {Inventory} inventory
-   */
-  setInventory(id, inventory) {
+  setInventory(id: string, inventory: Inventory) {
     this.#inventories[id] = inventory
     this.serializeInventories()
   }
 
-  /**
-   * @param {string} id
-   */
-  removeInventory(id) {
+  removeInventory(id: string) {
     delete this.#inventories[id]
     this.serializeInventories()
   }
 
-  /**
-   * @param {string} id
-   */
-  resetInventoryItems(id) {
+  resetInventoryItems(id: string) {
     this.#inventories[id].items = { ...DEFAULT_INVENTORY_ITEMS }
     this.serializeInventories()
   }
 
-  /**
-   * @param {string} id
-   * @param {string} name
-   * @returns {Inventory}
-   */
-  static getNewInventory(id, name) {
+  static getNewInventory(id: string, name: string): Inventory {
     return {
       id: id,
       name,
       items: { ...DEFAULT_INVENTORY_ITEMS },
+      character: null,
     }
   }
 
-  /**
-   * @param {string} id
-   * @param {CharacterStats} stats
-   * @param {CharacterClass} classDef
-   */
-  setCharacter(id, stats, classDef) {
-    this.#inventories[id].character = { stats: { ...stats }, classDef: { ...classDef } }
+  setCharacter(inventoryId: string, stats: CharacterStats, classDef: CharacterClass) {
+    this.#inventories[inventoryId].character = {
+      stats: { ...stats },
+      classDef: { ...classDef },
+    }
   }
 }
 
-/**
- * @returns {State}
- */
-export const getState = () => {
+export const getState = (): State => {
   return State.getInstance()
 }
