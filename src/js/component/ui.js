@@ -244,8 +244,8 @@ const addInventory = (name) => {
  * Initializes the UI for managing multiple inventories.
  */
 const bindInventoryControls = () => {
-  document.getElementById('add-component-button').addEventListener('click', () => {
-    const inventoryName = document.getElementById('new-component-name')?.value.trim() || DEFAULT_INVENTORY_ID
+  document.getElementById('add-inventory-button').addEventListener('click', () => {
+    const inventoryName = document.getElementById('new-inventory-name')?.value.trim() || DEFAULT_INVENTORY_ID
     const inventoryId = addInventory(inventoryName)
     getState().setCurrentInventoryId(inventoryId)
     markSelectedInventory(inventoryId)
