@@ -5,7 +5,7 @@ import {
   dexterityModifiers,
   intelligenceModifiers,
   strengthModifiers,
-} from '../domain/Modifiers'
+} from '../config/snw/Modifiers'
 import { getRandomArrayItem, roll, rollDiceFormula } from './dice'
 import { CharacterClasses, PRIME_ATTR_MIN } from '../config/snw/CharacterClasses'
 

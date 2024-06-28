@@ -1,7 +1,12 @@
-/**
- * @type {Record<number, StrengthModifierDef>}
- */
-export const strengthModifiers = {
+import {
+  CharismaModifierDef,
+  ConstitutionModifierDef,
+  DexterityModifierDef,
+  IntelligenceModifierDef,
+  StrengthModifierDef,
+} from '../../domain/CharacterStats'
+
+export const strengthModifiers: Record<number, StrengthModifierDef> = {
   4: {
     ToHit: -2,
     Damage: -1,
@@ -52,16 +57,7 @@ export const strengthModifiers = {
   },
 }
 
-/**
- * @typedef DexterityModifierDef
- * @property {number} MissilesToHit
- * @property {number} ArmorClass
- */
-
-/**
- * @type {Record<number, DexterityModifierDef>}
- */
-export const dexterityModifiers = {
+export const dexterityModifiers: Record<number, DexterityModifierDef> = {
   8: {
     MissilesToHit: -1,
     ArmorClass: -1,
@@ -76,16 +72,7 @@ export const dexterityModifiers = {
   },
 }
 
-/**
- * @typedef ConstitutionModifierDef
- * @property {number} HitPoints
- * @property {string} RaiseDeadSurvivalChance
- */
-
-/**
- * @type {Record<number, ConstitutionModifierDef>}
- */
-export const constitutionModifiers = {
+export const constitutionModifiers: Record<number, ConstitutionModifierDef> = {
   8: {
     HitPoints: -1,
     RaiseDeadSurvivalChance: '50%',
@@ -100,18 +87,7 @@ export const constitutionModifiers = {
   },
 }
 
-/**
- * @typedef IntelligenceModifierDef
- * @property {number} MaxAdditionalLanguages
- * @property {number} MaxSpellLevel
- * @property {string} NewSpellUnderstandingChance
- * @property {string} SpellsPerLevel
- */
-
-/**
- * @type {Record<number, IntelligenceModifierDef>}
- */
-export const intelligenceModifiers = {
+export const intelligenceModifiers: Record<number, IntelligenceModifierDef> = {
   7: {
     MaxAdditionalLanguages: 0,
     MaxSpellLevel: 4,
@@ -186,15 +162,7 @@ export const intelligenceModifiers = {
   },
 }
 
-/**
- * @typedef CharismaModifierDef
- * @property {number} MaxNumberOfSpecialHirelings
- */
-
-/**
- * @type {Record<number, CharismaModifierDef>}
- */
-export const charismaModifiers = {
+export const charismaModifiers: Record<number, CharismaModifierDef> = {
   4: { MaxNumberOfSpecialHirelings: 1 },
   6: { MaxNumberOfSpecialHirelings: 2 },
   8: { MaxNumberOfSpecialHirelings: 3 },
