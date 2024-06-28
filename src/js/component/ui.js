@@ -50,8 +50,8 @@ const updateSpeedDisplay = (inventoryId, baseMovementRate) => {
 }
 
 /**
- * Renders the specified inventory in the UI.
- * @param {string} id - The identifier for the inventory to be rendered.
+ * Renders the specified component in the UI.
+ * @param {string} id - The identifier for the component to be rendered.
  * @param {string} [name]
  */
 const renderInventory = (id, name) => {
@@ -221,8 +221,8 @@ const bindConversionControls = () => {
 }
 
 /**
- * Adds a new inventory with a given name.
- * @param {string} name - The name for the new inventory.
+ * Adds a new component with a given name.
+ * @param {string} name - The name for the new component.
  * @returns {string} inventoryId
  */
 const addInventory = (name) => {
@@ -244,8 +244,8 @@ const addInventory = (name) => {
  * Initializes the UI for managing multiple inventories.
  */
 const bindInventoryControls = () => {
-  document.getElementById('add-inventory-button').addEventListener('click', () => {
-    const inventoryName = document.getElementById('new-inventory-name')?.value.trim() || DEFAULT_INVENTORY_ID
+  document.getElementById('add-component-button').addEventListener('click', () => {
+    const inventoryName = document.getElementById('new-component-name')?.value.trim() || DEFAULT_INVENTORY_ID
     const inventoryId = addInventory(inventoryName)
     getState().setCurrentInventoryId(inventoryId)
     markSelectedInventory(inventoryId)
@@ -419,7 +419,7 @@ const handleNewRandomCharInit = () => {
 const subscribeToEvents = () => {
   document.addEventListener('SelectInventory', (event) => {
     if (!event.detail.id) {
-      throw new Error('No inventory ID passed')
+      throw new Error('No component ID passed')
     }
     getState().setCurrentInventoryId(event.detail.id)
     markSelectedInventory(event.detail.id)
