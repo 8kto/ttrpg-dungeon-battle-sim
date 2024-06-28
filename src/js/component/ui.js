@@ -1,6 +1,7 @@
 import { CharacterClasses } from '../config/snw/CharacterClasses'
 import { AllEquipment, Armor, Equip, Weapons } from '../config/snw/Equip'
 import { EquipSets } from '../config/snw/EquipSets'
+import { DEFAULT_INVENTORY_ID, getState, State } from '../state/State'
 import {
   getBestClass,
   getCharHitPoints,
@@ -8,7 +9,6 @@ import {
   getRandomAttributes,
   getRandomClass,
 } from '../utils/character'
-import { DEFAULT_INVENTORY_ID, getState, State } from './State'
 import {
   dispatchEvent,
   getBaseMovementRate,

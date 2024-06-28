@@ -1,4 +1,4 @@
-import { getState } from './State'
+import { getState } from '../state/State'
 import { dispatchEvent, getIdFromName } from './utils'
 
 /**
