@@ -1,6 +1,6 @@
+import { CharacterClasses, PRIME_ATTR_MIN } from '../../config/snw/CharacterClasses'
 import { strengthModifiers } from '../../config/snw/Modifiers'
 import { getBestClass, getClassSuggestions, getMatchedPrimaryAttributes, getMatchingScore } from '../character'
-import { CharacterClasses, PRIME_ATTR_MIN } from '../../config/snw/CharacterClasses'
 
 describe('character utils', () => {
   describe('getMatchingScore', () => {

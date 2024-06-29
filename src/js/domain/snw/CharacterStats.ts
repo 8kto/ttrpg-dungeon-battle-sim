@@ -30,13 +30,17 @@ export type CharismaModifierDef = {
   MaxNumberOfSpecialHirelings: number
 }
 
+export type ScoredModifierDef = {
+  Score: number
+}
+
 export type CharacterStats = {
-  Strength: StrengthModifierDef
-  Dexterity: DexterityModifierDef
-  Constitution: ConstitutionModifierDef
-  Intelligence: IntelligenceModifierDef
-  Wisdom: WisdomModifierDef
-  Charisma: CharismaModifierDef
+  Strength: StrengthModifierDef & ScoredModifierDef
+  Dexterity: DexterityModifierDef & ScoredModifierDef
+  Constitution: ConstitutionModifierDef & ScoredModifierDef
+  Intelligence: IntelligenceModifierDef & ScoredModifierDef
+  Wisdom: WisdomModifierDef & ScoredModifierDef
+  Charisma: CharismaModifierDef & ScoredModifierDef
   Gold: number
   HitPoints: number
 }
