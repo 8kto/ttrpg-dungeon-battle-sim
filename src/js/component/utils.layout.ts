@@ -238,12 +238,10 @@ export const renderCasterDetails = (
   container.removeAttribute('hidden')
 }
 
-/** FIXME check stats/class order
- */
 export const renderStatsContainer = (
   container: HTMLElement,
-  classDef: CharacterClassDef,
   stats: CharacterStats,
+  classDef: CharacterClassDef,
 ): void => {
   const template = document.getElementById('template-stats') as HTMLTemplateElement
   const clone = document.importNode(template.content, true)

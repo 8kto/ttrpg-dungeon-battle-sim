@@ -2,7 +2,7 @@
 
 import { EquipItem } from '../domain/Equipment'
 import { Inventory, InventoryItem } from '../domain/Inventory'
-import { CharacterClass } from '../domain/snw/CharacterClass'
+import { CharacterClass, CharacterClassDef } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
 
 export const DEFAULT_INVENTORY_ID = 'MainCharacter'
@@ -136,8 +136,7 @@ export class State {
     }
   }
 
-  // FIXME order
-  setCharacter(inventoryId: string, stats: CharacterStats, classDef: CharacterClass): void {
+  setCharacter(inventoryId: string, classDef: CharacterClassDef, stats: CharacterStats): void {
     this.#inventories[inventoryId].character = {
       stats: { ...stats },
       classDef: { ...classDef },

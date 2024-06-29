@@ -338,18 +338,17 @@ const renderInventories = (): void => {
       renderInventory(inventory.id, inventory.name)
 
       if (inventory.character) {
-        renderCharacterSection(inventory.id, inventory.character.stats, inventory.character.classDef)
+        renderCharacterSection(inventory.id, inventory.character.classDef, inventory.character.stats)
         document.querySelector(`#${inventory.id}-inventory-controls-top-section`).classList.add('hidden')
       }
     })
 }
 
-// FIXME order
-const renderCharacterSection = (inventoryId: string, charStats: CharacterStats, charClass: CharacterClassDef): void => {
+const renderCharacterSection = (inventoryId: string, charClass: CharacterClassDef, charStats: CharacterStats): void => {
   const container = document.querySelector<HTMLElement>(`#${inventoryId}-container .char-stats`)
 
   container.innerHTML = ''
-  renderStatsContainer(container, charClass, charStats)
+  renderStatsContainer(container, charStats, charClass)
 }
 
 const handleNewRandomCharInit = (): void => {
@@ -377,7 +376,7 @@ const handleNewRandomCharInit = (): void => {
   charStats.HitPoints = getCharHitPoints(charClass, charStats.Constitution.HitPoints)
   const currentInventoryId = state.getCurrentInventoryId()
   state.setCharacter(currentInventoryId, charStats, charClass)
-  renderCharacterSection(currentInventoryId, charStats, charClass)
+  renderCharacterSection(currentInventoryId, charClass, charStats)
 }
 
 const subscribeToEvents = (): void => {
