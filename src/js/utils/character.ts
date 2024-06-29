@@ -6,22 +6,18 @@ import {
   intelligenceModifiers,
   strengthModifiers,
 } from '../config/snw/Modifiers'
-import { AttrScore } from '../domain/snw/CharacterClass'
+import { AttrScore, CharacterClass, CharacterClassDef, PrimeAttribute } from '../domain/snw/CharacterClass'
+import { CharacterStats, ScoredModifierDef } from '../domain/snw/CharacterStats'
 import { getRandomArrayItem, roll, rollDiceFormula } from './dice'
 
-/**
- * @param {Record<number, unknown>} keyedStorage
- * @param {number} num
- * @returns {number}
- */
-export const getMatchingScore = (keyedStorage, num) => {
-  const scores = Object.keys(keyedStorage).map(Number)
+export const getMatchingScore = <T>(modifiers: Record<number, T>, maxScoreValue: number): number => {
+  const scores = Object.keys(modifiers).map(Number)
   let matched = scores[0]
 
   for (const score of scores) {
     matched = score
 
-    if (num <= score) {
+    if (maxScoreValue <= score) {
       break
     }
   }
@@ -29,12 +25,7 @@ export const getMatchingScore = (keyedStorage, num) => {
   return matched
 }
 
-/**
- * @param {Record<number, unknown>} modifiers
- * @param {number} score
- * @returns {Object}
- */
-const getModifier = (modifiers, score) => {
+const getModifier = <T>(modifiers: Record<number, T>, score: number): T & ScoredModifierDef => {
   const matched = getMatchingScore(modifiers, score)
 
   const modifierData = modifiers[matched] || {}
@@ -42,13 +33,10 @@ const getModifier = (modifiers, score) => {
   return {
     Score: score,
     ...modifierData,
-  }
+  } as T & ScoredModifierDef
 }
 
-/**
- * @returns {CharacterStats}
- */
-export const getRandomAttributes = () => {
+export const getRandomAttributes = (): CharacterStats => {
   const roll3d6 = rollDiceFormula.bind(null, '3d6')
 
   /* eslint-disable sort-keys-fix/sort-keys-fix */
@@ -60,16 +48,14 @@ export const getRandomAttributes = () => {
     [AttrScore.Wisdom]: getModifier({}, roll3d6()),
     [AttrScore.Charisma]: getModifier(charismaModifiers, roll3d6()),
     Gold: roll3d6() * 10,
+    HitPoints: 0,
   }
 }
 
 /**
  * TODO if all below 13, suggest a class for the highest attr
- * @param {CharacterStats} stats
- * @param {'PrimeAttr' | 'StrictAttr'} kind
- * @returns {string[]} Matching class names
  */
-export const getClassSuggestions = (stats, kind) => {
+export const getClassSuggestions = (stats: CharacterStats, kind: 'PrimeAttr' | 'StrictAttr'): MatchingClasses => {
   if (kind !== 'PrimeAttr') {
     throw new Error('Not implemented')
   }
@@ -87,53 +73,48 @@ export const getClassSuggestions = (stats, kind) => {
 
 /**
  * Return a list of attributes matching the min score value
- * @param {CharacterStats} stats
- * @param {number} minScore
- * @returns {Array<[AttrScore, number]>}
  */
-export const getMatchedPrimaryAttributes = (stats, minScore) => {
-  return Object.entries(stats)
-    .filter(([key, val]) => !!val.Score && !!AttrScore[key] && val.Score >= minScore)
+export const getMatchedPrimaryAttributes = (stats: CharacterStats, minScore: number): Array<[AttrScore, number]> => {
+  return (Object.entries(stats) as [AttrScore, ScoredModifierDef][])
+    .filter(([, val]) => typeof val === 'object' && !!val.Score && val.Score >= minScore)
     .sort((a, b) => b[1].Score - a[1].Score)
     .map(([name, { Score }]) => [name, Score])
 }
 
 /**
- * @param {CharacterStats} stats
- * @returns {Array<AttrScore>} Attribute names sorted by theis scores
+ * Get Attribute names sorted by theis scores
  */
-export const getSortedAttributes = (stats) => {
-  return Object.entries(stats)
+export const getSortedAttributes = (stats: CharacterStats): AttrScore[] => {
+  return (Object.entries(stats) as [AttrScore, ScoredModifierDef][])
     .filter(([key, val]) => !!val.Score && !!AttrScore[key])
     .sort((a, b) => b[1].Score - a[1].Score)
-    .map(([key]) => key)
+    .map((item) => item[0])
 }
 
-/**
- * @param {Array<[AttrScore, number]>} attrs
- * @returns {Array<[CharacterClass, number]>} Matching class names
- */
-export const getMatchingClasses = (attrs) => {
-  const targetAttrs = Object.fromEntries(attrs)
+type MatchingClassesRecord = [CharacterClass, PrimeAttribute[], TargetAttrs]
+type MatchingClasses = Array<MatchingClassesRecord>
+type TargetAttrs = Record<AttrScore, number>
+
+export const getMatchingClasses = (attrs: Array<[AttrScore, number]>): MatchingClasses => {
+  const targetAttrs = Object.fromEntries(attrs) as TargetAttrs
 
   return Object.entries(CharacterClasses).reduce((matchingClasses, [className, classDef]) => {
-    const isMatching = classDef.PrimeAttr.every(([primeAttrName]) => {
-      return !!targetAttrs[primeAttrName]
+    const isMatching = classDef.PrimeAttr.every((primeAttr): boolean => {
+      return !!targetAttrs[primeAttr[0]]
     })
 
     if (isMatching) {
-      matchingClasses.push([className, classDef.PrimeAttr, targetAttrs])
+      matchingClasses.push([className as CharacterClass, classDef.PrimeAttr, targetAttrs])
     }
 
     return matchingClasses
-  }, [])
+  }, Array<MatchingClassesRecord>())
 }
 
 /**
  * @deprecated To be reworked
- * @returns {CharacterClass}
  */
-export const getRandomClass = () => {
+export const getRandomClass = (): CharacterClassDef => {
   return getRandomArrayItem(Object.values(CharacterClasses))
 }
 
@@ -142,10 +123,7 @@ export const getRandomClass = () => {
  * @param {number} bonusHp
  * @returns {number}
  */
-export const getCharHitPoints = (charClass, bonusHp) => {
-  if (!charClass) {
-    return null
-  }
+export const getCharHitPoints = (charClass: CharacterClassDef, bonusHp: number): number => {
   const baseHp = roll(charClass.HitDice)
 
   // Return at least 1 HP
@@ -157,25 +135,18 @@ export const getCharHitPoints = (charClass, bonusHp) => {
  * @typedef {SuggestedClassRecord[]} SuggestedClassData
  */
 
-/**
- * @param {SuggestedClassData} data
- * @returns {CharacterClass|null}
- */
-export const getBestClass = (data) => {
-  if (data.length === 0) {
-    return null
-  }
-
+export const getBestClass = (matchedClasses: MatchingClasses): CharacterClassDef => {
   // Find the record(s) with the longest classPrimeAttrs
-  const maxPrimeAttrLength = Math.max(...data.map(([, classPrimeAttrs]) => classPrimeAttrs.length))
-  const longestPrimeAttrs = data.filter(([, classPrimeAttrs]) => classPrimeAttrs.length === maxPrimeAttrLength)
+  const maxPrimeAttrLength = Math.max(...matchedClasses.map(([, classPrimeAttrs]) => classPrimeAttrs.length))
+  const longestPrimeAttrs = matchedClasses.filter(
+    ([, classPrimeAttrs]) => classPrimeAttrs.length === maxPrimeAttrLength,
+  )
 
   // Find the record(s) with the highest sum of characterAttrScores
-  const getPropsSum = (scores) => Object.values(scores).reduce((sum, score) => sum + score, 0)
-  const maxAttrScoreSum = Math.max(...longestPrimeAttrs.map(([, , charAttrScores]) => getPropsSum(charAttrScores)))
-  const bestMatches = longestPrimeAttrs.filter(
-    ([, , charAttrScores]) => getPropsSum(charAttrScores) === maxAttrScoreSum,
-  )
+  const getPropsSum = (targetAttrs: TargetAttrs): number =>
+    Object.values(targetAttrs).reduce((sum, score) => sum + score, 0)
+  const maxAttrScoreSum = Math.max(...longestPrimeAttrs.map(([, , targetAttrs]) => getPropsSum(targetAttrs)))
+  const bestMatches = longestPrimeAttrs.filter(([, , targetAttrs]) => getPropsSum(targetAttrs) === maxAttrScoreSum)
 
   // If there are multiple best matches, choose one randomly
   if (bestMatches.length > 1) {
