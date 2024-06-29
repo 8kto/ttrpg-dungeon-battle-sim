@@ -130,11 +130,6 @@ export const getCharHitPoints = (charClass: CharacterClassDef, bonusHp: number):
   return Math.max(baseHp + bonusHp, 1)
 }
 
-/**
- * @typedef {[CharacterClass, [AttrScore, number][], Record<AttrScore, number>]} SuggestedClassRecord
- * @typedef {SuggestedClassRecord[]} SuggestedClassData
- */
-
 export const getBestClass = (matchedClasses: MatchingClasses): CharacterClass => {
   // Find the record(s) with the longest classPrimeAttrs
   const maxPrimeAttrLength = Math.max(...matchedClasses.map(([, classPrimeAttrs]) => classPrimeAttrs.length))

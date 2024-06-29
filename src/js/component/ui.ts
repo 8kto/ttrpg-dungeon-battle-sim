@@ -148,7 +148,6 @@ const createCategorySection = (container: HTMLElement, categoryName: string, ite
 }
 
 const bindConversionControls = (): void => {
-  /** @type {HTMLInputElement} */
   const allowOnlyExistingCheckbox = document.getElementById('equip-import-allow-only-existing') as HTMLInputElement
 
   document.getElementById('convert-button').addEventListener('click', function () {
