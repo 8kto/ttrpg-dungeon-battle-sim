@@ -1,9 +1,9 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 
-import { CharacterClass } from '../domain/snw/CharacterClass'
-import { CharacterStats } from '../domain/snw/CharacterStats'
 import { EquipItem } from '../domain/Equipment'
 import { Inventory, InventoryItem } from '../domain/Inventory'
+import { CharacterClass } from '../domain/snw/CharacterClass'
+import { CharacterStats } from '../domain/snw/CharacterStats'
 
 export const DEFAULT_INVENTORY_ID = 'MainCharacter'
 export const DEFAULT_INVENTORY_ITEMS = Object.freeze({
