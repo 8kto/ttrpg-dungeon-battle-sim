@@ -1,5 +1,6 @@
 import { getState } from '../state/State'
-import { dispatchEvent, getIdFromName } from './utils'
+import { dispatchEvent } from '../utils/event'
+import { getInventoryIdFromName } from '../utils/inventory'
 
 /**
  * @param {string} htmlString Should enclose the layout with one element (div, span etc.)
@@ -36,7 +37,7 @@ const getInventoryTable = (id) => {
  * @returns {string}
  */
 export const getEquipTableSection = (categoryName) => `
-        <section id="${getIdFromName(categoryName)}-section" class="mb-8">
+        <section id="${getInventoryIdFromName(categoryName)}-section" class="mb-8">
             <h2 class="text-2xl text-gen-700 font-bold mb-4">${categoryName}</h2>
             <table class="min-w-full bg-white shadow-md rounded">
                 <thead class="bg-gen-100 text-left">
@@ -156,7 +157,8 @@ export const bindInventoryControls = (id) => {
 
   document.getElementById(`${id}-save-char`).addEventListener('click', (event) => {
     dispatchEvent('SerializeState')
-    event.target.closest('.inventory-controls-top-section').classList.add('hidden')
+    const target = event.target as HTMLElement
+    target.closest('.inventory-controls-top-section').classList.add('hidden')
     dispatchEvent('SelectInventory', { id })
   })
 }
@@ -270,7 +272,7 @@ export const renderCasterDetails = (container, classDef, stats) => {
  * @param {CharacterClassDef} charClass
  */
 export const renderStatsContainer = (container, stats, charClass) => {
-  const template = document.getElementById('template-stats')
+  const template = document.getElementById('template-stats') as HTMLTemplateElement
   const clone = document.importNode(template.content, true)
 
   const tableStats = clone.querySelector('table.table-stats')
