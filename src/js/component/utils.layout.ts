@@ -4,7 +4,7 @@ import { BaseMovementRate } from '../domain/snw/Movement'
 import { getState } from '../state/State'
 import { dispatchEvent } from '../utils/event'
 import { getInventoryIdFromName } from '../utils/inventory'
-import { getUndergroundSpeed } from '../utils/movement'
+import { getUndergroundSpeed } from '../utils/snw/movement'
 
 /**
  * @param {string} htmlString Should enclose the layout with one element (div, span etc.)

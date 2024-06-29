@@ -1,4 +1,4 @@
-import { BaseMovementRate, UndergroundMovement } from '../domain/snw/Movement'
+import { BaseMovementRate, UndergroundMovement } from '../../domain/snw/Movement'
 
 /**
  * Determines the base movement rate based on the total weight carried and a carry modifier.

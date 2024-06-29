@@ -8,7 +8,7 @@ import {
   getMatchedPrimaryAttributes,
   getMatchingScore,
   MatchingClasses,
-} from '../character'
+} from '../snw/character'
 
 describe('character utils', () => {
   describe('getMatchingScore', () => {

@@ -1,14 +1,14 @@
-import { CharacterClasses, PRIME_ATTR_MIN } from '../config/snw/CharacterClasses'
+import { CharacterClasses, PRIME_ATTR_MIN } from '../../config/snw/CharacterClasses'
 import {
   charismaModifiers,
   constitutionModifiers,
   dexterityModifiers,
   intelligenceModifiers,
   strengthModifiers,
-} from '../config/snw/Modifiers'
-import { AttrScore, CharacterClass, CharacterClassDef, PrimeAttribute } from '../domain/snw/CharacterClass'
-import { CharacterStats, ScoredModifierDef } from '../domain/snw/CharacterStats'
-import { getRandomArrayItem, roll, rollDiceFormula } from './dice'
+} from '../../config/snw/Modifiers'
+import { AttrScore, CharacterClass, CharacterClassDef, PrimeAttribute } from '../../domain/snw/CharacterClass'
+import { CharacterStats, ScoredModifierDef } from '../../domain/snw/CharacterStats'
+import { getRandomArrayItem, roll, rollDiceFormula } from '../dice'
 
 type TargetAttrs = Record<AttrScore, number>
 type MatchingClassesRecord = [CharacterClass, PrimeAttribute[], TargetAttrs]

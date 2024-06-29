@@ -11,11 +11,11 @@ import {
   getClassSuggestions,
   getRandomAttributes,
   getRandomClass,
-} from '../utils/character'
+} from '../utils/snw/character'
 import { getEquipNameSuffix, importEquipSet } from '../utils/equipment'
 import { dispatchEvent } from '../utils/event'
 import { getInventoryIdFromName } from '../utils/inventory'
-import { getBaseMovementRate } from '../utils/movement'
+import { getBaseMovementRate } from '../utils/snw/movement'
 import {
   createElementFromHtml,
   getEquipTableSection,
