@@ -3,7 +3,7 @@ import { Dice } from '../domain/Dice'
 /**
  * Generates a cryptographically secure random integer between min (inclusive) and max (inclusive)
  */
-export const secureRandomInteger = (min: number, max: number) => {
+export const secureRandomInteger = (min: number, max: number): number => {
   const range = max - min + 1
   const maxUint32 = 0xffffffff
   const limit = maxUint32 - (maxUint32 % range)
