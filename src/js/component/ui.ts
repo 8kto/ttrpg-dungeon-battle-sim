@@ -27,6 +27,8 @@ import {
   updateSpeedDisplay,
 } from './utils.layout'
 
+// TODO split up layout utils further: communicate (e.g. with events binding) through Custom Events
+
 /**
  * Renders the specified inventory in the UI.
  */
