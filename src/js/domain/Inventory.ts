@@ -1,5 +1,5 @@
 import { EquipItem } from './Equipment'
-import { CharacterClass } from './snw/CharacterClass'
+import { CharacterClassDef } from './snw/CharacterClass'
 import { CharacterStats } from './snw/CharacterStats'
 
 export type InventoryItem = EquipItem & {
@@ -12,6 +12,6 @@ export type Inventory = {
   items: Record<string, InventoryItem>
   character: {
     stats: CharacterStats
-    classDef: CharacterClass
+    classDef: CharacterClassDef
   } | null
 }

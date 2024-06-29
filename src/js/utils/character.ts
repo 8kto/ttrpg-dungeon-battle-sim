@@ -10,6 +10,10 @@ import { AttrScore, CharacterClass, CharacterClassDef, PrimeAttribute } from '..
 import { CharacterStats, ScoredModifierDef } from '../domain/snw/CharacterStats'
 import { getRandomArrayItem, roll, rollDiceFormula } from './dice'
 
+type TargetAttrs = Record<AttrScore, number>
+type MatchingClassesRecord = [CharacterClass, PrimeAttribute[], TargetAttrs]
+export type MatchingClasses = Array<MatchingClassesRecord>
+
 export const getMatchingScore = <T>(modifiers: Record<number, T>, maxScoreValue: number): number => {
   const scores = Object.keys(modifiers).map(Number)
   let matched = scores[0]
@@ -91,10 +95,6 @@ export const getSortedAttributes = (stats: CharacterStats): AttrScore[] => {
     .map((item) => item[0])
 }
 
-type MatchingClassesRecord = [CharacterClass, PrimeAttribute[], TargetAttrs]
-type MatchingClasses = Array<MatchingClassesRecord>
-type TargetAttrs = Record<AttrScore, number>
-
 export const getMatchingClasses = (attrs: Array<[AttrScore, number]>): MatchingClasses => {
   const targetAttrs = Object.fromEntries(attrs) as TargetAttrs
 
@@ -158,5 +158,10 @@ export const getBestClass = (matchedClasses: MatchingClasses): CharacterClass =>
     return getRandomArrayItem(bestMatches)[0]
   }
 
-  return bestMatches[0][0]
+  const res = bestMatches?.[0]?.[0]
+  if (!res) {
+    throw new Error('No matching classes')
+  }
+
+  return res
 }

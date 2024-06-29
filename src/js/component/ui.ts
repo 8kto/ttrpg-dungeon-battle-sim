@@ -357,16 +357,21 @@ const handleNewRandomCharInit = (): void => {
   const state = getState()
   const charStats = getRandomAttributes()
   const suggestions = getClassSuggestions(charStats, 'PrimeAttr')
-  const matched = getBestClass(suggestions)
-
-  // FIXME debug
-  // const matched = getBestClass([['Cleric', [['Wisdom', 13]], { Constitution: 14, Wisdom: 16 }]])
 
   let charClass
-  if (matched) {
-    charClass = CharacterClasses[matched]
-  } else {
-    console.info('No matching classes. Choosing random')
+  try {
+    const matched = getBestClass(suggestions)
+
+    // FIXME debug
+    // const matched = getBestClass([['Cleric', [['Wisdom', 13]], { Constitution: 14, Wisdom: 16 }]])
+
+    if (matched) {
+      charClass = CharacterClasses[matched]
+    } else {
+      throw new Error('Character class not found')
+    }
+  } catch (err) {
+    console.info('No matching classes. Choosing random', err.message)
     charClass = getRandomClass()
   }
 
