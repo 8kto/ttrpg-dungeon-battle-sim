@@ -1,4 +1,4 @@
-import { AttrScore } from '../domain/CharacterClass'
+import { CharacterClasses, PRIME_ATTR_MIN } from '../config/snw/CharacterClasses'
 import {
   charismaModifiers,
   constitutionModifiers,
@@ -6,8 +6,8 @@ import {
   intelligenceModifiers,
   strengthModifiers,
 } from '../config/snw/Modifiers'
+import { AttrScore } from '../domain/snw/CharacterClass'
 import { getRandomArrayItem, roll, rollDiceFormula } from './dice'
-import { CharacterClasses, PRIME_ATTR_MIN } from '../config/snw/CharacterClasses'
 
 /**
  * @param {Record<number, unknown>} keyedStorage

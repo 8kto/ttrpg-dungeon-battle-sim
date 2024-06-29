@@ -1,7 +1,7 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 
-import { CharacterClass } from '../domain/CharacterClass'
-import { CharacterStats } from '../domain/CharacterStats'
+import { CharacterClass } from '../domain/snw/CharacterClass'
+import { CharacterStats } from '../domain/snw/CharacterStats'
 import { EquipItem } from '../domain/Equipment'
 import { Inventory, InventoryItem } from '../domain/Inventory'
 

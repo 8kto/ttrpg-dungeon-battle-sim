@@ -1,5 +1,5 @@
-import { CharacterClassDef } from '../domain/CharacterClass'
-import { CharacterStats } from '../domain/CharacterStats'
+import { CharacterClassDef } from '../domain/snw/CharacterClass'
+import { CharacterStats } from '../domain/snw/CharacterStats'
 import { BaseMovementRate } from '../domain/snw/Movement'
 import { getState } from '../state/State'
 import { dispatchEvent } from '../utils/event'

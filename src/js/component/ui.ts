@@ -1,8 +1,8 @@
 import { CharacterClasses } from '../config/snw/CharacterClasses'
 import { AllEquipment, Armor, Equip, Weapons } from '../config/snw/Equip'
 import { EquipSets } from '../config/snw/EquipSets'
-import { CharacterClassDef } from '../domain/CharacterClass'
-import { CharacterStats } from '../domain/CharacterStats'
+import { CharacterClassDef } from '../domain/snw/CharacterClass'
+import { CharacterStats } from '../domain/snw/CharacterStats'
 import { EquipItem } from '../domain/Equipment'
 import { DEFAULT_INVENTORY_ID, getState, State } from '../state/State'
 import {
