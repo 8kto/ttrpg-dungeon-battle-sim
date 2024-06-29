@@ -21,7 +21,7 @@ export class State {
     },
   }
 
-  #currentInventoryId = DEFAULT_INVENTORY_ID
+  #currentInventoryId: string = DEFAULT_INVENTORY_ID
   static #instance: State | null = null
 
   constructor() {
@@ -37,7 +37,7 @@ export class State {
   }
 
   // TODO rename
-  serializeInventories() {
+  serializeInventories(): void {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.#inventories))
   }
 
@@ -69,7 +69,7 @@ export class State {
     return this.#currentInventoryId
   }
 
-  setCurrentInventoryId(id: string) {
+  setCurrentInventoryId(id: string): void {
     this.#currentInventoryId = id
     this.serializeInventories()
   }
@@ -77,7 +77,7 @@ export class State {
   /**
    * Adds an item to a specified inventory.
    */
-  addToInventory(inventoryId: string, item: EquipItem) {
+  addToInventory(inventoryId: string, item: EquipItem): void {
     const inventoryItems = this.#inventories[inventoryId].items
 
     if (!inventoryItems[item.name]) {
@@ -90,7 +90,7 @@ export class State {
   /**
    * Removes an item from a specified inventory or decreases its quantity.
    */
-  removeFromInventory(inventoryId: string, itemName: string) {
+  removeFromInventory(inventoryId: string, itemName: string): void {
     const inventoryItems = this.#inventories[inventoryId].items
 
     if (inventoryItems[itemName]) {
@@ -112,17 +112,17 @@ export class State {
     return this.#inventories[inventoryId]
   }
 
-  setInventory(id: string, inventory: Inventory) {
+  setInventory(id: string, inventory: Inventory): void {
     this.#inventories[id] = inventory
     this.serializeInventories()
   }
 
-  removeInventory(id: string) {
+  removeInventory(id: string): void {
     delete this.#inventories[id]
     this.serializeInventories()
   }
 
-  resetInventoryItems(id: string) {
+  resetInventoryItems(id: string): void {
     this.#inventories[id].items = { ...DEFAULT_INVENTORY_ITEMS }
     this.serializeInventories()
   }
@@ -136,7 +136,8 @@ export class State {
     }
   }
 
-  setCharacter(inventoryId: string, stats: CharacterStats, classDef: CharacterClass) {
+  // FIXME order
+  setCharacter(inventoryId: string, stats: CharacterStats, classDef: CharacterClass): void {
     this.#inventories[inventoryId].character = {
       stats: { ...stats },
       classDef: { ...classDef },
