@@ -38,14 +38,14 @@
         "disallowTemplateShorthand": true,
         "allow": ["!!"]
       }
-    ],
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
+    ]
   },
   "overrides": [
     {
       "files": ["*.ts", "*.tsx"],
       "rules": {
         "no-undef": "off",
+        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
         "@typescript-eslint/explicit-function-return-type": "error",
         "@typescript-eslint/explicit-module-boundary-types": "error",
         "@typescript-eslint/typedef": [
