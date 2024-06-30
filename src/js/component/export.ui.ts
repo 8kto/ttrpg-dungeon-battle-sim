@@ -44,7 +44,7 @@ export const bindConversionControls = (): void => {
 }
 
 export const bindDumpingControls = (): void => {
-  const container = document.getElementById('dump-domain-container--json-container')
+  const container = document.getElementById('dump-data-container--json-container')
 
   document.getElementById('dump-json-button').addEventListener('click', () => {
     container.textContent = getState().getSerializeInventories()
