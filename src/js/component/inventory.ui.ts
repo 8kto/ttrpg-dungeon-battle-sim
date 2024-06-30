@@ -1,12 +1,13 @@
-import { EquipSets } from '../config/snw/EquipSets'
+import { Armor, Equip, Weapons } from '../config/snw/Equip'
 import { EquipItem } from '../domain/Equipment'
-import { getState } from '../state/State'
+import { BaseMovementRate } from '../domain/snw/Movement'
+import { DEFAULT_INVENTORY_ID, getState, State } from '../state/State'
 import { getEquipNameSuffix } from '../utils/equipment'
 import { dispatchEvent } from '../utils/event'
 import { getInventoryIdFromName } from '../utils/inventory'
-import { createElementFromHtml } from '../utils/layout'
-import { getBaseMovementRate } from '../utils/snw/movement'
-import { renderCharacterSection, updateSpeedDisplay } from './character.ui'
+import { createElementFromHtml, scrollToElement } from '../utils/layout'
+import { getBaseMovementRate, getUndergroundSpeed } from '../utils/snw/movement'
+import { renderCharacterSection } from './character.ui'
 
 const getInventoryTable = (inventoryId: string): string => {
   return `<table id="${inventoryId}-table-container" class="min-w-full bg-white shadow-md rounded my-4">
@@ -75,6 +76,21 @@ const getInventoryControlsBottomSection = (inventoryId: string): string => {
               </button>
             </div>
           </section>`
+}
+
+const addInventory = (inventoryName: string): string => {
+  const inventoryId = getInventoryIdFromName(inventoryName)
+  const state = getState()
+
+  if (!state.getInventory(inventoryId)) {
+    state.setInventory(inventoryId, State.getNewInventory(inventoryId, inventoryName))
+    renderInventory(inventoryId, inventoryName)
+
+    const element = document.getElementById(`${inventoryId}-container`)
+    scrollToElement(element)
+  }
+
+  return inventoryId
 }
 
 export const bindInventoryControls = (inventoryId: string): void => {
@@ -182,17 +198,6 @@ export const markSelectedInventory = (inventoryId: string): void => {
   containerTitle.textContent = getState().getInventory(inventoryId).name
 }
 
-export const renderErrorMessage = (errorMessage: string): void => {
-  const pageContentElement = document.querySelector('.page-content')
-  const errorMsgElement = document.createElement('div')
-
-  errorMsgElement.className = 'border rounded px-4 py-2 border-red-400 bg-red-100 m-auto my-10'
-  errorMsgElement.textContent = errorMessage
-  pageContentElement.classList.add('text-center')
-  pageContentElement.innerHTML = ''
-  pageContentElement.appendChild(errorMsgElement)
-}
-
 /**
  * Renders the specified inventory in the UI.
  */
@@ -261,43 +266,21 @@ export const renderInventory = (inventoryId: string, name?: string): void => {
   document.getElementById(`${inventoryId}-total-cost`).textContent = totalCost.toFixed(2)
   document.getElementById(`${inventoryId}-base-movement-rate`).textContent = baseMovementRate.toString()
 
+  // FIXME to char stats section
   updateSpeedDisplay(inventoryId, baseMovementRate)
 }
 
-export const renderEquipSets = (): void => {
-  const dropdown = document.getElementById('equip-set-dropdown') as HTMLSelectElement
-  const equipSetsContainer = document.getElementById('equip-sets-container')
-
-  for (const key in EquipSets) {
-    const option = document.createElement('option')
-    option.value = key
-    option.textContent = EquipSets[key].name
-    option.classList.add('text-base')
-    dropdown.appendChild(option)
-  }
-
-  dropdown.addEventListener('change', function () {
-    const selectedSetKey = this.value
-    equipSetsContainer.innerHTML = ''
-
-    if (selectedSetKey) {
-      renderEquipSetTable(equipSetsContainer, selectedSetKey)
-    }
-  })
-}
-
-const renderEquipSetTable = (container: HTMLElement, selectedKey: string): void => {
-  const selectedSet = EquipSets[selectedKey]
-  const itemList = document.createElement('ul')
-  itemList.className = 'list-disc list-inside two-columns'
-
-  selectedSet.items.forEach((item) => {
-    const listItem = document.createElement('li')
-    listItem.textContent = item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name
-    itemList.appendChild(listItem)
-  })
-
-  container.appendChild(itemList)
+/**
+ * FIXME to char section
+ * Updates the HTML element with speeds for walking, running, and combat
+ * based on the base movement rate.
+ */
+export const updateSpeedDisplay = (inventoryId: string, baseMovementRate: BaseMovementRate): void => {
+  const speeds = getUndergroundSpeed(baseMovementRate)
+  document.getElementById(`${inventoryId}-speed-feet-per-turn`).innerHTML =
+    `Walking: <span class="text-alt">${speeds.walking}</span>` +
+    ` • Running: <span class="text-alt">${speeds.running}</span>` +
+    ` • Combat: <span class="text-alt">${speeds.combat}</span>`
 }
 
 export const renderInventories = (): void => {
@@ -354,11 +337,69 @@ const addEquipRow = (tableBody: HTMLTableSectionElement, item: EquipItem): void 
   actionsCell.className = `${cellClassnames} text-center px-2 w-16`
 }
 
-export const renderCategorySection = (container: HTMLElement, categoryName: string, items: EquipItem[]): void => {
+export const renderEquipCategorySection = (container: HTMLElement, categoryName: string, items: EquipItem[]): void => {
   const sectionHtml = getEquipTableSection(categoryName)
   const section = createElementFromHtml(sectionHtml)
   container.appendChild(section)
 
   const tableBody = section.querySelector('tbody')
   items.forEach((item) => addEquipRow(tableBody, item))
+}
+
+const bindNewItemControl = (): void => {
+  document.getElementById('add-new-item-button').addEventListener('click', () => {
+    const inputNameElement = document.getElementById('new-item-name') as HTMLInputElement
+    const inputWeightElement = document.getElementById('new-item-weight') as HTMLInputElement
+
+    const itemName = inputNameElement.value.trim()
+    const itemWeight = Math.max(parseInt(inputWeightElement.value) || 0, 0)
+
+    if (!itemName) {
+      console.error('No item name provided')
+
+      return
+    }
+
+    const state = getState()
+    const inventory = state.getInventory(state.getCurrentInventoryId())
+
+    if (!inventory.items[itemName]) {
+      inventory.items[itemName] = {
+        cost: 0,
+        name: itemName,
+        quantity: 1,
+        weight: itemWeight,
+      }
+    } else {
+      inventory.items[itemName].quantity++
+      inventory.items[itemName].weight = itemWeight
+    }
+
+    state.serializeInventories()
+    dispatchEvent('RenderInventories')
+  })
+}
+
+export const initInventoryUi = (): void => {
+  const currentInventoryId = getState().getCurrentInventoryId()
+  const equipmentContainer = document.getElementById('equipment-container')
+
+  renderEquipCategorySection(equipmentContainer, 'Armor', Armor)
+  renderEquipCategorySection(equipmentContainer, 'Weapons', Weapons)
+  renderEquipCategorySection(equipmentContainer, 'Equipment', Equip)
+
+  // TODO extract
+  document.getElementById('add-inventory-button').addEventListener('click', () => {
+    const newNameInputElement = document.getElementById('new-inventory-name') as HTMLInputElement
+    const inventoryName = newNameInputElement?.value.trim() || DEFAULT_INVENTORY_ID
+    const inventoryId = addInventory(inventoryName)
+
+    getState().setCurrentInventoryId(inventoryId)
+    markSelectedInventory(inventoryId)
+  })
+
+  dispatchEvent('RenderInventories')
+  markSelectedInventory(currentInventoryId)
+
+  bindNewItemControl()
 }

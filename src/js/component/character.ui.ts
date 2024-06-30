@@ -1,7 +1,14 @@
+import { CharacterClasses } from '../config/snw/CharacterClasses'
 import { CharacterClassDef } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
-import { BaseMovementRate } from '../domain/snw/Movement'
-import { getUndergroundSpeed } from '../utils/snw/movement'
+import { getState } from '../state/State'
+import {
+  getBestClass,
+  getCharHitPoints,
+  getClassSuggestions,
+  getRandomAttributes,
+  getRandomClass,
+} from '../utils/snw/character'
 
 export const renderCasterDetails = (
   container: HTMLElement,
@@ -82,18 +89,6 @@ export const renderStatsContainer = (
   container.appendChild(clone)
 }
 
-/**
- * Updates the HTML element with speeds for walking, running, and combat
- * based on the base movement rate.
- */
-export const updateSpeedDisplay = (inventoryId: string, baseMovementRate: BaseMovementRate): void => {
-  const speeds = getUndergroundSpeed(baseMovementRate)
-  document.getElementById(`${inventoryId}-speed-feet-per-turn`).innerHTML =
-    `Walking: <span class="text-alt">${speeds.walking}</span>` +
-    ` • Running: <span class="text-alt">${speeds.running}</span>` +
-    ` • Combat: <span class="text-alt">${speeds.combat}</span>`
-}
-
 export const renderCharacterSection = (
   inventoryId: string,
   charClass: CharacterClassDef,
@@ -103,4 +98,36 @@ export const renderCharacterSection = (
 
   container.innerHTML = ''
   renderStatsContainer(container, charStats, charClass)
+}
+
+export const handleNewRandomCharInit = (): void => {
+  const state = getState()
+  const charStats = getRandomAttributes()
+  const suggestions = getClassSuggestions(charStats, 'PrimeAttr')
+
+  let charClass
+  try {
+    const matched = getBestClass(suggestions)
+
+    // FIXME debug
+    // const matched = getBestClass([['Cleric', [['Wisdom', 13]], { Constitution: 14, Wisdom: 16 }]])
+
+    if (matched) {
+      charClass = CharacterClasses[matched]
+    } else {
+      throw new Error('Character class not found')
+    }
+  } catch (err) {
+    console.info('No matching classes. Choosing random', err.message)
+    charClass = getRandomClass()
+  }
+
+  charStats.HitPoints = getCharHitPoints(charClass, charStats.Constitution.HitPoints)
+  const currentInventoryId = state.getCurrentInventoryId()
+  state.setCharacter(currentInventoryId, charClass, charStats)
+  renderCharacterSection(currentInventoryId, charClass, charStats)
+}
+
+export const initCharacterSectionUi = (): void => {
+  void 0
 }
