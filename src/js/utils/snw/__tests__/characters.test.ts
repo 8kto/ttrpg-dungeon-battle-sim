@@ -1,6 +1,14 @@
-import { characterClasses, PRIME_ATTR_MIN } from '../../data/classes'
-import { strengthModifiers } from '../../data/modifiers'
-import { getBestClass, getClassSuggestions, getMatchedPrimaryAttributes, getMatchingScore } from '../character'
+import { CharacterClasses, PRIME_ATTR_MIN } from '../../../config/snw/CharacterClasses'
+import { strengthModifiers } from '../../../config/snw/Modifiers'
+import { AttrScore } from '../../../domain/snw/CharacterClass'
+import { CharacterStats } from '../../../domain/snw/CharacterStats'
+import {
+  getBestClass,
+  getClassSuggestions,
+  getMatchedPrimaryAttributes,
+  getMatchingScore,
+  MatchingClasses,
+} from '../character'
 
 describe('character utils', () => {
   describe('getMatchingScore', () => {
@@ -27,13 +35,20 @@ describe('character utils', () => {
   })
 
   describe('getClassSuggestions', () => {
-    const getStatsWithScores = (scores) => ({
-      Charisma: { Score: scores.Charisma || 0 },
-      Constitution: { Score: scores.Constitution || 0 },
-      Dexterity: { Score: scores.Dexterity || 0 },
+    const getStatsWithScores = (scores: Partial<Record<AttrScore, number>>): CharacterStats => ({
+      Charisma: { MaxNumberOfSpecialHirelings: 1, Score: scores.Charisma || 0 },
+      Constitution: { HitPoints: 0, RaiseDeadSurvivalChance: '0%', Score: scores.Constitution || 0 },
+      Dexterity: { ArmorClass: 0, MissilesToHit: 0, Score: scores.Dexterity || 0 },
       Gold: 0,
-      Intelligence: { Score: scores.Intelligence || 0 },
-      Strength: { Score: scores.Strength || 0 },
+      HitPoints: 1,
+      Intelligence: {
+        MaxAdditionalLanguages: 0,
+        MaxSpellLevel: 1,
+        NewSpellUnderstandingChance: '0%',
+        Score: scores.Intelligence || 0,
+        SpellsPerLevel: 'x/y',
+      },
+      Strength: { Carry: 0, Damage: 0, Doors: 'x', Score: scores.Strength || 0, ToHit: 0 },
       Wisdom: { Score: scores.Wisdom || 0 },
     })
 
@@ -91,7 +106,7 @@ describe('character utils', () => {
         Strength: 13,
         Wisdom: 13,
       })
-      expect(getClassSuggestions(stats, 'PrimeAttr').map((c) => c[0])).toEqual(Object.keys(characterClasses))
+      expect(getClassSuggestions(stats, 'PrimeAttr').map((c) => c[0])).toEqual(Object.keys(CharacterClasses))
     })
 
     // Edge case: Only one attribute meets the minimum
@@ -133,7 +148,7 @@ describe('character utils', () => {
             Intelligence: { Score: 13 },
             Strength: { Score: 8 },
             Wisdom: { Score: 13 },
-          },
+          } as unknown as CharacterStats,
           PRIME_ATTR_MIN,
         ),
       ).toEqual([
@@ -153,7 +168,7 @@ describe('character utils', () => {
             Intelligence: { Score: 13 },
             Strength: { Score: 8 },
             Wisdom: { Score: 18 },
-          },
+          } as unknown as CharacterStats,
           PRIME_ATTR_MIN,
         ),
       ).toEqual([
@@ -173,14 +188,14 @@ describe('character utils', () => {
             Intelligence: { Score: 10 },
             Strength: { Score: 8 },
             Wisdom: { Score: 11 },
-          },
+          } as unknown as CharacterStats,
           PRIME_ATTR_MIN,
         ),
       ).toEqual([])
     })
 
     it('should handle empty stats object', () => {
-      expect(getMatchedPrimaryAttributes({}, PRIME_ATTR_MIN)).toEqual([])
+      expect(getMatchedPrimaryAttributes({} as unknown as CharacterStats, PRIME_ATTR_MIN)).toEqual([])
     })
 
     it('should handle missing scores in stats', () => {
@@ -194,7 +209,7 @@ describe('character utils', () => {
             // eslint-disable-next-line no-undefined
             Strength: { Score: undefined },
             Wisdom: { Score: 18 },
-          },
+          } as unknown as CharacterStats,
           PRIME_ATTR_MIN,
         ),
       ).toEqual([
@@ -214,7 +229,7 @@ describe('character utils', () => {
             Intelligence: { Score: 14 },
             Strength: { Score: 14 },
             Wisdom: { Score: 14 },
-          },
+          } as unknown as CharacterStats,
           PRIME_ATTR_MIN,
         ),
       ).toEqual([
@@ -229,7 +244,7 @@ describe('character utils', () => {
   })
 
   describe('getBestClass', () => {
-    const data = [
+    const data: MatchingClasses = [
       [
         'Fighter',
         [['Strength', 13]],
@@ -275,7 +290,7 @@ describe('character utils', () => {
           Strength: 13,
         },
       ],
-    ]
+    ] as MatchingClasses
 
     it('should return the best matching class based on the longest classPrimeAttrs and highest characterAttrScores', () => {
       const result = getBestClass(data)
@@ -298,7 +313,7 @@ describe('character utils', () => {
           },
         ],
         [
-          'Knight',
+          'Ranger',
           [
             ['Strength', 13],
             ['Dexterity', 13],
@@ -309,21 +324,20 @@ describe('character utils', () => {
             Strength: 13,
           },
         ],
-      ]
+      ] as MatchingClasses
 
       const result = getBestClass(similarData)
       expect(result).toBe('Warrior')
     })
 
     it('should return null for an empty data array', () => {
-      const result = getBestClass([])
-      expect(result).toBeNull()
+      expect(() => getBestClass([])).toThrowError('No matching classes')
     })
 
     it('should prioritize longer classPrimeAttrs even if scores are higher in shorter one', () => {
       const mixedData = [
         [
-          'Mage',
+          'MagicUser',
           [['Intelligence', 13]],
           {
             Intelligence: 18,
@@ -331,7 +345,7 @@ describe('character utils', () => {
           },
         ],
         [
-          'Sorcerer',
+          'Druid',
           [
             ['Intelligence', 13],
             ['Wisdom', 13],
@@ -341,16 +355,16 @@ describe('character utils', () => {
             Wisdom: 14,
           },
         ],
-      ]
+      ] as MatchingClasses
 
       const result = getBestClass(mixedData)
-      expect(result).toBe('Sorcerer')
+      expect(result).toBe('Druid')
     })
 
     it('should handle single entry data array', () => {
       const singleData = [
         [
-          'Barbarian',
+          'Fighter',
           [
             ['Strength', 13],
             ['Constitution', 13],
@@ -360,10 +374,10 @@ describe('character utils', () => {
             Strength: 15,
           },
         ],
-      ]
+      ] as MatchingClasses
 
       const result = getBestClass(singleData)
-      expect(result).toBe('Barbarian')
+      expect(result).toBe('Fighter')
     })
   })
 })

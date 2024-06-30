@@ -1,0 +1,585 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EquipSets should match the snapshot 1`] = `
+{
+  "AssassinEquipSet": {
+    "items": [
+      {
+        "name": "Basic accessories",
+        "quantity": 1,
+      },
+      {
+        "name": "Leather",
+        "quantity": 1,
+      },
+      {
+        "name": "Shield",
+        "quantity": 1,
+      },
+      {
+        "name": "Sword, Long",
+        "quantity": 1,
+      },
+      {
+        "name": "Sling Stones (20)",
+        "quantity": 1,
+      },
+      {
+        "name": "Backpack",
+        "quantity": 1,
+      },
+      {
+        "name": "Bedroll",
+        "quantity": 1,
+      },
+      {
+        "name": "Candle",
+        "quantity": 10,
+      },
+      {
+        "name": "Flask, leather",
+        "quantity": 1,
+      },
+      {
+        "name": "Flint & steel",
+        "quantity": 1,
+      },
+      {
+        "name": "Grappling Hook",
+        "quantity": 1,
+      },
+      {
+        "name": "Lantern, hooded",
+        "quantity": 1,
+      },
+      {
+        "name": "Manacles",
+        "quantity": 1,
+      },
+      {
+        "name": "Oil, lamp (1 pint)",
+        "quantity": 2,
+      },
+      {
+        "name": "Rations, dried",
+        "quantity": 7,
+      },
+      {
+        "name": "Rope, silk (50 feet)",
+        "quantity": 1,
+      },
+      {
+        "name": "Shovel",
+        "quantity": 1,
+      },
+      {
+        "name": "Waterskin",
+        "quantity": 1,
+      },
+    ],
+    "name": "Assassin",
+  },
+  "BaseAdventurerEquipSet": {
+    "items": [
+      {
+        "name": "Basic accessories",
+        "quantity": 1,
+      },
+      {
+        "name": "Arrows (20)",
+        "quantity": 1,
+      },
+      {
+        "name": "Bow, Short",
+        "quantity": 1,
+      },
+      {
+        "name": "Dagger",
+        "quantity": 1,
+      },
+      {
+        "name": "Sword, Long",
+        "quantity": 1,
+      },
+      {
+        "name": "Backpack",
+        "quantity": 1,
+      },
+      {
+        "name": "Bedroll",
+        "quantity": 1,
+      },
+      {
+        "name": "Block and tackle",
+        "quantity": 1,
+      },
+      {
+        "name": "Case (map or scroll)",
+        "quantity": 1,
+      },
+      {
+        "name": "Chalk, 1 piece",
+        "quantity": 1,
+      },
+      {
+        "name": "Crowbar",
+        "quantity": 1,
+      },
+      {
+        "name": "Fishing net (25 square feet)",
+        "quantity": 1,
+      },
+      {
+        "name": "Flint & steel",
+        "quantity": 1,
+      },
+      {
+        "name": "Grappling Hook",
+        "quantity": 1,
+      },
+      {
+        "name": "Ink (1-ounce bottle)",
+        "quantity": 1,
+      },
+      {
+        "name": "Ladder (10 foot)",
+        "quantity": 1,
+      },
+      {
+        "name": "Lantern, bullseye",
+        "quantity": 1,
+      },
+      {
+        "name": "Leather",
+        "quantity": 1,
+      },
+      {
+        "name": "Mirror",
+        "quantity": 1,
+      },
+      {
+        "name": "Oil, lamp (1 pint)",
+        "quantity": 3,
+      },
+      {
+        "name": "Parchment (sheet)",
+        "quantity": 1,
+      },
+      {
+        "name": "Pole (10 foot)",
+        "quantity": 1,
+      },
+      {
+        "name": "Rations, trail",
+        "quantity": 5,
+      },
+      {
+        "name": "Rope, hemp (50 feet)",
+        "quantity": 1,
+      },
+      {
+        "name": "Sack (15 pounds capacity)",
+        "quantity": 1,
+      },
+      {
+        "name": "Waterskin",
+        "quantity": 1,
+      },
+    ],
+    "name": "Base Adventurer",
+  },
+  "ClericEquipSet": {
+    "items": [
+      {
+        "name": "Basic accessories",
+        "quantity": 1,
+      },
+      {
+        "name": "Ring",
+        "quantity": 1,
+      },
+      {
+        "name": "Mace",
+        "quantity": 1,
+      },
+      {
+        "name": "Sling",
+        "quantity": 1,
+      },
+      {
+        "name": "Sling Stones (20)",
+        "quantity": 1,
+      },
+      {
+        "name": "Backpack",
+        "quantity": 1,
+      },
+      {
+        "name": "Bedroll",
+        "quantity": 1,
+      },
+      {
+        "name": "Bell",
+        "quantity": 1,
+      },
+      {
+        "name": "Flask, leather",
+        "quantity": 1,
+      },
+      {
+        "name": "Flint & steel",
+        "quantity": 1,
+      },
+      {
+        "name": "Holy symbol, wooden",
+        "quantity": 1,
+      },
+      {
+        "name": "Lantern, hooded",
+        "quantity": 1,
+      },
+      {
+        "name": "Waterskin",
+        "quantity": 1,
+      },
+      {
+        "name": "Candle",
+        "quantity": 10,
+      },
+      {
+        "name": "Holy water (flask)",
+        "quantity": 1,
+      },
+      {
+        "name": "Oil, lamp (1 pint)",
+        "quantity": 3,
+      },
+      {
+        "name": "Rations, trail",
+        "quantity": 7,
+      },
+      {
+        "name": "Rope, hemp (50 feet)",
+        "quantity": 1,
+      },
+      {
+        "name": "Spike, iron",
+        "quantity": 6,
+      },
+    ],
+    "name": "Cleric",
+  },
+  "FighterArcherEquipSet": {
+    "items": [
+      {
+        "name": "Basic accessories",
+        "quantity": 1,
+      },
+      {
+        "name": "Ring",
+        "quantity": 1,
+      },
+      {
+        "name": "Spear",
+        "quantity": 1,
+      },
+      {
+        "name": "Sword, Long",
+        "quantity": 1,
+      },
+      {
+        "name": "Bow, Short",
+        "quantity": 1,
+      },
+      {
+        "name": "Arrows (20)",
+        "quantity": 1,
+      },
+      {
+        "name": "Backpack",
+        "quantity": 1,
+      },
+      {
+        "name": "Bedroll",
+        "quantity": 1,
+      },
+      {
+        "name": "Flask, leather",
+        "quantity": 1,
+      },
+      {
+        "name": "Flint & steel",
+        "quantity": 1,
+      },
+      {
+        "name": "Lantern, bullseye",
+        "quantity": 1,
+      },
+      {
+        "name": "Waterskin",
+        "quantity": 1,
+      },
+      {
+        "name": "Chalk, 1 piece",
+        "quantity": 1,
+      },
+      {
+        "name": "Oil, lamp (1 pint)",
+        "quantity": 3,
+      },
+      {
+        "name": "Rations, trail",
+        "quantity": 7,
+      },
+      {
+        "name": "Rope, hemp (50 feet)",
+        "quantity": 1,
+      },
+      {
+        "name": "Sack (15 pounds capacity)",
+        "quantity": 1,
+      },
+    ],
+    "name": "Fighter / Archer",
+  },
+  "FighterHeavyEquipSet": {
+    "items": [
+      {
+        "name": "Basic accessories",
+        "quantity": 1,
+      },
+      {
+        "name": "Chain",
+        "quantity": 1,
+      },
+      {
+        "name": "Sling",
+        "quantity": 1,
+      },
+      {
+        "name": "Sling Stones (20)",
+        "quantity": 1,
+      },
+      {
+        "name": "Spear",
+        "quantity": 1,
+      },
+      {
+        "name": "Sword, Long",
+        "quantity": 1,
+      },
+      {
+        "name": "Dagger",
+        "quantity": 1,
+      },
+      {
+        "name": "Bedroll",
+        "quantity": 1,
+      },
+      {
+        "name": "Flint & steel",
+        "quantity": 1,
+      },
+      {
+        "name": "Rations, trail",
+        "quantity": 7,
+      },
+      {
+        "name": "Sack (15 pounds capacity)",
+        "quantity": 1,
+      },
+      {
+        "name": "Torch",
+        "quantity": 5,
+      },
+      {
+        "name": "Waterskin",
+        "quantity": 1,
+      },
+    ],
+    "name": "Fighter / Heavy",
+  },
+  "MagicUserEquipSet": {
+    "items": [
+      {
+        "name": "Basic accessories",
+        "quantity": 1,
+      },
+      {
+        "name": "Dagger",
+        "quantity": 1,
+      },
+      {
+        "name": "Staff",
+        "quantity": 1,
+      },
+      {
+        "name": "Spellbook, blank",
+        "quantity": 1,
+      },
+      {
+        "name": "Backpack",
+        "quantity": 1,
+      },
+      {
+        "name": "Bedroll",
+        "quantity": 1,
+      },
+      {
+        "name": "Candle",
+        "quantity": 5,
+      },
+      {
+        "name": "Case (map or scroll)",
+        "quantity": 1,
+      },
+      {
+        "name": "Flask, leather",
+        "quantity": 1,
+      },
+      {
+        "name": "Flint & steel",
+        "quantity": 1,
+      },
+      {
+        "name": "Ink (1-ounce bottle)",
+        "quantity": 1,
+      },
+      {
+        "name": "Lantern, bullseye",
+        "quantity": 1,
+      },
+      {
+        "name": "Mirror",
+        "quantity": 1,
+      },
+      {
+        "name": "Oil, lamp (1 pint)",
+        "quantity": 1,
+      },
+      {
+        "name": "Parchment (sheet)",
+        "quantity": 5,
+      },
+      {
+        "name": "Rations, trail",
+        "quantity": 7,
+      },
+      {
+        "name": "Waterskin",
+        "quantity": 1,
+      },
+    ],
+    "name": "Magic User",
+  },
+  "ThiefEquipSet": {
+    "items": [
+      {
+        "name": "Basic accessories",
+        "quantity": 1,
+      },
+      {
+        "name": "Leather",
+        "quantity": 1,
+      },
+      {
+        "name": "Arrows (20)",
+        "quantity": 1,
+      },
+      {
+        "name": "Bow, Short",
+        "quantity": 1,
+      },
+      {
+        "name": "Dagger",
+        "quantity": 1,
+      },
+      {
+        "name": "Sword, Long",
+        "quantity": 1,
+      },
+      {
+        "name": "Backpack",
+        "quantity": 1,
+      },
+      {
+        "name": "Bedroll",
+        "quantity": 1,
+      },
+      {
+        "name": "Block and tackle",
+        "quantity": 1,
+      },
+      {
+        "name": "Crowbar",
+        "quantity": 1,
+      },
+      {
+        "name": "Case (map or scroll)",
+        "quantity": 1,
+      },
+      {
+        "name": "Chalk, 1 piece",
+        "quantity": 1,
+      },
+      {
+        "name": "Fishing net (25 square feet)",
+        "quantity": 1,
+      },
+      {
+        "name": "Flint & steel",
+        "quantity": 1,
+      },
+      {
+        "name": "Grappling Hook",
+        "quantity": 1,
+      },
+      {
+        "name": "Ink (1-ounce bottle)",
+        "quantity": 1,
+      },
+      {
+        "name": "Ladder (10 foot)",
+        "quantity": 1,
+      },
+      {
+        "name": "Lantern, bullseye",
+        "quantity": 1,
+      },
+      {
+        "name": "Mirror",
+        "quantity": 1,
+      },
+      {
+        "name": "Oil, lamp (1 pint)",
+        "quantity": 3,
+      },
+      {
+        "name": "Parchment (sheet)",
+        "quantity": 1,
+      },
+      {
+        "name": "Pole (10 foot)",
+        "quantity": 1,
+      },
+      {
+        "name": "Waterskin",
+        "quantity": 1,
+      },
+      {
+        "name": "Rations, trail",
+        "quantity": 5,
+      },
+      {
+        "name": "Rope, hemp (50 feet)",
+        "quantity": 1,
+      },
+      {
+        "name": "Sack (15 pounds capacity)",
+        "quantity": 1,
+      },
+    ],
+    "name": "Thief",
+  },
+}
+`;

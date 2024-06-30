@@ -1,13 +1,17 @@
 {
-  "extends": ["eslint:recommended", "plugin:import/recommended", "prettier"],
-  "plugins": ["import", "simple-import-sort", "sort-keys-fix", "sort-destructure-keys"],
+  "extends": ["eslint:recommended", "plugin:import/recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+  "plugins": ["import", "simple-import-sort", "sort-keys-fix", "sort-destructure-keys", "@typescript-eslint"],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 2022
+    "ecmaVersion": 2022,
+    "sourceType": "module",
+    "project": "./tsconfig.json"
   },
   "env": {
     "browser": true,
     "node": false,
-    "jest": true
+    "jest": true,
+    "es6": true
   },
   "rules": {
     "semi": ["error", "never"],
@@ -22,7 +26,7 @@
     "no-console": ["error", { "allow": ["error", "info"] }],
     "no-debugger": "error",
     "no-undefined": "error",
-    "no-undef": "error",
+    "no-undef": "off",
     "sort-keys-fix/sort-keys-fix": ["error", "asc", { "natural": true }],
     "sort-destructure-keys/sort-destructure-keys": ["error", { "caseSensitive": false }],
     "no-implicit-coercion": [
@@ -34,12 +38,48 @@
         "disallowTemplateShorthand": true,
         "allow": ["!!"]
       }
-    ],
-    "import/no-unresolved": [
-      "error",
-      {
-        "ignore": ["\\.js\\?v=\\$VERSION\\$"]
-      }
     ]
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "no-undef": "off",
+        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "@typescript-eslint/explicit-function-return-type": "error",
+        "@typescript-eslint/explicit-module-boundary-types": "error",
+        "@typescript-eslint/typedef": [
+          "error",
+          {
+            "arrayDestructuring": false,
+            "arrowParameter": false,
+            "memberVariableDeclaration": true,
+            "objectDestructuring": false,
+            "parameter": true,
+            "propertyDeclaration": true,
+            "variableDeclaration": false,
+            "variableDeclarationIgnoreFunction": true
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/js/domain/**/*.ts", "src/js/config/**/*.ts"],
+      "rules": {
+        "sort-keys-fix/sort-keys-fix": "off"
+      }
+    }
+  ],
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "./tsconfig.json"
+      },
+      "node": {
+        "paths": ["src"],
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
   }
 }

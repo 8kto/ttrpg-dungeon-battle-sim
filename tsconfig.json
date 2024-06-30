@@ -15,9 +15,13 @@
     "allowSyntheticDefaultImports": true,
     "downlevelIteration": true,
     "useDefineForClassFields": true,
-    "lib": ["ESNext", "DOM"]
+    "lib": ["ESNext", "DOM"],
+    "baseUrl": "src",
+    "paths": {
+      "*": ["*", "src/*"]
+    }
   },
-  "include": ["node_modules/wmr/types.d.ts", "**/*"],
+  "include": ["node_modules/wmr/types.d.ts", "**/*.ts", "**/*.tsx", "**/*.js"],
   "typeAcquisition": {
     "enable": true
   }
