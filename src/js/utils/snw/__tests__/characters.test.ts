@@ -1,14 +1,14 @@
-import { CharacterClasses, PRIME_ATTR_MIN } from '../../config/snw/CharacterClasses'
-import { strengthModifiers } from '../../config/snw/Modifiers'
-import { AttrScore } from '../../domain/snw/CharacterClass'
-import { CharacterStats } from '../../domain/snw/CharacterStats'
+import { CharacterClasses, PRIME_ATTR_MIN } from '../../../config/snw/CharacterClasses'
+import { strengthModifiers } from '../../../config/snw/Modifiers'
+import { AttrScore } from '../../../domain/snw/CharacterClass'
+import { CharacterStats } from '../../../domain/snw/CharacterStats'
 import {
   getBestClass,
   getClassSuggestions,
   getMatchedPrimaryAttributes,
   getMatchingScore,
   MatchingClasses,
-} from '../snw/character'
+} from '../character'
 
 describe('character utils', () => {
   describe('getMatchingScore', () => {
