@@ -4,8 +4,8 @@ import { getState } from '../state/State'
 import { getEquipNameSuffix } from '../utils/equipment'
 import { dispatchEvent } from '../utils/event'
 import { getInventoryIdFromName } from '../utils/inventory'
-import { getBaseMovementRate } from '../utils/snw/movement'
 import { createElementFromHtml } from '../utils/layout'
+import { getBaseMovementRate } from '../utils/snw/movement'
 import { renderCharacterSection, updateSpeedDisplay } from './character.ui'
 
 const getInventoryTable = (inventoryId: string): string => {
@@ -308,6 +308,7 @@ export const renderInventories = (): void => {
     .forEach((inventory) => {
       renderInventory(inventory.id, inventory.name)
 
+      // FIXME event
       if (inventory.character) {
         renderCharacterSection(inventory.id, inventory.character.classDef, inventory.character.stats)
         document.querySelector(`#${inventory.id}-inventory-controls-top-section`).classList.add('hidden')

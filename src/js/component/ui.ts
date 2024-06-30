@@ -5,6 +5,7 @@ import { DEFAULT_INVENTORY_ID, getState, State } from '../state/State'
 import { importEquipSet } from '../utils/equipment'
 import { dispatchEvent } from '../utils/event'
 import { getInventoryIdFromName } from '../utils/inventory'
+import { scrollToElement } from '../utils/layout'
 import {
   getBestClass,
   getCharHitPoints,
@@ -12,16 +13,15 @@ import {
   getRandomAttributes,
   getRandomClass,
 } from '../utils/snw/character'
+import { renderCharacterSection } from './character.ui'
 import {
   markSelectedInventory,
   renderCategorySection,
-  renderCharacterSection,
   renderEquipSets,
   renderErrorMessage,
   renderInventories,
   renderInventory,
-  scrollToElement,
-} from './utils.layout'
+} from './inventory.ui'
 
 // TODO split up layout utils further: communicate (e.g. with events binding) through Custom Events
 
