@@ -132,9 +132,9 @@ export const getCharHitPoints = (charClass: CharacterClassDef, bonusHp: number):
 
 export const getBestClass = (matchedClasses: MatchingClasses): CharacterClass => {
   // Find the record(s) with the longest classPrimeAttrs
-  const maxPrimeAttrLength = Math.max(...matchedClasses.map(([, classPrimeAttrs]) => classPrimeAttrs.length))
+  const maxPrimeAttrLength = Math.max(...matchedClasses.map(([, classPrimeAttrs, _]) => classPrimeAttrs.length))
   const longestPrimeAttrs = matchedClasses.filter(
-    ([, classPrimeAttrs]) => classPrimeAttrs.length === maxPrimeAttrLength,
+    ([, classPrimeAttrs, _]) => classPrimeAttrs.length === maxPrimeAttrLength,
   )
 
   // Find the record(s) with the highest sum of characterAttrScores
@@ -147,7 +147,7 @@ export const getBestClass = (matchedClasses: MatchingClasses): CharacterClass =>
   if (bestMatches.length > 1) {
     console.info(
       'Choosing random from best matches',
-      bestMatches.map(([name]) => name),
+      bestMatches.map(([name, _, __]) => name),
     )
 
     return getRandomArrayItem(bestMatches)[0]
