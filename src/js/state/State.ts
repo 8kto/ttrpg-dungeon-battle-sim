@@ -2,7 +2,7 @@
 
 import { EquipItem } from '../domain/Equipment'
 import { Inventory, InventoryItem } from '../domain/Inventory'
-import { CharacterClass, CharacterClassDef } from '../domain/snw/CharacterClass'
+import { CharacterClassDef } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
 
 export const DEFAULT_INVENTORY_ID = 'MainCharacter'

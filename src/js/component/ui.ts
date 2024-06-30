@@ -5,6 +5,9 @@ import { EquipItem } from '../domain/Equipment'
 import { CharacterClassDef } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
 import { DEFAULT_INVENTORY_ID, getState, State } from '../state/State'
+import { getEquipNameSuffix, importEquipSet } from '../utils/equipment'
+import { dispatchEvent } from '../utils/event'
+import { getInventoryIdFromName } from '../utils/inventory'
 import {
   getBestClass,
   getCharHitPoints,
@@ -12,9 +15,6 @@ import {
   getRandomAttributes,
   getRandomClass,
 } from '../utils/snw/character'
-import { getEquipNameSuffix, importEquipSet } from '../utils/equipment'
-import { dispatchEvent } from '../utils/event'
-import { getInventoryIdFromName } from '../utils/inventory'
 import { getBaseMovementRate } from '../utils/snw/movement'
 import {
   createElementFromHtml,
@@ -375,7 +375,7 @@ const handleNewRandomCharInit = (): void => {
 
   charStats.HitPoints = getCharHitPoints(charClass, charStats.Constitution.HitPoints)
   const currentInventoryId = state.getCurrentInventoryId()
-  state.setCharacter(currentInventoryId, charStats, charClass)
+  state.setCharacter(currentInventoryId, charClass, charStats)
   renderCharacterSection(currentInventoryId, charClass, charStats)
 }
 
