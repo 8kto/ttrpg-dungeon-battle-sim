@@ -1,10 +1,13 @@
+import { EquipSets } from '../config/snw/EquipSets'
+import { EquipItem } from '../domain/Equipment'
 import { CharacterClassDef } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
 import { BaseMovementRate } from '../domain/snw/Movement'
 import { getState } from '../state/State'
+import { getEquipNameSuffix } from '../utils/equipment'
 import { dispatchEvent } from '../utils/event'
 import { getInventoryIdFromName } from '../utils/inventory'
-import { getUndergroundSpeed } from '../utils/snw/movement'
+import { getBaseMovementRate, getUndergroundSpeed } from '../utils/snw/movement'
 
 /**
  * @param {string} htmlString Should enclose the layout with one element (div, span etc.)
@@ -303,4 +306,184 @@ export const updateSpeedDisplay = (inventoryId: string, baseMovementRate: BaseMo
     `Walking: <span class="text-alt">${speeds.walking}</span>` +
     ` • Running: <span class="text-alt">${speeds.running}</span>` +
     ` • Combat: <span class="text-alt">${speeds.combat}</span>`
+}
+
+/**
+ * Renders the specified inventory in the UI.
+ */
+export const renderInventory = (inventoryId: string, name?: string): void => {
+  const inventory = getState().getInventory(inventoryId)
+  if (!inventory) {
+    console.error('Inventory not found:', inventoryId)
+
+    return
+  }
+
+  const cellClassnames = 'px-4 py-1'
+  let inventoryTableContainer = document.querySelector(`#${inventoryId}-table-container`)
+  if (!inventoryTableContainer) {
+    renderInitialInventory(inventoryId, name)
+    inventoryTableContainer = document.querySelector(`#${inventoryId}-table-container`)
+  }
+
+  const inventoryTableBody = inventoryTableContainer.querySelector<HTMLTableSectionElement>('table tbody')
+  inventoryTableBody.innerHTML = ''
+
+  let totalWeight = 0
+  let totalCost = 0
+
+  Object.values(inventory.items).forEach((item) => {
+    const row = inventoryTableBody.insertRow()
+    row.className = 'even:bg-gray-50 hover:bg-gen-50'
+
+    const nameCell = row.insertCell(0)
+    nameCell.innerHTML = item.name + getEquipNameSuffix(item)
+    nameCell.className = cellClassnames
+
+    const qtyCell = row.insertCell(1)
+    qtyCell.textContent = item.quantity.toString()
+    qtyCell.className = cellClassnames
+
+    const weightCell = row.insertCell(2)
+    weightCell.textContent = (item.weight * item.quantity).toFixed(2).replace(/\.0+$/g, '')
+    weightCell.className = cellClassnames
+
+    const costCell = row.insertCell(3)
+    costCell.textContent = (item.cost * item.quantity).toFixed(2).replace(/\.0+$/g, '')
+    costCell.className = cellClassnames
+
+    // Create and append the Remove button
+    const removeButton = document.createElement('button')
+    removeButton.textContent = 'Remove'
+    removeButton.className = 'px-4 py-1 text-sm text-red-800 hover:text-red-500'
+    removeButton.onclick = (): void => {
+      getState().removeFromInventory(inventoryId, item.name)
+      renderInventory(inventoryId, name)
+    }
+
+    const actionsCell = row.insertCell(4)
+    actionsCell.appendChild(removeButton)
+    actionsCell.className = `${cellClassnames} text-center px-2 w-16`
+
+    totalWeight += item.weight * item.quantity
+    totalCost += item.cost * item.quantity
+  })
+
+  const carryModifier = 0 // FIXME Placeholder for a carry modifier
+  const baseMovementRate = getBaseMovementRate(totalWeight, carryModifier)
+
+  document.getElementById(`${inventoryId}-total-weight`).textContent = totalWeight.toFixed(1)
+  document.getElementById(`${inventoryId}-total-cost`).textContent = totalCost.toFixed(2)
+  document.getElementById(`${inventoryId}-base-movement-rate`).textContent = baseMovementRate.toString()
+
+  updateSpeedDisplay(inventoryId, baseMovementRate)
+}
+
+export const renderEquipSets = (): void => {
+  const dropdown = document.getElementById('equip-set-dropdown') as HTMLSelectElement
+  const equipSetsContainer = document.getElementById('equip-sets-container')
+
+  for (const key in EquipSets) {
+    const option = document.createElement('option')
+    option.value = key
+    option.textContent = EquipSets[key].name
+    option.classList.add('text-base')
+    dropdown.appendChild(option)
+  }
+
+  dropdown.addEventListener('change', function () {
+    const selectedSetKey = this.value
+    equipSetsContainer.innerHTML = ''
+
+    if (selectedSetKey) {
+      renderEquipSetTable(equipSetsContainer, selectedSetKey)
+    }
+  })
+}
+
+const renderEquipSetTable = (container: HTMLElement, selectedKey: string): void => {
+  const selectedSet = EquipSets[selectedKey]
+  const itemList = document.createElement('ul')
+  itemList.className = 'list-disc list-inside two-columns'
+
+  selectedSet.items.forEach((item) => {
+    const listItem = document.createElement('li')
+    listItem.textContent = item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name
+    itemList.appendChild(listItem)
+  })
+
+  container.appendChild(itemList)
+}
+
+export const renderInventories = (): void => {
+  const inventoryTableContainer = document.getElementById('inventories-container')
+  inventoryTableContainer.innerHTML = ''
+  getState()
+    .getInventories()
+    .forEach((inventory) => {
+      renderInventory(inventory.id, inventory.name)
+
+      if (inventory.character) {
+        renderCharacterSection(inventory.id, inventory.character.classDef, inventory.character.stats)
+        document.querySelector(`#${inventory.id}-inventory-controls-top-section`).classList.add('hidden')
+      }
+    })
+}
+
+export const renderCharacterSection = (
+  inventoryId: string,
+  charClass: CharacterClassDef,
+  charStats: CharacterStats,
+): void => {
+  const container = document.querySelector<HTMLElement>(`#${inventoryId}-container .char-stats`)
+
+  container.innerHTML = ''
+  renderStatsContainer(container, charStats, charClass)
+}
+
+const addEquipRow = (tableBody: HTMLTableSectionElement, item: EquipItem): void => {
+  const row = tableBody.insertRow()
+  row.className = 'even:bg-gray-50 hover:bg-gen-50'
+
+  const cellClassnames = 'px-4 py-1'
+
+  // Create and set properties for the name cell
+  const nameCell = row.insertCell(0)
+
+  nameCell.innerHTML = item.name + getEquipNameSuffix(item)
+  nameCell.className = cellClassnames
+
+  // Create and set properties for the weight cell
+  const weightCell = row.insertCell(1)
+  weightCell.textContent = item.weight.toString()
+  weightCell.className = cellClassnames
+
+  // Create and set properties for the cost cell
+  const costCell = row.insertCell(2)
+  costCell.textContent = item.cost.toString()
+  costCell.className = cellClassnames
+
+  // Create and set properties for the button cell
+  const addButton = document.createElement('button')
+  addButton.textContent = 'Add'
+  addButton.className = 'px-4 text-sm text-left font-medium text-sub hover:text-red-800'
+  addButton.onclick = (): void => {
+    const state = getState()
+    const inventoryId = state.getCurrentInventoryId()
+    state.addToInventory(inventoryId, item)
+    renderInventory(inventoryId, inventoryId)
+  }
+
+  const actionsCell = row.insertCell(3)
+  actionsCell.appendChild(addButton)
+  actionsCell.className = `${cellClassnames} text-center px-2 w-16`
+}
+
+export const renderCategorySection = (container: HTMLElement, categoryName: string, items: EquipItem[]): void => {
+  const sectionHtml = getEquipTableSection(categoryName)
+  const section = createElementFromHtml(sectionHtml)
+  container.appendChild(section)
+
+  const tableBody = section.querySelector('tbody')
+  items.forEach((item) => addEquipRow(tableBody, item))
 }
