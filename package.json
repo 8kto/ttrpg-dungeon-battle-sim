@@ -11,7 +11,7 @@
     "deploy": "scripts/deploy.sh",
     "dev:old": "npx live-server src --port=3000 --no-browser",
     "format": "prettier . --check",
-    "format:fix": "yarn eslint -- --fix && prettier --write .",
+    "format:fix": "yarn eslint --fix && prettier --write .",
     "test": "jest"
   },
   "devDependencies": {
