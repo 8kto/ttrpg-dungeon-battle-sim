@@ -7,7 +7,6 @@ import { dispatchEvent } from '../utils/event'
 import { getInventoryIdFromName } from '../utils/inventory'
 import { createElementFromHtml, scrollToElement } from '../utils/layout'
 import { getBaseMovementRate, getUndergroundSpeed } from '../utils/snw/movement'
-import { renderCharacterSection } from './character.ui'
 
 const getInventoryTable = (inventoryId: string): string => {
   return `<table id="${inventoryId}-table-container" class="min-w-full bg-white shadow-md rounded my-4">
@@ -259,7 +258,9 @@ export const renderInventory = (inventoryId: string, name?: string): void => {
     totalCost += item.cost * item.quantity
   })
 
-  const carryModifier = 0 // FIXME Placeholder for a carry modifier
+  // TODO test carry modifier
+  const charStats = inventory.character?.stats
+  const carryModifier = charStats?.Strength.Carry || 0
   const baseMovementRate = getBaseMovementRate(totalWeight, carryModifier)
 
   document.getElementById(`${inventoryId}-total-weight`).textContent = totalWeight.toFixed(1)
@@ -291,10 +292,8 @@ export const renderInventories = (): void => {
     .forEach((inventory) => {
       renderInventory(inventory.id, inventory.name)
 
-      // FIXME event
       if (inventory.character) {
-        renderCharacterSection(inventory.id, inventory.character.classDef, inventory.character.stats)
-        document.querySelector(`#${inventory.id}-inventory-controls-top-section`).classList.add('hidden')
+        dispatchEvent('RenderCharacterSection', { inventoryId: inventory.id })
       }
     })
 }
