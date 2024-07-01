@@ -59,7 +59,6 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 - [ ] Race
 - [ ] Get EXP bonuses
 - [ ] Apply to Carry modifier to encumbrance
-- [ ] Class Armor/Shield/Weapons
 - [ ] Char AC
 - [ ] Char To Hit
 - [ ] Saving Throw / num + details
