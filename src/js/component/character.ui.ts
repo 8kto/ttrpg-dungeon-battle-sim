@@ -2,6 +2,7 @@ import { CharacterClasses } from '../config/snw/CharacterClasses'
 import { CharacterClassDef } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
 import { getState } from '../state/State'
+import { createElementFromHtml } from '../utils/layout'
 import {
   getBestClass,
   getCharHitPoints,
@@ -45,12 +46,24 @@ export const renderCasterDetails = (
   container.removeAttribute('hidden')
 }
 
+const renderArmorDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
+  const armorDetails = createElementFromHtml('<p>')
+  const weaponsDetails = createElementFromHtml('<p>')
+
+  armorDetails.innerHTML = `<span class="font-bold">Armor</span>: ${classDef.ArmorPermitted}`
+  weaponsDetails.innerHTML = `<span class="font-bold">Weapons</span>: ${classDef.WeaponsPermitted}`
+
+  container.appendChild(armorDetails)
+  container.appendChild(weaponsDetails)
+  container.removeAttribute('hidden')
+}
+
 export const renderStatsContainer = (
   container: HTMLElement,
   stats: CharacterStats,
   classDef: CharacterClassDef,
 ): void => {
-  const template = document.getElementById('template-stats') as HTMLTemplateElement
+  const template = document.getElementById('template-char-stats') as HTMLTemplateElement
   const clone = document.importNode(template.content, true)
 
   const tableStats = clone.querySelector('table.table-stats')
@@ -79,6 +92,8 @@ export const renderStatsContainer = (
     const casterDetailsContainer = clone.querySelector<HTMLElement>('.char-stats--caster-details')
     renderCasterDetails(casterDetailsContainer, classDef, stats)
   }
+
+  renderArmorDetails(clone.querySelector<HTMLElement>('.char-stats--armor'), classDef)
 
   // Other details
   clone.querySelector('.char-gold').textContent = stats.Gold.toString()
