@@ -56,6 +56,14 @@ const renderArmorDetails = (container: HTMLElement, classDef: CharacterClassDef)
   container.removeAttribute('hidden')
 }
 
+const renderAlignmentDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
+  const alignment = classDef.Alignment.length === 3 ? 'Any' : classDef.Alignment.join(', ')
+  container.appendChild(
+    createElementFromHtml(`<p><span class="font-bold">Suggested alignment</span>: ${alignment}</p>`),
+  )
+  container.removeAttribute('hidden')
+}
+
 export const renderStatsContainer = (
   container: HTMLElement,
   stats: CharacterStats,
@@ -92,6 +100,7 @@ export const renderStatsContainer = (
   }
 
   renderArmorDetails(clone.querySelector<HTMLElement>('.char-stats--armor'), classDef)
+  renderAlignmentDetails(clone.querySelector<HTMLElement>('.char-stats--alignment'), classDef)
 
   // Other details
   clone.querySelector('.char-gold').textContent = stats.Gold.toString()
