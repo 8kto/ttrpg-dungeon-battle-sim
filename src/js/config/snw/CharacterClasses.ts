@@ -1,5 +1,5 @@
-import { Alignment, AttrScore, CharacterClass, CharacterClassDef, CharacterRace } from '../../domain/snw/CharacterClass'
 import { Dice } from '../../domain/Dice'
+import { Alignment, AttrScore, CharacterClass, CharacterClassDef, CharacterRace } from '../../domain/snw/CharacterClass'
 
 export const ANY_RACE = Object.values(CharacterRace) as CharacterRace[]
 
@@ -20,8 +20,8 @@ const AssassinClassDef: CharacterClassDef = {
     [AttrScore.Intelligence, 12],
   ],
   HitDice: Dice.d6,
-  ArmorPermitted: 'Leather armor only, shield permitted.',
-  WeaponsPermitted: 'All',
+  ArmorPermitted: 'Leather armor only, shield permitted',
+  WeaponsPermitted: 'Any',
   Race: [CharacterRace.Human],
   Alignment: [Alignment.Neutral, Alignment.Chaotic],
 }
@@ -30,9 +30,10 @@ const ClericClassDef: CharacterClassDef = {
   name: CharacterClass.Cleric,
   PrimeAttr: [[AttrScore.Wisdom, PRIME_ATTR_MIN]],
   HitDice: Dice.d6,
-  ArmorPermitted:
-    'Blunt weapons only (club, flail, hammer, mace, staff, etc.). No missile weapons, other than oil or slings if the Referee permits.',
-  WeaponsPermitted: 'All',
+  ArmorPermitted: 'Any',
+  WeaponsPermitted:
+    'Blunt weapons only (club, flail, hammer, mace, staff, etc.). ' +
+    'No missile weapons other than oil or slings if the Referee permits.',
   Race: [CharacterRace.Human, CharacterRace.HalfElf],
   Alignment: [Alignment.Lawful, Alignment.Chaotic],
   $isCaster: true,
@@ -62,8 +63,8 @@ const FighterClassDef: CharacterClassDef = {
   name: CharacterClass.Fighter,
   PrimeAttr: [[AttrScore.Strength, PRIME_ATTR_MIN]],
   HitDice: Dice.d8,
-  ArmorPermitted: 'All',
-  WeaponsPermitted: 'All',
+  ArmorPermitted: 'Any',
+  WeaponsPermitted: 'Any',
   Race: ANY_RACE,
   Alignment: ANY_ALIGNMENT,
 }
@@ -90,7 +91,7 @@ const MonkClassDef: CharacterClassDef = {
   ],
   HitDice: Dice.d4,
   ArmorPermitted: 'None',
-  WeaponsPermitted: 'All',
+  WeaponsPermitted: 'Any',
   Race: [CharacterRace.Human],
   Alignment: ANY_ALIGNMENT,
 }
@@ -100,8 +101,8 @@ const PaladinClassDef: CharacterClassDef = {
   PrimeAttr: [[AttrScore.Strength, PRIME_ATTR_MIN]],
   StrictAttr: [[AttrScore.Charisma, 17]],
   HitDice: Dice.d8,
-  ArmorPermitted: 'All',
-  WeaponsPermitted: 'All',
+  ArmorPermitted: 'Any',
+  WeaponsPermitted: 'Any',
   Race: [CharacterRace.Human],
   Alignment: [Alignment.Lawful],
 }
@@ -115,8 +116,8 @@ const RangerClassDef: CharacterClassDef = {
     [AttrScore.Wisdom, 12],
   ],
   HitDice: Dice.d8,
-  ArmorPermitted: 'All',
-  WeaponsPermitted: 'All',
+  ArmorPermitted: 'Any',
+  WeaponsPermitted: 'Any',
   Race: [CharacterRace.Human],
   Alignment: [Alignment.Lawful],
   $meta: '2d8 at first level, 1d8/level thereafter',
@@ -131,6 +132,7 @@ const ThiefClassDef: CharacterClassDef = {
   Race: ANY_RACE,
   Alignment: [Alignment.Neutral, Alignment.Chaotic],
 }
+
 /**
  * Record for Character Class Definitions
  */
