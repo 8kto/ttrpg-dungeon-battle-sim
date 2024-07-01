@@ -47,14 +47,12 @@ export const renderCasterDetails = (
 }
 
 const renderArmorDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
-  const armorDetails = createElementFromHtml('<p>')
-  const weaponsDetails = createElementFromHtml('<p>')
-
-  armorDetails.innerHTML = `<span class="font-bold">Armor</span>: ${classDef.ArmorPermitted}`
-  weaponsDetails.innerHTML = `<span class="font-bold">Weapons</span>: ${classDef.WeaponsPermitted}`
-
-  container.appendChild(armorDetails)
-  container.appendChild(weaponsDetails)
+  container.appendChild(
+    createElementFromHtml(`<p><span class="font-bold">Armor</span>: ${classDef.ArmorPermitted}</p>`),
+  )
+  container.appendChild(
+    createElementFromHtml(`<p><span class="font-bold">Weapons</span>: ${classDef.WeaponsPermitted}</p>`),
+  )
   container.removeAttribute('hidden')
 }
 
