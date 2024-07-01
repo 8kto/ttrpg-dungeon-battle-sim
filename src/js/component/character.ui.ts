@@ -48,10 +48,10 @@ export const renderCasterDetails = (
 
 const renderArmorDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
   container.appendChild(
-    createElementFromHtml(`<p><span class="font-bold">Armor</span>: ${classDef.ArmorPermitted}</p>`),
+    createElementFromHtml(`<p><span class="font-bold text-gen-800">Armor</span>: ${classDef.ArmorPermitted}</p>`),
   )
   container.appendChild(
-    createElementFromHtml(`<p><span class="font-bold">Weapons</span>: ${classDef.WeaponsPermitted}</p>`),
+    createElementFromHtml(`<p><span class="font-bold text-gen-800">Weapons</span>: ${classDef.WeaponsPermitted}</p>`),
   )
   container.removeAttribute('hidden')
 }
@@ -59,7 +59,15 @@ const renderArmorDetails = (container: HTMLElement, classDef: CharacterClassDef)
 const renderAlignmentDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
   const alignment = classDef.Alignment.length === 3 ? 'Any' : classDef.Alignment.join(', ')
   container.appendChild(
-    createElementFromHtml(`<p><span class="font-bold">Suggested alignment</span>: ${alignment}</p>`),
+    createElementFromHtml(`<p><span class="font-bold text-gen-800">Suggested alignment</span>: ${alignment}</p>`),
+  )
+  container.removeAttribute('hidden')
+}
+
+const renderRacesDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
+  const races = classDef.Race.length === 3 ? 'Any' : classDef.Race.join(', ')
+  container.appendChild(
+    createElementFromHtml(`<p><span class="font-bold text-gen-800">Suggested races</span>: ${races}</p>`),
   )
   container.removeAttribute('hidden')
 }
@@ -101,6 +109,7 @@ export const renderStatsContainer = (
 
   renderArmorDetails(clone.querySelector<HTMLElement>('.char-stats--armor'), classDef)
   renderAlignmentDetails(clone.querySelector<HTMLElement>('.char-stats--alignment'), classDef)
+  renderRacesDetails(clone.querySelector<HTMLElement>('.char-stats--races'), classDef)
 
   // Other details
   clone.querySelector('.char-gold').textContent = stats.Gold.toString()

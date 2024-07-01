@@ -55,7 +55,6 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 - [ ] More convenient Import
 - [ ] Production Tailwind version
 - [ ] New random character: adjust heuristics (drop hopeless, pick random properly)
-- [ ] Available races per class
 - [ ] Race
 - [ ] Get EXP bonuses
 - [ ] Apply to Carry modifier to encumbrance

@@ -184,9 +184,7 @@ export const markSelectedInventory = (inventoryId: string): void => {
   const headerElement = document.getElementById(`${inventoryId}-header`)
   if (headerElement) {
     headerElement.appendChild(
-      createElementFromHtml(
-        `<span class="text-alt selected text-sm ml-2" title="Currently selected inventory">🎒</span>`,
-      ),
+      createElementFromHtml(`<span class="text-alt selected text-sm ml-2" title="Selected character">🛡️</span>`),
     )
   }
 
