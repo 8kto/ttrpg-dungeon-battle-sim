@@ -7,7 +7,7 @@ exports[`characterClasses should match the snapshot 1`] = `
       "Neutral",
       "Chaotic",
     ],
-    "ArmorPermitted": "Leather armor only, shield permitted.",
+    "ArmorPermitted": "Leather armor only, shield permitted",
     "HitDice": 6,
     "PrimeAttr": [
       [
@@ -40,7 +40,7 @@ exports[`characterClasses should match the snapshot 1`] = `
         12,
       ],
     ],
-    "WeaponsPermitted": "All",
+    "WeaponsPermitted": "Any",
     "name": "Assassin",
   },
   "Cleric": {
@@ -50,7 +50,7 @@ exports[`characterClasses should match the snapshot 1`] = `
       "Lawful",
       "Chaotic",
     ],
-    "ArmorPermitted": "Blunt weapons only (club, flail, hammer, mace, staff, etc.). No missile weapons, other than oil or slings if the Referee permits.",
+    "ArmorPermitted": "Any",
     "HitDice": 6,
     "PrimeAttr": [
       [
@@ -62,7 +62,7 @@ exports[`characterClasses should match the snapshot 1`] = `
       "Human",
       "HalfElf",
     ],
-    "WeaponsPermitted": "All",
+    "WeaponsPermitted": "Blunt weapons only (club, flail, hammer, mace, staff, etc.). No missile weapons other than oil or slings if the Referee permits.",
     "name": "Cleric",
   },
   "Druid": {
@@ -105,7 +105,7 @@ exports[`characterClasses should match the snapshot 1`] = `
       "Neutral",
       "Lawful",
     ],
-    "ArmorPermitted": "All",
+    "ArmorPermitted": "Any",
     "HitDice": 8,
     "PrimeAttr": [
       [
@@ -120,7 +120,7 @@ exports[`characterClasses should match the snapshot 1`] = `
       "HalfElf",
       "Hobbit",
     ],
-    "WeaponsPermitted": "All",
+    "WeaponsPermitted": "Any",
     "name": "Fighter",
   },
   "MagicUser": {
@@ -178,14 +178,14 @@ exports[`characterClasses should match the snapshot 1`] = `
         15,
       ],
     ],
-    "WeaponsPermitted": "All",
+    "WeaponsPermitted": "Any",
     "name": "Monk",
   },
   "Paladin": {
     "Alignment": [
       "Lawful",
     ],
-    "ArmorPermitted": "All",
+    "ArmorPermitted": "Any",
     "HitDice": 8,
     "PrimeAttr": [
       [
@@ -202,7 +202,7 @@ exports[`characterClasses should match the snapshot 1`] = `
         17,
       ],
     ],
-    "WeaponsPermitted": "All",
+    "WeaponsPermitted": "Any",
     "name": "Paladin",
   },
   "Ranger": {
@@ -210,7 +210,7 @@ exports[`characterClasses should match the snapshot 1`] = `
     "Alignment": [
       "Lawful",
     ],
-    "ArmorPermitted": "All",
+    "ArmorPermitted": "Any",
     "HitDice": 8,
     "PrimeAttr": [
       [
@@ -235,7 +235,7 @@ exports[`characterClasses should match the snapshot 1`] = `
         12,
       ],
     ],
-    "WeaponsPermitted": "All",
+    "WeaponsPermitted": "Any",
     "name": "Ranger",
   },
   "Thief": {
