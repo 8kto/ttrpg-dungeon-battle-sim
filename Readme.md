@@ -50,8 +50,6 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 - [ ] Mobiles support (?)
 - [ ] Languages support (?)
 - [ ] Add coins
-- [ ] Filter by name
-- [ ] Extend equipment lists (?)
 - [ ] More convenient Import
 - [ ] Production Tailwind version
 - [ ] New random character: adjust heuristics (drop hopeless, pick random properly)
@@ -60,6 +58,8 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 - [ ] Apply to Carry modifier to encumbrance
 - [ ] Char AC
 - [ ] Char To Hit
+- [ ] Char: edit numbers
 - [ ] Saving Throw / num + details
 - [ ] Generate with strict 0e attrs
 - [ ] Fighter Parrying Ability
+- [ ] Casters: spells
