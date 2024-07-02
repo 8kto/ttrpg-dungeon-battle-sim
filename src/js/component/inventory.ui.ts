@@ -343,7 +343,7 @@ export const renderEquipCategorySection = (container: HTMLElement, categoryName:
   items.forEach((item) => addEquipRow(tableBody, item))
 }
 
-const bindNewItemControl = (): void => {
+const bindInventoryCommonControls = (): void => {
   document.getElementById('add-new-item-button').addEventListener('click', () => {
     const inputNameElement = document.getElementById('new-item-name') as HTMLInputElement
     const inputWeightElement = document.getElementById('new-item-weight') as HTMLInputElement
@@ -375,9 +375,7 @@ const bindNewItemControl = (): void => {
     state.serializeInventories()
     dispatchEvent('RenderInventories')
   })
-}
 
-const bindInventoryCommonControls = (): void => {
   document.getElementById('add-inventory-button').addEventListener('click', () => {
     const newNameInputElement = document.getElementById('new-inventory-name') as HTMLInputElement
     const inventoryName = newNameInputElement?.value.trim() || DEFAULT_INVENTORY_ID
@@ -400,5 +398,4 @@ export const initInventoryUi = (): void => {
   markSelectedInventory(currentInventoryId)
 
   bindInventoryCommonControls()
-  bindNewItemControl()
 }
