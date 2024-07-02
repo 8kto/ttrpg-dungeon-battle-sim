@@ -377,15 +377,7 @@ const bindNewItemControl = (): void => {
   })
 }
 
-export const initInventoryUi = (): void => {
-  const currentInventoryId = getState().getCurrentInventoryId()
-  const equipmentContainer = document.getElementById('equipment-container')
-
-  renderEquipCategorySection(equipmentContainer, 'Armor', Armor)
-  renderEquipCategorySection(equipmentContainer, 'Weapons', Weapons)
-  renderEquipCategorySection(equipmentContainer, 'Equipment', Equip)
-
-  // TODO extract
+const bindInventoryCommonControls = (): void => {
   document.getElementById('add-inventory-button').addEventListener('click', () => {
     const newNameInputElement = document.getElementById('new-inventory-name') as HTMLInputElement
     const inventoryName = newNameInputElement?.value.trim() || DEFAULT_INVENTORY_ID
@@ -394,9 +386,19 @@ export const initInventoryUi = (): void => {
     getState().setCurrentInventoryId(inventoryId)
     markSelectedInventory(inventoryId)
   })
+}
+
+export const initInventoryUi = (): void => {
+  const currentInventoryId = getState().getCurrentInventoryId()
+  const equipmentContainer = document.getElementById('equipment-container')
+
+  renderEquipCategorySection(equipmentContainer, 'Armor', Armor)
+  renderEquipCategorySection(equipmentContainer, 'Weapons', Weapons)
+  renderEquipCategorySection(equipmentContainer, 'Equipment', Equip)
 
   dispatchEvent('RenderInventories')
   markSelectedInventory(currentInventoryId)
 
+  bindInventoryCommonControls()
   bindNewItemControl()
 }
