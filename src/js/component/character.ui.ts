@@ -2,6 +2,7 @@ import { CharacterClasses } from '../config/snw/CharacterClasses'
 import { CharacterClassDef } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
 import { getState } from '../state/State'
+import { dispatchEvent } from '../utils/event'
 import { createElementFromHtml } from '../utils/layout'
 import {
   getBestClass,
@@ -72,11 +73,10 @@ const renderRacesDetails = (container: HTMLElement, classDef: CharacterClassDef)
   container.removeAttribute('hidden')
 }
 
-export const renderStatsContainer = (
-  container: HTMLElement,
-  stats: CharacterStats,
-  classDef: CharacterClassDef,
-): void => {
+export const renderCharSection = (inventoryId: string, classDef: CharacterClassDef, stats: CharacterStats): void => {
+  const container = document.querySelector<HTMLElement>(`#${inventoryId}-container .char-stats`)
+  container.innerHTML = ''
+
   const template = document.getElementById('template-char-stats') as HTMLTemplateElement
   const clone = document.importNode(template.content, true)
 
@@ -120,15 +120,32 @@ export const renderStatsContainer = (
   container.appendChild(clone)
 }
 
-export const renderCharacterSection = (
-  inventoryId: string,
-  charClass: CharacterClassDef,
-  charStats: CharacterStats,
-): void => {
-  const container = document.querySelector<HTMLElement>(`#${inventoryId}-container .char-stats`)
+const bindCharSectionControls = (inventoryId: string): void => {
+  document.getElementById(`${inventoryId}-add-new-random-char`).addEventListener('click', () => {
+    dispatchEvent('RenderNewRandomCharacter', { inventoryId })
+    document.getElementById(`${inventoryId}-save-char`).classList.remove('hidden')
+    dispatchEvent('SelectInventory', { id: inventoryId })
+  })
 
-  container.innerHTML = ''
-  renderStatsContainer(container, charStats, charClass)
+  document.getElementById(`${inventoryId}-save-char`).addEventListener('click', (event) => {
+    dispatchEvent('SerializeState')
+    const target = event.target as HTMLElement
+    target.closest('.inventory-controls-top-section').classList.add('hidden')
+    dispatchEvent('SelectInventory', { id: inventoryId })
+  })
+
+  document.getElementById(`${inventoryId}-remove-char`).addEventListener('click', () => {
+    const state = getState()
+    const inventory = state.getInventory(inventoryId)
+
+    if (confirm(`Remove character ${inventory.name}? The inventory will remain available.`)) {
+      state.removeChar(inventoryId)
+      state.setCurrentInventoryId(inventory.id)
+
+      dispatchEvent('RenderInventories')
+      dispatchEvent('SelectInventory', { id: inventory.id })
+    }
+  })
 }
 
 export const handleNewRandomCharInit = (inventoryId: string): void => {
@@ -155,7 +172,9 @@ export const handleNewRandomCharInit = (inventoryId: string): void => {
 
   charStats.HitPoints = getCharHitPoints(charClass, charStats.Constitution.HitPoints)
   state.setCharacter(inventoryId, charClass, charStats)
-  renderCharacterSection(inventoryId, charClass, charStats)
+
+  renderCharSection(inventoryId, charClass, charStats)
+  bindCharSectionControls(inventoryId)
 }
 
 export const initCharacterSectionUi = (): void => {

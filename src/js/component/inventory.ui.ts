@@ -116,32 +116,6 @@ export const bindInventoryControls = (inventoryId: string): void => {
       dispatchEvent('SelectInventory', { id: inventoryId })
     }
   })
-
-  document.getElementById(`${inventoryId}-add-new-random-char`).addEventListener('click', () => {
-    dispatchEvent('RenderNewRandomCharacter', { inventoryId })
-    document.getElementById(`${inventoryId}-save-char`).classList.remove('hidden')
-    dispatchEvent('SelectInventory', { id: inventoryId })
-  })
-
-  document.getElementById(`${inventoryId}-save-char`).addEventListener('click', (event) => {
-    dispatchEvent('SerializeState')
-    const target = event.target as HTMLElement
-    target.closest('.inventory-controls-top-section').classList.add('hidden')
-    dispatchEvent('SelectInventory', { id: inventoryId })
-  })
-
-  document.getElementById(`${inventoryId}-remove-char`).addEventListener('click', () => {
-    const state = getState()
-    const inventory = state.getInventory(inventoryId)
-
-    if (confirm(`Remove character ${inventory.name}? The inventory will remain available.`)) {
-      state.removeChar(inventoryId)
-      state.setCurrentInventoryId(inventory.id)
-
-      dispatchEvent('RenderInventories')
-      dispatchEvent('SelectInventory', { id: inventory.id })
-    }
-  })
 }
 
 const getInventoryDetails = (inventoryId: string): string => {
@@ -344,8 +318,9 @@ const bindInventoryCommonControls = (): void => {
     const inventoryId = addInventory(inventoryName)
 
     getState().setCurrentInventoryId(inventoryId)
-    markSelectedInventory(inventoryId)
     dispatchEvent('RenderNewRandomCharacter', { inventoryId })
+    dispatchEvent('RenderInventories')
+    markSelectedInventory(inventoryId)
   })
 }
 
