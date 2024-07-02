@@ -144,6 +144,23 @@ export const bindInventoryControls = (inventoryId: string): void => {
   })
 }
 
+const getInventoryDetails = (inventoryId: string): string => {
+  const inventory = getState().getInventory(inventoryId)
+  const carryModifier = inventory.character?.stats?.Strength?.Carry || 0
+  const carryFragment = !carryModifier
+    ? ''
+    : `&nbsp;<span>(Carry modifier: ${carryModifier < 0 ? carryModifier : `+${carryModifier}`} pounds)</span>`
+
+  return `<div class="text-sm mb-4">
+            <p>Total Weight: <span id="${inventoryId}-total-weight" class="font-semibold">0</span> pounds${carryFragment}</p>
+            <p>Total Cost: <span id="${inventoryId}-total-cost" class="font-semibold">0</span> gold pieces</p>
+            <p>Base movement rate: <span id="${inventoryId}-base-movement-rate" class="font-semibold">0</span></p>
+            <p>
+              <span class="">Underground speed</span>, feet per turn: <span id="${inventoryId}-speed-feet-per-turn" class="text-gen-800">...</span>
+            </p>
+          </div>`
+}
+
 export const renderInitialInventory = (inventoryId: string, name?: string): void => {
   const inventoryTableContainer = document.getElementById('inventories-container')
 
@@ -161,14 +178,7 @@ export const renderInitialInventory = (inventoryId: string, name?: string): void
             <div class="char-stats my-2"></div>
           </header>
           ${getInventoryTable(inventoryId)}
-          <div class="text-sm mb-4">
-            <p>Total Weight: <span id="${inventoryId}-total-weight" class="font-semibold">0</span> pounds</p>
-            <p>Total Cost: <span id="${inventoryId}-total-cost" class="font-semibold">0</span> gold pieces</p>
-            <p>Base movement rate: <span id="${inventoryId}-base-movement-rate" class="font-semibold">0</span></p>
-            <p>
-              <span class="">Speed</span>, feet per turn: <span id="${inventoryId}-speed-feet-per-turn" class="text-gen-800">...</span>
-            </p>
-          </div>
+          ${getInventoryDetails(inventoryId)}
         </section>
     `),
   )
@@ -256,7 +266,6 @@ export const renderInventory = (inventoryId: string, name?: string): void => {
     totalCost += item.cost * item.quantity
   })
 
-  // TODO test carry modifier
   const charStats = inventory.character?.stats
   const carryModifier = charStats?.Strength.Carry || 0
   const baseMovementRate = getBaseMovementRate(totalWeight, carryModifier)
