@@ -122,6 +122,12 @@ export class State {
     this.serializeInventories()
   }
 
+  removeChar(id: string): void {
+    delete this.#inventories[id].character?.stats
+    delete this.#inventories[id].character?.classDef
+    this.serializeInventories()
+  }
+
   resetInventoryItems(id: string): void {
     this.#inventories[id].items = { ...DEFAULT_INVENTORY_ITEMS }
     this.serializeInventories()

@@ -21,7 +21,7 @@ const getInventoryTable = (inventoryId: string): string => {
           </table>`
 }
 
-const getInventoryControlsTopSection = (inventoryId: string): string => {
+const getInventoryCharControlsSection = (inventoryId: string): string => {
   return `<section id="${inventoryId}-inventory-controls-top-section" class="inventory-controls-top-section mt-4 text-gen-800 text-sm flex gap-x-1">
             <button id="${inventoryId}-add-new-random-char" class="text-xs border rounded bg-white text-black-400 hover:text-white rounded-l hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0 flex items-center">
               <span class="block px-2 py-1">♻ Generate random character</span>
@@ -35,24 +35,19 @@ const getInventoryControlsTopSection = (inventoryId: string): string => {
           </section>`
 }
 
-const getInventoryControlsBottomSection = (inventoryId: string): string => {
-  return `<section class="mt-4 text-gen-800 text-sm">
-            <div class="mb-4">
-              <p>Total Weight: <span id="${inventoryId}-total-weight" class="font-semibold">0</span> pounds</p>
-              <p>Total Cost: <span id="${inventoryId}-total-cost" class="font-semibold">0</span> gold pieces</p>
-              <p>Base movement rate: <span id="${inventoryId}-base-movement-rate" class="font-semibold">0</span></p>
-              <p>
-                <span class="">Speed</span>, feet per turn: <span id="${inventoryId}-speed-feet-per-turn" class="text-gen-800">...</span>
-              </p>
-            </div>
+const getInventoryControlsSection = (inventoryId: string): string => {
+  return `<section class="inventory-controls mt-0 text-gen-800 text-sm absolute top-0 right-0">
             <div class="flex justify-end">
-              <button id="${inventoryId}-rename-inventory" class="text-xs bg-gen-100 text-gen-400 hover:text-white rounded-l hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+              <button id="${inventoryId}-rename-inventory" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white rounded-l hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
                 <span role="img" title="Rename inventory" aria-label="Rename inventory" class="block px-2 py-1">Rename</span>
               </button>
-              <button id="${inventoryId}-reset-inventory" class="text-xs bg-gen-100 text-gen-400 hover:text-white hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+              <button id="${inventoryId}-remove-char" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+                <span role="img" title="Remove character" aria-label="Remove character" class="block px-2 py-1">Remove character</span>
+              </button>
+              <button id="${inventoryId}-reset-inventory" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
                 <span role="img" title="Reset inventory items" aria-label="Reset inventory items" class="block px-2 py-1">Reset</span>
               </button>
-              <button id="${inventoryId}-remove-inventory" class="text-xs bg-gen-100 text-gen-400 hover:text-white rounded-r hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+              <button id="${inventoryId}-remove-inventory" class="text-xs bg-white border text-gen-400 hover:text-white rounded-r hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
                 <span role="img" title="Remove inventory" aria-label="Remove inventory" class="block px-3 py-1.5">❌</span>
               </button>
             </div>
@@ -134,6 +129,19 @@ export const bindInventoryControls = (inventoryId: string): void => {
     target.closest('.inventory-controls-top-section').classList.add('hidden')
     dispatchEvent('SelectInventory', { id: inventoryId })
   })
+
+  document.getElementById(`${inventoryId}-remove-char`).addEventListener('click', () => {
+    const state = getState()
+    const inventory = state.getInventory(inventoryId)
+
+    if (confirm(`Remove character ${inventory.name}? The inventory will remain available.`)) {
+      state.removeChar(inventoryId)
+      state.setCurrentInventoryId(inventory.id)
+
+      dispatchEvent('RenderInventories')
+      dispatchEvent('SelectInventory', { id: inventory.id })
+    }
+  })
 }
 
 export const renderInitialInventory = (inventoryId: string, name?: string): void => {
@@ -141,16 +149,26 @@ export const renderInitialInventory = (inventoryId: string, name?: string): void
 
   inventoryTableContainer.appendChild(
     createElementFromHtml(`
-        <section id="${inventoryId}-container" class="inventory-container px-4 py-2 border shadow-lg">
-          <h3
-            id="${inventoryId}-header"
-            class="inventory-header text-lg text-alt mb-4 hover:text-red-700 hover:cursor-pointer"
-            title="Click to select"
-          >${name ?? inventoryId}</h3>
-          ${getInventoryControlsTopSection(inventoryId)}
-          <div class="char-stats my-2"></div>
+        <section id="${inventoryId}-container" class="inventory-container px-4 py-4 border shadow-lg">
+          <header class="relative">
+            ${getInventoryControlsSection(inventoryId)}
+            <h3
+              id="${inventoryId}-header"
+              class="inventory-header text-lg text-alt mb-4 hover:text-red-700 hover:cursor-pointer"
+              title="Click to select"
+            >${name ?? inventoryId}</h3>
+            ${getInventoryCharControlsSection(inventoryId)}
+            <div class="char-stats my-2"></div>
+          </header>
           ${getInventoryTable(inventoryId)}
-          ${getInventoryControlsBottomSection(inventoryId)}
+          <div class="text-sm mb-4">
+            <p>Total Weight: <span id="${inventoryId}-total-weight" class="font-semibold">0</span> pounds</p>
+            <p>Total Cost: <span id="${inventoryId}-total-cost" class="font-semibold">0</span> gold pieces</p>
+            <p>Base movement rate: <span id="${inventoryId}-base-movement-rate" class="font-semibold">0</span></p>
+            <p>
+              <span class="">Speed</span>, feet per turn: <span id="${inventoryId}-speed-feet-per-turn" class="text-gen-800">...</span>
+            </p>
+          </div>
         </section>
     `),
   )
