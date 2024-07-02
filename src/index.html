@@ -358,9 +358,18 @@
         <div class="text-gen-800 text-sm"><span class="font-bold">Gold</span>: <span class="char-gold"></span> GP</div>
       </div>
       <div class="char-stats--caster-details text-sm mb-2" hidden></div>
-      <div class="char-stats--armor text-sm" hidden></div>
-      <div class="char-stats--alignment text-sm" hidden></div>
-      <div class="char-stats--races text-sm" hidden></div>
+
+      <div class="flex flex-wrap gap-4">
+        <div class="w-1/3">
+          <div class="char-stats--armor text-sm" hidden></div>
+        </div>
+
+        <div class="flex-1 w-2/3">
+          <div class="char-stats--alignment text-sm" hidden></div>
+          <div class="char-stats--races text-sm" hidden></div>
+        </div>
+      </div>
+
       <div class="grid md:grid-cols-3 gap-4 bg-white my-4">
         <div class="flex flex-col md:col-span-1">
           <table class="table-stats table-fixed border border-gray-300 flex-grow shadow-md">
