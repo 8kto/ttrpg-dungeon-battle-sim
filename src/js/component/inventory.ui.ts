@@ -383,6 +383,7 @@ const bindInventoryCommonControls = (): void => {
 
     getState().setCurrentInventoryId(inventoryId)
     markSelectedInventory(inventoryId)
+    dispatchEvent('RenderNewRandomCharacter')
   })
 }
 
