@@ -19,6 +19,7 @@ else
   PUBLIC_PATH=/
 fi
 
+npx tailwindcss -i ./src/styles/styles.css -o ./src/styles/styles.processed.css
 yarn build -- --publicPath "$PUBLIC_PATH"
 mkdir -p /tmp/snw-to-be-deployed
 cp -r build/* /tmp/snw-to-be-deployed
