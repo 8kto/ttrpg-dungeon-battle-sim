@@ -7,8 +7,12 @@ export const subscribeToEvents = (): void => {
     renderInventories()
   })
 
-  document.addEventListener('RenderNewRandomCharacter', () => {
-    handleNewRandomCharInit()
+  document.addEventListener('RenderNewRandomCharacter', (event: CustomEvent) => {
+    if (!event.detail.inventoryId) {
+      throw new Error('No inventory ID passed')
+    }
+
+    handleNewRandomCharInit(event.detail.inventoryId)
   })
 
   document.addEventListener('SerializeState', () => {

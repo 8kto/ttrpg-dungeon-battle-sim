@@ -123,7 +123,7 @@ export const bindInventoryControls = (inventoryId: string): void => {
   })
 
   document.getElementById(`${inventoryId}-add-new-random-char`).addEventListener('click', () => {
-    dispatchEvent('RenderNewRandomCharacter')
+    dispatchEvent('RenderNewRandomCharacter', { inventoryId })
     document.getElementById(`${inventoryId}-save-char`).classList.remove('hidden')
     dispatchEvent('SelectInventory', { id: inventoryId })
   })
@@ -318,7 +318,7 @@ const bindInventoryCommonControls = (): void => {
 
     getState().setCurrentInventoryId(inventoryId)
     markSelectedInventory(inventoryId)
-    dispatchEvent('RenderNewRandomCharacter')
+    dispatchEvent('RenderNewRandomCharacter', { inventoryId })
   })
 }
 

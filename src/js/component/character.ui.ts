@@ -131,7 +131,7 @@ export const renderCharacterSection = (
   renderStatsContainer(container, charStats, charClass)
 }
 
-export const handleNewRandomCharInit = (): void => {
+export const handleNewRandomCharInit = (inventoryId: string): void => {
   const state = getState()
   const charStats = getRandomAttributes()
   const suggestions = getClassSuggestions(charStats, 'PrimeAttr')
@@ -154,9 +154,8 @@ export const handleNewRandomCharInit = (): void => {
   }
 
   charStats.HitPoints = getCharHitPoints(charClass, charStats.Constitution.HitPoints)
-  const currentInventoryId = state.getCurrentInventoryId()
-  state.setCharacter(currentInventoryId, charClass, charStats)
-  renderCharacterSection(currentInventoryId, charClass, charStats)
+  state.setCharacter(inventoryId, charClass, charStats)
+  renderCharacterSection(inventoryId, charClass, charStats)
 }
 
 export const initCharacterSectionUi = (): void => {
