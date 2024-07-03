@@ -1,6 +1,6 @@
 import { AllEquipment } from '../config/snw/Equip'
 import { getState } from '../state/State'
-import { renderInventory } from './inventory.ui'
+import { dispatchEvent } from '../utils/event'
 
 export const bindConversionControls = (): void => {
   const allowOnlyExistingCheckbox = document.getElementById('equip-import-allow-only-existing') as HTMLInputElement
@@ -38,8 +38,7 @@ export const bindConversionControls = (): void => {
       document.getElementById('error-output').textContent = ''
     }
 
-    // FIXME event
-    renderInventory(currentInventoryId)
+    dispatchEvent('RenderInventory', { inventoryId: currentInventoryId })
   })
 }
 

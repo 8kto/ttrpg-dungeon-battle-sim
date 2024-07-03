@@ -46,7 +46,7 @@ const addInventory = (inventoryName: string): string => {
 
   if (!state.getInventory(inventoryId)) {
     state.setInventory(inventoryId, State.getNewInventory(inventoryId, inventoryName))
-    renderInventory(inventoryId, inventoryName)
+    dispatchEvent('RenderInventory', { inventoryId, inventoryName })
 
     const element = document.getElementById(`${inventoryId}-container`)
     scrollToElement(element)
@@ -60,7 +60,7 @@ const addInventory = (inventoryName: string): string => {
  */
 export const bindInventoryControls = (inventoryId: string): void => {
   document.getElementById(`${inventoryId}-header`).addEventListener('click', () => {
-    dispatchEvent('SelectInventory', { id: inventoryId })
+    dispatchEvent('SelectInventory', { inventoryId })
   })
 
   document.getElementById(`${inventoryId}-remove-inventory`).addEventListener('click', () => {
@@ -75,7 +75,7 @@ export const bindInventoryControls = (inventoryId: string): void => {
         state.setCurrentInventoryId(selected.id)
 
         dispatchEvent('RenderInventories')
-        dispatchEvent('SelectInventory', { id: selected.id })
+        dispatchEvent('SelectInventory', { inventoryId: selected.id })
       } else {
         dispatchEvent('RenderInventories')
       }
@@ -89,7 +89,7 @@ export const bindInventoryControls = (inventoryId: string): void => {
     if (confirm(`Reset inventory items for ${inventory.name}?`)) {
       state.resetInventoryItems(inventoryId)
       dispatchEvent('RenderInventories')
-      dispatchEvent('SelectInventory', { id: inventoryId })
+      dispatchEvent('SelectInventory', { inventoryId })
     }
   })
 
@@ -102,7 +102,7 @@ export const bindInventoryControls = (inventoryId: string): void => {
       inventory.name = name
       state.setInventory(inventoryId, inventory)
       dispatchEvent('RenderInventories')
-      dispatchEvent('SelectInventory', { id: inventoryId })
+      dispatchEvent('SelectInventory', { inventoryId })
     }
   })
 
@@ -175,9 +175,9 @@ export const markSelectedInventory = (inventoryId: string): void => {
 }
 
 /**
- * Renders the specified inventory in the UI.
+ * @notice No direct calls
  */
-export const renderInventory = (inventoryId: string, name?: string): void => {
+export const handleRenderInventory = (inventoryId: string, inventoryName?: string): void => {
   const inventory = getState().getInventory(inventoryId)
   if (!inventory) {
     console.error('Inventory not found:', inventoryId)
@@ -188,7 +188,7 @@ export const renderInventory = (inventoryId: string, name?: string): void => {
   const cellClassnames = 'px-4 py-1'
   let inventoryTableContainer = document.querySelector(`#${inventoryId}-table-container`)
   if (!inventoryTableContainer) {
-    renderInitialInventory(inventoryId, name)
+    renderInitialInventory(inventoryId, inventoryName)
     inventoryTableContainer = document.querySelector(`#${inventoryId}-table-container`)
   }
 
@@ -224,7 +224,7 @@ export const renderInventory = (inventoryId: string, name?: string): void => {
     removeButton.className = 'px-4 py-1 text-sm text-red-800 hover:text-red-500'
     removeButton.onclick = (): void => {
       getState().removeFromInventory(inventoryId, item.name)
-      renderInventory(inventoryId, name)
+      dispatchEvent('RenderInventory', { inventoryId, inventoryName })
     }
 
     const actionsCell = row.insertCell(4)
@@ -265,10 +265,11 @@ export const updateSpeedDisplay = (inventoryId: string, baseMovementRate: BaseMo
 export const handleRenderInventories = (): void => {
   const inventoryTableContainer = document.getElementById('inventories-container')
   inventoryTableContainer.innerHTML = ''
+
   getState()
     .getInventories()
     .forEach((inventory) => {
-      renderInventory(inventory.id, inventory.name)
+      dispatchEvent('RenderInventory', { inventoryId: inventory.id, inventoryName: inventory.name })
 
       if (inventory.character?.stats) {
         dispatchEvent('RenderCharacterSection', { inventoryId: inventory.id })

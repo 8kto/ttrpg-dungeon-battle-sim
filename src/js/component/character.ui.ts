@@ -94,14 +94,14 @@ export const handleRenderNewCharControlsSection = (inventoryId: string): void =>
   container.appendChild(clone)
   container.querySelector(`.add-new-random-char-btn`).addEventListener('click', () => {
     dispatchEvent('RenderNewRandomCharacter', { inventoryId })
-    dispatchEvent('SelectInventory', { id: inventoryId })
+    dispatchEvent('SelectInventory', { inventoryId })
   })
 
   container.querySelector(`.save-char-btn`).addEventListener('click', () => {
     if (getState().getInventory(inventoryId).character?.stats) {
       container.setAttribute('hidden', 'hidden')
       dispatchEvent('SerializeState')
-      dispatchEvent('SelectInventory', { id: inventoryId })
+      dispatchEvent('SelectInventory', { inventoryId })
     }
   })
 }
@@ -165,10 +165,9 @@ export const handleRemoveCharacter = (inventoryId: string): void => {
 
   if (confirm(`Remove character ${inventory.name}? The inventory will remain available.`)) {
     state.removeCharacter(inventoryId)
-    state.setCurrentInventoryId(inventory.id)
 
     dispatchEvent('RenderInventories')
-    dispatchEvent('SelectInventory', { id: inventory.id })
+    dispatchEvent('SelectInventory', { inventoryId: inventory.id })
   }
 }
 
@@ -184,7 +183,7 @@ export const handleRenderNewRandomCharacter = (inventoryId: string): void => {
   try {
     const matched = getBestClass(suggestions)
 
-    // FIXME debug
+    // Debug
     // const matched = getBestClass([['Cleric', [['Wisdom', 13]], { Constitution: 14, Wisdom: 16 }]])
 
     if (matched) {

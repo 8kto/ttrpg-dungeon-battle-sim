@@ -2,9 +2,9 @@ import { Armor, Equip, Weapons } from '../config/snw/Equip'
 import { EquipItem } from '../domain/Equipment'
 import { getState } from '../state/State'
 import { getEquipNameSuffix } from '../utils/equipment'
+import { dispatchEvent } from '../utils/event'
 import { getInventoryIdFromName } from '../utils/inventory'
 import { createElementFromHtml } from '../utils/layout'
-import { renderInventory } from './inventory.ui'
 
 export const getEquipTableSection = (categoryName: string): string => `
         <section id="${getInventoryIdFromName(categoryName)}-section" class="mb-8">
@@ -52,7 +52,7 @@ const addEquipRow = (tableBody: HTMLTableSectionElement, item: EquipItem): void 
     const state = getState()
     const inventoryId = state.getCurrentInventoryId()
     state.addToInventory(inventoryId, item)
-    renderInventory(inventoryId, inventoryId)
+    dispatchEvent('RenderInventory', { inventoryId })
   }
 
   const actionsCell = row.insertCell(3)
