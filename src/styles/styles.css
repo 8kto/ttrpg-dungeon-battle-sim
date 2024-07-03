@@ -35,6 +35,14 @@ div:empty {
   color: #a13d68;
 }
 
+.hover\:text-alt:hover {
+  color: #a13d68;
+}
+
+.bg-alt {
+  background-color: #a13d68;
+}
+
 .text-sub {
   color: #cea181;
 }
