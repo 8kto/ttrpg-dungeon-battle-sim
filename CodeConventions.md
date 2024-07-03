@@ -2,20 +2,22 @@
 
 ## Common
 
-- Code is written in TypeScript, each function/method has typed arguments and return type
-- No JsDoc describes params, types do
-- JsDoc is used only for the logic descriptions
-- No linter warnings suppression in the codebase. Allowed in tests.
+- Code is written in TypeScript. Each function/method has typed arguments and a return type.
+- No JSDoc is needed for parameters; types serve this purpose.
+- JSDoc is used only for logic descriptions.
+- No linter warning suppressions in the codebase, except in tests.
 
 ## Components
 
-- No cross-referencing exported parts of modules.
-  For instance, no function from `inventory.ui.ts` can be imported into `character.ui.ts` or any other `*.ui.ts` module.
+- No cross-referencing of exported parts from different modules.
+  For example, no function from `inventory.ui.ts` should be imported into `character.ui.ts` or any other `*.ui.ts` module.
 - Instead, `*.ui.ts` modules interact through CustomEvents and subscriptions in `subscriptions.ts`.
-- No direct calls of functions used in subscriptions callbacks.
-  For instance, no direct `handleRenderInventories` call should be made. Instead, dispatch `RenderInventories` action.
+- No direct calls to functions used in subscription callbacks.
+  For example, do not directly call `handleRenderInventories`. Instead, dispatch the `RenderInventories` action.
+- No conditional logic in `subscriptions.ts`; only calls to event handlers that encapsulate all logic within them.
 
 ## Naming
 
 - "Equipment" is shortened to "Equip" everywhere.
-- "Character" is shortened to "Char" in HTML layout.
+- "Character" is shortened to "Char" in HTML layouts.
+- Subscription event handlers should have the `handle` prefix.
