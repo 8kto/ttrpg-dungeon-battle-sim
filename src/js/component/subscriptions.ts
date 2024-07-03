@@ -1,20 +1,22 @@
 import { getState } from '../state/State'
 import { assert } from '../utils/assert'
-import { handleNewRandomCharInit, renderCharSection } from './character.ui'
+import { handleNewRandomCharacterInit, renderCharacterSection, renderNewCharControlsSection } from './character.ui'
 import { markSelectedInventory, renderInventories } from './inventory.ui'
 
+/**
+ * Run once
+ */
 export const subscribeToEvents = (): void => {
-  document.addEventListener('RenderInventories', () => {
-    renderInventories()
-  })
-
-  document.addEventListener('RenderNewRandomCharacter', (event: CustomEvent) => {
-    assert(event.detail.inventoryId, 'No inventory ID passed')
-    handleNewRandomCharInit(event.detail.inventoryId)
-  })
-
   document.addEventListener('SerializeState', () => {
     getState().serializeInventories()
+  })
+
+  /**
+   ** Inventory
+   **/
+
+  document.addEventListener('RenderInventories', () => {
+    renderInventories()
   })
 
   document.addEventListener('SelectInventory', (event: CustomEvent) => {
@@ -24,6 +26,16 @@ export const subscribeToEvents = (): void => {
     markSelectedInventory(event.detail.id)
   })
 
+  /**
+   ** Character
+   **/
+
+  document.addEventListener('RenderNewRandomCharacter', (event: CustomEvent) => {
+    assert(event.detail.inventoryId, 'No inventory ID passed')
+    handleNewRandomCharacterInit(event.detail.inventoryId)
+    renderNewCharControlsSection(event.detail.inventoryId)
+  })
+
   document.addEventListener('RenderCharacterSection', (event: CustomEvent) => {
     assert(event.detail.inventoryId, 'No inventory ID passed')
 
@@ -31,11 +43,10 @@ export const subscribeToEvents = (): void => {
     const inventory = getState().getInventory(inventoryId)
 
     if (inventory.character?.classDef && inventory.character?.stats) {
-      renderCharSection(inventoryId, inventory.character.classDef, inventory.character.stats)
-      document.querySelector(`#${inventory.id}-inventory-controls-top-section`).classList.add('hidden')
+      renderCharacterSection(inventoryId, inventory.character.classDef, inventory.character.stats)
+      // document.querySelector(`#${inventory.id}-inventory-controls-top-section`).classList.add('hidden')
     }
   })
 }
 
-// FIXME event listeners added many times on new random char generation
 // FIXME any logic/condition should be put in the called funcs
