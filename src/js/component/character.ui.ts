@@ -106,11 +106,11 @@ export const handleRenderNewCharControlsSection = (inventoryId: string): void =>
   })
 }
 
-export const renderCharacterSection = (
-  inventoryId: string,
-  classDef: CharacterClassDef,
-  stats: CharacterStats,
-): void => {
+export const handleRenderCharacterSection = (inventoryId: string): void => {
+  const inventory = getState().getInventory(inventoryId)
+  const {classDef, stats} = inventory.character || {}
+  assert(classDef && stats, `No character data found for inventory ${  inventoryId}`)
+
   const container = getRootContainer(inventoryId).querySelector('.char-stats--container')
   container.innerHTML = ''
 
@@ -200,7 +200,7 @@ export const handleRenderNewRandomCharacter = (inventoryId: string): void => {
   charStats.HitPoints = getCharacterHitPoints(charClass, charStats.Constitution.HitPoints)
   state.setCharacter(inventoryId, charClass, charStats)
 
-  renderCharacterSection(inventoryId, charClass, charStats)
+  dispatchEvent('RenderCharacterSection', {inventoryId})
 }
 
 /**

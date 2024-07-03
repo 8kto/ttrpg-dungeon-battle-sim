@@ -270,10 +270,10 @@ export const handleRenderInventories = (): void => {
     .forEach((inventory) => {
       renderInventory(inventory.id, inventory.name)
 
-      if (inventory.character) {
+      if (inventory.character?.stats) {
         dispatchEvent('RenderCharacterSection', { inventoryId: inventory.id })
       } else {
-        dispatchEvent('RenderNewRandomCharacter', { inventoryId: inventory.id })
+        dispatchEvent('RenderNewCharacterControlsSection', { inventoryId: inventory.id })
       }
     })
 }

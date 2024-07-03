@@ -3,9 +3,9 @@ import { assert } from '../utils/assert'
 import { dispatchEvent } from '../utils/event'
 import {
   handleRemoveCharacter,
-  handleRenderNewRandomCharacter,
+  handleRenderCharacterSection,
   handleRenderNewCharControlsSection,
-  renderCharacterSection,
+  handleRenderNewRandomCharacter,
 } from './character.ui'
 import { handleRenderInventories, handleSelectInventory } from './inventory.ui'
 
@@ -17,9 +17,9 @@ export const subscribeToEvents = (): void => {
     getState().serialize()
   })
 
-  /**
-   ** Inventory
-   **/
+  //---------------------------------------------------------------------------
+  // Inventory
+  //---------------------------------------------------------------------------
 
   document.addEventListener('RenderInventories', () => {
     handleRenderInventories()
@@ -30,9 +30,9 @@ export const subscribeToEvents = (): void => {
     handleSelectInventory(event.detail.id)
   })
 
-  /**
-   ** Character
-   **/
+  //---------------------------------------------------------------------------
+  // Character
+  //---------------------------------------------------------------------------
 
   document.addEventListener('RenderNewCharacterControlsSection', (event: CustomEvent) => {
     assert(event.detail.inventoryId, 'No inventory ID passed')
@@ -47,13 +47,7 @@ export const subscribeToEvents = (): void => {
 
   document.addEventListener('RenderCharacterSection', (event: CustomEvent) => {
     assert(event.detail.inventoryId, 'No inventory ID passed')
-
-    const inventoryId = event.detail.inventoryId
-    const inventory = getState().getInventory(inventoryId)
-
-    if (inventory.character?.classDef && inventory.character?.stats) {
-      renderCharacterSection(inventoryId, inventory.character.classDef, inventory.character.stats)
-    }
+    handleRenderCharacterSection(event.detail.inventoryId)
   })
 
   document.addEventListener('RemoveCharacter', (event: CustomEvent) => {
@@ -62,5 +56,3 @@ export const subscribeToEvents = (): void => {
     dispatchEvent('RenderNewCharacterControlsSection', { inventoryId: event.detail.inventoryId })
   })
 }
-
-// FIXME any logic/condition should be put in the called funcs
