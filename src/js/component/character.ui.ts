@@ -12,6 +12,7 @@ import {
   getRandomAttributes,
   getRandomClass,
 } from '../utils/snw/character'
+import { getExperienceBonus } from '../utils/snw/experience'
 
 const getRootContainer = (inventoryId: string): HTMLElement => {
   const elem = document.querySelector<HTMLElement>(`#${inventoryId}-container .char-stats`)
@@ -154,6 +155,7 @@ export const handleRenderCharacterSection = (inventoryId: string): void => {
   container.querySelector('.char-hp').textContent = stats.HitPoints.toString()
   container.querySelector('.char-hd').textContent = classDef.HitDice.toString()
   container.querySelector('.char-class').textContent = classDef.name
+  container.querySelector('.char-exp-bonus').textContent = getExperienceBonus(classDef, stats).toString()
 }
 
 /**
