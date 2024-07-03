@@ -2,11 +2,11 @@
  * @param {string} htmlString Should enclose the layout with one element (div, span etc.)
  * @returns {ChildNode}
  */
-export const createElementFromHtml = <T = HTMLElement>(htmlString: string): T => {
-  const div = document.createElement('div') as T
+export const createElementFromHtml = <T extends HTMLElement = HTMLElement>(htmlString: string): T => {
+  const div = document.createElement('div')
   div.innerHTML = htmlString.trim()
 
-  return div.firstChild
+  return div.firstChild as T
 }
 
 export const scrollToElement = (element: HTMLElement): void => {
