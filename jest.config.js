@@ -1,5 +1,5 @@
-// jest.config.js
 module.exports = {
+  collectCoverageFrom: ['src/**/*.ts', 'src/**/*.js'],
   moduleFileExtensions: ['js', 'ts', 'tsx'],
   roots: ['<rootDir>/src/'],
   testEnvironment: 'jsdom',
