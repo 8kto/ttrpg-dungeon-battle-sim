@@ -21,33 +21,19 @@ const getInventoryTable = (inventoryId: string): string => {
           </table>`
 }
 
-const getInventoryCharControlsSection = (inventoryId: string): string => {
-  return `<section id="${inventoryId}-inventory-controls-top-section" class="inventory-controls-top-section mt-4 text-gen-800 text-sm flex gap-x-1">
-            <button id="${inventoryId}-add-new-random-char" class="text-xs border rounded bg-white text-black-400 hover:text-white rounded-l hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0 flex items-center">
-              <span class="block px-2 py-1">♻ Generate random character</span>
-            </button>
-            <button
-              id="${inventoryId}-save-char"
-              class="text-xs border rounded bg-white text-alt hover:text-white rounded-l hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0 flex items-center hidden"
-            >
-              <span class="block px-2 py-1">Save</span>
-            </button>
-          </section>`
-}
-
 const getInventoryControlsSection = (inventoryId: string): string => {
   return `<section class="inventory-controls mt-0 text-gen-800 text-sm absolute top-0 right-0">
             <div class="flex justify-end">
-              <button id="${inventoryId}-rename-inventory" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white rounded-l hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+              <button id="${inventoryId}-rename-inventory" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white rounded-l hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
                 <span role="img" title="Rename inventory" aria-label="Rename inventory" class="block px-2 py-1">Rename</span>
               </button>
-              <button id="${inventoryId}-remove-char" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+              <button id="${inventoryId}-remove-char" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
                 <span role="img" title="Remove character" aria-label="Remove character" class="block px-2 py-1">Remove character</span>
               </button>
-              <button id="${inventoryId}-reset-inventory" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+              <button id="${inventoryId}-reset-inventory" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
                 <span role="img" title="Reset inventory items" aria-label="Reset inventory items" class="block px-2 py-1">Reset</span>
               </button>
-              <button id="${inventoryId}-remove-inventory" class="text-xs bg-white border text-gen-400 hover:text-white rounded-r hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+              <button id="${inventoryId}-remove-inventory" class="text-xs bg-white border text-gen-400 hover:text-white rounded-r hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
                 <span role="img" title="Remove inventory" aria-label="Remove inventory" class="block px-3 py-1.5">❌</span>
               </button>
             </div>
@@ -148,8 +134,10 @@ export const renderInitialInventory = (inventoryId: string, name?: string): void
               class="inventory-header text-lg text-alt mb-4 hover:text-red-700 hover:cursor-pointer"
               title="Click to select"
             >${name ?? inventoryId}</h3>
-            ${getInventoryCharControlsSection(inventoryId)}
-            <div class="char-stats my-2"></div>
+            <div class="char-stats my-2">
+              <div class="char-stats--controls mb-2"></div>
+              <div class="char-stats--container mb-2"></div>
+            </div>
           </header>
           ${getInventoryTable(inventoryId)}
           ${getInventoryDetails(inventoryId)}
@@ -252,11 +240,6 @@ export const renderInventory = (inventoryId: string, name?: string): void => {
   updateSpeedDisplay(inventoryId, baseMovementRate)
 }
 
-/**
- * FIXME to char section
- * Updates the HTML element with speeds for walking, running, and combat
- * based on the base movement rate.
- */
 export const updateSpeedDisplay = (inventoryId: string, baseMovementRate: BaseMovementRate): void => {
   const speeds = getUndergroundSpeed(baseMovementRate)
   document.getElementById(`${inventoryId}-speed-feet-per-turn`).innerHTML =
@@ -275,10 +258,15 @@ export const renderInventories = (): void => {
 
       if (inventory.character) {
         dispatchEvent('RenderCharacterSection', { inventoryId: inventory.id })
+      } else {
+        dispatchEvent('RenderNewRandomCharacter', { inventoryId: inventory.id })
       }
     })
 }
 
+/**
+ * Run once
+ */
 const bindInventoryCommonControls = (): void => {
   document.getElementById('add-new-item-button').addEventListener('click', () => {
     const inputNameElement = document.getElementById('new-item-name') as HTMLInputElement
@@ -319,11 +307,13 @@ const bindInventoryCommonControls = (): void => {
 
     getState().setCurrentInventoryId(inventoryId)
     dispatchEvent('RenderNewRandomCharacter', { inventoryId })
-    dispatchEvent('RenderInventories')
     markSelectedInventory(inventoryId)
   })
 }
 
+/**
+ * Run once
+ */
 export const initInventoryUi = (): void => {
   const currentInventoryId = getState().getCurrentInventoryId()
 
@@ -332,3 +322,6 @@ export const initInventoryUi = (): void => {
 
   bindInventoryCommonControls()
 }
+
+// TODO incl bind* to all render* funcs
+// TODO ? Code conventions: all funcs within the same module should be called directly, not through the Events subscriptions

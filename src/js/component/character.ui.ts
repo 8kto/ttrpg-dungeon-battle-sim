@@ -2,6 +2,7 @@ import { CharacterClasses } from '../config/snw/CharacterClasses'
 import { CharacterClassDef } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
 import { getState } from '../state/State'
+import { assert } from '../utils/assert'
 import { dispatchEvent } from '../utils/event'
 import { createElementFromHtml } from '../utils/layout'
 import {
@@ -11,6 +12,13 @@ import {
   getRandomAttributes,
   getRandomClass,
 } from '../utils/snw/character'
+
+const getRootContainer = (inventoryId: string): HTMLElement => {
+  const elem = document.querySelector<HTMLElement>(`#${inventoryId}-container .char-stats`)
+  assert(elem, 'Character root container not found')
+
+  return elem
+}
 
 export const renderCasterDetails = (
   container: HTMLElement,
@@ -73,15 +81,40 @@ const renderRacesDetails = (container: HTMLElement, classDef: CharacterClassDef)
   container.removeAttribute('hidden')
 }
 
-export const renderCharSection = (inventoryId: string, classDef: CharacterClassDef, stats: CharacterStats): void => {
-  const container = document.querySelector<HTMLElement>(`#${inventoryId}-container .char-stats`)
+export const renderNewCharControlsSection = (inventoryId: string): void => {
+  const container = getRootContainer(inventoryId).querySelector('.char-stats--controls')
+  container.innerHTML = ''
+
+  const template = document.querySelector<HTMLTemplateElement>('#template-new-char-controls')
+  const clone = document.importNode(template.content, true)
+
+  container.appendChild(clone)
+  container.querySelector(`.add-new-random-char-btn`).addEventListener('click', () => {
+    dispatchEvent('RenderNewRandomCharacter', { inventoryId })
+    dispatchEvent('SelectInventory', { id: inventoryId })
+  })
+
+  container.querySelector(`.save-char-btn`).addEventListener('click', () => {
+    container.setAttribute('hidden', 'hidden')
+    dispatchEvent('SerializeState')
+    dispatchEvent('SelectInventory', { id: inventoryId })
+  })
+}
+
+export const renderCharacterSection = (
+  inventoryId: string,
+  classDef: CharacterClassDef,
+  stats: CharacterStats,
+): void => {
+  const container = getRootContainer(inventoryId).querySelector('.char-stats--container')
   container.innerHTML = ''
 
   const template = document.getElementById('template-char-stats') as HTMLTemplateElement
   const clone = document.importNode(template.content, true)
+  container.appendChild(clone)
 
-  const tableStats = clone.querySelector('table.table-stats')
-  const tableBonuses = clone.querySelector('table.table-bonuses')
+  const tableStats = container.querySelector('table.table-stats')
+  const tableBonuses = container.querySelector('table.table-bonuses')
 
   Object.entries(stats).forEach(([statName, stat]) => {
     const { Score, ...bonuses } = stat
@@ -103,37 +136,22 @@ export const renderCharSection = (inventoryId: string, classDef: CharacterClassD
   })
 
   if (classDef.$isCaster) {
-    const casterDetailsContainer = clone.querySelector<HTMLElement>('.char-stats--caster-details')
+    const casterDetailsContainer = container.querySelector<HTMLElement>('.char-stats--caster-details')
     renderCasterDetails(casterDetailsContainer, classDef, stats)
   }
 
-  renderArmorDetails(clone.querySelector<HTMLElement>('.char-stats--armor'), classDef)
-  renderAlignmentDetails(clone.querySelector<HTMLElement>('.char-stats--alignment'), classDef)
-  renderRacesDetails(clone.querySelector<HTMLElement>('.char-stats--races'), classDef)
+  renderArmorDetails(container.querySelector<HTMLElement>('.char-stats--armor'), classDef)
+  renderAlignmentDetails(container.querySelector<HTMLElement>('.char-stats--alignment'), classDef)
+  renderRacesDetails(container.querySelector<HTMLElement>('.char-stats--races'), classDef)
 
   // Other details
-  clone.querySelector('.char-gold').textContent = stats.Gold.toString()
-  clone.querySelector('.char-hp').textContent = stats.HitPoints.toString()
-  clone.querySelector('.char-hd').textContent = classDef.HitDice.toString()
-  clone.querySelector('.char-class').textContent = classDef.name
-
-  container.appendChild(clone)
+  container.querySelector('.char-gold').textContent = stats.Gold.toString()
+  container.querySelector('.char-hp').textContent = stats.HitPoints.toString()
+  container.querySelector('.char-hd').textContent = classDef.HitDice.toString()
+  container.querySelector('.char-class').textContent = classDef.name
 }
 
-const bindCharSectionControls = (inventoryId: string): void => {
-  document.getElementById(`${inventoryId}-add-new-random-char`).addEventListener('click', () => {
-    dispatchEvent('RenderNewRandomCharacter', { inventoryId })
-    document.getElementById(`${inventoryId}-save-char`).classList.remove('hidden')
-    dispatchEvent('SelectInventory', { id: inventoryId })
-  })
-
-  document.getElementById(`${inventoryId}-save-char`).addEventListener('click', (event) => {
-    dispatchEvent('SerializeState')
-    const target = event.target as HTMLElement
-    target.closest('.inventory-controls-top-section').classList.add('hidden')
-    dispatchEvent('SelectInventory', { id: inventoryId })
-  })
-
+export const bindCharacterSectionControls = (inventoryId: string): void => {
   document.getElementById(`${inventoryId}-remove-char`).addEventListener('click', () => {
     const state = getState()
     const inventory = state.getInventory(inventoryId)
@@ -148,7 +166,7 @@ const bindCharSectionControls = (inventoryId: string): void => {
   })
 }
 
-export const handleNewRandomCharInit = (inventoryId: string): void => {
+export const handleNewRandomCharacterInit = (inventoryId: string): void => {
   const state = getState()
   const charStats = getRandomAttributes()
   const suggestions = getClassSuggestions(charStats, 'PrimeAttr')
@@ -173,10 +191,15 @@ export const handleNewRandomCharInit = (inventoryId: string): void => {
   charStats.HitPoints = getCharHitPoints(charClass, charStats.Constitution.HitPoints)
   state.setCharacter(inventoryId, charClass, charStats)
 
-  renderCharSection(inventoryId, charClass, charStats)
-  bindCharSectionControls(inventoryId)
+  renderCharacterSection(inventoryId, charClass, charStats)
+  bindCharacterSectionControls(inventoryId)
 }
 
+/**
+ * Run once
+ */
 export const initCharacterSectionUi = (): void => {
   void 0
 }
+
+// TODO all char to character
