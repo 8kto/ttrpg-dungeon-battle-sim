@@ -7,7 +7,7 @@ import { dispatchEvent } from '../utils/event'
 import { createElementFromHtml } from '../utils/layout'
 import {
   getBestClass,
-  getCharHitPoints,
+  getCharacterHitPoints,
   getClassSuggestions,
   getRandomAttributes,
   getRandomClass,
@@ -157,7 +157,7 @@ export const bindCharacterSectionControls = (inventoryId: string): void => {
     const inventory = state.getInventory(inventoryId)
 
     if (confirm(`Remove character ${inventory.name}? The inventory will remain available.`)) {
-      state.removeChar(inventoryId)
+      state.removeCharacter(inventoryId)
       state.setCurrentInventoryId(inventory.id)
 
       dispatchEvent('RenderInventories')
@@ -188,7 +188,7 @@ export const handleNewRandomCharacterInit = (inventoryId: string): void => {
     charClass = getRandomClass()
   }
 
-  charStats.HitPoints = getCharHitPoints(charClass, charStats.Constitution.HitPoints)
+  charStats.HitPoints = getCharacterHitPoints(charClass, charStats.Constitution.HitPoints)
   state.setCharacter(inventoryId, charClass, charStats)
 
   renderCharacterSection(inventoryId, charClass, charStats)
@@ -201,5 +201,3 @@ export const handleNewRandomCharacterInit = (inventoryId: string): void => {
 export const initCharacterSectionUi = (): void => {
   void 0
 }
-
-// TODO all char to character

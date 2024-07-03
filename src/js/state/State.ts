@@ -122,7 +122,7 @@ export class State {
     this.serializeInventories()
   }
 
-  removeChar(id: string): void {
+  removeCharacter(id: string): void {
     delete this.#inventories[id].character?.stats
     delete this.#inventories[id].character?.classDef
     this.serializeInventories()

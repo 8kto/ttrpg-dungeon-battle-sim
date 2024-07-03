@@ -123,7 +123,7 @@ export const getRandomClass = (): CharacterClassDef => {
  * @param {number} bonusHp
  * @returns {number}
  */
-export const getCharHitPoints = (charClass: CharacterClassDef, bonusHp: number): number => {
+export const getCharacterHitPoints = (charClass: CharacterClassDef, bonusHp: number): number => {
   const baseHp = roll(charClass.HitDice)
 
   // Return at least 1 HP
