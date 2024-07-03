@@ -45,22 +45,23 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 - [x] Custom items
 - [x] Builds with WMR
 
+## Contributions
+
+Contributions are welcome. Code should follow conventions described in [CodeConventions](./CodeConventions.md).
+
 ### TODO
 
 - [ ] Mobiles support (?)
 - [ ] Languages support (?)
 - [ ] Add coins
-- [ ] Filter by name
-- [ ] Extend equipment lists (?)
 - [ ] More convenient Import
-- [ ] Production Tailwind version
 - [ ] New random character: adjust heuristics (drop hopeless, pick random properly)
-- [ ] Available races per class
 - [ ] Race
 - [ ] Get EXP bonuses
-- [ ] Apply to Carry modifier to encumbrance
 - [ ] Char AC
 - [ ] Char To Hit
+- [ ] Char: edit numbers
 - [ ] Saving Throw / num + details
 - [ ] Generate with strict 0e attrs
 - [ ] Fighter Parrying Ability
+- [ ] Casters: spells

@@ -36,8 +36,7 @@ export class State {
     }
   }
 
-  // TODO rename
-  serializeInventories(): void {
+  serialize(): void {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.#inventories))
   }
 
@@ -71,7 +70,7 @@ export class State {
 
   setCurrentInventoryId(id: string): void {
     this.#currentInventoryId = id
-    this.serializeInventories()
+    this.serialize()
   }
 
   /**
@@ -84,7 +83,7 @@ export class State {
       inventoryItems[item.name] = { ...item, quantity: 0 }
     }
     inventoryItems[item.name].quantity++
-    this.serializeInventories()
+    this.serialize()
   }
 
   /**
@@ -100,7 +99,7 @@ export class State {
         delete inventoryItems[itemName]
       }
 
-      this.serializeInventories()
+      this.serialize()
     }
   }
 
@@ -114,17 +113,23 @@ export class State {
 
   setInventory(id: string, inventory: Inventory): void {
     this.#inventories[id] = inventory
-    this.serializeInventories()
+    this.serialize()
   }
 
   removeInventory(id: string): void {
     delete this.#inventories[id]
-    this.serializeInventories()
+    this.serialize()
+  }
+
+  removeCharacter(id: string): void {
+    delete this.#inventories[id].character?.stats
+    delete this.#inventories[id].character?.classDef
+    this.serialize()
   }
 
   resetInventoryItems(id: string): void {
     this.#inventories[id].items = { ...DEFAULT_INVENTORY_ITEMS }
-    this.serializeInventories()
+    this.serialize()
   }
 
   static getNewInventory(id: string, name: string): Inventory {

@@ -1,5 +1,3 @@
-import { Armor, Equip, Weapons } from '../config/snw/Equip'
-import { EquipItem } from '../domain/Equipment'
 import { BaseMovementRate } from '../domain/snw/Movement'
 import { DEFAULT_INVENTORY_ID, getState, State } from '../state/State'
 import { getEquipNameSuffix } from '../utils/equipment'
@@ -23,54 +21,19 @@ const getInventoryTable = (inventoryId: string): string => {
           </table>`
 }
 
-export const getEquipTableSection = (categoryName: string): string => `
-        <section id="${getInventoryIdFromName(categoryName)}-section" class="mb-8">
-            <h2 class="text-2xl text-gen-700 font-bold mb-4">${categoryName}</h2>
-            <table class="min-w-full bg-white shadow-md rounded">
-                <thead class="bg-gen-100 text-left">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/2">Name</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Weight</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Cost, gp</th>
-                        <th class="px-2 py-3 text-center text-xs font-medium uppercase w-1/6">Actions</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </section>`
-
-const getInventoryControlsTopSection = (inventoryId: string): string => {
-  return `<section id="${inventoryId}-inventory-controls-top-section" class="inventory-controls-top-section mt-4 text-gen-800 text-sm flex gap-x-1">
-            <button id="${inventoryId}-add-new-random-char" class="text-xs border rounded bg-white text-black-400 hover:text-white rounded-l hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0 flex items-center">
-              <span class="block px-2 py-1">♻ Generate random character</span>
-            </button>
-            <button
-              id="${inventoryId}-save-char"
-              class="text-xs border rounded bg-white text-alt hover:text-white rounded-l hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0 flex items-center hidden"
-            >
-              <span class="block px-2 py-1">Save</span>
-            </button>
-          </section>`
-}
-
-const getInventoryControlsBottomSection = (inventoryId: string): string => {
-  return `<section class="mt-4 text-gen-800 text-sm">
-            <div class="mb-4">
-              <p>Total Weight: <span id="${inventoryId}-total-weight" class="font-semibold">0</span> pounds</p>
-              <p>Total Cost: <span id="${inventoryId}-total-cost" class="font-semibold">0</span> gold pieces</p>
-              <p>Base movement rate: <span id="${inventoryId}-base-movement-rate" class="font-semibold">0</span></p>
-              <p>
-                <span class="">Speed</span>, feet per turn: <span id="${inventoryId}-speed-feet-per-turn" class="text-gen-800">...</span>
-              </p>
-            </div>
+const getInventoryControlsSection = (inventoryId: string): string => {
+  return `<section class="inventory-controls mt-0 text-gen-800 text-sm absolute top-0 right-0">
             <div class="flex justify-end">
-              <button id="${inventoryId}-rename-inventory" class="text-xs bg-gen-100 text-gen-400 hover:text-white rounded-l hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+              <button id="${inventoryId}-rename-inventory" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white rounded-l hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
                 <span role="img" title="Rename inventory" aria-label="Rename inventory" class="block px-2 py-1">Rename</span>
               </button>
-              <button id="${inventoryId}-reset-inventory" class="text-xs bg-gen-100 text-gen-400 hover:text-white hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+              <button id="${inventoryId}-remove-char" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+                <span role="img" title="Remove character" aria-label="Remove character" class="block px-2 py-1">Remove character</span>
+              </button>
+              <button id="${inventoryId}-reset-inventory" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
                 <span role="img" title="Reset inventory items" aria-label="Reset inventory items" class="block px-2 py-1">Reset</span>
               </button>
-              <button id="${inventoryId}-remove-inventory" class="text-xs bg-gen-100 text-gen-400 hover:text-white rounded-r hover:bg-gen-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
+              <button id="${inventoryId}-remove-inventory" class="text-xs bg-white border text-gen-400 hover:text-white rounded-r hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
                 <span role="img" title="Remove inventory" aria-label="Remove inventory" class="block px-3 py-1.5">❌</span>
               </button>
             </div>
@@ -83,7 +46,7 @@ const addInventory = (inventoryName: string): string => {
 
   if (!state.getInventory(inventoryId)) {
     state.setInventory(inventoryId, State.getNewInventory(inventoryId, inventoryName))
-    renderInventory(inventoryId, inventoryName)
+    dispatchEvent('RenderInventory', { inventoryId, inventoryName })
 
     const element = document.getElementById(`${inventoryId}-container`)
     scrollToElement(element)
@@ -92,9 +55,12 @@ const addInventory = (inventoryName: string): string => {
   return inventoryId
 }
 
+/**
+ * Run once per inventory
+ */
 export const bindInventoryControls = (inventoryId: string): void => {
   document.getElementById(`${inventoryId}-header`).addEventListener('click', () => {
-    dispatchEvent('SelectInventory', { id: inventoryId })
+    dispatchEvent('SelectInventory', { inventoryId })
   })
 
   document.getElementById(`${inventoryId}-remove-inventory`).addEventListener('click', () => {
@@ -109,7 +75,7 @@ export const bindInventoryControls = (inventoryId: string): void => {
         state.setCurrentInventoryId(selected.id)
 
         dispatchEvent('RenderInventories')
-        dispatchEvent('SelectInventory', { id: selected.id })
+        dispatchEvent('SelectInventory', { inventoryId: selected.id })
       } else {
         dispatchEvent('RenderInventories')
       }
@@ -123,7 +89,7 @@ export const bindInventoryControls = (inventoryId: string): void => {
     if (confirm(`Reset inventory items for ${inventory.name}?`)) {
       state.resetInventoryItems(inventoryId)
       dispatchEvent('RenderInventories')
-      dispatchEvent('SelectInventory', { id: inventoryId })
+      dispatchEvent('SelectInventory', { inventoryId })
     }
   })
 
@@ -136,39 +102,52 @@ export const bindInventoryControls = (inventoryId: string): void => {
       inventory.name = name
       state.setInventory(inventoryId, inventory)
       dispatchEvent('RenderInventories')
-      dispatchEvent('SelectInventory', { id: inventoryId })
+      dispatchEvent('SelectInventory', { inventoryId })
     }
   })
 
-  document.getElementById(`${inventoryId}-add-new-random-char`).addEventListener('click', () => {
-    dispatchEvent('RenderNewRandomCharacter')
-    document.getElementById(`${inventoryId}-save-char`).classList.remove('hidden')
-    dispatchEvent('SelectInventory', { id: inventoryId })
-  })
-
-  document.getElementById(`${inventoryId}-save-char`).addEventListener('click', (event) => {
-    dispatchEvent('SerializeState')
-    const target = event.target as HTMLElement
-    target.closest('.inventory-controls-top-section').classList.add('hidden')
-    dispatchEvent('SelectInventory', { id: inventoryId })
+  document.getElementById(`${inventoryId}-remove-char`).addEventListener('click', () => {
+    dispatchEvent('RemoveCharacter', { inventoryId })
   })
 }
 
-export const renderInitialInventory = (inventoryId: string, name?: string): void => {
-  const inventoryTableContainer = document.getElementById('inventories-container')
+const getInventoryDetails = (inventoryId: string): string => {
+  const inventory = getState().getInventory(inventoryId)
+  const carryModifier = inventory.character?.stats?.Strength?.Carry || 0
+  const carryFragment = !carryModifier
+    ? ''
+    : `&nbsp;<span>(Carry modifier: ${carryModifier < 0 ? carryModifier : `+${carryModifier}`} pounds)</span>`
 
-  inventoryTableContainer.appendChild(
+  return `<div class="text-sm mb-4">
+            <p>Total Weight: <span id="${inventoryId}-total-weight" class="font-semibold">0</span> pounds${carryFragment}</p>
+            <p>Total Cost: <span id="${inventoryId}-total-cost" class="font-semibold">0</span> gold pieces</p>
+            <p>Base movement rate: <span id="${inventoryId}-base-movement-rate" class="font-semibold">0</span></p>
+            <p>
+              <span class="">Underground speed</span>, feet per turn: <span id="${inventoryId}-speed-feet-per-turn" class="text-gen-800">...</span>
+            </p>
+          </div>`
+}
+
+export const renderInitialInventory = (inventoryId: string, name?: string): void => {
+  const container = document.getElementById('inventories-container')
+
+  container.appendChild(
     createElementFromHtml(`
-        <section id="${inventoryId}-container" class="inventory-container px-4 py-2 border shadow-lg">
-          <h3
-            id="${inventoryId}-header"
-            class="inventory-header text-lg text-alt mb-4 hover:text-red-700 hover:cursor-pointer"
-            title="Click to select"
-          >${name ?? inventoryId}</h3>
-          ${getInventoryControlsTopSection(inventoryId)}
-          <div class="char-stats my-2"></div>
+        <section id="${inventoryId}-container" class="inventory-container px-4 py-4 border shadow-lg">
+          <header class="relative">
+            ${getInventoryControlsSection(inventoryId)}
+            <h3
+              id="${inventoryId}-header"
+              class="inventory-header text-lg text-alt mb-4 hover:text-red-700 hover:cursor-pointer"
+              title="Click to select"
+            >${name ?? inventoryId}</h3>
+            <div class="char-stats my-2">
+              <div class="char-stats--controls mb-2"></div>
+              <div class="char-stats--container mb-2"></div>
+            </div>
+          </header>
           ${getInventoryTable(inventoryId)}
-          ${getInventoryControlsBottomSection(inventoryId)}
+          ${getInventoryDetails(inventoryId)}
         </section>
     `),
   )
@@ -184,9 +163,7 @@ export const markSelectedInventory = (inventoryId: string): void => {
   const headerElement = document.getElementById(`${inventoryId}-header`)
   if (headerElement) {
     headerElement.appendChild(
-      createElementFromHtml(
-        `<span class="text-alt selected text-sm ml-2" title="Currently selected inventory">🎒</span>`,
-      ),
+      createElementFromHtml(`<span class="text-alt selected text-sm ml-2" title="Selected character">🛡️</span>`),
     )
   }
 
@@ -198,9 +175,9 @@ export const markSelectedInventory = (inventoryId: string): void => {
 }
 
 /**
- * Renders the specified inventory in the UI.
+ * @notice No direct calls
  */
-export const renderInventory = (inventoryId: string, name?: string): void => {
+export const handleRenderInventory = (inventoryId: string, inventoryName?: string): void => {
   const inventory = getState().getInventory(inventoryId)
   if (!inventory) {
     console.error('Inventory not found:', inventoryId)
@@ -211,7 +188,7 @@ export const renderInventory = (inventoryId: string, name?: string): void => {
   const cellClassnames = 'px-4 py-1'
   let inventoryTableContainer = document.querySelector(`#${inventoryId}-table-container`)
   if (!inventoryTableContainer) {
-    renderInitialInventory(inventoryId, name)
+    renderInitialInventory(inventoryId, inventoryName)
     inventoryTableContainer = document.querySelector(`#${inventoryId}-table-container`)
   }
 
@@ -247,7 +224,7 @@ export const renderInventory = (inventoryId: string, name?: string): void => {
     removeButton.className = 'px-4 py-1 text-sm text-red-800 hover:text-red-500'
     removeButton.onclick = (): void => {
       getState().removeFromInventory(inventoryId, item.name)
-      renderInventory(inventoryId, name)
+      dispatchEvent('RenderInventory', { inventoryId, inventoryName })
     }
 
     const actionsCell = row.insertCell(4)
@@ -258,10 +235,13 @@ export const renderInventory = (inventoryId: string, name?: string): void => {
     totalCost += item.cost * item.quantity
   })
 
-  // TODO test carry modifier
   const charStats = inventory.character?.stats
   const carryModifier = charStats?.Strength.Carry || 0
   const baseMovementRate = getBaseMovementRate(totalWeight, carryModifier)
+
+  if (!charStats) {
+    dispatchEvent('RenderNewCharacterControlsSection', { inventoryId })
+  }
 
   document.getElementById(`${inventoryId}-total-weight`).textContent = totalWeight.toFixed(1)
   document.getElementById(`${inventoryId}-total-cost`).textContent = totalCost.toFixed(2)
@@ -271,11 +251,6 @@ export const renderInventory = (inventoryId: string, name?: string): void => {
   updateSpeedDisplay(inventoryId, baseMovementRate)
 }
 
-/**
- * FIXME to char section
- * Updates the HTML element with speeds for walking, running, and combat
- * based on the base movement rate.
- */
 export const updateSpeedDisplay = (inventoryId: string, baseMovementRate: BaseMovementRate): void => {
   const speeds = getUndergroundSpeed(baseMovementRate)
   document.getElementById(`${inventoryId}-speed-feet-per-turn`).innerHTML =
@@ -284,68 +259,30 @@ export const updateSpeedDisplay = (inventoryId: string, baseMovementRate: BaseMo
     ` • Combat: <span class="text-alt">${speeds.combat}</span>`
 }
 
-export const renderInventories = (): void => {
+/**
+ * @notice No direct calls
+ */
+export const handleRenderInventories = (): void => {
   const inventoryTableContainer = document.getElementById('inventories-container')
   inventoryTableContainer.innerHTML = ''
+
   getState()
     .getInventories()
     .forEach((inventory) => {
-      renderInventory(inventory.id, inventory.name)
+      dispatchEvent('RenderInventory', { inventoryId: inventory.id, inventoryName: inventory.name })
 
-      if (inventory.character) {
+      if (inventory.character?.stats) {
         dispatchEvent('RenderCharacterSection', { inventoryId: inventory.id })
+      } else {
+        dispatchEvent('RenderNewCharacterControlsSection', { inventoryId: inventory.id })
       }
     })
 }
 
-const addEquipRow = (tableBody: HTMLTableSectionElement, item: EquipItem): void => {
-  const row = tableBody.insertRow()
-  row.className = 'even:bg-gray-50 hover:bg-gen-50'
-
-  const cellClassnames = 'px-4 py-1'
-
-  // Create and set properties for the name cell
-  const nameCell = row.insertCell(0)
-
-  nameCell.innerHTML = item.name + getEquipNameSuffix(item)
-  nameCell.className = cellClassnames
-
-  // Create and set properties for the weight cell
-  const weightCell = row.insertCell(1)
-  weightCell.textContent = item.weight.toString()
-  weightCell.className = cellClassnames
-
-  // Create and set properties for the cost cell
-  const costCell = row.insertCell(2)
-  costCell.textContent = item.cost.toString()
-  costCell.className = cellClassnames
-
-  // Create and set properties for the button cell
-  const addButton = document.createElement('button')
-  addButton.textContent = 'Add'
-  addButton.className = 'px-4 text-sm text-left font-medium text-sub hover:text-red-800'
-  addButton.onclick = (): void => {
-    const state = getState()
-    const inventoryId = state.getCurrentInventoryId()
-    state.addToInventory(inventoryId, item)
-    renderInventory(inventoryId, inventoryId)
-  }
-
-  const actionsCell = row.insertCell(3)
-  actionsCell.appendChild(addButton)
-  actionsCell.className = `${cellClassnames} text-center px-2 w-16`
-}
-
-export const renderEquipCategorySection = (container: HTMLElement, categoryName: string, items: EquipItem[]): void => {
-  const sectionHtml = getEquipTableSection(categoryName)
-  const section = createElementFromHtml(sectionHtml)
-  container.appendChild(section)
-
-  const tableBody = section.querySelector('tbody')
-  items.forEach((item) => addEquipRow(tableBody, item))
-}
-
-const bindNewItemControl = (): void => {
+/**
+ * Run once
+ */
+const bindInventoryCommonControls = (): void => {
   document.getElementById('add-new-item-button').addEventListener('click', () => {
     const inputNameElement = document.getElementById('new-item-name') as HTMLInputElement
     const inputWeightElement = document.getElementById('new-item-weight') as HTMLInputElement
@@ -374,31 +311,37 @@ const bindNewItemControl = (): void => {
       inventory.items[itemName].weight = itemWeight
     }
 
-    state.serializeInventories()
+    state.serialize()
     dispatchEvent('RenderInventories')
   })
-}
 
-export const initInventoryUi = (): void => {
-  const currentInventoryId = getState().getCurrentInventoryId()
-  const equipmentContainer = document.getElementById('equipment-container')
-
-  renderEquipCategorySection(equipmentContainer, 'Armor', Armor)
-  renderEquipCategorySection(equipmentContainer, 'Weapons', Weapons)
-  renderEquipCategorySection(equipmentContainer, 'Equipment', Equip)
-
-  // TODO extract
   document.getElementById('add-inventory-button').addEventListener('click', () => {
     const newNameInputElement = document.getElementById('new-inventory-name') as HTMLInputElement
     const inventoryName = newNameInputElement?.value.trim() || DEFAULT_INVENTORY_ID
     const inventoryId = addInventory(inventoryName)
 
     getState().setCurrentInventoryId(inventoryId)
+    dispatchEvent('RenderNewRandomCharacter', { inventoryId })
     markSelectedInventory(inventoryId)
   })
+}
+
+/**
+ * @notice No direct calls
+ */
+export const handleSelectInventory = (inventoryId: string): void => {
+  getState().setCurrentInventoryId(inventoryId)
+  markSelectedInventory(inventoryId)
+}
+
+/**
+ * Run once
+ */
+export const initInventoryUi = (): void => {
+  const currentInventoryId = getState().getCurrentInventoryId()
 
   dispatchEvent('RenderInventories')
   markSelectedInventory(currentInventoryId)
 
-  bindNewItemControl()
+  bindInventoryCommonControls()
 }

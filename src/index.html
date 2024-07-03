@@ -5,51 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Swords & Wizardry: Equipment & Inventory</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/component/ui.ts" type="module"></script>
-    <link rel="stylesheet" href="./styles/styles.css" />
+    <link rel="stylesheet" href="./styles/styles.processed.css" />
     <link rel="manifest" href="./site.webmanifest" />
 
     <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png" />
-
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              gen: {
-                50: '#f5f4f1',
-                100: '#e6e2db',
-                200: '#cec7ba',
-                300: '#b2a592',
-                400: '#9e8c77',
-                500: '#8d7965',
-                600: '#786456',
-                700: '#614f47',
-                800: '#54453f',
-                900: '#4a3d39',
-                950: '#29201f',
-              },
-            },
-            fontSize: {
-              xxs: '0.625rem',
-              xxxs: '0.5rem',
-            },
-          },
-        },
-      }
-    </script>
   </head>
   <body class="bg-gen-50 p-4">
     <noscript> Sorry, JS should be enabled </noscript>
 
     <header class="flex items-center justify-center w-full min-w-full overflow-x-auto no-scrollbar">
       <pre
-        title="Swords & Wizardry logo"
         class="overflow-x-auto no-scrollbar m-auto text-alt text-xxs sm:text-sm md:text-base lg:text-lg"
-      >
+      ><a href="/" class="transition-gradient block">
                            _                         _                  _
                           | |       ___             (_)                | |
  _____      _____  _ __ __| |___   ( _ )   __      ___ ______ _ _ __ __| |_ __ _   _
@@ -58,8 +28,7 @@
 |___/ \_/\_/ \___/|_|  \__,_|___/  \___/\/   \_/\_/ |_/___\__,_|_|  \__,_|_|   \__, |
                                                                                 __/ |
                                                                                |___/
-    </pre
-      >
+      </a></pre>
     </header>
     <main class="mx-auto w-full max-w-screen-2xl flex-grow px-2.5 sm:px-6 lg:px-8 mb-4">
       <header>
@@ -97,7 +66,7 @@
               id="add-inventory-button"
               class="btn bg-gen-500 hover:bg-gen-600 text-white py-2 px-4 rounded-b sm:rounded-r sm:rounded-b-none"
             >
-              Add&nbsp;Inventory
+              Add&nbsp;Character
             </button>
           </section>
 
@@ -154,7 +123,6 @@
                     id="equip-set-dropdown"
                     class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-l-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-base"
                   >
-                    <option value="" class="text-base">Select a set</option>
                     <option value="" class="text-base">Select a set</option>
                   </select>
                   <button
@@ -349,6 +317,22 @@
     </main>
 
     <!-- Templates -->
+    <!-- New random char controls -->
+    <template id="template-new-char-controls">
+      <section class="inventory-controls-top-section mt-4 text-gen-800 text-sm flex gap-x-1">
+        <button
+          class="add-new-random-char-btn text-xs border rounded bg-white text-black-400 hover:text-white rounded-l hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0 flex items-center"
+        >
+          <span class="block px-2 py-1">♻ Generate random character</span>
+        </button>
+        <button
+          class="save-char-btn text-xs border rounded bg-alt text-white hover:text-alt rounded-l hover:bg-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0 items-center"
+        >
+          <span class="block px-2 py-1">Save</span>
+        </button>
+      </section>
+    </template>
+
     <!-- Character Stats -->
     <template id="template-char-stats">
       <p class="mb-2 text-gray-600"><span class="char-class text-alt"></span>, level 1</p>
@@ -358,8 +342,18 @@
         <div class="text-gen-800 text-sm"><span class="font-bold">Gold</span>: <span class="char-gold"></span> GP</div>
       </div>
       <div class="char-stats--caster-details text-sm mb-2" hidden></div>
-      <div class="char-stats--armor text-sm" hidden></div>
-      <div class="char-stats--alignment text-sm" hidden></div>
+
+      <div class="flex flex-wrap gap-4">
+        <div class="w-1/3">
+          <div class="char-stats--armor text-sm" hidden></div>
+        </div>
+
+        <div class="flex-1 w-2/3">
+          <div class="char-stats--alignment text-sm" hidden></div>
+          <div class="char-stats--races text-sm" hidden></div>
+        </div>
+      </div>
+
       <div class="grid md:grid-cols-3 gap-4 bg-white my-4">
         <div class="flex flex-col md:col-span-1">
           <table class="table-stats table-fixed border border-gray-300 flex-grow shadow-md">

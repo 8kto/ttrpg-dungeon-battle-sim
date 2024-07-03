@@ -1,4 +1,5 @@
 import { initCharacterSectionUi } from './character.ui'
+import { initEquipUi } from './equip.ui'
 import { initEquipSetsUi } from './equipSets.ui'
 import { initExportImportUi } from './export.ui'
 import { initInventoryUi } from './inventory.ui'
@@ -7,6 +8,7 @@ import { renderErrorMessage } from './utils'
 
 const main = (): void => {
   subscribeToEvents()
+  initEquipUi()
   initInventoryUi()
   initCharacterSectionUi()
   initEquipSetsUi()

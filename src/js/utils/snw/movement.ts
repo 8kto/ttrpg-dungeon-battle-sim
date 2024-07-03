@@ -8,6 +8,7 @@ import { BaseMovementRate, UndergroundMovement } from '../../domain/snw/Movement
  * @returns {number}
  */
 export const getBaseMovementRate = (totalWeight: number, carryModifier: number): BaseMovementRate => {
+  // NB when carryModifier is negative it is bad
   const adjustedWeight = Math.max(totalWeight - carryModifier, 0)
 
   if (adjustedWeight <= 75) {

@@ -2,14 +2,23 @@ import { CharacterClasses } from '../config/snw/CharacterClasses'
 import { CharacterClassDef } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
 import { getState } from '../state/State'
+import { assert } from '../utils/assert'
+import { dispatchEvent } from '../utils/event'
 import { createElementFromHtml } from '../utils/layout'
 import {
   getBestClass,
-  getCharHitPoints,
+  getCharacterHitPoints,
   getClassSuggestions,
   getRandomAttributes,
   getRandomClass,
 } from '../utils/snw/character'
+
+const getRootContainer = (inventoryId: string): HTMLElement => {
+  const elem = document.querySelector<HTMLElement>(`#${inventoryId}-container .char-stats`)
+  assert(elem, 'Character root container not found')
+
+  return elem
+}
 
 export const renderCasterDetails = (
   container: HTMLElement,
@@ -48,10 +57,10 @@ export const renderCasterDetails = (
 
 const renderArmorDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
   container.appendChild(
-    createElementFromHtml(`<p><span class="font-bold">Armor</span>: ${classDef.ArmorPermitted}</p>`),
+    createElementFromHtml(`<p><span class="font-bold text-gen-800">Armor</span>: ${classDef.ArmorPermitted}</p>`),
   )
   container.appendChild(
-    createElementFromHtml(`<p><span class="font-bold">Weapons</span>: ${classDef.WeaponsPermitted}</p>`),
+    createElementFromHtml(`<p><span class="font-bold text-gen-800">Weapons</span>: ${classDef.WeaponsPermitted}</p>`),
   )
   container.removeAttribute('hidden')
 }
@@ -59,21 +68,58 @@ const renderArmorDetails = (container: HTMLElement, classDef: CharacterClassDef)
 const renderAlignmentDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
   const alignment = classDef.Alignment.length === 3 ? 'Any' : classDef.Alignment.join(', ')
   container.appendChild(
-    createElementFromHtml(`<p><span class="font-bold">Suggested alignment</span>: ${alignment}</p>`),
+    createElementFromHtml(`<p><span class="font-bold text-gen-800">Suggested alignment</span>: ${alignment}</p>`),
   )
   container.removeAttribute('hidden')
 }
 
-export const renderStatsContainer = (
-  container: HTMLElement,
-  stats: CharacterStats,
-  classDef: CharacterClassDef,
-): void => {
-  const template = document.getElementById('template-char-stats') as HTMLTemplateElement
+const renderRacesDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
+  const races = classDef.Race.length === 3 ? 'Any' : classDef.Race.join(', ')
+  container.appendChild(
+    createElementFromHtml(`<p><span class="font-bold text-gen-800">Suggested races</span>: ${races}</p>`),
+  )
+  container.removeAttribute('hidden')
+}
+
+/**
+ * @notice No direct calls
+ */
+export const handleRenderNewCharControlsSection = (inventoryId: string): void => {
+  const container = getRootContainer(inventoryId).querySelector('.char-stats--controls')
+  container.innerHTML = ''
+
+  const template = document.querySelector<HTMLTemplateElement>('#template-new-char-controls')
   const clone = document.importNode(template.content, true)
 
-  const tableStats = clone.querySelector('table.table-stats')
-  const tableBonuses = clone.querySelector('table.table-bonuses')
+  container.appendChild(clone)
+  container.querySelector(`.add-new-random-char-btn`).addEventListener('click', () => {
+    dispatchEvent('RenderNewRandomCharacter', { inventoryId })
+    dispatchEvent('SelectInventory', { inventoryId })
+  })
+
+  container.querySelector(`.save-char-btn`).addEventListener('click', () => {
+    if (getState().getInventory(inventoryId).character?.stats) {
+      container.setAttribute('hidden', 'hidden')
+      dispatchEvent('SerializeState')
+      dispatchEvent('SelectInventory', { inventoryId })
+    }
+  })
+}
+
+export const handleRenderCharacterSection = (inventoryId: string): void => {
+  const inventory = getState().getInventory(inventoryId)
+  const { classDef, stats } = inventory.character || {}
+  assert(classDef && stats, `No character data found for inventory ${inventoryId}`)
+
+  const container = getRootContainer(inventoryId).querySelector('.char-stats--container')
+  container.innerHTML = ''
+
+  const template = document.getElementById('template-char-stats') as HTMLTemplateElement
+  const clone = document.importNode(template.content, true)
+  container.appendChild(clone)
+
+  const tableStats = container.querySelector('table.table-stats')
+  const tableBonuses = container.querySelector('table.table-bonuses')
 
   Object.entries(stats).forEach(([statName, stat]) => {
     const { Score, ...bonuses } = stat
@@ -95,34 +141,40 @@ export const renderStatsContainer = (
   })
 
   if (classDef.$isCaster) {
-    const casterDetailsContainer = clone.querySelector<HTMLElement>('.char-stats--caster-details')
+    const casterDetailsContainer = container.querySelector<HTMLElement>('.char-stats--caster-details')
     renderCasterDetails(casterDetailsContainer, classDef, stats)
   }
 
-  renderArmorDetails(clone.querySelector<HTMLElement>('.char-stats--armor'), classDef)
-  renderAlignmentDetails(clone.querySelector<HTMLElement>('.char-stats--alignment'), classDef)
+  renderArmorDetails(container.querySelector<HTMLElement>('.char-stats--armor'), classDef)
+  renderAlignmentDetails(container.querySelector<HTMLElement>('.char-stats--alignment'), classDef)
+  renderRacesDetails(container.querySelector<HTMLElement>('.char-stats--races'), classDef)
 
   // Other details
-  clone.querySelector('.char-gold').textContent = stats.Gold.toString()
-  clone.querySelector('.char-hp').textContent = stats.HitPoints.toString()
-  clone.querySelector('.char-hd').textContent = classDef.HitDice.toString()
-  clone.querySelector('.char-class').textContent = classDef.name
-
-  container.appendChild(clone)
+  container.querySelector('.char-gold').textContent = stats.Gold.toString()
+  container.querySelector('.char-hp').textContent = stats.HitPoints.toString()
+  container.querySelector('.char-hd').textContent = classDef.HitDice.toString()
+  container.querySelector('.char-class').textContent = classDef.name
 }
 
-export const renderCharacterSection = (
-  inventoryId: string,
-  charClass: CharacterClassDef,
-  charStats: CharacterStats,
-): void => {
-  const container = document.querySelector<HTMLElement>(`#${inventoryId}-container .char-stats`)
+/**
+ * @notice No direct calls
+ */
+export const handleRemoveCharacter = (inventoryId: string): void => {
+  const state = getState()
+  const inventory = state.getInventory(inventoryId)
 
-  container.innerHTML = ''
-  renderStatsContainer(container, charStats, charClass)
+  if (confirm(`Remove character ${inventory.name}? The inventory will remain available.`)) {
+    state.removeCharacter(inventoryId)
+
+    dispatchEvent('RenderInventories')
+    dispatchEvent('SelectInventory', { inventoryId: inventory.id })
+  }
 }
 
-export const handleNewRandomCharInit = (): void => {
+/**
+ * @notice No direct calls
+ */
+export const handleRenderNewRandomCharacter = (inventoryId: string): void => {
   const state = getState()
   const charStats = getRandomAttributes()
   const suggestions = getClassSuggestions(charStats, 'PrimeAttr')
@@ -131,7 +183,7 @@ export const handleNewRandomCharInit = (): void => {
   try {
     const matched = getBestClass(suggestions)
 
-    // FIXME debug
+    // Debug
     // const matched = getBestClass([['Cleric', [['Wisdom', 13]], { Constitution: 14, Wisdom: 16 }]])
 
     if (matched) {
@@ -144,12 +196,15 @@ export const handleNewRandomCharInit = (): void => {
     charClass = getRandomClass()
   }
 
-  charStats.HitPoints = getCharHitPoints(charClass, charStats.Constitution.HitPoints)
-  const currentInventoryId = state.getCurrentInventoryId()
-  state.setCharacter(currentInventoryId, charClass, charStats)
-  renderCharacterSection(currentInventoryId, charClass, charStats)
+  charStats.HitPoints = getCharacterHitPoints(charClass, charStats.Constitution.HitPoints)
+  state.setCharacter(inventoryId, charClass, charStats)
+
+  dispatchEvent('RenderCharacterSection', { inventoryId })
 }
 
+/**
+ * Run once
+ */
 export const initCharacterSectionUi = (): void => {
   void 0
 }
