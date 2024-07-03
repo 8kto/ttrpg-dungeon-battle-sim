@@ -2,7 +2,7 @@ export type EquipItem = {
   name: string
   weight: number
   cost: number
-  armorClass?: string | number
+  armorClass?: string
   damage?: string
   flags?: InventoryItemFlag
 }
