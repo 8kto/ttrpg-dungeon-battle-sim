@@ -1,5 +1,5 @@
 import { CharacterClasses, PRIME_ATTR_MIN } from '../../../config/snw/CharacterClasses'
-import { strengthModifiers } from '../../../config/snw/Modifiers'
+import { StrengthModifiers } from '../../../config/snw/Modifiers'
 import { AttrScore } from '../../../domain/snw/CharacterClass'
 import { CharacterStats } from '../../../domain/snw/CharacterStats'
 import {
@@ -30,7 +30,7 @@ describe('character utils', () => {
       [17, 17],
       [18, 18],
     ])('should match the expected scores %d => %d', (score, expected) => {
-      expect(getMatchingScore(strengthModifiers, score)).toEqual(expected)
+      expect(getMatchingScore(StrengthModifiers, score)).toEqual(expected)
     })
   })
 

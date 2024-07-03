@@ -1,10 +1,10 @@
 import { CharacterClasses, PRIME_ATTR_MIN } from '../../config/snw/CharacterClasses'
 import {
-  charismaModifiers,
-  constitutionModifiers,
-  dexterityModifiers,
-  intelligenceModifiers,
-  strengthModifiers,
+  CharismaModifiers,
+  ConstitutionModifiers,
+  DexterityModifiers,
+  IntelligenceModifiers,
+  StrengthModifiers,
 } from '../../config/snw/Modifiers'
 import { AttrScore, CharacterClass, CharacterClassDef, PrimeAttribute } from '../../domain/snw/CharacterClass'
 import { CharacterStats, ScoredModifierDef } from '../../domain/snw/CharacterStats'
@@ -45,12 +45,12 @@ export const getRandomAttributes = (): CharacterStats => {
 
   /* eslint-disable sort-keys-fix/sort-keys-fix */
   return {
-    [AttrScore.Strength]: getModifier(strengthModifiers, roll3d6()),
-    [AttrScore.Dexterity]: getModifier(dexterityModifiers, roll3d6()),
-    [AttrScore.Constitution]: getModifier(constitutionModifiers, roll3d6()),
-    [AttrScore.Intelligence]: getModifier(intelligenceModifiers, roll3d6()),
+    [AttrScore.Strength]: getModifier(StrengthModifiers, roll3d6()),
+    [AttrScore.Dexterity]: getModifier(DexterityModifiers, roll3d6()),
+    [AttrScore.Constitution]: getModifier(ConstitutionModifiers, roll3d6()),
+    [AttrScore.Intelligence]: getModifier(IntelligenceModifiers, roll3d6()),
     [AttrScore.Wisdom]: getModifier({}, roll3d6()),
-    [AttrScore.Charisma]: getModifier(charismaModifiers, roll3d6()),
+    [AttrScore.Charisma]: getModifier(CharismaModifiers, roll3d6()),
     Gold: roll3d6() * 10,
     HitPoints: 0,
   }

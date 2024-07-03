@@ -1,0 +1,191 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Modifiers CHA should match the snapshot 1`] = `
+{
+  "12": {
+    "MaxNumberOfSpecialHirelings": 4,
+  },
+  "15": {
+    "MaxNumberOfSpecialHirelings": 5,
+  },
+  "17": {
+    "MaxNumberOfSpecialHirelings": 6,
+  },
+  "18": {
+    "MaxNumberOfSpecialHirelings": 7,
+  },
+  "4": {
+    "MaxNumberOfSpecialHirelings": 1,
+  },
+  "6": {
+    "MaxNumberOfSpecialHirelings": 2,
+  },
+  "8": {
+    "MaxNumberOfSpecialHirelings": 3,
+  },
+}
+`;
+
+exports[`Modifiers CON should match the snapshot 1`] = `
+{
+  "12": {
+    "HitPoints": 0,
+    "RaiseDeadSurvivalChance": "75%",
+  },
+  "18": {
+    "HitPoints": 1,
+    "RaiseDeadSurvivalChance": "100%",
+  },
+  "8": {
+    "HitPoints": -1,
+    "RaiseDeadSurvivalChance": "50%",
+  },
+}
+`;
+
+exports[`Modifiers DEX should match the snapshot 1`] = `
+{
+  "12": {
+    "ArmorClass": 0,
+    "MissilesToHit": 0,
+  },
+  "18": {
+    "ArmorClass": 1,
+    "MissilesToHit": 1,
+  },
+  "8": {
+    "ArmorClass": -1,
+    "MissilesToHit": -1,
+  },
+}
+`;
+
+exports[`Modifiers INT should match the snapshot 1`] = `
+{
+  "10": {
+    "MaxAdditionalLanguages": 2,
+    "MaxSpellLevel": 5,
+    "NewSpellUnderstandingChance": "50%",
+    "SpellsPerLevel": "4/6",
+  },
+  "11": {
+    "MaxAdditionalLanguages": 2,
+    "MaxSpellLevel": 6,
+    "NewSpellUnderstandingChance": "50%",
+    "SpellsPerLevel": "4/6",
+  },
+  "12": {
+    "MaxAdditionalLanguages": 3,
+    "MaxSpellLevel": 6,
+    "NewSpellUnderstandingChance": "55%",
+    "SpellsPerLevel": "4/6",
+  },
+  "13": {
+    "MaxAdditionalLanguages": 3,
+    "MaxSpellLevel": 7,
+    "NewSpellUnderstandingChance": "65%",
+    "SpellsPerLevel": "5/8",
+  },
+  "14": {
+    "MaxAdditionalLanguages": 4,
+    "MaxSpellLevel": 7,
+    "NewSpellUnderstandingChance": "65%",
+    "SpellsPerLevel": "5/8",
+  },
+  "15": {
+    "MaxAdditionalLanguages": 4,
+    "MaxSpellLevel": 8,
+    "NewSpellUnderstandingChance": "75%",
+    "SpellsPerLevel": "6/10",
+  },
+  "16": {
+    "MaxAdditionalLanguages": 5,
+    "MaxSpellLevel": 8,
+    "NewSpellUnderstandingChance": "75%",
+    "SpellsPerLevel": "6/10",
+  },
+  "17": {
+    "MaxAdditionalLanguages": 5,
+    "MaxSpellLevel": 9,
+    "NewSpellUnderstandingChance": "85%",
+    "SpellsPerLevel": "7/All",
+  },
+  "18": {
+    "MaxAdditionalLanguages": 6,
+    "MaxSpellLevel": 9,
+    "NewSpellUnderstandingChance": "95%",
+    "SpellsPerLevel": "8/All",
+  },
+  "7": {
+    "MaxAdditionalLanguages": 0,
+    "MaxSpellLevel": 4,
+    "NewSpellUnderstandingChance": "30%",
+    "SpellsPerLevel": "2/4",
+  },
+  "8": {
+    "MaxAdditionalLanguages": 1,
+    "MaxSpellLevel": 5,
+    "NewSpellUnderstandingChance": "40%",
+    "SpellsPerLevel": "3/5",
+  },
+  "9": {
+    "MaxAdditionalLanguages": 1,
+    "MaxSpellLevel": 5,
+    "NewSpellUnderstandingChance": "45%",
+    "SpellsPerLevel": "3/5",
+  },
+}
+`;
+
+exports[`Modifiers STR should match the snapshot 1`] = `
+{
+  "12": {
+    "Carry": 5,
+    "Damage": 0,
+    "Doors": "1-2",
+    "ToHit": 0,
+  },
+  "15": {
+    "Carry": 10,
+    "Damage": 0,
+    "Doors": "1-2",
+    "ToHit": 1,
+  },
+  "16": {
+    "Carry": 15,
+    "Damage": 1,
+    "Doors": "1-3",
+    "ToHit": 1,
+  },
+  "17": {
+    "Carry": 30,
+    "Damage": 2,
+    "Doors": "1-4",
+    "ToHit": 2,
+  },
+  "18": {
+    "Carry": 50,
+    "Damage": 3,
+    "Doors": "1-5",
+    "ToHit": 2,
+  },
+  "4": {
+    "Carry": -10,
+    "Damage": -1,
+    "Doors": "1",
+    "ToHit": -2,
+  },
+  "6": {
+    "Carry": -5,
+    "Damage": 0,
+    "Doors": "1",
+    "ToHit": -1,
+  },
+  "8": {
+    "Carry": 0,
+    "Damage": 0,
+    "Doors": "1-2",
+    "ToHit": 0,
+  },
+}
+`;

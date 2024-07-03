@@ -1,4 +1,4 @@
-## A tabletop RPG inventory generator for Swords & Wizardry (Complete/Revised)
+## Character and inventory generator for Swords & Wizardry (Complete/Revised)
 
 ```
                            _                         _                  _
@@ -33,7 +33,7 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 
 ## Features
 
-- [x] Random character generation (basic, check TODO)
+- [x] Random character generation (check TODO)
 - [x] Lists of equipment, weapons, and armor with weight and cost
 - [x] Inventory management, calculating total weight, cost, and speed
 - [x] Multiple inventories that can be renamed. For example: "Zsusza, the thief", "Zoltan, the mercenary", "Solomon, the donkey", etc.
