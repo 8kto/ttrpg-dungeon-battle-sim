@@ -60,3 +60,31 @@ div:empty {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* Define the keyframes for the running gradient */
+@keyframes runningGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.transition-gradient {
+  transition:
+    color 2s ease,
+    background 2s ease;
+}
+
+/* Apply the animation on hover */
+.transition-gradient:hover {
+  background: linear-gradient(270deg, #00ffff, #d900ff, #007cc0);
+  background-size: 300% 300%;
+  animation: runningGradient 6s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
