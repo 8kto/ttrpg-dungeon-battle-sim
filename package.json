@@ -5,8 +5,9 @@
   "author": "8kto <ifhtagn@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "wmr",
-    "build": "wmr build --sourcemap --minify",
+    "dev": "wmr --reload",
+    "build:styles": "npx tailwindcss -i ./src/styles/styles.css -o ./src/styles/styles.processed.css",
+    "build": "yarn build:styles && wmr build --sourcemap --minify",
     "serve": "wmr serve",
     "deploy": "scripts/deploy.sh",
     "dev:old": "npx live-server src --port=3000 --no-browser",
