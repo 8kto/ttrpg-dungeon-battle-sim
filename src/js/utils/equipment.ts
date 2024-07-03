@@ -13,16 +13,17 @@ export const getEquipNameSuffix = (item: EquipItem): string => {
     sfx += `${item.damage} `
   }
 
-  if (item.flags & InventoryItemFlag.VAR_HANDED) {
-    sfx += '†'
+  if (item.flags) {
+    if (item.flags & InventoryItemFlag.VAR_HANDED) {
+      sfx += '†'
+    }
+    if (item.flags & InventoryItemFlag.TWO_HANDED) {
+      sfx += '*'
+    }
+    if (item.flags & InventoryItemFlag.MELEE_AND_MISSILE) {
+      sfx += '‡'
+    }
   }
-  if (item.flags & InventoryItemFlag.TWO_HANDED) {
-    sfx += '*'
-  }
-  if (item.flags & InventoryItemFlag.MELEE_AND_MISSILE) {
-    sfx += '‡'
-  }
-
   // Line breaks not allowed
   sfx = sfx.replaceAll(' ', '&nbsp;')
 
