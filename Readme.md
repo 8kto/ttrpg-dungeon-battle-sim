@@ -45,6 +45,10 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 - [x] Custom items
 - [x] Builds with WMR
 
+## Contributions
+
+Contributions are welcome. Code should follow conventions described in [CodeConventions](./CodeConventions.md).
+
 ### TODO
 
 - [ ] Mobiles support (?)
