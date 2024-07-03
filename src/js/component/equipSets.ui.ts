@@ -5,7 +5,6 @@ import { dispatchEvent } from '../utils/event'
 
 export const renderEquipSets = (): void => {
   const dropdown = document.getElementById('equip-set-dropdown') as HTMLSelectElement
-  const equipSetsContainer = document.getElementById('equip-sets-container')
 
   for (const key in EquipSets) {
     const option = document.createElement('option')
@@ -15,14 +14,7 @@ export const renderEquipSets = (): void => {
     dropdown.appendChild(option)
   }
 
-  dropdown.addEventListener('change', function () {
-    const selectedSetKey = this.value
-    equipSetsContainer.innerHTML = ''
-
-    if (selectedSetKey) {
-      renderEquipSetTable(equipSetsContainer, selectedSetKey)
-    }
-  })
+  bindEquipSetImportControls()
 }
 
 const renderEquipSetTable = (container: HTMLElement, selectedKey: string): void => {
@@ -54,6 +46,16 @@ const bindEquipSetImportControls = (): void => {
     dropdown.value = ''
     dropdown.dispatchEvent(new Event('change'))
   })
+
+  dropdown.addEventListener('change', function () {
+    const equipSetsContainer = document.getElementById('equip-sets-container')
+    const selectedSetKey = this.value
+    equipSetsContainer.innerHTML = ''
+
+    if (selectedSetKey) {
+      renderEquipSetTable(equipSetsContainer, selectedSetKey)
+    }
+  })
 }
 
 /**
@@ -61,5 +63,4 @@ const bindEquipSetImportControls = (): void => {
  */
 export const initEquipSetsUi = (): void => {
   renderEquipSets()
-  bindEquipSetImportControls()
 }

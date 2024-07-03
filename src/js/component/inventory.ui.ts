@@ -344,6 +344,3 @@ export const initInventoryUi = (): void => {
 
   bindInventoryCommonControls()
 }
-
-// TODO incl bind* to all render* funcs
-// TODO ? Code conventions: all funcs within the same module should be called directly, not through the Events subscriptions
