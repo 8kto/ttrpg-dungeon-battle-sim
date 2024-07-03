@@ -55,6 +55,9 @@ const addInventory = (inventoryName: string): string => {
   return inventoryId
 }
 
+/**
+ * Run once per inventory
+ */
 export const bindInventoryControls = (inventoryId: string): void => {
   document.getElementById(`${inventoryId}-header`).addEventListener('click', () => {
     dispatchEvent('SelectInventory', { id: inventoryId })
@@ -102,6 +105,10 @@ export const bindInventoryControls = (inventoryId: string): void => {
       dispatchEvent('SelectInventory', { id: inventoryId })
     }
   })
+
+  document.getElementById(`${inventoryId}-remove-char`).addEventListener('click', () => {
+    dispatchEvent('RemoveCharacter', { inventoryId })
+  })
 }
 
 const getInventoryDetails = (inventoryId: string): string => {
@@ -122,9 +129,9 @@ const getInventoryDetails = (inventoryId: string): string => {
 }
 
 export const renderInitialInventory = (inventoryId: string, name?: string): void => {
-  const inventoryTableContainer = document.getElementById('inventories-container')
+  const container = document.getElementById('inventories-container')
 
-  inventoryTableContainer.appendChild(
+  container.appendChild(
     createElementFromHtml(`
         <section id="${inventoryId}-container" class="inventory-container px-4 py-4 border shadow-lg">
           <header class="relative">
@@ -146,6 +153,7 @@ export const renderInitialInventory = (inventoryId: string, name?: string): void
   )
 
   bindInventoryControls(inventoryId)
+  dispatchEvent('RenderNewCharacterControlsSection', { inventoryId })
 }
 
 export const markSelectedInventory = (inventoryId: string): void => {

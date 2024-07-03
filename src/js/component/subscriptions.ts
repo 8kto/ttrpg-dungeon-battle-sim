@@ -1,6 +1,12 @@
 import { getState } from '../state/State'
 import { assert } from '../utils/assert'
-import { handleNewRandomCharacterInit, renderCharacterSection, renderNewCharControlsSection } from './character.ui'
+import { dispatchEvent } from '../utils/event'
+import {
+  handleCharacterRemoval,
+  handleNewRandomCharacterInit,
+  renderCharacterSection,
+  renderNewCharControlsSection,
+} from './character.ui'
 import { markSelectedInventory, renderInventories } from './inventory.ui'
 
 /**
@@ -30,10 +36,16 @@ export const subscribeToEvents = (): void => {
    ** Character
    **/
 
+  document.addEventListener('RenderNewCharacterControlsSection', (event: CustomEvent) => {
+    assert(event.detail.inventoryId, 'No inventory ID passed')
+    renderNewCharControlsSection(event.detail.inventoryId)
+  })
+
   document.addEventListener('RenderNewRandomCharacter', (event: CustomEvent) => {
     assert(event.detail.inventoryId, 'No inventory ID passed')
     handleNewRandomCharacterInit(event.detail.inventoryId)
-    renderNewCharControlsSection(event.detail.inventoryId)
+    // renderNewCharControlsSection(event.detail.inventoryId)
+    dispatchEvent('RenderNewCharacterControlsSection', { inventoryId: event.detail.inventoryId })
   })
 
   document.addEventListener('RenderCharacterSection', (event: CustomEvent) => {
@@ -46,6 +58,13 @@ export const subscribeToEvents = (): void => {
       renderCharacterSection(inventoryId, inventory.character.classDef, inventory.character.stats)
       // document.querySelector(`#${inventory.id}-inventory-controls-top-section`).classList.add('hidden')
     }
+  })
+
+  document.addEventListener('RemoveCharacter', (event: CustomEvent) => {
+    assert(event.detail.inventoryId, 'No inventory ID passed')
+    handleCharacterRemoval(event.detail.inventoryId)
+    // renderNewCharControlsSection(event.detail.inventoryId)
+    dispatchEvent('RenderNewCharacterControlsSection', { inventoryId: event.detail.inventoryId })
   })
 }
 

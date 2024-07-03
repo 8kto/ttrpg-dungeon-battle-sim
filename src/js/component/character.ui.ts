@@ -95,9 +95,11 @@ export const renderNewCharControlsSection = (inventoryId: string): void => {
   })
 
   container.querySelector(`.save-char-btn`).addEventListener('click', () => {
-    container.setAttribute('hidden', 'hidden')
-    dispatchEvent('SerializeState')
-    dispatchEvent('SelectInventory', { id: inventoryId })
+    if (getState().getInventory(inventoryId).character?.stats) {
+      container.setAttribute('hidden', 'hidden')
+      dispatchEvent('SerializeState')
+      dispatchEvent('SelectInventory', { id: inventoryId })
+    }
   })
 }
 
@@ -151,19 +153,17 @@ export const renderCharacterSection = (
   container.querySelector('.char-class').textContent = classDef.name
 }
 
-export const bindCharacterSectionControls = (inventoryId: string): void => {
-  document.getElementById(`${inventoryId}-remove-char`).addEventListener('click', () => {
-    const state = getState()
-    const inventory = state.getInventory(inventoryId)
+export const handleCharacterRemoval = (inventoryId: string): void => {
+  const state = getState()
+  const inventory = state.getInventory(inventoryId)
 
-    if (confirm(`Remove character ${inventory.name}? The inventory will remain available.`)) {
-      state.removeCharacter(inventoryId)
-      state.setCurrentInventoryId(inventory.id)
+  if (confirm(`Remove character ${inventory.name}? The inventory will remain available.`)) {
+    state.removeCharacter(inventoryId)
+    state.setCurrentInventoryId(inventory.id)
 
-      dispatchEvent('RenderInventories')
-      dispatchEvent('SelectInventory', { id: inventory.id })
-    }
-  })
+    dispatchEvent('RenderInventories')
+    dispatchEvent('SelectInventory', { id: inventory.id })
+  }
 }
 
 export const handleNewRandomCharacterInit = (inventoryId: string): void => {
@@ -192,7 +192,6 @@ export const handleNewRandomCharacterInit = (inventoryId: string): void => {
   state.setCharacter(inventoryId, charClass, charStats)
 
   renderCharacterSection(inventoryId, charClass, charStats)
-  bindCharacterSectionControls(inventoryId)
 }
 
 /**
