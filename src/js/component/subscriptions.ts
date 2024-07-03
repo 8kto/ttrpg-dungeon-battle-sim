@@ -2,12 +2,12 @@ import { getState } from '../state/State'
 import { assert } from '../utils/assert'
 import { dispatchEvent } from '../utils/event'
 import {
-  handleCharacterRemoval,
-  handleNewRandomCharacterInit,
+  handleRemoveCharacter,
+  handleRenderNewRandomCharacter,
+  handleRenderNewCharControlsSection,
   renderCharacterSection,
-  renderNewCharControlsSection,
 } from './character.ui'
-import { markSelectedInventory, renderInventories } from './inventory.ui'
+import { handleRenderInventories, handleSelectInventory } from './inventory.ui'
 
 /**
  * Run once
@@ -22,14 +22,12 @@ export const subscribeToEvents = (): void => {
    **/
 
   document.addEventListener('RenderInventories', () => {
-    renderInventories()
+    handleRenderInventories()
   })
 
   document.addEventListener('SelectInventory', (event: CustomEvent) => {
     assert(event.detail.id, 'No inventory ID passed')
-
-    getState().setCurrentInventoryId(event.detail.id)
-    markSelectedInventory(event.detail.id)
+    handleSelectInventory(event.detail.id)
   })
 
   /**
@@ -38,13 +36,12 @@ export const subscribeToEvents = (): void => {
 
   document.addEventListener('RenderNewCharacterControlsSection', (event: CustomEvent) => {
     assert(event.detail.inventoryId, 'No inventory ID passed')
-    renderNewCharControlsSection(event.detail.inventoryId)
+    handleRenderNewCharControlsSection(event.detail.inventoryId)
   })
 
   document.addEventListener('RenderNewRandomCharacter', (event: CustomEvent) => {
     assert(event.detail.inventoryId, 'No inventory ID passed')
-    handleNewRandomCharacterInit(event.detail.inventoryId)
-    // renderNewCharControlsSection(event.detail.inventoryId)
+    handleRenderNewRandomCharacter(event.detail.inventoryId)
     dispatchEvent('RenderNewCharacterControlsSection', { inventoryId: event.detail.inventoryId })
   })
 
@@ -56,14 +53,12 @@ export const subscribeToEvents = (): void => {
 
     if (inventory.character?.classDef && inventory.character?.stats) {
       renderCharacterSection(inventoryId, inventory.character.classDef, inventory.character.stats)
-      // document.querySelector(`#${inventory.id}-inventory-controls-top-section`).classList.add('hidden')
     }
   })
 
   document.addEventListener('RemoveCharacter', (event: CustomEvent) => {
     assert(event.detail.inventoryId, 'No inventory ID passed')
-    handleCharacterRemoval(event.detail.inventoryId)
-    // renderNewCharControlsSection(event.detail.inventoryId)
+    handleRemoveCharacter(event.detail.inventoryId)
     dispatchEvent('RenderNewCharacterControlsSection', { inventoryId: event.detail.inventoryId })
   })
 }

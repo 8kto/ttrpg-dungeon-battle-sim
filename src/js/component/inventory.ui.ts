@@ -153,7 +153,6 @@ export const renderInitialInventory = (inventoryId: string, name?: string): void
   )
 
   bindInventoryControls(inventoryId)
-  dispatchEvent('RenderNewCharacterControlsSection', { inventoryId })
 }
 
 export const markSelectedInventory = (inventoryId: string): void => {
@@ -240,6 +239,10 @@ export const renderInventory = (inventoryId: string, name?: string): void => {
   const carryModifier = charStats?.Strength.Carry || 0
   const baseMovementRate = getBaseMovementRate(totalWeight, carryModifier)
 
+  if (!charStats) {
+    dispatchEvent('RenderNewCharacterControlsSection', { inventoryId })
+  }
+
   document.getElementById(`${inventoryId}-total-weight`).textContent = totalWeight.toFixed(1)
   document.getElementById(`${inventoryId}-total-cost`).textContent = totalCost.toFixed(2)
   document.getElementById(`${inventoryId}-base-movement-rate`).textContent = baseMovementRate.toString()
@@ -256,7 +259,10 @@ export const updateSpeedDisplay = (inventoryId: string, baseMovementRate: BaseMo
     ` • Combat: <span class="text-alt">${speeds.combat}</span>`
 }
 
-export const renderInventories = (): void => {
+/**
+ * @notice No direct calls
+ */
+export const handleRenderInventories = (): void => {
   const inventoryTableContainer = document.getElementById('inventories-container')
   inventoryTableContainer.innerHTML = ''
   getState()
@@ -317,6 +323,14 @@ const bindInventoryCommonControls = (): void => {
     dispatchEvent('RenderNewRandomCharacter', { inventoryId })
     markSelectedInventory(inventoryId)
   })
+}
+
+/**
+ * @notice No direct calls
+ */
+export const handleSelectInventory = (inventoryId: string): void => {
+  getState().setCurrentInventoryId(inventoryId)
+  markSelectedInventory(inventoryId)
 }
 
 /**

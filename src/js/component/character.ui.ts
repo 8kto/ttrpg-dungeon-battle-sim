@@ -81,7 +81,10 @@ const renderRacesDetails = (container: HTMLElement, classDef: CharacterClassDef)
   container.removeAttribute('hidden')
 }
 
-export const renderNewCharControlsSection = (inventoryId: string): void => {
+/**
+ * @notice No direct calls
+ */
+export const handleRenderNewCharControlsSection = (inventoryId: string): void => {
   const container = getRootContainer(inventoryId).querySelector('.char-stats--controls')
   container.innerHTML = ''
 
@@ -153,7 +156,10 @@ export const renderCharacterSection = (
   container.querySelector('.char-class').textContent = classDef.name
 }
 
-export const handleCharacterRemoval = (inventoryId: string): void => {
+/**
+ * @notice No direct calls
+ */
+export const handleRemoveCharacter = (inventoryId: string): void => {
   const state = getState()
   const inventory = state.getInventory(inventoryId)
 
@@ -166,7 +172,10 @@ export const handleCharacterRemoval = (inventoryId: string): void => {
   }
 }
 
-export const handleNewRandomCharacterInit = (inventoryId: string): void => {
+/**
+ * @notice No direct calls
+ */
+export const handleRenderNewRandomCharacter = (inventoryId: string): void => {
   const state = getState()
   const charStats = getRandomAttributes()
   const suggestions = getClassSuggestions(charStats, 'PrimeAttr')
