@@ -34,7 +34,7 @@
   <body class="bg-gen-50 p-4">
     <noscript> Sorry, JS should be enabled </noscript>
 
-    <header class="flex items-center justify-center w-full min-w-full overflow-x-auto no-scrollbar">
+    <header class="flex items-center justify-center w-full min-w-full overflow-x-auto no-scrollbar flex-col">
       <pre
         class="overflow-x-auto no-scrollbar m-auto text-alt text-xxs sm:text-sm md:text-base lg:text-lg"
       ><a href="/" class="transition-gradient block">
@@ -47,13 +47,9 @@
                                                                                 __/ |
                                                                                |___/
       </a></pre>
+      <h1 class="text-2xl text-gen-600 font-bold text-center mb-4">Character Generator</h1>
     </header>
     <main class="mx-auto w-full max-w-screen-2xl flex-grow px-2.5 sm:px-6 lg:px-8 mb-4">
-      <header hidden>
-        <h1 class="text-3xl text-gen-900 font-bold text-center mb-3">Equipment & Inventory</h1>
-        <div class="text-lg text-gen-600 text-center mb-3">Complete/Revised</div>
-      </header>
-
       <div class="page-content flex flex-row justify-between gap-4">
         <!-- Equipment Container -->
         <section id="equipment-container" class="flex-1 p-4 bg-white shadow-lg rounded-lg"></section>
