@@ -14,7 +14,7 @@ import { markSelectedInventory, renderInventories } from './inventory.ui'
  */
 export const subscribeToEvents = (): void => {
   document.addEventListener('SerializeState', () => {
-    getState().serializeInventories()
+    getState().serialize()
   })
 
   /**

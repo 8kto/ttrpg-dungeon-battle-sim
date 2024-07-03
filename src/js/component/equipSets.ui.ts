@@ -47,7 +47,7 @@ const bindEquipSetImportControls = (): void => {
     const equipSet = dropdown.value
     if (equipSet in EquipSets) {
       importEquipSet(state.getInventory(state.getCurrentInventoryId()), EquipSets[equipSet])
-      state.serializeInventories()
+      state.serialize()
       dispatchEvent('RenderInventories')
     }
 

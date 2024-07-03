@@ -304,7 +304,7 @@ const bindInventoryCommonControls = (): void => {
       inventory.items[itemName].weight = itemWeight
     }
 
-    state.serializeInventories()
+    state.serialize()
     dispatchEvent('RenderInventories')
   })
 
