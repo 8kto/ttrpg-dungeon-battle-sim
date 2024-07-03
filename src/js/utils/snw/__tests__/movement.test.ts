@@ -1,7 +1,6 @@
 import { BaseMovementRate, UndergroundMovement } from '../../../domain/snw/Movement'
 import { getBaseMovementRate, getUndergroundSpeed } from '../movement'
 
-
 describe('getBaseMovementRate', () => {
   it('should return 12 when adjusted weight is less than or equal to 75', () => {
     expect(getBaseMovementRate(50, 0)).toBe(12)
