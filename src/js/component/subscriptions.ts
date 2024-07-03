@@ -1,4 +1,5 @@
 import { getState } from '../state/State'
+import { assert } from '../utils/assert'
 import { handleNewRandomCharInit, renderCharSection } from './character.ui'
 import { markSelectedInventory, renderInventories } from './inventory.ui'
 
@@ -8,10 +9,7 @@ export const subscribeToEvents = (): void => {
   })
 
   document.addEventListener('RenderNewRandomCharacter', (event: CustomEvent) => {
-    if (!event.detail.inventoryId) {
-      throw new Error('No inventory ID passed')
-    }
-
+    assert(event.detail.inventoryId, 'No inventory ID passed')
     handleNewRandomCharInit(event.detail.inventoryId)
   })
 
@@ -20,18 +18,14 @@ export const subscribeToEvents = (): void => {
   })
 
   document.addEventListener('SelectInventory', (event: CustomEvent) => {
-    if (!event.detail.id) {
-      throw new Error('No inventory ID passed')
-    }
+    assert(event.detail.id, 'No inventory ID passed')
 
     getState().setCurrentInventoryId(event.detail.id)
     markSelectedInventory(event.detail.id)
   })
 
   document.addEventListener('RenderCharacterSection', (event: CustomEvent) => {
-    if (!event.detail.inventoryId) {
-      throw new Error('No inventory ID passed')
-    }
+    assert(event.detail.inventoryId, 'No inventory ID passed')
 
     const inventoryId = event.detail.inventoryId
     const inventory = getState().getInventory(inventoryId)
@@ -42,3 +36,6 @@ export const subscribeToEvents = (): void => {
     }
   })
 }
+
+// FIXME event listeners added many times on new random char generation
+// FIXME any logic/condition should be put in the called funcs
