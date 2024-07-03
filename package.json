@@ -14,7 +14,9 @@
     "format": "prettier . --check",
     "format:fix": "yarn eslint --fix && prettier --write .",
     "test": "jest",
-    "dev:tailwind": "npx tailwindcss -i ./src/styles/styles.css -o ./src/styles/styles.processed.css --watch"
+    "dev:tailwind": "npx tailwindcss -i ./src/styles/styles.css -o ./src/styles/styles.processed.css --watch",
+    "todos": "egrep --color=always -i '(TODO|FIXME)' -r src/",
+    "weok": "yarn tsc && yarn lint && yarn format && yarn test && echo WE OK"
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",
