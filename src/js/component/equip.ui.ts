@@ -69,6 +69,9 @@ export const renderEquipCategorySection = (container: HTMLElement, categoryName:
   items.forEach((item) => addEquipRow(tableBody, item))
 }
 
+/**
+ * Run once
+ */
 export const initEquipUi = (): void => {
   const equipmentContainer = document.getElementById('equipment-container')
 

@@ -56,6 +56,9 @@ const bindEquipSetImportControls = (): void => {
   })
 }
 
+/**
+ * Run once
+ */
 export const initEquipSetsUi = (): void => {
   renderEquipSets()
   bindEquipSetImportControls()

@@ -69,6 +69,9 @@ export const bindDumpingControls = (): void => {
   })
 }
 
+/**
+ * Run once
+ */
 export const initExportImportUi = (): void => {
   bindConversionControls()
   bindDumpingControls()
