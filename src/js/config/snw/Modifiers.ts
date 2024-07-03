@@ -6,7 +6,7 @@ import {
   StrengthModifierDef,
 } from '../../domain/snw/CharacterStats'
 
-export const strengthModifiers: Record<number, StrengthModifierDef> = {
+export const StrengthModifiers: Record<number, StrengthModifierDef> = {
   4: {
     ToHit: -2,
     Damage: -1,
@@ -57,7 +57,7 @@ export const strengthModifiers: Record<number, StrengthModifierDef> = {
   },
 }
 
-export const dexterityModifiers: Record<number, DexterityModifierDef> = {
+export const DexterityModifiers: Record<number, DexterityModifierDef> = {
   8: {
     MissilesToHit: -1,
     ArmorClass: -1,
@@ -72,7 +72,7 @@ export const dexterityModifiers: Record<number, DexterityModifierDef> = {
   },
 }
 
-export const constitutionModifiers: Record<number, ConstitutionModifierDef> = {
+export const ConstitutionModifiers: Record<number, ConstitutionModifierDef> = {
   8: {
     HitPoints: -1,
     RaiseDeadSurvivalChance: '50%',
@@ -87,7 +87,7 @@ export const constitutionModifiers: Record<number, ConstitutionModifierDef> = {
   },
 }
 
-export const intelligenceModifiers: Record<number, IntelligenceModifierDef> = {
+export const IntelligenceModifiers: Record<number, IntelligenceModifierDef> = {
   7: {
     MaxAdditionalLanguages: 0,
     MaxSpellLevel: 4,
@@ -162,7 +162,7 @@ export const intelligenceModifiers: Record<number, IntelligenceModifierDef> = {
   },
 }
 
-export const charismaModifiers: Record<number, CharismaModifierDef> = {
+export const CharismaModifiers: Record<number, CharismaModifierDef> = {
   4: { MaxNumberOfSpecialHirelings: 1 },
   6: { MaxNumberOfSpecialHirelings: 2 },
   8: { MaxNumberOfSpecialHirelings: 3 },
