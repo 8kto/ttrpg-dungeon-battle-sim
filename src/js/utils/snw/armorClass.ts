@@ -17,25 +17,17 @@ export const getDescArmorClass = (ascArmorClass: number): number => {
   return ARMOR_CLASS_INVERTER - ascArmorClass
 }
 
-// Extract the modifier from the armorClass string
-const getArmorClassModifier = (armorClass: string): number => {
-  const match = armorClass.match(/\+(\d)/)
-
-  return match ? parseInt(match[1], 10) : 0
-}
-
 export const getCharArmorClass = (stats: CharacterStats, items: EquipItem[]): CharArmorClass => {
   const bonus = stats.Dexterity.ArmorClass
   let highestArmorClass: CharArmorClass | null = null
   let shield: CharArmorClass | null = null
 
   items.forEach((item) => {
-    if (!item.armorClass) {
+    if (!item.ascArmorClass) {
       return
     }
 
-    const mod = getArmorClassModifier(item.armorClass)
-    const aac = BASE_ASC_ARMOR_CLASS + mod + bonus
+    const aac = BASE_ASC_ARMOR_CLASS + item.ascArmorClass + bonus
     const dac = getDescArmorClass(aac)
 
     const armorClass = { aac, armor: item.name, dac }

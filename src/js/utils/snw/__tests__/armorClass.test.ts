@@ -23,7 +23,7 @@ describe('armorClass utils', () => {
       expect(
         getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as CharacterStats, [
           {
-            armorClass: '+2 [-2]',
+            ascArmorClass: 2,
             cost: 5,
             name: 'Leather',
             weight: 25,
@@ -36,7 +36,7 @@ describe('armorClass utils', () => {
       expect(
         getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as CharacterStats, [
           {
-            armorClass: '+3 [-3]',
+            ascArmorClass: 3,
             cost: 30,
             name: 'Ring',
             weight: 40,
@@ -49,7 +49,7 @@ describe('armorClass utils', () => {
       expect(
         getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as CharacterStats, [
           {
-            armorClass: '+6 [-6]',
+            ascArmorClass: 6,
             cost: 100,
             name: 'Plate',
             weight: 70,
@@ -62,7 +62,7 @@ describe('armorClass utils', () => {
       expect(
         getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as CharacterStats, [
           {
-            armorClass: '+4 [-4]',
+            ascArmorClass: 4,
             cost: 75,
             name: 'Chain',
             weight: 50,
@@ -74,7 +74,7 @@ describe('armorClass utils', () => {
     it('should calc AC / 0-bonus, shield', () => {
       expect(
         getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as CharacterStats, [
-          { armorClass: '+1 [-1]', cost: 15, name: 'Shield', weight: 10 },
+          { ascArmorClass: 1, cost: 15, name: 'Shield', weight: 10 },
         ]),
       ).toEqual({ aac: 11, armor: 'Shield', dac: 8 })
     })
@@ -83,12 +83,12 @@ describe('armorClass utils', () => {
       expect(
         getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as CharacterStats, [
           {
-            armorClass: '+4 [-4]',
+            ascArmorClass: 4,
             cost: 75,
             name: 'Chain',
             weight: 50,
           },
-          { armorClass: '+1 [-1]', cost: 15, name: 'Shield', weight: 10 },
+          { ascArmorClass: 1, cost: 15, name: 'Shield', weight: 10 },
         ]),
       ).toEqual({ aac: 15, armor: 'Chain, shield', dac: 4 })
     })
@@ -97,12 +97,12 @@ describe('armorClass utils', () => {
       expect(
         getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as CharacterStats, [
           {
-            armorClass: '+6 [-6]',
+            ascArmorClass: 6,
             cost: 100,
             name: 'Plate',
             weight: 70,
           },
-          { armorClass: '+1 [-1]', cost: 15, name: 'Shield', weight: 10 },
+          { ascArmorClass: 1, cost: 15, name: 'Shield', weight: 10 },
         ]),
       ).toEqual({ aac: 17, armor: 'Plate, shield', dac: 2 })
     })
