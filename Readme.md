@@ -64,3 +64,4 @@ Contributions are welcome. Code should follow conventions described in [CodeConv
 - [ ] Generate with strict 0e attrs
 - [ ] Fighter Parrying Ability
 - [ ] Casters: spells
+- [ ] daisyUI, dark/light themes
