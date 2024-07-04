@@ -1,6 +1,7 @@
 import { CharacterClasses } from '../config/snw/CharacterClasses'
+import { CasterSpells } from '../config/snw/Magic'
 import { InventoryItem } from '../domain/Inventory'
-import { CharacterClassDef } from '../domain/snw/CharacterClass'
+import { CharacterClass, CharacterClassDef } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
 import { getState } from '../state/State'
 import { assert } from '../utils/assert'
@@ -28,6 +29,8 @@ export const renderCasterDetails = (
   classDef: CharacterClassDef,
   stats: CharacterStats,
 ): void => {
+  const col1 = container.querySelector('.char-stats--caster-details-col-1')
+  const col2 = container.querySelector('.char-stats--caster-details-col-2')
   const intelligenceAttr = stats.Intelligence
   const magicUserProps = ['NewSpellUnderstandingChance', 'SpellsPerLevel']
   const ignoredProps = ['MaxAdditionalLanguages', 'Score']
@@ -49,11 +52,20 @@ export const renderCasterDetails = (
       return false
     }
 
-    container.appendChild(getDetailsItem(key, value))
+    col1.appendChild(getDetailsItem(key, value))
   })
 
   const spellsNum = classDef.name === 'Cleric' && stats.Wisdom.Score >= 15 ? 1 : classDef.$spellsAtTheFirstLevel
-  container.appendChild(getDetailsItem('Spells at the 1st level', spellsNum))
+  col1.appendChild(getDetailsItem('Spells at the 1st level', spellsNum))
+
+  // TODO magic user
+  if (classDef.name === CharacterClass.Druid || classDef.name === CharacterClass.Cleric) {
+    const list = createElementFromHtml('<ul class="column-count-2" />')
+    Object.values(CasterSpells[classDef.name]).forEach((s) => {
+      list.appendChild(createElementFromHtml(`<li  class="break-inside-avoid text-alt">${s.name}</li>`))
+    })
+    col2.appendChild(list)
+  }
 
   container.removeAttribute('hidden')
 }

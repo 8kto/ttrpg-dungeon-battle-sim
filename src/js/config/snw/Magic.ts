@@ -1,3 +1,4 @@
+import { CharacterClass } from '../../domain/snw/CharacterClass'
 import { Spell } from '../../domain/snw/Magic'
 
 export const MagicUserSpells: Record<string, Spell> = {
@@ -95,4 +96,10 @@ export const DruidSpells: Record<string, Spell> = {
     name: 'Purify Water',
     level: 1,
   },
+}
+
+export const CasterSpells = {
+  [CharacterClass.Cleric]: ClericSpells,
+  [CharacterClass.MagicUser]: MagicUserSpells,
+  [CharacterClass.Druid]: DruidSpells,
 }
