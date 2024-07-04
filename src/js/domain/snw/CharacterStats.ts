@@ -18,7 +18,7 @@ export type ConstitutionModifierDef = {
 export type IntelligenceModifierDef = {
   MaxAdditionalLanguages: number
   MaxSpellLevel: number
-  NewSpellUnderstandingChance: string
+  NewSpellUnderstandingChance: number
   SpellsPerLevel: string
 }
 
