@@ -13,7 +13,7 @@ jest.mock('../../config/snw/Equip', () => ({
 describe('getEquipNameSuffix', () => {
   it('should return correct suffix for item with armor class', () => {
     const item: EquipItem = {
-      ascArmorClass: '2',
+      ascArmorClass: 2,
       cost: 1,
       damage: '',
       flags: InventoryItemFlag.VAR_HANDED,
