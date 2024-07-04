@@ -225,6 +225,7 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
     removeButton.onclick = (): void => {
       getState().removeFromInventory(inventoryId, item.name)
       dispatchEvent('RenderInventory', { inventoryId, inventoryName })
+      dispatchEvent('RenderCharacterSection', { inventoryId })
     }
 
     const actionsCell = row.insertCell(4)

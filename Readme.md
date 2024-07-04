@@ -57,11 +57,10 @@ Contributions are welcome. Code should follow conventions described in [CodeConv
 - [ ] More convenient Import
 - [ ] New random character: adjust heuristics (drop hopeless, pick random properly)
 - [ ] Race
-- [ ] Get EXP bonuses
-- [ ] Char AC
 - [ ] Char To Hit
 - [ ] Char: edit numbers
 - [ ] Saving Throw / num + details
 - [ ] Generate with strict 0e attrs
 - [ ] Fighter Parrying Ability
 - [ ] Casters: spells
+- [ ] daisyUI, dark/light themes
