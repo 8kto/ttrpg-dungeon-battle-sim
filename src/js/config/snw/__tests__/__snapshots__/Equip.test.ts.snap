@@ -3,31 +3,31 @@
 exports[`Equip should match the snapshot 1`] = `
 [
   {
-    "armorClass": "+1 [-1]",
+    "ascArmorClass": 1,
     "cost": 15,
     "name": "Shield",
     "weight": 10,
   },
   {
-    "armorClass": "+2 [-2]",
+    "ascArmorClass": 2,
     "cost": 5,
     "name": "Leather",
     "weight": 25,
   },
   {
-    "armorClass": "+3 [-3]",
+    "ascArmorClass": 3,
     "cost": 30,
     "name": "Ring",
     "weight": 40,
   },
   {
-    "armorClass": "+4 [-4]",
+    "ascArmorClass": 4,
     "cost": 75,
     "name": "Chain",
     "weight": 50,
   },
   {
-    "armorClass": "+6 [-6]",
+    "ascArmorClass": 6,
     "cost": 100,
     "name": "Plate",
     "weight": 70,
