@@ -1,11 +1,11 @@
 import { EquipItem, InventoryItemFlag } from '../../domain/Equipment'
 
 export const Armor: Array<EquipItem> = [
-  { cost: 15, name: 'Shield', weight: 10, armorClass: '+1 [-1]' },
-  { cost: 5, name: 'Leather', weight: 25, armorClass: '+2 [-2]' },
-  { cost: 30, name: 'Ring', weight: 40, armorClass: '+3 [-3]' },
-  { cost: 75, name: 'Chain', weight: 50, armorClass: '+4 [-4]' },
-  { cost: 100, name: 'Plate', weight: 70, armorClass: '+6 [-6]' },
+  { cost: 15, name: 'Shield', weight: 10, ascArmorClass: 1 },
+  { cost: 5, name: 'Leather', weight: 25, ascArmorClass: 2 },
+  { cost: 30, name: 'Ring', weight: 40, ascArmorClass: 3 },
+  { cost: 75, name: 'Chain', weight: 50, ascArmorClass: 4 },
+  { cost: 100, name: 'Plate', weight: 70, ascArmorClass: 6 },
 ]
 
 export const Weapons: Array<EquipItem> = [
