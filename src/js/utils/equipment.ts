@@ -5,8 +5,8 @@ import { Inventory } from '../domain/Inventory'
 export const getEquipNameSuffix = (item: EquipItem): string => {
   let sfx = ''
 
-  if (item.armorClass) {
-    sfx += `AC ${item.armorClass}`
+  if (item.ascArmorClass) {
+    sfx += `AC ${item.ascArmorClass}`
   }
 
   if (item.damage) {

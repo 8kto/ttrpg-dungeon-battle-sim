@@ -13,7 +13,7 @@ jest.mock('../../config/snw/Equip', () => ({
 describe('getEquipNameSuffix', () => {
   it('should return correct suffix for item with armor class', () => {
     const item: EquipItem = {
-      armorClass: '2',
+      ascArmorClass: '2',
       cost: 1,
       damage: '',
       flags: InventoryItemFlag.VAR_HANDED,
@@ -24,13 +24,13 @@ describe('getEquipNameSuffix', () => {
   })
 
   it('should return correct suffix for item with damage', () => {
-    const item: EquipItem = { armorClass: 0, cost: 1, damage: '1d8', name: 'Sword', weight: 1 }
+    const item: EquipItem = { ascArmorClass: 0, cost: 1, damage: '1d8', name: 'Sword', weight: 1 }
     expect(getEquipNameSuffix(item)).toBe('<span class="text-alt ml-3 text-xs">1d8&nbsp;</span>')
   })
 
   it('should return correct suffix for item with multiple flags', () => {
     const item: EquipItem = {
-      armorClass: 0,
+      ascArmorClass: 0,
       cost: 1,
       damage: '1d6',
       flags: InventoryItemFlag.MELEE_AND_MISSILE,
@@ -41,7 +41,7 @@ describe('getEquipNameSuffix', () => {
   })
 
   it('should return empty string if no suffix is applicable', () => {
-    const item: EquipItem = { armorClass: 0, cost: 1, damage: '', name: 'Sword', weight: 1 }
+    const item: EquipItem = { ascArmorClass: 0, cost: 1, damage: '', name: 'Sword', weight: 1 }
     expect(getEquipNameSuffix(item)).toBe('')
   })
 })
@@ -73,7 +73,7 @@ describe('importEquipSet', () => {
     const inventory: Inventory = {
       character: null,
       id: 'test-11',
-      items: { Sword: { armorClass: 0, cost: 1, damage: '1d8', name: 'Sword', quantity: 1, weight: 1 } },
+      items: { Sword: { ascArmorClass: 0, cost: 1, damage: '1d8', name: 'Sword', quantity: 1, weight: 1 } },
       name: 'Test',
     }
     const equipSet: EquipSet = { items: [{ name: 'Sword', quantity: 2 }], name: 'Test' }
