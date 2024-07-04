@@ -41,3 +41,22 @@ export const getRandomArrayItem = <T = unknown>(arr: Array<T>): T => {
 
   return arr[secureRandomInteger(0, arr.length - 1)]
 }
+
+export const getRandomArrayItems = <T = unknown>(arr: Array<T>, count: number): Array<T> => {
+  if (count > arr.length) {
+    throw new Error('Requested more elements than are present in the array')
+  }
+
+  const result: Array<T> = []
+  const usedIndices = new Set<number>()
+
+  while (result.length < count) {
+    const index = secureRandomInteger(0, arr.length - 1)
+    if (!usedIndices.has(index)) {
+      usedIndices.add(index)
+      result.push(arr[index])
+    }
+  }
+
+  return result
+}
