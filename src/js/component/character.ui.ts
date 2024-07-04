@@ -3,6 +3,7 @@ import { CasterSpells } from '../config/snw/Magic'
 import { InventoryItem } from '../domain/Inventory'
 import { CharacterClass, CharacterClassDef } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
+import { Spell } from '../domain/snw/Magic'
 import { getState } from '../state/State'
 import { assert } from '../utils/assert'
 import { dispatchEvent } from '../utils/event'
@@ -24,13 +25,25 @@ const getRootContainer = (inventoryId: string): HTMLElement => {
   return elem
 }
 
+const renderSpellsList = (container: HTMLElement, spells: Record<string, Spell>): void => {
+  const list = createElementFromHtml('<ul class="column-count-2" />')
+
+  for (const s in spells) {
+    list.appendChild(
+      createElementFromHtml(`<li class="break-inside-avoid text-alt">${spells[s].name}</li>`),
+    )
+  }
+
+  container.appendChild(list)
+}
+
 export const renderCasterDetails = (
   container: HTMLElement,
   classDef: CharacterClassDef,
   stats: CharacterStats,
 ): void => {
-  const col1 = container.querySelector('.char-stats--caster-details-col-1')
-  const col2 = container.querySelector('.char-stats--caster-details-col-2')
+  const col1 = container.querySelector<HTMLElement>('.char-stats--caster-details-col-1')
+  const col2 = container.querySelector<HTMLElement>('.char-stats--caster-details-col-2')
   const intelligenceAttr = stats.Intelligence
   const magicUserProps = ['NewSpellUnderstandingChance', 'SpellsPerLevel']
   const ignoredProps = ['MaxAdditionalLanguages', 'Score']
@@ -60,11 +73,7 @@ export const renderCasterDetails = (
 
   // TODO magic user
   if (classDef.name === CharacterClass.Druid || classDef.name === CharacterClass.Cleric) {
-    const list = createElementFromHtml('<ul class="column-count-2" />')
-    Object.values(CasterSpells[classDef.name]).forEach((s) => {
-      list.appendChild(createElementFromHtml(`<li  class="break-inside-avoid text-alt">${s.name}</li>`))
-    })
-    col2.appendChild(list)
+    renderSpellsList(col2, CasterSpells[classDef.name])
   }
 
   container.removeAttribute('hidden')
