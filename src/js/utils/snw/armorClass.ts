@@ -1,4 +1,4 @@
-import { EquipItem } from '../../domain/Equipment'
+import { InventoryItem } from '../../domain/Inventory'
 import { CharacterStats } from '../../domain/snw/CharacterStats'
 import { assert } from '../assert'
 
@@ -17,12 +17,12 @@ export const getDescArmorClass = (ascArmorClass: number): number => {
   return ARMOR_CLASS_INVERTER - ascArmorClass
 }
 
-export const getCharArmorClass = (stats: CharacterStats, items: EquipItem[]): CharArmorClass => {
+export const getCharArmorClass = (stats: CharacterStats, items: Record<string, InventoryItem>): CharArmorClass => {
   const bonus = stats.Dexterity.ArmorClass
   let highestArmorClass: CharArmorClass | null = null
   let shield: CharArmorClass | null = null
 
-  items.forEach((item) => {
+  Object.values(items).forEach((item) => {
     if (!item.ascArmorClass) {
       return
     }
