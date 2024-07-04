@@ -53,6 +53,7 @@ const addEquipRow = (tableBody: HTMLTableSectionElement, item: EquipItem): void 
     const inventoryId = state.getCurrentInventoryId()
     state.addToInventory(inventoryId, item)
     dispatchEvent('RenderInventory', { inventoryId })
+    dispatchEvent('RenderCharacterSection', { inventoryId })
   }
 
   const actionsCell = row.insertCell(3)
