@@ -349,15 +349,22 @@
     <!-- Character Stats -->
     <template id="template-char-stats">
       <p class="mb-2 text-gray-600"><span class="char-class text-alt"></span>, level 1</p>
+      <!-- Primary row -->
       <div class="flex gap-x-2 mb-1">
         <div class="text-gen-800 text-sm"><span class="font-bold">HP</span>: <span class="char-hp"></span></div>
-        <div class="text-gen-800 text-sm"><span class="font-bold">Hit Die</span>: d<span class="char-hd"></span></div>
-        <div class="text-gen-800 text-sm"><span class="font-bold">Gold</span>: <span class="char-gold"></span> GP</div>
+        <div class="text-gen-800 text-sm"><span class="font-bold">Armor</span>: <span class="char-ac"></span></div>
       </div>
-      <div class="flex gap-x-2 mb-2">
+
+      <!-- Secondary row -->
+      <div class="flex gap-x-2 mb-1">
         <div class="text-gen-800 text-sm">
           <span class="font-bold">Experience bonus</span>: <span class="char-exp-bonus"></span>%
         </div>
+        <div class="text-gen-800 text-sm"><span class="font-bold">Hit Die</span>: d<span class="char-hd"></span></div>
+      </div>
+
+      <div class="flex gap-x-2 mb-2">
+        <div class="text-gen-800 text-sm"><span class="font-bold">Gold</span>: <span class="char-gold"></span> GP</div>
       </div>
       <div class="char-stats--caster-details text-sm mb-2" hidden></div>
 

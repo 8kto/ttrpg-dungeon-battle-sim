@@ -1,10 +1,12 @@
 import { CharacterClasses } from '../config/snw/CharacterClasses'
+import { InventoryItem } from '../domain/Inventory'
 import { CharacterClassDef } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
 import { getState } from '../state/State'
 import { assert } from '../utils/assert'
 import { dispatchEvent } from '../utils/event'
 import { createElementFromHtml } from '../utils/layout'
+import { getCharArmorClass } from '../utils/snw/armorClass'
 import {
   getBestClass,
   getCharacterHitPoints,
@@ -82,6 +84,23 @@ const renderRacesDetails = (container: HTMLElement, classDef: CharacterClassDef)
   container.removeAttribute('hidden')
 }
 
+const renderArmorClassDetails = (
+  container: HTMLElement,
+  stats: CharacterStats,
+  items: Record<string, InventoryItem>,
+): void => {
+  const armorClass = getCharArmorClass(stats, items)
+
+  container.innerHTML = [
+    armorClass.armor,
+    '<span class="underline underline-offset-4 decoration-dashed decoration-gray-300 hover:cursor-help" title="Descending AC [Ascending AC]">',
+    'AC',
+    armorClass.dac,
+    `[${armorClass.aac}]`,
+    '</span>',
+  ].join(' ')
+}
+
 /**
  * @notice No direct calls
  */
@@ -149,6 +168,7 @@ export const handleRenderCharacterSection = (inventoryId: string): void => {
   renderArmorDetails(container.querySelector<HTMLElement>('.char-stats--armor'), classDef)
   renderAlignmentDetails(container.querySelector<HTMLElement>('.char-stats--alignment'), classDef)
   renderRacesDetails(container.querySelector<HTMLElement>('.char-stats--races'), classDef)
+  renderArmorClassDetails(container.querySelector('.char-ac'), stats, inventory.items)
 
   // Other details
   container.querySelector('.char-gold').textContent = stats.Gold.toString()
