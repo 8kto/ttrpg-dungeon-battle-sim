@@ -1,7 +1,7 @@
 import { CharacterClass } from '../../domain/snw/CharacterClass'
 import { Spell } from '../../domain/snw/Magic'
 
-export const MagicUserSpells: Record<string, Spell> = {
+export const MagicUserSpells: Record<string, Spell> = Object.freeze({
   'Charm Person': {
     name: 'Charm Person',
     level: 1,
@@ -42,9 +42,9 @@ export const MagicUserSpells: Record<string, Spell> = {
     name: 'Sleep',
     level: 1,
   },
-}
+})
 
-export const ClericSpells: Record<string, Spell> = {
+export const ClericSpells: Record<string, Spell> = Object.freeze({
   'Cure Light Wounds': {
     name: 'Cure Light Wounds',
     level: 1,
@@ -69,9 +69,9 @@ export const ClericSpells: Record<string, Spell> = {
     name: 'Purify Food and Drink',
     level: 1,
   },
-}
+})
 
-export const DruidSpells: Record<string, Spell> = {
+export const DruidSpells: Record<string, Spell> = Object.freeze({
   'Detect Magic': {
     name: 'Detect Magic',
     level: 1,
@@ -96,7 +96,7 @@ export const DruidSpells: Record<string, Spell> = {
     name: 'Purify Water',
     level: 1,
   },
-}
+})
 
 export const CasterSpells = {
   [CharacterClass.Cleric]: ClericSpells,

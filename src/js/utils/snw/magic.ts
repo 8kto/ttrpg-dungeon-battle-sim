@@ -21,7 +21,7 @@ export const getMagicUserSpellsList = (stats: CharacterStats): Record<string, Sp
   const minSpellListNames = minSpellsList.map((s) => s.name)
 
   maxSpellsList.forEach((s) => {
-    if (minSpellListNames.includes(s.name) || (roll(Dice.d100) <= chances)) {
+    if (minSpellListNames.includes(s.name) || roll(Dice.d100) <= chances) {
       res[s.name] = s
     }
   })
@@ -29,5 +29,4 @@ export const getMagicUserSpellsList = (stats: CharacterStats): Record<string, Sp
   return res
 }
 
-// TODO tests
 // TODO save in char stats / state
