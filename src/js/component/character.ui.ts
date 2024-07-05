@@ -29,9 +29,7 @@ const renderSpellsList = (container: HTMLElement, spells: Record<string, Spell>)
   const list = createElementFromHtml('<ul class="column-count-2" />')
 
   for (const s in spells) {
-    list.appendChild(
-      createElementFromHtml(`<li class="break-inside-avoid text-alt">${spells[s].name}</li>`),
-    )
+    list.appendChild(createElementFromHtml(`<li class="break-inside-avoid text-alt">${spells[s].name}</li>`))
   }
 
   container.appendChild(list)
