@@ -28,7 +28,7 @@ describe('magic utils', () => {
       ]
 
       // This will be rolled for the Sleep spell and skip it
-      rollSpy.mockReturnValue(99)
+      rollSpy.mockReturnValue(56)
       // Will return first 5 spells of 6
       getRandomArrayItemsSpy.mockReturnValueOnce(mockedMaxSpells)
       getRandomArrayItemsSpy.mockReturnValueOnce(mockedMaxSpells.slice(0, 5))
@@ -65,7 +65,7 @@ describe('magic utils', () => {
 
     it('compiles random spells list, adds some', () => {
       // Chances are always 100%
-      rollSpy.mockReturnValue(1)
+      rollSpy.mockReturnValue(85)
 
       // Max is "All" i.e. all MU spells
       const mockedMaxSpells = Object.values(MagicUserSpells)
