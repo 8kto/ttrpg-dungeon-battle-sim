@@ -48,7 +48,7 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 
 ## Contributions
 
-Contributions are welcome. Code should follow conventions described in [CodeConventions](./CodeConventions.md).
+Contributions are welcome. Code should follow conventions described in [Code Conventions](./CodeConventions.md).
 
 ### TODO
 
