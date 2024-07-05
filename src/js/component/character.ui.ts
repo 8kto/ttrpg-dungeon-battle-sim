@@ -1,10 +1,10 @@
 import { CharacterClasses } from '../config/snw/CharacterClasses'
 import { CasterSpells } from '../config/snw/Magic'
-import { InventoryItem } from '../domain/Inventory'
+import { Inventory, InventoryItem } from '../domain/Inventory'
 import { CharacterClass, CharacterClassDef } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
 import { Spell } from '../domain/snw/Magic'
-import { getState } from '../state/State'
+import { CharacterOptions, getState } from '../state/State'
 import { assert } from '../utils/assert'
 import { dispatchEvent } from '../utils/event'
 import { createElementFromHtml } from '../utils/layout'
@@ -17,6 +17,7 @@ import {
   getRandomClass,
 } from '../utils/snw/character'
 import { getExperienceBonus } from '../utils/snw/experience'
+import { getMagicUserSpellsList } from '../utils/snw/magic'
 
 const getRootContainer = (inventoryId: string): HTMLElement => {
   const elem = document.querySelector<HTMLElement>(`#${inventoryId}-container .char-stats`)
@@ -38,13 +39,17 @@ const renderSpellsList = (container: HTMLElement, spells: Record<string, Spell>)
 export const renderCasterDetails = (
   container: HTMLElement,
   classDef: CharacterClassDef,
-  stats: CharacterStats,
+  inventory: Inventory,
 ): void => {
   const col1 = container.querySelector<HTMLElement>('.char-stats--caster-details-col-1')
   const col2 = container.querySelector<HTMLElement>('.char-stats--caster-details-col-2')
-  const intelligenceAttr = stats.Intelligence
   const magicUserProps = ['NewSpellUnderstandingChance', 'SpellsPerLevel']
   const ignoredProps = ['MaxAdditionalLanguages', 'Score']
+  const stats = inventory.character?.stats
+
+  if (!stats) {
+    throw new Error('renderCasterDetails: Invalid CharacterStats')
+  }
 
   const getDetailsItem = (key, value): HTMLElement => {
     const elem = document.createElement('p')
@@ -55,7 +60,7 @@ export const renderCasterDetails = (
     return elem
   }
 
-  Object.entries(intelligenceAttr).forEach(([key, value]) => {
+  Object.entries(stats.Intelligence).forEach(([key, value]) => {
     if (ignoredProps.includes(key)) {
       return false
     }
@@ -69,9 +74,12 @@ export const renderCasterDetails = (
   const spellsNum = classDef.name === 'Cleric' && stats.Wisdom.Score >= 15 ? 1 : classDef.$spellsAtTheFirstLevel
   col1.appendChild(getDetailsItem('Spells at the 1st level', spellsNum))
 
-  // TODO magic user
-  if (classDef.name === CharacterClass.Druid || classDef.name === CharacterClass.Cleric) {
+  if (inventory.character?.spells === 'All') {
     renderSpellsList(col2, CasterSpells[classDef.name])
+  } else if (!!inventory.character?.spells && typeof inventory.character?.spells === 'object') {
+    renderSpellsList(col2, inventory.character.spells)
+  } else {
+    col2.appendChild(getDetailsItem('Spells', 'Your character has an incomplete configuration. Try adding a new one.'))
   }
 
   container.removeAttribute('hidden')
@@ -181,7 +189,7 @@ export const handleRenderCharacterSection = (inventoryId: string): void => {
 
   if (classDef.$isCaster) {
     const casterDetailsContainer = container.querySelector<HTMLElement>('.char-stats--caster-details')
-    renderCasterDetails(casterDetailsContainer, classDef, stats)
+    renderCasterDetails(casterDetailsContainer, classDef, inventory)
   }
 
   renderArmorDetails(container.querySelector<HTMLElement>('.char-stats--armor'), classDef)
@@ -217,10 +225,10 @@ export const handleRemoveCharacter = (inventoryId: string): void => {
  */
 export const handleRenderNewRandomCharacter = (inventoryId: string): void => {
   const state = getState()
-  const charStats = getRandomAttributes()
-  const suggestions = getClassSuggestions(charStats, 'PrimeAttr')
+  const stats = getRandomAttributes()
+  const suggestions = getClassSuggestions(stats, 'PrimeAttr')
 
-  let charClass
+  let classDef
   try {
     const matched = getBestClass(suggestions)
 
@@ -228,17 +236,28 @@ export const handleRenderNewRandomCharacter = (inventoryId: string): void => {
     // const matched = getBestClass([['Cleric', [['Wisdom', 13]], { Constitution: 14, Wisdom: 16 }]])
 
     if (matched) {
-      charClass = CharacterClasses[matched]
+      classDef = CharacterClasses[matched]
     } else {
       throw new Error('Character class not found')
     }
   } catch (err) {
     console.info('No matching classes. Choosing random', err.message)
-    charClass = getRandomClass()
+    classDef = getRandomClass()
   }
 
-  charStats.HitPoints = getCharacterHitPoints(charClass, charStats.Constitution.HitPoints)
-  state.setCharacter(inventoryId, charClass, charStats)
+  stats.HitPoints = getCharacterHitPoints(classDef, stats.Constitution.HitPoints)
+  const charOptions: CharacterOptions = { classDef, stats }
+  if (classDef.$isCaster) {
+    if (classDef.name === CharacterClass.Druid || classDef.name === CharacterClass.Cleric) {
+      charOptions.spells = 'All'
+    } else if (classDef.name === CharacterClass.MagicUser) {
+      charOptions.spells = getMagicUserSpellsList(stats)
+    } else {
+      throw new Error('Unknown type of caster')
+    }
+  }
+
+  state.setCharacter(inventoryId, charOptions)
 
   dispatchEvent('RenderCharacterSection', { inventoryId })
 }
