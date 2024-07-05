@@ -44,7 +44,7 @@ describe('character utils', () => {
       Intelligence: {
         MaxAdditionalLanguages: 0,
         MaxSpellLevel: 1,
-        NewSpellUnderstandingChance: '0%',
+        NewSpellUnderstandingChance: 0,
         Score: scores.Intelligence || 0,
         SpellsPerLevel: 'x/y',
       },

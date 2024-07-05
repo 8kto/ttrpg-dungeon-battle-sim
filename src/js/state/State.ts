@@ -4,6 +4,13 @@ import { EquipItem } from '../domain/Equipment'
 import { Inventory, InventoryItem } from '../domain/Inventory'
 import { CharacterClassDef } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
+import { Spell } from '../domain/snw/Magic'
+
+export type CharacterOptions = {
+  classDef: CharacterClassDef
+  stats: CharacterStats
+  spells?: Record<string, Spell> | 'All'
+}
 
 export const DEFAULT_INVENTORY_ID = 'MainCharacter'
 export const DEFAULT_INVENTORY_ITEMS = Object.freeze({
@@ -141,10 +148,11 @@ export class State {
     }
   }
 
-  setCharacter(inventoryId: string, classDef: CharacterClassDef, stats: CharacterStats): void {
+  setCharacter(inventoryId: string, { classDef, spells, stats }: CharacterOptions): void {
     this.#inventories[inventoryId].character = {
       stats: { ...stats },
       classDef: { ...classDef },
+      spells,
     }
   }
 }

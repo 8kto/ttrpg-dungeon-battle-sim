@@ -118,7 +118,7 @@ const getInventoryDetails = (inventoryId: string): string => {
     ? ''
     : `&nbsp;<span>(Carry modifier: ${carryModifier < 0 ? carryModifier : `+${carryModifier}`} pounds)</span>`
 
-  return `<div class="text-sm mb-4">
+  return `<div class="text-sm mb-2">
             <p>Total Weight: <span id="${inventoryId}-total-weight" class="font-semibold">0</span> pounds${carryFragment}</p>
             <p>Total Cost: <span id="${inventoryId}-total-cost" class="font-semibold">0</span> gold pieces</p>
             <p>Base movement rate: <span id="${inventoryId}-base-movement-rate" class="font-semibold">0</span></p>

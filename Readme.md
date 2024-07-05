@@ -34,6 +34,7 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 ## Features
 
 - [x] Random character generation (check TODO)
+- [x] Spell lists for casters. Magic Users get their spells randomly according to their Intelligence score
 - [x] Lists of equipment, weapons, and armor with weight and cost
 - [x] Inventory management, calculating total weight, cost, and speed
 - [x] Multiple inventories that can be renamed. For example: "Zsusza, the thief", "Zoltan, the mercenary", "Solomon, the donkey", etc.
@@ -47,7 +48,7 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 
 ## Contributions
 
-Contributions are welcome. Code should follow conventions described in [CodeConventions](./CodeConventions.md).
+Contributions are welcome. Code should follow conventions described in [Code Conventions](./CodeConventions.md).
 
 ### TODO
 
@@ -62,5 +63,4 @@ Contributions are welcome. Code should follow conventions described in [CodeConv
 - [ ] Saving Throw / num + details
 - [ ] Generate with strict 0e attrs
 - [ ] Fighter Parrying Ability
-- [ ] Casters: spells
 - [ ] daisyUI, dark/light themes

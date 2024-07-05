@@ -11,7 +11,7 @@
 
 - No cross-referencing of exported parts from different modules.
   For example, no function from `inventory.ui.ts` should be imported into `character.ui.ts` or any other `*.ui.ts` module.
-- Instead, `*.ui.ts` modules interact through CustomEvents and subscriptions in `subscriptions.ts`.
+- Instead, `*.ui.ts` modules interact through `CustomEvents` and subscriptions in `subscriptions.ts`.
 - No direct calls to functions used in subscription callbacks.
   For example, do not directly call `handleRenderInventories`. Instead, dispatch the `RenderInventories` action.
 - No conditional logic in `subscriptions.ts`; only calls to event handlers that encapsulate all logic within them.

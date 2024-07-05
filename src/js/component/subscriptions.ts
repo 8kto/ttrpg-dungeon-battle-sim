@@ -1,6 +1,6 @@
 import { getState } from '../state/State'
 import { assert } from '../utils/assert'
-import { dispatchEvent } from '../utils/event'
+import { dispatchEvent, subscribe } from '../utils/event'
 import {
   handleRemoveCharacter,
   handleRenderCharacterSection,
@@ -13,7 +13,7 @@ import { handleRenderInventories, handleRenderInventory, handleSelectInventory }
  * Run once
  */
 export const subscribeToEvents = (): void => {
-  document.addEventListener('SerializeState', () => {
+  subscribe('SerializeState', () => {
     getState().serialize()
   })
 
@@ -21,19 +21,16 @@ export const subscribeToEvents = (): void => {
   // Inventory
   //---------------------------------------------------------------------------
 
-  document.addEventListener(
-    'RenderInventory',
-    (event: CustomEvent<{ inventoryId: string; inventoryName?: string }>) => {
-      assert(event.detail.inventoryId, 'No inventory ID passed')
-      handleRenderInventory(event.detail.inventoryId, event.detail?.inventoryName)
-    },
-  )
+  subscribe('RenderInventory', (event: CustomEvent<{ inventoryId: string; inventoryName?: string }>) => {
+    assert(event.detail.inventoryId, 'No inventory ID passed')
+    handleRenderInventory(event.detail.inventoryId, event.detail?.inventoryName)
+  })
 
-  document.addEventListener('RenderInventories', () => {
+  subscribe('RenderInventories', () => {
     handleRenderInventories()
   })
 
-  document.addEventListener('SelectInventory', (event: CustomEvent<{ inventoryId: string }>) => {
+  subscribe('SelectInventory', (event: CustomEvent<{ inventoryId: string }>) => {
     assert(event.detail.inventoryId, 'No inventory ID passed')
     handleSelectInventory(event.detail.inventoryId)
   })
@@ -42,23 +39,23 @@ export const subscribeToEvents = (): void => {
   // Character
   //---------------------------------------------------------------------------
 
-  document.addEventListener('RenderNewCharacterControlsSection', (event: CustomEvent<{ inventoryId: string }>) => {
+  subscribe('RenderNewCharacterControlsSection', (event: CustomEvent<{ inventoryId: string }>) => {
     assert(event.detail.inventoryId, 'No inventory ID passed')
     handleRenderNewCharControlsSection(event.detail.inventoryId)
   })
 
-  document.addEventListener('RenderNewRandomCharacter', (event: CustomEvent<{ inventoryId: string }>) => {
+  subscribe('RenderNewRandomCharacter', (event: CustomEvent<{ inventoryId: string }>) => {
     assert(event.detail.inventoryId, 'No inventory ID passed')
     handleRenderNewRandomCharacter(event.detail.inventoryId)
     dispatchEvent('RenderNewCharacterControlsSection', { inventoryId: event.detail.inventoryId })
   })
 
-  document.addEventListener('RenderCharacterSection', (event: CustomEvent<{ inventoryId: string }>) => {
+  subscribe('RenderCharacterSection', (event: CustomEvent<{ inventoryId: string }>) => {
     assert(event.detail.inventoryId, 'No inventory ID passed')
     handleRenderCharacterSection(event.detail.inventoryId)
   })
 
-  document.addEventListener('RemoveCharacter', (event: CustomEvent<{ inventoryId: string }>) => {
+  subscribe('RemoveCharacter', (event: CustomEvent<{ inventoryId: string }>) => {
     assert(event.detail.inventoryId, 'No inventory ID passed')
     handleRemoveCharacter(event.detail.inventoryId)
     dispatchEvent('RenderNewCharacterControlsSection', { inventoryId: event.detail.inventoryId })

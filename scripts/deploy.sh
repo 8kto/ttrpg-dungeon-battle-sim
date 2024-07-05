@@ -21,11 +21,8 @@ fi
 
 yarn build -- --publicPath "$PUBLIC_PATH"
 mkdir -p /tmp/snw-to-be-deployed
-cp -r build/* /tmp/snw-to-be-deployed
-
-# Find all HTML files in /tmp/snw-to-be-deployed and replace $VERSION$ with current timestamp
-#CURRENT_TIMESTAMP=$(date +%s)
-#find /tmp/snw-to-be-deployed \( -name '*.html' -or -name '*.js' \) -exec sed -i "s/\$VERSION\\$/$CURRENT_TIMESTAMP/g" {} +
+rm -rf /tmp/snw-to-be-deployed/*
+rsync -av --exclude='*.test.ts' --exclude='*.test.ts.snap' build/ /tmp/snw-to-be-deployed
 
 # Deploy to remote server
 echo "DEPLOY_SSH_PORT: $DEPLOY_SSH_PORT"
