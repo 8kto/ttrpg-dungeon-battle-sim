@@ -186,8 +186,12 @@ export const handleRenderNewCharControlsSection = (inventoryId: string): void =>
 
 export const handleRenderCharacterSection = (inventoryId: string): void => {
   const inventory = getState().getInventory(inventoryId)
-  const { classDef, stats } = inventory.character || {}
-  assert(classDef && stats, `No character data found for inventory ${inventoryId}`)
+  if (!inventory.character) {
+    return
+  }
+
+  const { characterClass, stats } = inventory.character
+  assert(characterClass && stats, `No character data found for inventory ${inventoryId}`)
 
   const container = getRootContainer(inventoryId).querySelector('.char-stats--container')
   container.innerHTML = ''
@@ -217,6 +221,9 @@ export const handleRenderCharacterSection = (inventoryId: string): void => {
       }
     })
   })
+
+  const classDef = CharacterClasses[characterClass]
+  assert(classDef, `Unknown character class: ${characterClass}`)
 
   if (classDef.$isCaster) {
     const casterDetailsContainer = container.querySelector<HTMLElement>('.char-stats--caster-details')
@@ -278,7 +285,7 @@ export const handleRenderNewRandomCharacter = (inventoryId: string): void => {
   }
 
   stats.HitPoints = getCharacterHitPoints(classDef, stats.Constitution.HitPoints)
-  const charOptions: CharacterOptions = { classDef, stats }
+  const charOptions: CharacterOptions = { characterClass: classDef.name, stats }
   if (classDef.$isCaster) {
     if (classDef.name === CharacterClass.Druid || classDef.name === CharacterClass.Cleric) {
       charOptions.spells = 'All'
