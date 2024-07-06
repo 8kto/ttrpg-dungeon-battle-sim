@@ -1,4 +1,4 @@
-import { createElementFromHtml, scrollToElement } from '../layout'
+import { createElementFromHtml, getTitleFromId, scrollToElement } from '../layout'
 
 describe('layout utils', () => {
   describe('createElementFromHtml', () => {
@@ -66,6 +66,33 @@ describe('layout utils', () => {
 
       // @ts-ignore
       console.error.mockRestore()
+    })
+  })
+
+  describe('getTitleFromId', () => {
+    it('should convert camelCase to title case', () => {
+      expect(getTitleFromId('camelCaseExample')).toBe('Camel case example')
+    })
+
+    it('should convert PascalCase to title case', () => {
+      expect(getTitleFromId('PascalCaseExample')).toBe('Pascal case example')
+    })
+
+    it('should handle single word inputs', () => {
+      expect(getTitleFromId('example')).toBe('Example')
+    })
+
+    it('should handle empty strings', () => {
+      expect(getTitleFromId('')).toBe('')
+    })
+
+    it('should handle already title cased strings', () => {
+      expect(getTitleFromId('Already Title Cased')).toBe('Already title cased')
+    })
+
+    it('should handle strings with numbers', () => {
+      expect(getTitleFromId('example1Test')).toBe('Example1 test')
+      expect(getTitleFromId('test2Example')).toBe('Test2 example')
     })
   })
 })

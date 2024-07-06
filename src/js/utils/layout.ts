@@ -22,7 +22,7 @@ export const scrollToElement = (element: HTMLElement): void => {
 }
 
 export const getTitleFromId = (id: string): string => {
-  const res = id.replace(/([A-Z])/g, ' $1').trim()
+  const res = id.replace(/(?<!\s)([A-Z])/g, ' $1').trim()
 
   return res.slice(0, 1).toLocaleUpperCase() + res.slice(1).toLocaleLowerCase()
 }
