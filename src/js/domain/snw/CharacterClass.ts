@@ -1,8 +1,6 @@
 import { Dice } from '../Dice'
+import { SavingThrow } from './SavingThrow'
 
-/**
- * Enum for Character Classes
- */
 export enum CharacterClass {
   Assassin = 'Assassin',
   Cleric = 'Cleric',
@@ -15,9 +13,6 @@ export enum CharacterClass {
   Thief = 'Thief',
 }
 
-/**
- * Enum for Character Races
- */
 export enum CharacterRace {
   Human = 'Human',
   Dwarf = 'Dwarf',
@@ -26,9 +21,6 @@ export enum CharacterRace {
   Hobbit = 'Hobbit',
 }
 
-/**
- * Enum for Attribute Scores
- */
 export enum AttrScore {
   Strength = 'Strength',
   Dexterity = 'Dexterity',
@@ -38,23 +30,14 @@ export enum AttrScore {
   Charisma = 'Charisma',
 }
 
-/**
- * Enum for Alignments
- */
 export enum Alignment {
   Chaotic = 'Chaotic',
   Neutral = 'Neutral',
   Lawful = 'Lawful',
 }
 
-/**
- * Type for Prime Attribute
- */
 export type PrimeAttribute = [AttrScore, number]
 
-/**
- * Interface for Character Class Definition
- */
 export interface CharacterClassDef {
   name: CharacterClass
   PrimeAttr: PrimeAttribute[]
@@ -64,6 +47,7 @@ export interface CharacterClassDef {
   WeaponsPermitted: string
   Race: CharacterRace[]
   Alignment: Alignment[]
+  SavingThrow: SavingThrow
   $isCaster?: boolean
   $spellsAtTheFirstLevel?: number
   $meta?: string
