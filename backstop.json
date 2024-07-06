@@ -11,11 +11,11 @@
   "onReadyScript": "puppet/onReady.js",
   "scenarios": [
     {
-      "label": "Main page (initial)",
+      "label": "Initial",
       "url": "http://localhost:3000/"
     },
     {
-      "label": "Local storage contains serialized data",
+      "label": "All classes",
       "url": "http://localhost:3000",
       "onReadyScript": "onReadyScriptWithLocalStorage.js"
     }
