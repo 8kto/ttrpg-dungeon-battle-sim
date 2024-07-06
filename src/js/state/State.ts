@@ -2,12 +2,12 @@
 
 import { EquipItem } from '../domain/Equipment'
 import { Inventory, InventoryItem } from '../domain/Inventory'
-import { CharacterClassDef } from '../domain/snw/CharacterClass'
+import { CharacterClass } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
 import { Spell } from '../domain/snw/Magic'
 
 export type CharacterOptions = {
-  classDef: CharacterClassDef
+  characterClass: CharacterClass
   stats: CharacterStats
   spells?: Record<string, Spell> | 'All'
 }
@@ -129,8 +129,9 @@ export class State {
   }
 
   removeCharacter(id: string): void {
-    delete this.#inventories[id].character?.stats
-    delete this.#inventories[id].character?.classDef
+    if (this.#inventories[id].character) {
+      this.#inventories[id].character = null
+    }
     this.serialize()
   }
 
@@ -148,10 +149,10 @@ export class State {
     }
   }
 
-  setCharacter(inventoryId: string, { classDef, spells, stats }: CharacterOptions): void {
+  setCharacter(inventoryId: string, { characterClass, spells, stats }: CharacterOptions): void {
     this.#inventories[inventoryId].character = {
       stats: { ...stats },
-      classDef: { ...classDef },
+      characterClass,
       spells,
     }
   }
@@ -160,5 +161,3 @@ export class State {
 export const getState = (): State => {
   return State.getInstance()
 }
-
-// TODO do not serialize classDef, use reference
