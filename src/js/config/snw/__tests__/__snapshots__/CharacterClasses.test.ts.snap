@@ -34,7 +34,7 @@ exports[`characterClasses should match the snapshot 1`] = `
         "TurnedToStone": 13,
         "Wands": 14,
       },
-      "swn": {
+      "snw": {
         "details": null,
         "value": 15,
       },
@@ -83,7 +83,7 @@ exports[`characterClasses should match the snapshot 1`] = `
         "TurnedToStone": 14,
         "Wands": 12,
       },
-      "swn": {
+      "snw": {
         "details": "+2 against being paralyzed or poisoned",
         "value": 15,
       },
@@ -120,7 +120,7 @@ exports[`characterClasses should match the snapshot 1`] = `
         "TurnedToStone": 14,
         "Wands": 12,
       },
-      "swn": {
+      "snw": {
         "details": "+2 bonus against fire",
         "value": 15,
       },
@@ -167,7 +167,7 @@ exports[`characterClasses should match the snapshot 1`] = `
         "TurnedToStone": 14,
         "Wands": 13,
       },
-      "swn": {
+      "snw": {
         "details": "+1 bonus on all saving throws except against spells (including those from wands and staffs)",
         "value": 15,
       },
@@ -204,7 +204,7 @@ exports[`characterClasses should match the snapshot 1`] = `
         "TurnedToStone": 13,
         "Wands": 14,
       },
-      "swn": {
+      "snw": {
         "details": "+2 against spells, including spells from magic wands and staffs",
         "value": 15,
       },
@@ -237,7 +237,7 @@ exports[`characterClasses should match the snapshot 1`] = `
         "TurnedToStone": 14,
         "Wands": 12,
       },
-      "swn": {
+      "snw": {
         "details": "+2 bonus against paralysis and poisons (when Wisdom is 12+)",
         "value": 15,
       },
@@ -282,7 +282,7 @@ exports[`characterClasses should match the snapshot 1`] = `
         "TurnedToStone": 14,
         "Wands": 13,
       },
-      "swn": {
+      "snw": {
         "details": null,
         "value": 12,
       },
@@ -320,7 +320,7 @@ exports[`characterClasses should match the snapshot 1`] = `
         "TurnedToStone": 14,
         "Wands": 13,
       },
-      "swn": {
+      "snw": {
         "details": null,
         "value": 14,
       },
@@ -370,7 +370,7 @@ exports[`characterClasses should match the snapshot 1`] = `
         "TurnedToStone": 13,
         "Wands": 14,
       },
-      "swn": {
+      "snw": {
         "details": "+2 against devices, including traps, magical wands or staffs, and other magical devices",
         "value": 15,
       },
