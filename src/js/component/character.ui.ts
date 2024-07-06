@@ -7,7 +7,7 @@ import { Spell } from '../domain/snw/Magic'
 import { CharacterOptions, getState } from '../state/State'
 import { assert } from '../utils/assert'
 import { dispatchEvent } from '../utils/event'
-import { createElementFromHtml } from '../utils/layout'
+import { createElementFromHtml, getTitleFromId } from '../utils/layout'
 import { getCharArmorClass } from '../utils/snw/armorClass'
 import {
   getBestClass,
@@ -53,7 +53,7 @@ export const renderCasterDetails = (
 
   const getDetailsItem = (key, value): HTMLElement => {
     const elem = document.createElement('p')
-    const formatted = key.replace(/([A-Z])/g, ' $1').trim()
+    const formatted = getTitleFromId(key)
 
     elem.innerHTML = `${formatted}: <span class="text-alt">${value}</span>`
 
@@ -128,12 +128,35 @@ const renderArmorClassDetails = (
   ].join(' ')
 }
 
-const renderSavingThrowDetails = (container: HTMLElement, classDef: CharacterClassDef) => {
+const renderSavingThrowDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
   const valueContainer = container.querySelector('.char-saving-throw--value')
   const detailsContainer = container.querySelector('.char-saving-throw--details')
+  const altDetailsContainer = container.querySelector('.char-saving-throw--alt-details')
+  const toggleButton = container.querySelector('.char-saving-throw--toggle')
 
   valueContainer.textContent = classDef.SavingThrow.swn.value.toString()
   detailsContainer.textContent = classDef.SavingThrow.swn.details ?? ''
+
+  const altList = Object.entries(classDef.SavingThrow.alternative)
+    .map(([key, def]) => {
+      return `<li class="p-1">${getTitleFromId(key)}: ${def}</li>`
+    })
+    .join('')
+  altDetailsContainer.innerHTML = `<ul class="list-disc list-inside ml-2">${altList}</ul>`
+
+  let toggled = false
+  toggleButton.addEventListener('click', () => {
+    if (!toggled) {
+      valueContainer.setAttribute('hidden', 'hidden')
+      detailsContainer.setAttribute('hidden', 'hidden')
+      altDetailsContainer.removeAttribute('hidden')
+    } else {
+      valueContainer.removeAttribute('hidden')
+      detailsContainer.removeAttribute('hidden')
+      altDetailsContainer.setAttribute('hidden', 'hidden')
+    }
+    toggled = !toggled
+  })
 }
 
 /**
