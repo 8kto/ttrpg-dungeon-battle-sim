@@ -128,6 +128,14 @@ const renderArmorClassDetails = (
   ].join(' ')
 }
 
+const renderSavingThrowDetails = (container: HTMLElement, classDef: CharacterClassDef) => {
+  const valueContainer = container.querySelector('.char-saving-throw--value')
+  const detailsContainer = container.querySelector('.char-saving-throw--details')
+
+  valueContainer.textContent = classDef.SavingThrow.swn.value.toString()
+  detailsContainer.textContent = classDef.SavingThrow.swn.details ?? ''
+}
+
 /**
  * @notice No direct calls
  */
@@ -196,6 +204,7 @@ export const handleRenderCharacterSection = (inventoryId: string): void => {
   renderAlignmentDetails(container.querySelector<HTMLElement>('.char-stats--alignment'), classDef)
   renderRacesDetails(container.querySelector<HTMLElement>('.char-stats--races'), classDef)
   renderArmorClassDetails(container.querySelector('.char-ac'), stats, inventory.items)
+  renderSavingThrowDetails(container.querySelector('.char-saving-throw'), classDef)
 
   // Other details
   container.querySelector('.char-gold').textContent = stats.Gold.toString()
