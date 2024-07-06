@@ -13,19 +13,22 @@ export type CharacterOptions = {
 }
 
 export const DEFAULT_INVENTORY_ID = 'MainCharacter'
+
 export const DEFAULT_INVENTORY_ITEMS = Object.freeze({
   'Basic accessories': { cost: 0, name: 'Basic accessories', quantity: 1, weight: 8 },
 }) as Record<string, InventoryItem>
 const LOCAL_STORAGE_KEY = 's&w-generator'
 
+export const DEFAULT_INVENTORY: Inventory = {
+  id: DEFAULT_INVENTORY_ID,
+  name: 'Main Character',
+  items: { ...DEFAULT_INVENTORY_ITEMS },
+  character: null,
+}
+
 export class State {
   #inventories: Record<string, Inventory> = {
-    [DEFAULT_INVENTORY_ID]: {
-      id: DEFAULT_INVENTORY_ID,
-      name: 'Main Character',
-      items: { ...DEFAULT_INVENTORY_ITEMS },
-      character: null,
-    },
+    [DEFAULT_INVENTORY_ID]: DEFAULT_INVENTORY,
   }
 
   #currentInventoryId: string = DEFAULT_INVENTORY_ID
@@ -53,7 +56,7 @@ export class State {
 
   getSerializedInventories(): Record<string, Inventory> | null {
     try {
-      const json = localStorage.getItem(LOCAL_STORAGE_KEY)
+      const json = localStorage.getItem(LOCAL_STORAGE_KEY) || ''
 
       return JSON.parse(json)
     } catch (err) {
@@ -71,11 +74,19 @@ export class State {
     return State.#instance!
   }
 
+  static resetInstance(): void {
+    State.#instance = null
+  }
+
   getCurrentInventoryId(): string {
     return this.#currentInventoryId
   }
 
   setCurrentInventoryId(id: string): void {
+    if (!this.#inventories[id]) {
+      throw new Error(`Inventory does not exist: ${id}`)
+    }
+
     this.#currentInventoryId = id
     this.serialize()
   }
