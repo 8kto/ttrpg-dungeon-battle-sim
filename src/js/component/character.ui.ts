@@ -134,8 +134,8 @@ const renderSavingThrowDetails = (container: HTMLElement, classDef: CharacterCla
   const altDetailsContainer = container.querySelector('.char-saving-throw--alt-details')
   const toggleButton = container.querySelector('.char-saving-throw--toggle')
 
-  valueContainer.textContent = classDef.SavingThrow.swn.value.toString()
-  detailsContainer.textContent = classDef.SavingThrow.swn.details ?? ''
+  valueContainer.textContent = classDef.SavingThrow.snw.value.toString()
+  detailsContainer.textContent = classDef.SavingThrow.snw.details ?? ''
 
   const altList = Object.entries(classDef.SavingThrow.alternative)
     .map(([key, def]) => {
