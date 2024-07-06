@@ -9,7 +9,7 @@ export type AlternativeSavingThrow = {
 export type SavingThrow = {
   swn: {
     value: number
-    notes: string | null
+    details: string | null
   }
   alternative: AlternativeSavingThrow
 }

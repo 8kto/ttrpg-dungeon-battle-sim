@@ -20,7 +20,7 @@ const AssassinClassDef: CharacterClassDef = {
     [AttrScore.Dexterity, 12],
     [AttrScore.Intelligence, 12],
   ],
-  SavingThrow: { swn: { value: 15, notes: null }, alternative: MagicUsersSavingThrows },
+  SavingThrow: { swn: { value: 15, details: null }, alternative: MagicUsersSavingThrows },
   HitDice: Dice.d6,
   ArmorPermitted: 'Leather armor only, shield permitted',
   WeaponsPermitted: 'Any',
@@ -31,7 +31,10 @@ const AssassinClassDef: CharacterClassDef = {
 const ClericClassDef: CharacterClassDef = {
   name: CharacterClass.Cleric,
   PrimeAttr: [[AttrScore.Wisdom, PRIME_ATTR_MIN]],
-  SavingThrow: { swn: { value: 15, notes: '+2 against being paralyzed or poisoned' }, alternative: ClericSavingThrows },
+  SavingThrow: {
+    swn: { value: 15, details: '+2 against being paralyzed or poisoned' },
+    alternative: ClericSavingThrows,
+  },
   HitDice: Dice.d6,
   ArmorPermitted: 'Any',
   WeaponsPermitted:
@@ -54,7 +57,7 @@ const DruidClassDef: CharacterClassDef = {
     [AttrScore.Charisma, 14],
   ],
   HitDice: Dice.d6,
-  SavingThrow: { swn: { value: 15, notes: '+2 bonus against fire' }, alternative: ClericSavingThrows },
+  SavingThrow: { swn: { value: 15, details: '+2 bonus against fire' }, alternative: ClericSavingThrows },
   ArmorPermitted: 'Leather armor, wooden shield',
   WeaponsPermitted: 'Dagger, sickle-shaped sword (treat as short sword), spear, sling, oil',
   Race: [CharacterRace.Human],
@@ -69,7 +72,7 @@ const FighterClassDef: CharacterClassDef = {
   SavingThrow: {
     swn: {
       value: 15,
-      notes: '+1 bonus on all saving throws except against spells (including those from wands and staffs)',
+      details: '+1 bonus on all saving throws except against spells (including those from wands and staffs)',
     },
     alternative: FightersSavingThrows,
   },
@@ -84,7 +87,7 @@ const MagicUserClassDef: CharacterClassDef = {
   name: CharacterClass.MagicUser,
   PrimeAttr: [[AttrScore.Intelligence, PRIME_ATTR_MIN]],
   SavingThrow: {
-    swn: { value: 15, notes: '+2 against spells, including spells from magic wands and staffs' },
+    swn: { value: 15, details: '+2 against spells, including spells from magic wands and staffs' },
     alternative: MagicUsersSavingThrows,
   },
   HitDice: Dice.d4,
@@ -105,7 +108,7 @@ const MonkClassDef: CharacterClassDef = {
     [AttrScore.Wisdom, 15],
   ],
   SavingThrow: {
-    swn: { value: 15, notes: '+2 bonus against paralysis and poisons (when Wisdom is 12+)' },
+    swn: { value: 15, details: '+2 bonus against paralysis and poisons (when Wisdom is 12+)' },
     alternative: ClericSavingThrows,
   },
   HitDice: Dice.d4,
@@ -119,7 +122,7 @@ const PaladinClassDef: CharacterClassDef = {
   name: CharacterClass.Paladin,
   PrimeAttr: [[AttrScore.Strength, PRIME_ATTR_MIN]],
   StrictAttr: [[AttrScore.Charisma, 17]],
-  SavingThrow: { swn: { value: 12, notes: null }, alternative: FightersSavingThrows },
+  SavingThrow: { swn: { value: 12, details: null }, alternative: FightersSavingThrows },
   HitDice: Dice.d8,
   ArmorPermitted: 'Any',
   WeaponsPermitted: 'Any',
@@ -135,7 +138,7 @@ const RangerClassDef: CharacterClassDef = {
     [AttrScore.Intelligence, 12],
     [AttrScore.Wisdom, 12],
   ],
-  SavingThrow: { swn: { value: 14, notes: null }, alternative: FightersSavingThrows },
+  SavingThrow: { swn: { value: 14, details: null }, alternative: FightersSavingThrows },
   HitDice: Dice.d8,
   ArmorPermitted: 'Any',
   WeaponsPermitted: 'Any',
@@ -150,7 +153,7 @@ const ThiefClassDef: CharacterClassDef = {
   SavingThrow: {
     swn: {
       value: 15,
-      notes: '+2 against devices, including traps, magical wands or staffs, and other magical devices',
+      details: '+2 against devices, including traps, magical wands or staffs, and other magical devices',
     },
     alternative: MagicUsersSavingThrows,
   },
