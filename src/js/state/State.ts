@@ -2,30 +2,33 @@
 
 import { EquipItem } from '../domain/Equipment'
 import { Inventory, InventoryItem } from '../domain/Inventory'
-import { CharacterClassDef } from '../domain/snw/CharacterClass'
+import { CharacterClass } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
 import { Spell } from '../domain/snw/Magic'
 
 export type CharacterOptions = {
-  classDef: CharacterClassDef
+  characterClass: CharacterClass
   stats: CharacterStats
   spells?: Record<string, Spell> | 'All'
 }
 
 export const DEFAULT_INVENTORY_ID = 'MainCharacter'
+
 export const DEFAULT_INVENTORY_ITEMS = Object.freeze({
   'Basic accessories': { cost: 0, name: 'Basic accessories', quantity: 1, weight: 8 },
 }) as Record<string, InventoryItem>
-const LOCAL_STORAGE_KEY = 's&w-generator'
+export const LOCAL_STORAGE_KEY = 's&w-generator'
+
+export const DEFAULT_INVENTORY: Inventory = {
+  id: DEFAULT_INVENTORY_ID,
+  name: 'Main Character',
+  items: { ...DEFAULT_INVENTORY_ITEMS },
+  character: null,
+}
 
 export class State {
   #inventories: Record<string, Inventory> = {
-    [DEFAULT_INVENTORY_ID]: {
-      id: DEFAULT_INVENTORY_ID,
-      name: 'Main Character',
-      items: { ...DEFAULT_INVENTORY_ITEMS },
-      character: null,
-    },
+    [DEFAULT_INVENTORY_ID]: DEFAULT_INVENTORY,
   }
 
   #currentInventoryId: string = DEFAULT_INVENTORY_ID
@@ -54,6 +57,9 @@ export class State {
   getSerializedInventories(): Record<string, Inventory> | null {
     try {
       const json = localStorage.getItem(LOCAL_STORAGE_KEY)
+      if (!json || typeof json !== 'string') {
+        return null
+      }
 
       return JSON.parse(json)
     } catch (err) {
@@ -71,11 +77,19 @@ export class State {
     return State.#instance!
   }
 
+  static resetInstance(): void {
+    State.#instance = null
+  }
+
   getCurrentInventoryId(): string {
     return this.#currentInventoryId
   }
 
   setCurrentInventoryId(id: string): void {
+    if (!this.#inventories[id]) {
+      throw new Error(`Inventory does not exist: ${id}`)
+    }
+
     this.#currentInventoryId = id
     this.serialize()
   }
@@ -129,8 +143,9 @@ export class State {
   }
 
   removeCharacter(id: string): void {
-    delete this.#inventories[id].character?.stats
-    delete this.#inventories[id].character?.classDef
+    if (this.#inventories[id].character) {
+      this.#inventories[id].character = null
+    }
     this.serialize()
   }
 
@@ -148,10 +163,10 @@ export class State {
     }
   }
 
-  setCharacter(inventoryId: string, { classDef, spells, stats }: CharacterOptions): void {
+  setCharacter(inventoryId: string, { characterClass, spells, stats }: CharacterOptions): void {
     this.#inventories[inventoryId].character = {
       stats: { ...stats },
-      classDef: { ...classDef },
+      characterClass,
       spells,
     }
   }
@@ -160,5 +175,3 @@ export class State {
 export const getState = (): State => {
   return State.getInstance()
 }
-
-// TODO do not serialize classDef, use reference

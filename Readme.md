@@ -1,5 +1,7 @@
 ## Character and inventory generator for Swords & Wizardry (Complete/Revised)
 
+![build](https://github.com/8kto/ttrpg-snw-generator/actions/workflows/main.yml/badge.svg)
+
 ```
                            _                         _                  _
                           | |       ___             (_)                | |
@@ -64,3 +66,5 @@ Contributions are welcome. Code should follow conventions described in [Code Con
 - [ ] Fighter Parrying Ability
 - [ ] daisyUI, dark/light themes
 - [ ] Console log with events like "Intelligence: rolled 3d6 with 12 ..." (?)
+- [ ] Compact mode
+- [ ] Save prepared spell
