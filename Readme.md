@@ -60,7 +60,7 @@ Contributions are welcome. Code should follow conventions described in [Code Con
 - [ ] Race
 - [ ] Char To Hit
 - [ ] Char: edit numbers
-- [ ] Saving Throw / num + details
 - [ ] Generate with strict 0e attrs
 - [ ] Fighter Parrying Ability
 - [ ] daisyUI, dark/light themes
+- [ ] Console log with events like "Intelligence: rolled 3d6 with 12 ..." (?)
