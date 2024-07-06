@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`State character should set and remove character in inventory 1`] = `
+{
+  "characterClass": "MagicUser",
+  "spells": {
+    "Charm Person": {
+      "level": 1,
+      "name": "Charm Person",
+    },
+    "Detect Magic": {
+      "level": 1,
+      "name": "Detect Magic",
+    },
+    "Hold Portal": {
+      "level": 1,
+      "name": "Hold Portal",
+    },
+    "Light": {
+      "level": 1,
+      "name": "Light",
+    },
+    "Protection from Evil": {
+      "level": 1,
+      "name": "Protection from Evil",
+    },
+    "Read Languages": {
+      "level": 1,
+      "name": "Read Languages",
+    },
+    "Shield": {
+      "level": 1,
+      "name": "Shield",
+    },
+    "Sleep": {
+      "level": 1,
+      "name": "Sleep",
+    },
+  },
+  "stats": {
+    "Charisma": {
+      "MaxNumberOfSpecialHirelings": 4,
+      "Score": 9,
+    },
+    "Constitution": {
+      "HitPoints": -1,
+      "RaiseDeadSurvivalChance": "50%",
+      "Score": 5,
+    },
+    "Dexterity": {
+      "ArmorClass": 1,
+      "MissilesToHit": 1,
+      "Score": 13,
+    },
+    "Gold": 140,
+    "HitPoints": 1,
+    "Intelligence": {
+      "MaxAdditionalLanguages": 4,
+      "MaxSpellLevel": 8,
+      "NewSpellUnderstandingChance": 75,
+      "Score": 15,
+      "SpellsPerLevel": "6/10",
+    },
+    "Strength": {
+      "Carry": 5,
+      "Damage": 0,
+      "Doors": "1-2",
+      "Score": 9,
+      "ToHit": 0,
+    },
+    "Wisdom": {
+      "Score": 9,
+    },
+  },
+}
+`;
+
+exports[`State default state should initialize with default inventory 1`] = `
+[
+  {
+    "character": null,
+    "id": "MainCharacter",
+    "items": {
+      "Basic accessories": {
+        "cost": 0,
+        "name": "Basic accessories",
+        "quantity": 1,
+        "weight": 8,
+      },
+    },
+    "name": "Main Character",
+  },
+]
+`;
