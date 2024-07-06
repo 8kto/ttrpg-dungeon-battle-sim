@@ -17,6 +17,7 @@
     "test:coverage": "jest --collectCoverage",
     "dev:styles": "npx tailwindcss -i ./src/styles/styles.css -o ./src/styles/styles.processed.css --watch",
     "todos": "egrep --color=always -i '(TODO|FIXME)' -r src/",
+    "test:e2e": "backstop test",
     "weok": "yarn tsc && yarn lint && yarn format && yarn test && echo WE OK"
   },
   "devDependencies": {
