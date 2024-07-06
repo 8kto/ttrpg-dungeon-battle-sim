@@ -20,3 +20,9 @@ export const scrollToElement = (element: HTMLElement): void => {
     console.error('Invalid element passed to scrollToElement function.')
   }
 }
+
+export const getTitleFromId = (id: string): string => {
+  const res = id.replace(/(?<!\s)([A-Z])/g, ' $1').trim()
+
+  return res.slice(0, 1).toLocaleUpperCase() + res.slice(1).toLocaleLowerCase()
+}

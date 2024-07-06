@@ -160,3 +160,5 @@ export class State {
 export const getState = (): State => {
   return State.getInstance()
 }
+
+// TODO do not serialize classDef, use reference
