@@ -56,7 +56,10 @@ export class State {
 
   getSerializedInventories(): Record<string, Inventory> | null {
     try {
-      const json = localStorage.getItem(LOCAL_STORAGE_KEY) || ''
+      const json = localStorage.getItem(LOCAL_STORAGE_KEY)
+      if (!json || typeof json !== 'string') {
+        return null
+      }
 
       return JSON.parse(json)
     } catch (err) {
