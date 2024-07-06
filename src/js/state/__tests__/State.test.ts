@@ -6,6 +6,7 @@ import {
   DEFAULT_INVENTORY_ID,
   DEFAULT_INVENTORY_ITEMS,
   getState,
+  LOCAL_STORAGE_KEY,
   State,
 } from '../State'
 
@@ -39,6 +40,61 @@ describe('State', () => {
       expect(serializedInventories).toEqual({
         [DEFAULT_INVENTORY_ID]: DEFAULT_INVENTORY,
       })
+    })
+  })
+
+  describe('serialization', () => {
+    it('should call localStorage.getItem', () => {
+      // @ts-ignore
+      const localStorageGetItemSpy = jest.spyOn(Storage.prototype, 'getItem')
+
+      State.resetInstance()
+      getState()
+
+      expect(localStorageGetItemSpy).toHaveBeenCalledTimes(1)
+      expect(localStorageGetItemSpy).toHaveBeenCalledWith(LOCAL_STORAGE_KEY)
+    })
+
+    it('should restore from localStorage', () => {
+      const json = `{"MainCharacter":{"id":"MainCharacter","name":"Main Character","items":{"Basic accessories":{"cost":0,"name":"Basic accessories","quantity":1,"weight":8}},"character":{"stats":{"Strength":{"Score":11,"ToHit":0,"Damage":0,"Doors":"1-2","Carry":5},"Dexterity":{"Score":9,"MissilesToHit":0,"ArmorClass":0},"Constitution":{"Score":11,"HitPoints":0,"RaiseDeadSurvivalChance":"75%"},"Intelligence":{"Score":6,"MaxAdditionalLanguages":0,"MaxSpellLevel":4,"NewSpellUnderstandingChance":30,"SpellsPerLevel":"2/4"},"Wisdom":{"Score":17},"Charisma":{"Score":8,"MaxNumberOfSpecialHirelings":3},"Gold":110,"HitPoints":6},"characterClass":"Cleric","spells":"All"}}}`
+      localStorage.setItem(LOCAL_STORAGE_KEY, json)
+
+      State.resetInstance()
+      const state = getState()
+
+      expect(state.getSerializeInventories()).toEqual(JSON.stringify(JSON.parse(json), null, 2))
+      expect(state.getInventories()).toEqual(Object.values(JSON.parse(json)))
+    })
+
+    it('should handle empty localStorage', () => {
+      localStorage.clear()
+      State.resetInstance()
+      expect(() => getState()).not.toThrow()
+      expect(getState()).toEqual({})
+    })
+
+    it.each([
+      null,
+      0,
+      // @ts-ignore
+      // eslint-disable-next-line no-undefined
+      undefined,
+      '',
+      'null',
+      'false',
+      false,
+      NaN,
+      '{A:',
+      'x:1',
+      `\n`,
+    ])('should handle corrupted localStorage [%j]', (input) => {
+      localStorage.clear()
+      // @ts-ignore
+      localStorage.setItem(LOCAL_STORAGE_KEY, input)
+
+      State.resetInstance()
+      expect(() => getState()).not.toThrow()
+      expect(getState()).toEqual({})
     })
   })
 

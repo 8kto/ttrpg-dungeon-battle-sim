@@ -17,7 +17,7 @@ export const DEFAULT_INVENTORY_ID = 'MainCharacter'
 export const DEFAULT_INVENTORY_ITEMS = Object.freeze({
   'Basic accessories': { cost: 0, name: 'Basic accessories', quantity: 1, weight: 8 },
 }) as Record<string, InventoryItem>
-const LOCAL_STORAGE_KEY = 's&w-generator'
+export const LOCAL_STORAGE_KEY = 's&w-generator'
 
 export const DEFAULT_INVENTORY: Inventory = {
   id: DEFAULT_INVENTORY_ID,
