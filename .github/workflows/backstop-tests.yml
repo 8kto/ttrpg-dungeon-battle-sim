@@ -37,19 +37,16 @@ jobs:
       - name: Run visual regression tests
         run: |
           npx backstop test
-          echo "EXIT_CODE=$?" >> $GITHUB_ENV  
-          cat $GITHUB_ENV
-          cat tests_visual_regression/json_report/jsonReport.json
 
       - name: Upload BackstopJS artifacts
-        if: ${{ env.EXIT_CODE != 0 }}
+        if: failure()
         uses: actions/upload-artifact@v2
         with:
           name: backstopjs-artifacts
-          path: tests_visual_regression/ci_report
+          path: tests_visual_regression/html_report
 
       - name: Check for BackstopJS test results
-        if: ${{ env.EXIT_CODE != 0 }}
+        if: failure()
         run: |
           echo "BackstopJS tests failed. Check the artifacts for details."
           exit 1
