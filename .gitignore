@@ -6,11 +6,11 @@ build/
 src/styles/styles.processed.css
 coverage/
 
- Ignore test screenshots
+# Ignore test screenshots
 tests_visual_regression/bitmaps_test/
 
-# Ignore HTML reports
+# Ignore reports
 tests_visual_regression/html_report/
-
-# Ignore CI reports
 tests_visual_regression/ci_report/
+tests_visual_regression/json_report/
+
