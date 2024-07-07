@@ -31,7 +31,7 @@ jobs:
       - name: Start server
         run: |
           yarn build
-          yarn serve
+          yarn serve &
 
       - name: Wait for server to be ready
         run: npx wait-on http://localhost:3000
