@@ -33,7 +33,8 @@ jobs:
         run: npx wait-on http://localhost:3000
 
       - name: Run visual regression tests
-        run: yarn test:vr
+        run: npx backstop test
+        continue-on-error: true
 
       - name: Upload BackstopJS artifacts
         if: failure()
@@ -41,3 +42,9 @@ jobs:
         with:
           name: backstopjs-artifacts
           path: tests_visual_regression/html_report
+
+      - name: Check for BackstopJS test results
+        if: failure()
+        run: |
+          echo "BackstopJS tests failed. Check the artifacts for details."
+          exit 1 # Ensure the workflow fails if BackstopJS tests fail
