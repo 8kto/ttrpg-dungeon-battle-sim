@@ -33,18 +33,19 @@ jobs:
         run: npx wait-on http://localhost:3000
 
       - name: Run visual regression tests
-        run: npx backstop test
-        continue-on-error: true
+        run: |
+          yarn test:vr
+          echo "EXIT_CODE=$?" >> $GITHUB_ENV  
 
       - name: Upload BackstopJS artifacts
-        if: failure()
+        if: ${{ env.EXIT_CODE != 0 }}
         uses: actions/upload-artifact@v2
         with:
           name: backstopjs-artifacts
           path: tests_visual_regression/html_report
 
       - name: Check for BackstopJS test results
-        if: failure()
+        if: ${{ env.EXIT_CODE != 0 }}
         run: |
           echo "BackstopJS tests failed. Check the artifacts for details."
-          exit 1 # Ensure the workflow fails if BackstopJS tests fail
+          exit 1
