@@ -25,7 +25,7 @@
     "html_report": "tests_visual_regression/html_report",
     "ci_report": "tests_visual_regression/ci_report"
   },
-  "report": ["browser"],
+  "report": ["browser", "CI"],
   "engine": "puppeteer",
   "engineOptions": {
     "args": ["--no-sandbox"]
