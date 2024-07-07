@@ -23,9 +23,10 @@
     "bitmaps_test": "tests_visual_regression/bitmaps_test",
     "engine_scripts": "tests_visual_regression/tests",
     "html_report": "tests_visual_regression/html_report",
+    "json_report": "tests_visual_regression/json_report",
     "ci_report": "tests_visual_regression/ci_report"
   },
-  "report": ["browser", "CI"],
+  "report": ["browser", "CI", "json"],
   "engine": "puppeteer",
   "engineOptions": {
     "args": ["--no-sandbox"]
