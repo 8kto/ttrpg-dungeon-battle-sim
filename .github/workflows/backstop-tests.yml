@@ -36,6 +36,7 @@ jobs:
         run: |
           yarn test:vr
           echo "EXIT_CODE=$?" >> $GITHUB_ENV  
+          cat $GITHUB_ENV
 
       - name: Upload BackstopJS artifacts
         if: ${{ env.EXIT_CODE != 0 }}
