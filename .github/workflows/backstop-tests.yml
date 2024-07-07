@@ -24,8 +24,8 @@ jobs:
           node-version: '${{ steps.nvm.outputs.NVMRC }}'
 
       - name: Install dependencies
-      - run: yarn install --frozen-lockfile
-      - run: yarn install backstop
+        run: |
+          yarn install --frozen-lockfile
 
       - name: Start server
         run: yarn dev &
