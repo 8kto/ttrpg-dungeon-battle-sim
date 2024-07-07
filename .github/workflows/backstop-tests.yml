@@ -38,7 +38,7 @@ jobs:
         run: |
           npx backstop test
           pwd
-          env
+          ls -lah .
           cat tests_visual_regression/json_report/*
 
       - name: Upload BackstopJS artifacts
