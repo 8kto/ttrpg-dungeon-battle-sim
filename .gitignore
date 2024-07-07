@@ -7,10 +7,10 @@ src/styles/styles.processed.css
 coverage/
 
  Ignore test screenshots
-backstop_data/bitmaps_test/
+tests_visual_regression/bitmaps_test/
 
 # Ignore HTML reports
-backstop_data/html_report/
+tests_visual_regression/html_report/
 
 # Ignore CI reports
-backstop_data/ci_report/
+tests_visual_regression/ci_report/
