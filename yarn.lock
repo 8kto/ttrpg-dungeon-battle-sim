@@ -1854,6 +1854,11 @@ babel-preset-jest@^29.6.3:
     babel-plugin-jest-hoist "^29.6.3"
     babel-preset-current-node-syntax "^1.0.0"
 
+backstop@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/backstop/-/backstop-1.0.1.tgz#9afd0d1c74022d07449d6c0e73199973314a911c"
+  integrity sha512-1vLEMys4xy7ffDuTZQnjk7+30fwxQ5Nw5P7KDqm0TtsqsTM38aITYAJ083AEX/uojgtB/iBaq2B6ZygLjNAjUw==
+
 balanced-match@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
