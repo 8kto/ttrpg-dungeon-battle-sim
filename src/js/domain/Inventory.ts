@@ -7,14 +7,16 @@ export type InventoryItem = EquipItem & {
   quantity: number
 }
 
+export type Character = {
+  stats: CharacterStats
+  characterClass: CharacterClass
+  spells?: Record<string, Spell> | 'All'
+  prepared?: string[]
+}
+
 export type Inventory = {
   id: string
   name: string
   items: Record<string, InventoryItem>
-  character: {
-    stats: CharacterStats
-    characterClass: CharacterClass
-    spells?: Record<string, Spell> | 'All'
-    prepared?: string[]
-  } | null
+  character: Character | null
 }

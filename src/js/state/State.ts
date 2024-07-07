@@ -2,7 +2,7 @@
 
 import { CharacterClasses } from '../config/snw/CharacterClasses'
 import { EquipItem } from '../domain/Equipment'
-import { Inventory, InventoryItem } from '../domain/Inventory'
+import { Character, Inventory, InventoryItem } from '../domain/Inventory'
 import { CharacterClass, CharacterClassDef } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
 import { Spell } from '../domain/snw/Magic'
@@ -175,16 +175,17 @@ export class State {
 
   setPreparedSpells(inventoryId: string, spells: string[]): void {
     const inventory = this.#inventories[inventoryId]
-    const classDef = CharacterClasses[inventory.character?.characterClass] as CharacterClassDef
+    assert<Inventory>(inventory, `setPreparedSpells: Cannot find inventory ${inventoryId}`)
+    assert<Character>(inventory.character, `setPreparedSpells: Cannot find inventory ${inventoryId}`)
 
-    assert(inventory, `setPreparedSpells: Cannot find inventory ${inventoryId}`)
-    assert(classDef, `setPreparedSpells: Cannot parse character class for ${inventoryId}`)
-    assert(classDef.$isCaster, `setPreparedSpells: Character class is not caster: ${inventoryId}`)
+    const classDef = CharacterClasses[inventory.character.characterClass]
+    assert<CharacterClassDef>(classDef, `setPreparedSpells: Cannot parse character class for ${inventoryId}`)
+    assert<boolean>(classDef.$isCaster, `setPreparedSpells: Character class is not caster: ${inventoryId}`)
 
-    if (!inventory.character?.prepared) {
-      inventory.character!.prepared = []
+    if (!inventory.character.prepared) {
+      inventory.character.prepared = []
     }
-    inventory.character!.prepared = spells
+    inventory.character.prepared = spells
 
     this.serialize()
   }
