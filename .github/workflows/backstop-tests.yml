@@ -43,7 +43,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: backstopjs-artifacts
-          path: tests_visual_regression/html_report
+          path: tests_visual_regression/ci_report
 
       - name: Check for BackstopJS test results
         if: ${{ env.EXIT_CODE != 0 }}
