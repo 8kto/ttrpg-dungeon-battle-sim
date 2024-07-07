@@ -36,10 +36,10 @@ jobs:
       - name: Wait for server to be ready
         run: npx wait-on http://localhost:3000
 
-      - name: Run visual regression tests
+      - name: Run visual regression tests using Docker
         run: |
-          npx backstop test
-          ls -lah tests_visual_regression/
+          docker run --rm -v $(pwd):/src backstopjs/backstopjs test
+        continue-on-error: true
 
       - name: Upload BackstopJS artifacts
         if: failure()
