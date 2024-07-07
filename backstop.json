@@ -7,8 +7,6 @@
       "height": 1080
     }
   ],
-  "onBeforeScript": "puppet/onBefore.js",
-  "onReadyScript": "puppet/onReady.js",
   "scenarios": [
     {
       "label": "Initial",
@@ -17,15 +15,15 @@
     {
       "label": "All classes",
       "url": "http://localhost:3000",
-      "onReadyScript": "onReadyScriptWithLocalStorage.js"
+      "onReadyScript": "allClasses.test-e2e.js"
     }
   ],
   "paths": {
-    "bitmaps_reference": "backstop_data/bitmaps_reference",
-    "bitmaps_test": "backstop_data/bitmaps_test",
-    "engine_scripts": "e2e_scenarios",
-    "html_report": "backstop_data/html_report",
-    "ci_report": "backstop_data/ci_report"
+    "bitmaps_reference": "tests_visual_regression/bitmaps_reference",
+    "bitmaps_test": "tests_visual_regression/bitmaps_test",
+    "engine_scripts": "tests_visual_regression/tests",
+    "html_report": "tests_visual_regression/html_report",
+    "ci_report": "tests_visual_regression/ci_report"
   },
   "report": ["browser"],
   "engine": "puppeteer",
