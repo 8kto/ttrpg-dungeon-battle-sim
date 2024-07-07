@@ -1,8 +1,6 @@
 ## Character and inventory generator for Swords & Wizardry (Complete/Revised)
 
 ![linter and tests](https://github.com/8kto/ttrpg-snw-generator/actions/workflows/main.yml/badge.svg)
-![visual regression](https://github.com/8kto/ttrpg-snw-generator/actions/workflows/backstop-tests.yml/badge.svg)
-
 ```
                            _                         _                  _
                           | |       ___             (_)                | |
