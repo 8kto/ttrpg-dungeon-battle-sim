@@ -26,13 +26,65 @@ const getRootContainer = (inventoryId: string): HTMLElement => {
   return elem
 }
 
-const renderSpellsList = (container: HTMLElement, spells: Record<string, Spell>): void => {
-  const list = createElementFromHtml('<ul class="column-count-2" />')
+const bindSpellsControls = (inventoryId: string, container: HTMLElement): void => {
+  const items = container.querySelectorAll<HTMLInputElement>('.char-spells-list--item')
 
-  for (const s in spells) {
-    list.appendChild(createElementFromHtml(`<li class="break-inside-avoid text-alt">${spells[s].name}</li>`))
+  const getCheckedValues = (): string[] =>
+    Array.from(container.querySelectorAll('input:checked')).map((checkbox) => (checkbox as HTMLInputElement).value)
+
+  items.forEach((elem) => {
+    elem.addEventListener('click', () => {
+      const spells = getCheckedValues()
+
+      if (spells.length) {
+        getState().setPreparedSpells(inventoryId, spells)
+      }
+    })
+  })
+}
+
+const renderSpellsList = (container: HTMLElement, inventory: Inventory): void => {
+  let spells: Record<string, Spell> | null = null
+  const prepared = inventory.character?.prepared
+
+  if (inventory.character?.spells === 'All') {
+    spells = CasterSpells[inventory.character.characterClass]
+  } else if (!!inventory.character?.spells && typeof inventory.character?.spells === 'object') {
+    spells = inventory.character.spells
+  } else {
+    container.appendChild(
+      createElementFromHtml('<p>Your character has an incomplete configuration. Try adding a new one.</p>'),
+    )
+
+    return
   }
 
+  assert(spells, 'Cannot get character spells')
+
+  const inventoryId = inventory.id
+  const list = createElementFromHtml('<ul class="char-spells-list column-count-2" />')
+
+  for (const s in spells) {
+    const spellName = spells[s].name
+    list.appendChild(
+      createElementFromHtml(
+        [
+          `<li class="break-inside-avoid text-alt flex">`,
+          `<label for="${inventoryId}-${spellName}">`,
+          `<input class="char-spells-list--item mr-2" type="checkbox" name=""`,
+          `id="${inventoryId}-${spellName}" `,
+          `value="${spellName}"`,
+          prepared?.includes(spellName) ? 'checked' : '',
+          `>`,
+          spellName,
+          `<label>`,
+          `</li>`,
+        ].join(' '),
+      ),
+    )
+  }
+
+  bindSpellsControls(inventoryId, list)
   container.appendChild(list)
 }
 
@@ -74,13 +126,7 @@ export const renderCasterDetails = (
   const spellsNum = classDef.name === 'Cleric' && stats.Wisdom.Score >= 15 ? 1 : classDef.$spellsAtTheFirstLevel
   col1.appendChild(getDetailsItem('Spells at the 1st level', spellsNum))
 
-  if (inventory.character?.spells === 'All') {
-    renderSpellsList(col2, CasterSpells[classDef.name])
-  } else if (!!inventory.character?.spells && typeof inventory.character?.spells === 'object') {
-    renderSpellsList(col2, inventory.character.spells)
-  } else {
-    col2.appendChild(getDetailsItem('Spells', 'Your character has an incomplete configuration. Try adding a new one.'))
-  }
+  renderSpellsList(col2, inventory)
 
   container.removeAttribute('hidden')
 }

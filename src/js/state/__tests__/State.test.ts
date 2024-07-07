@@ -162,8 +162,8 @@ describe('State', () => {
   })
 
   describe('character', () => {
-    it('should set and remove character in inventory', () => {
-      const characterOptions: CharacterOptions = {
+    const getCharacterOptions = (): CharacterOptions => {
+      return {
         characterClass: CharacterClass.MagicUser,
         spells: {
           'Charm Person': {
@@ -235,7 +235,10 @@ describe('State', () => {
           },
         },
       }
-      state.setCharacter(DEFAULT_INVENTORY_ID, characterOptions)
+    }
+
+    it('should set and remove character in inventory', () => {
+      state.setCharacter(DEFAULT_INVENTORY_ID, getCharacterOptions())
 
       let inventory = state.getInventory(DEFAULT_INVENTORY_ID)
       expect(inventory.character).toMatchSnapshot()
@@ -243,6 +246,20 @@ describe('State', () => {
       state.removeCharacter(DEFAULT_INVENTORY_ID)
       inventory = state.getInventory(DEFAULT_INVENTORY_ID)
       expect(inventory.character).toBeNull()
+    })
+
+    it('should prepare spells', () => {
+      const opts = getCharacterOptions()
+      opts.characterClass = CharacterClass.Cleric
+      delete opts.spells
+
+      state.setCharacter(DEFAULT_INVENTORY_ID, opts)
+      const inventory = state.getInventory(DEFAULT_INVENTORY_ID)
+
+      expect(inventory.character?.prepared).toBeUndefined()
+
+      state.setPreparedSpells(inventory.id, ['Sleep', 'Protection from Evil'])
+      expect(inventory.character?.prepared).toEqual(['Sleep', 'Protection from Evil'])
     })
   })
 

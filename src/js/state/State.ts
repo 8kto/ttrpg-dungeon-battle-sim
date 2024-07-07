@@ -1,10 +1,12 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 
+import { CharacterClasses } from '../config/snw/CharacterClasses'
 import { EquipItem } from '../domain/Equipment'
-import { Inventory, InventoryItem } from '../domain/Inventory'
-import { CharacterClass } from '../domain/snw/CharacterClass'
+import { Character, Inventory, InventoryItem } from '../domain/Inventory'
+import { CharacterClass, CharacterClassDef } from '../domain/snw/CharacterClass'
 import { CharacterStats } from '../domain/snw/CharacterStats'
 import { Spell } from '../domain/snw/Magic'
+import { assert } from '../utils/assert'
 
 export type CharacterOptions = {
   characterClass: CharacterClass
@@ -169,6 +171,23 @@ export class State {
       characterClass,
       spells,
     }
+  }
+
+  setPreparedSpells(inventoryId: string, spells: string[]): void {
+    const inventory = this.#inventories[inventoryId]
+    assert<Inventory>(inventory, `setPreparedSpells: Cannot find inventory ${inventoryId}`)
+    assert<Character>(inventory.character, `setPreparedSpells: Cannot find inventory ${inventoryId}`)
+
+    const classDef = CharacterClasses[inventory.character.characterClass]
+    assert<CharacterClassDef>(classDef, `setPreparedSpells: Cannot parse character class for ${inventoryId}`)
+    assert<boolean>(classDef.$isCaster, `setPreparedSpells: Character class is not caster: ${inventoryId}`)
+
+    if (!inventory.character.prepared) {
+      inventory.character.prepared = []
+    }
+    inventory.character.prepared = spells
+
+    this.serialize()
   }
 }
 
