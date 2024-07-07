@@ -29,7 +29,14 @@
   "report": ["browser", "json"],
   "engine": "puppeteer",
   "engineOptions": {
-    "args": ["--no-sandbox"]
+    "headless": true,
+    "args": [
+      "--ignore-certificate-errors",
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-accelerated-2d-canvas",
+      "--disable-gpu"
+    ]
   },
   "asyncCaptureLimit": 5,
   "asyncCompareLimit": 25,
