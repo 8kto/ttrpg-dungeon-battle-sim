@@ -15,6 +15,6 @@ export type Inventory = {
     stats: CharacterStats
     characterClass: CharacterClass
     spells?: Record<string, Spell> | 'All'
-    prepared?: Spell[] // TODO
+    prepared?: string[]
   } | null
 }
