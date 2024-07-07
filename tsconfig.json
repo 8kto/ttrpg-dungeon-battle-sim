@@ -16,10 +16,9 @@
     "downlevelIteration": true,
     "useDefineForClassFields": true,
     "lib": ["ESNext", "DOM"],
-    "baseUrl": "src",
-    "typeRoots": ["./src/domain", "./node_modules/@types"]
+    "baseUrl": "src"
   },
-  "include": ["node_modules/wmr/types.d.ts", "src/**/*"],
+  "include": ["node_modules/wmr/types.d.ts", "src/**/*", "tests_visual_regression/tests/**/*"],
   "typeAcquisition": {
     "enable": true
   }

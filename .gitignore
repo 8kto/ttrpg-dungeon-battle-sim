@@ -5,3 +5,12 @@ node_modules
 build/
 src/styles/styles.processed.css
 coverage/
+
+# Ignore test screenshots
+tests_visual_regression/bitmaps_test/
+
+# Ignore reports
+tests_visual_regression/html_report/
+tests_visual_regression/ci_report/
+tests_visual_regression/json_report/
+
