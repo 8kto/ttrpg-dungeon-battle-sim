@@ -32,7 +32,7 @@
     "args": ["--no-sandbox"]
   },
   "asyncCaptureLimit": 5,
-  "asyncCompareLimit": 50,
+  "asyncCompareLimit": 25,
   "debug": false,
   "debugWindow": false
 }
