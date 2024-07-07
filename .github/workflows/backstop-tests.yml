@@ -29,7 +29,9 @@ jobs:
           npm install -g backstopjs
 
       - name: Start server
-        run: yarn dev &
+        run: |
+          yarn build
+          yarn serve
 
       - name: Wait for server to be ready
         run: npx wait-on http://localhost:3000
