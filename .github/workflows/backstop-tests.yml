@@ -24,8 +24,7 @@ jobs:
           node-version: '${{ steps.nvm.outputs.NVMRC }}'
 
       - name: Install dependencies
-        run: |
-          yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile
 
       - name: Start server
         run: yarn dev &
@@ -35,3 +34,10 @@ jobs:
 
       - name: Run visual regression tests
         run: yarn test:vr
+
+      - name: Upload BackstopJS artifacts
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: backstopjs-artifacts
+          path: tests_visual_regression/html_report
