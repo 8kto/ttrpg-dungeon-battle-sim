@@ -1,4 +1,4 @@
-name: Visual Regression Tests
+name: Visual Regression Tests. Disabled since not supported in GitHub actions.
 
 on:
   push:
