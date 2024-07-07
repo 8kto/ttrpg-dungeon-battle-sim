@@ -37,6 +37,9 @@ jobs:
       - name: Run visual regression tests
         run: |
           npx backstop test
+          pwd
+          env
+          cat tests_visual_regression/json_report/*
 
       - name: Upload BackstopJS artifacts
         if: failure()

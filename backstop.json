@@ -26,7 +26,7 @@
     "json_report": "tests_visual_regression/json_report",
     "ci_report": "tests_visual_regression/ci_report"
   },
-  "report": ["browser"],
+  "report": ["browser", "json"],
   "engine": "puppeteer",
   "engineOptions": {
     "args": ["--no-sandbox"]
