@@ -60,6 +60,7 @@ Contributions are welcome. Code should follow conventions described in [Code Con
 - [ ] More convenient Import
 - [ ] New random character: adjust heuristics (drop hopeless, pick random properly)
 - [ ] Race
+  - [ ] Half elves cannot be pure Fighters or MU, only listed classes (and other races?)
 - [ ] Char To Hit
 - [ ] Char: edit numbers
 - [ ] Generate with strict 0e attrs
