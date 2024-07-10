@@ -16,9 +16,9 @@ import {
   getRandomAttributes,
   getRandomClass,
 } from '../utils/snw/character'
+import { getToHitMelee, getToHitMissiles } from '../utils/snw/combat'
 import { getExperienceBonus } from '../utils/snw/experience'
 import { getMagicUserSpellsList } from '../utils/snw/magic'
-import { getToHitMelee, getToHitMissiles } from '../utils/snw/combat'
 
 const getRootContainer = (inventoryId: string): HTMLElement => {
   const elem = document.querySelector<HTMLElement>(`#${inventoryId}-container .char-stats`)
