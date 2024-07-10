@@ -58,7 +58,7 @@ describe('getToHitMelee', () => {
           Strength: { Carry: 0, Damage: 0, Doors: '1-2', Score: 15, ToHit: 1 },
         } as CharacterStats,
       )
-    }).toThrow('Cannot bet base to-hit for class: InvalidClass')
+    }).toThrow("Cannot get Base To-Hit for class: InvalidClass")
   })
 })
 
@@ -90,7 +90,7 @@ describe('getToHitMissiles', () => {
           Strength: { Carry: 0, Damage: 0, Doors: '1-2', Score: 15, ToHit: 1 },
         } as CharacterStats,
       )
-    }).toThrow('Cannot bet base to-hit for class: InvalidClass')
+    }).toThrow("Cannot get Base To-Hit for class: InvalidClass")
   })
 
   it('should return the correct positive to-hit value for Fighters', () => {
