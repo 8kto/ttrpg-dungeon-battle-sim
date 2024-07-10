@@ -7,7 +7,7 @@ const MAGIC_DEFAULT_LEVEL = 1
 
 export const getToHitMelee = (classDef: CharacterClassDef, stats: CharacterStats): number => {
   const baseToHit = QuickAscendingArmorClassBaseToHit[MAGIC_DEFAULT_LEVEL][classDef.name]
-  assert(typeof baseToHit === 'number' && !isNaN(baseToHit), `Cannot bet base to-hit for class: ${classDef.name}`)
+  assert(typeof baseToHit === 'number' && !isNaN(baseToHit), `Cannot get Base To-Hit for class: ${classDef.name}`)
 
   let statsToHit = stats.Strength.ToHit
   if (classDef.name !== CharacterClass.Fighter && statsToHit > 0) {
@@ -19,7 +19,7 @@ export const getToHitMelee = (classDef: CharacterClassDef, stats: CharacterStats
 
 export const getToHitMissiles = (classDef: CharacterClassDef, stats: CharacterStats): number => {
   const baseToHit = QuickAscendingArmorClassBaseToHit[MAGIC_DEFAULT_LEVEL][classDef.name]
-  assert(typeof baseToHit === 'number' && !isNaN(baseToHit), `Cannot bet base to-hit for class: ${classDef.name}`)
+  assert(typeof baseToHit === 'number' && !isNaN(baseToHit), `Cannot get Base To-Hit for class: ${classDef.name}`)
 
   let statsToHit = stats.Dexterity.MissilesToHit
   // This condition is questionable, though there are no Fighters with negative To-Hit. I guess.
