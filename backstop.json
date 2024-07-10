@@ -41,5 +41,6 @@
   "asyncCaptureLimit": 5,
   "asyncCompareLimit": 25,
   "debug": false,
-  "debugWindow": false
+  "debugWindow": false,
+  "misMatchThreshold": 0.049
 }
