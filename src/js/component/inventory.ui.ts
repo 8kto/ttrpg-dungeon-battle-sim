@@ -114,11 +114,22 @@ export const bindInventoryControls = (inventoryId: string): void => {
   })
 
   document.getElementById(`${inventoryId}-minimise-inventory`).addEventListener('click', () => {
-    const container = document.getElementById(`${inventoryId}-container`)
-    container.querySelectorAll('[data-compact-hidden]').forEach((elem) => {
-      elem.classList.toggle('hidden')
-    })
+    toggleCompactInventory(inventoryId)
   })
+}
+
+export const toggleCompactInventory = (inventoryId: string): void => {
+  const container = document.getElementById(`${inventoryId}-container`)
+  container.querySelectorAll('[data-compact-hidden]').forEach((elem) => {
+    elem.classList.toggle('hidden')
+  })
+}
+
+export const toggleCompactMode = (): void => {
+  getState()
+    .getInventories()
+    .map((s) => s.id)
+    .forEach(toggleCompactInventory)
 }
 
 const getInventoryDetails = (inventoryId: string): string => {
@@ -334,6 +345,10 @@ const bindInventoryCommonControls = (): void => {
     getState().setCurrentInventoryId(inventoryId)
     dispatchEvent('RenderNewRandomCharacter', { inventoryId })
     markSelectedInventory(inventoryId)
+  })
+
+  document.querySelector('.minimise-inventories-btn')?.addEventListener('click', () => {
+    toggleCompactMode()
   })
 }
 
