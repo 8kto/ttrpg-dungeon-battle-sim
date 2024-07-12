@@ -29,12 +29,13 @@ export const DEFAULT_INVENTORY: Inventory = {
 }
 
 export class State {
+  static #instance: State | null = null
+
   #inventories: Record<string, Inventory> = {
     [DEFAULT_INVENTORY_ID]: DEFAULT_INVENTORY,
   }
 
   #currentInventoryId: string = DEFAULT_INVENTORY_ID
-  static #instance: State | null = null
 
   constructor() {
     if (State.#instance) {
@@ -187,6 +188,14 @@ export class State {
     }
     inventory.character.prepared = spells
 
+    this.serialize()
+  }
+
+  toggleCompactMode(inventoryId: string): void {
+    const inventory = this.#inventories[inventoryId]
+    assert<Inventory>(inventory, `toggleCompactMode: Cannot find inventory ${inventoryId}`)
+
+    inventory.isCompact = !inventory.isCompact
     this.serialize()
   }
 }
