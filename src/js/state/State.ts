@@ -52,13 +52,13 @@ export class State {
       throw new Error('Instance of State already created, use State.getInstance()')
     }
 
-    const serializedInventories = this.getSerializedInventories()
+    const serializedInventories = this.deserializeInventories()
     if (serializedInventories && Object.keys(serializedInventories).length) {
       this.#inventories = serializedInventories
       this.#currentInventoryId = Object.values(serializedInventories)[0].id
     }
 
-    const uiState = this.getSerializedUiState()
+    const uiState = this.deserializeUiState()
     if (uiState && Object.keys(uiState).length) {
       this.#uiState = uiState
       // this.#currentInventoryId = Object.values(serializedInventories)[0].id TODO
@@ -75,11 +75,11 @@ export class State {
     return this
   }
 
-  getSerializeInventories(): string {
+  getSerializedInventories(): string {
     return JSON.stringify(this.#inventories, null, 2)
   }
 
-  getSerializedInventories(): Record<string, Inventory> | null {
+  deserializeInventories(): Record<string, Inventory> | null {
     try {
       const json = localStorage.getItem(LOCAL_STORAGE_KEY)
       if (!json || typeof json !== 'string') {
@@ -94,7 +94,7 @@ export class State {
     return null
   }
 
-  getSerializedUiState(): UiState | null {
+  deserializeUiState(): UiState | null {
     try {
       const json = localStorage.getItem(LOCAL_UI_STORAGE_KEY)
       if (!json || typeof json !== 'string') {
