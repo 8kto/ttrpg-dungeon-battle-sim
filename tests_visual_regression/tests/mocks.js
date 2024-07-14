@@ -1,4 +1,4 @@
-const allClassesInventory = {
+const getAllClassesInventory = () => Object.freeze({
   MainCharacter: {
     character: {
       characterClass: 'Cleric',
@@ -246,8 +246,8 @@ const allClassesInventory = {
     items: { 'Basic accessories': { cost: 0, name: 'Basic accessories', quantity: 1, weight: 8 } },
     name: 'Paladin',
   },
-}
+})
 
 module.exports = {
-  allClassesInventory,
+  getAllClassesInventory,
 }

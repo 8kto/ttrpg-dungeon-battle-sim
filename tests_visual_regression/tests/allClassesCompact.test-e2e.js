@@ -1,4 +1,4 @@
-const { allClassesInventory } = require('./mocks.js')
+const { getAllClassesInventory } = require('./mocks.js')
 
 module.exports = async (page) => {
   // Listen for console errors and log them
@@ -11,7 +11,7 @@ module.exports = async (page) => {
   // Restore all 9 classes from serialized string
   await page.evaluateOnNewDocument((allClassesInventory) => {
     localStorage.setItem('s&w-generator', JSON.stringify(allClassesInventory))
-  }, allClassesInventory)
+  }, getAllClassesInventory())
 
   await page.goto('http://localhost:3000', { waitUntil: 'load' })
   await page.waitForSelector('.minimise-inventories-btn')
