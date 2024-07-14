@@ -14,12 +14,18 @@ export type CharacterOptions = {
   spells?: Record<string, Spell> | 'All'
 }
 
+export type UiState = {
+  currentInventoryId: string // TODO
+  isCompactMode: boolean
+}
+
 export const DEFAULT_INVENTORY_ID = 'MainCharacter'
 
 export const DEFAULT_INVENTORY_ITEMS = Object.freeze({
   'Basic accessories': { cost: 0, name: 'Basic accessories', quantity: 1, weight: 8 },
 }) as Record<string, InventoryItem>
 export const LOCAL_STORAGE_KEY = 's&w-generator'
+export const LOCAL_UI_STORAGE_KEY = 's&w-generator:ui'
 
 export const DEFAULT_INVENTORY: Inventory = {
   id: DEFAULT_INVENTORY_ID,
@@ -36,6 +42,10 @@ export class State {
   }
 
   #currentInventoryId: string = DEFAULT_INVENTORY_ID
+  #uiState: UiState = {
+    currentInventoryId: DEFAULT_INVENTORY_ID,
+    isCompactMode: false,
+  }
 
   constructor() {
     if (State.#instance) {
@@ -47,10 +57,22 @@ export class State {
       this.#inventories = serializedInventories
       this.#currentInventoryId = Object.values(serializedInventories)[0].id
     }
+
+    const uiState = this.getSerializedUiState()
+    if (uiState && Object.keys(uiState).length) {
+      this.#uiState = uiState
+      // this.#currentInventoryId = Object.values(serializedInventories)[0].id TODO
+    }
   }
 
-  serialize(): void {
+  /**
+   * NB This worth debouncing for cases when called in loops
+   */
+  serialize(): this {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.#inventories))
+    localStorage.setItem(LOCAL_UI_STORAGE_KEY, JSON.stringify(this.#uiState))
+
+    return this
   }
 
   getSerializeInventories(): string {
@@ -67,6 +89,21 @@ export class State {
       return JSON.parse(json)
     } catch (err) {
       console.error('Cannot restore serialized inventories', err)
+    }
+
+    return null
+  }
+
+  getSerializedUiState(): UiState | null {
+    try {
+      const json = localStorage.getItem(LOCAL_UI_STORAGE_KEY)
+      if (!json || typeof json !== 'string') {
+        return null
+      }
+
+      return JSON.parse(json)
+    } catch (err) {
+      console.error('Cannot restore serialized UI State', err)
     }
 
     return null
@@ -191,12 +228,22 @@ export class State {
     this.serialize()
   }
 
-  toggleCompactMode(inventoryId: string): void {
+  setInventoryCompactMode(inventoryId: string, isCompact: boolean): void {
     const inventory = this.#inventories[inventoryId]
     assert<Inventory>(inventory, `toggleCompactMode: Cannot find inventory ${inventoryId}`)
 
-    inventory.isCompact = !inventory.isCompact
+    inventory.isCompact = isCompact
     this.serialize()
+  }
+
+  setCompactMode(compact: boolean): this {
+    this.#uiState.isCompactMode = compact
+
+    return this.serialize()
+  }
+
+  isCompactMode(): boolean {
+    return this.#uiState.isCompactMode
   }
 }
 
