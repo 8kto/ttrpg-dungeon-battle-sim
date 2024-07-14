@@ -16,6 +16,11 @@
       "label": "All classes",
       "url": "http://localhost:3000",
       "onReadyScript": "allClasses.test-e2e.js"
+    },
+    {
+      "label": "All classes in compact mode",
+      "url": "http://localhost:3000",
+      "onReadyScript": "allClassesCompact.test-e2e.js"
     }
   ],
   "paths": {
