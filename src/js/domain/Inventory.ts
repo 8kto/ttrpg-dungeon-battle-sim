@@ -19,4 +19,5 @@ export type Inventory = {
   name: string
   items: Record<string, InventoryItem>
   character: Character | null
+  isCompact?: boolean
 }

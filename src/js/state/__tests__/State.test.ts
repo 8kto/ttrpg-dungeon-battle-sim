@@ -1,5 +1,6 @@
 import { EquipItem } from '../../domain/Equipment'
 import { CharacterClass } from '../../domain/snw/CharacterClass'
+import { clericInventoryMock } from '../../mocks/snw/characterMocks'
 import {
   CharacterOptions,
   DEFAULT_INVENTORY,
@@ -7,6 +8,7 @@ import {
   DEFAULT_INVENTORY_ITEMS,
   getState,
   LOCAL_STORAGE_KEY,
+  LOCAL_UI_STORAGE_KEY,
   State,
 } from '../State'
 
@@ -23,6 +25,10 @@ describe('State', () => {
     state = getState()
   })
 
+  it('should throw if constructor called more than once', () => {
+    expect(() => new State()).toThrow('Instance of State already created, use State.getInstance()')
+  })
+
   describe('default state', () => {
     it('should initialize with default inventory', () => {
       const inventories = state.getInventories()
@@ -35,7 +41,7 @@ describe('State', () => {
 
     it('should serialize and deserialize inventories', () => {
       state.serialize()
-      const serializedInventories = state.getSerializedInventories()
+      const serializedInventories = state.deserializeInventories()
 
       expect(serializedInventories).toEqual({
         [DEFAULT_INVENTORY_ID]: DEFAULT_INVENTORY,
@@ -51,19 +57,26 @@ describe('State', () => {
       State.resetInstance()
       getState()
 
-      expect(localStorageGetItemSpy).toHaveBeenCalledTimes(1)
+      expect(localStorageGetItemSpy).toHaveBeenCalledTimes(2)
       expect(localStorageGetItemSpy).toHaveBeenCalledWith(LOCAL_STORAGE_KEY)
+      expect(localStorageGetItemSpy).toHaveBeenCalledWith(LOCAL_UI_STORAGE_KEY)
     })
 
     it('should restore from localStorage', () => {
-      const json = `{"MainCharacter":{"id":"MainCharacter","name":"Main Character","items":{"Basic accessories":{"cost":0,"name":"Basic accessories","quantity":1,"weight":8}},"character":{"stats":{"Strength":{"Score":11,"ToHit":0,"Damage":0,"Doors":"1-2","Carry":5},"Dexterity":{"Score":9,"MissilesToHit":0,"ArmorClass":0},"Constitution":{"Score":11,"HitPoints":0,"RaiseDeadSurvivalChance":"75%"},"Intelligence":{"Score":6,"MaxAdditionalLanguages":0,"MaxSpellLevel":4,"NewSpellUnderstandingChance":30,"SpellsPerLevel":"2/4"},"Wisdom":{"Score":17},"Charisma":{"Score":8,"MaxNumberOfSpecialHirelings":3},"Gold":110,"HitPoints":6},"characterClass":"Cleric","spells":"All"}}}`
-      localStorage.setItem(LOCAL_STORAGE_KEY, json)
+      const inventoriesJson = JSON.stringify({ ClericInventory: clericInventoryMock }, null, 2)
+      localStorage.setItem(LOCAL_STORAGE_KEY, inventoriesJson)
+
+      const uiStateJson = `{"currentInventoryId": "id-1", "isCompactMode": true}`
+      localStorage.setItem(LOCAL_UI_STORAGE_KEY, uiStateJson)
 
       State.resetInstance()
       const state = getState()
 
-      expect(state.getSerializeInventories()).toEqual(JSON.stringify(JSON.parse(json), null, 2))
-      expect(state.getInventories()).toEqual(Object.values(JSON.parse(json)))
+      expect(state.getInventories()).toEqual([clericInventoryMock])
+
+      expect(state.getSerializedInventories()).toEqual(inventoriesJson)
+      expect(state.deserializeUiState()).toEqual(JSON.parse(uiStateJson))
+      expect(state.deserializeInventories()).toEqual(JSON.parse(inventoriesJson))
     })
 
     it('should handle empty localStorage', () => {
@@ -87,10 +100,34 @@ describe('State', () => {
       '{A:',
       'x:1',
       `\n`,
-    ])('should handle corrupted localStorage [%j]', (input) => {
+    ])('should handle corrupted serialized inventories [%j]', (input) => {
       localStorage.clear()
       // @ts-ignore
       localStorage.setItem(LOCAL_STORAGE_KEY, input)
+
+      State.resetInstance()
+      expect(() => getState()).not.toThrow()
+      expect(getState()).toEqual({})
+    })
+
+    it.each([
+      null,
+      0,
+      // @ts-ignore
+      // eslint-disable-next-line no-undefined
+      undefined,
+      '',
+      'null',
+      'false',
+      false,
+      NaN,
+      '{A:',
+      'x:1',
+      `\n`,
+    ])('should handle corrupted serialized UI state [%j]', (input) => {
+      localStorage.clear()
+      // @ts-ignore
+      localStorage.setItem(LOCAL_UI_STORAGE_KEY, input)
 
       State.resetInstance()
       expect(() => getState()).not.toThrow()
@@ -301,6 +338,50 @@ describe('State', () => {
       state.removeInventory(DEFAULT_INVENTORY_ID)
       expect(state.getInventory(DEFAULT_INVENTORY_ID)).toBeUndefined()
       expect(state.getInventories()).toEqual([])
+    })
+  })
+
+  describe('UI state', () => {
+    describe('compact mode', () => {
+      it('should set global compact mode', () => {
+        expect(state.isCompactMode()).toEqual(false)
+        state.setCompactMode(true)
+        expect(state.isCompactMode()).toEqual(true)
+      })
+
+      it('should restore global compact mode', () => {
+        state.setCompactMode(true)
+        state.serialize()
+
+        const deserializeUiState = state.deserializeUiState()
+
+        expect(deserializeUiState).toEqual({
+          currentInventoryId: DEFAULT_INVENTORY_ID /*'TEST-1111'*/, // TODO
+          isCompactMode: true,
+        })
+      })
+
+      it('should set inventory compact mode', () => {
+        const inventoriesJson = JSON.stringify({ ClericInventory: clericInventoryMock }, null, 2)
+        localStorage.setItem(LOCAL_STORAGE_KEY, inventoriesJson)
+
+        State.resetInstance()
+        const state = getState()
+
+        expect(state.getInventory(clericInventoryMock.id).isCompact).toEqual(false)
+        state.setInventoryCompactMode(clericInventoryMock.id, true)
+        expect(state.getInventory(clericInventoryMock.id).isCompact).toEqual(true)
+
+        // Global compact mode is not affected
+        const deserializeUiState = state.deserializeUiState()
+        expect(deserializeUiState).toEqual({
+          currentInventoryId: DEFAULT_INVENTORY_ID,
+          isCompactMode: false,
+        })
+
+        // Inventory compact mode is set
+        expect(state.getInventory(clericInventoryMock.id).isCompact).toEqual(true)
+      })
     })
   })
 })

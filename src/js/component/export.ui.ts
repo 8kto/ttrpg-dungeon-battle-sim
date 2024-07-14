@@ -46,7 +46,7 @@ export const bindDumpingControls = (): void => {
   const container = document.getElementById('dump-data-container--json-container')
 
   document.getElementById('dump-json-button').addEventListener('click', () => {
-    container.textContent = getState().getSerializeInventories()
+    container.textContent = getState().getSerializedInventories()
   })
 
   document.getElementById('copy-json-button').addEventListener('click', function () {

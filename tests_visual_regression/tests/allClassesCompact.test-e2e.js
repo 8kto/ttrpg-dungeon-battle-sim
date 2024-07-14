@@ -14,4 +14,6 @@ module.exports = async (page) => {
   }, getAllClassesInventory())
 
   await page.goto('http://localhost:3000', { waitUntil: 'load' })
+  await page.waitForSelector('.minimise-inventories-btn')
+  await page.click('.minimise-inventories-btn')
 }

@@ -8,10 +8,15 @@ module.exports = async (page) => {
     }
   })
 
+  const state = getAllClassesInventory()
+  state['character-name1720287054445'].isCompact = true
+  state['character-name1720287096634'].isCompact = true
+  state['MainCharacter'].isCompact = true
+
   // Restore all 9 classes from serialized string
   await page.evaluateOnNewDocument((allClassesInventory) => {
     localStorage.setItem('s&w-generator', JSON.stringify(allClassesInventory))
-  }, getAllClassesInventory())
+  }, state)
 
   await page.goto('http://localhost:3000', { waitUntil: 'load' })
 }

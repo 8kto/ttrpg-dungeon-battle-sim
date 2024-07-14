@@ -1,5 +1,5 @@
 module.exports = {
-  collectCoverageFrom: ['src/**/*.ts', 'src/**/*.js'],
+  collectCoverageFrom: ['src/**/*.ts', 'src/**/*.js', '!src/js/mocks/**/*'],
   moduleFileExtensions: ['js', 'ts', 'tsx'],
   roots: ['<rootDir>/src/'],
   testEnvironment: 'jsdom',

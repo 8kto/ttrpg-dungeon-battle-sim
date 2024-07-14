@@ -16,9 +16,10 @@ import {
   getRandomAttributes,
   getRandomClass,
 } from '../utils/snw/character'
+import { getToHitMelee, getToHitMissiles } from '../utils/snw/combat'
 import { getExperienceBonus } from '../utils/snw/experience'
 import { getMagicUserSpellsList } from '../utils/snw/magic'
-import { getToHitMelee, getToHitMissiles } from '../utils/snw/combat'
+import { getCompactModeAffectedElements } from './domSelectors'
 
 const getRootContainer = (inventoryId: string): HTMLElement => {
   const elem = document.querySelector<HTMLElement>(`#${inventoryId}-container .char-stats`)
@@ -291,6 +292,10 @@ export const handleRenderCharacterSection = (inventoryId: string): void => {
   container.querySelector('.char-exp-bonus').textContent = getExperienceBonus(classDef, stats).toString()
   container.querySelector('.char-to-hit--melee').textContent = getToHitMelee(classDef, stats).toString()
   container.querySelector('.char-to-hit--missiles').textContent = getToHitMissiles(classDef, stats).toString()
+
+  if (inventory.isCompact) {
+    getCompactModeAffectedElements(inventoryId).forEach((elem) => elem.classList.add('hidden'))
+  }
 }
 
 /**
