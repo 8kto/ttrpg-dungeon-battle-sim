@@ -10,10 +10,7 @@ module.exports = async (page) => {
 
   // Restore all 9 classes from serialized string
   await page.evaluateOnNewDocument((allClassesInventory) => {
-    localStorage.setItem(
-      's&w-generator',
-      JSON.stringify(allClassesInventory),
-    )
+    localStorage.setItem('s&w-generator', JSON.stringify(allClassesInventory))
   }, getAllClassesInventory())
 
   await page.goto('http://localhost:3000', { waitUntil: 'load' })
