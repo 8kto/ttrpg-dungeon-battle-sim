@@ -5,6 +5,7 @@ import { dispatchEvent } from '../utils/event'
 import { getInventoryIdFromName } from '../utils/inventory'
 import { createElementFromHtml, scrollToElement } from '../utils/layout'
 import { getBaseMovementRate, getUndergroundSpeed } from '../utils/snw/movement'
+import { getCompactModeAffectedElements, getInventoryContainer, getInventoryTablesContainer } from './domSelectors'
 
 const getInventoryTable = (inventoryId: string): string => {
   return `<table data-compact-hidden id="${inventoryId}-table-container" class="min-w-full bg-white shadow-md rounded my-4">
@@ -51,8 +52,7 @@ const addInventory = (inventoryName: string): string => {
     state.setInventory(inventoryId, State.getNewInventory(inventoryId, inventoryName))
     dispatchEvent('RenderInventory', { inventoryId, inventoryName })
 
-    const element = document.getElementById(`${inventoryId}-container`)
-    scrollToElement(element)
+    scrollToElement(getInventoryContainer(inventoryId))
   }
 
   return inventoryId
@@ -114,22 +114,34 @@ export const bindInventoryControls = (inventoryId: string): void => {
   })
 
   document.getElementById(`${inventoryId}-minimise-inventory`).addEventListener('click', () => {
-    toggleCompactInventory(inventoryId)
+    const state = getState()
+    const inventory = state.getInventory(inventoryId)
+    const compactMode = !inventory.isCompact
+
+    setInventoryCompactMode(inventoryId, compactMode)
+    getState().setInventoryCompactMode(inventoryId, compactMode)
   })
 }
 
-export const toggleCompactInventory = (inventoryId: string): void => {
-  const container = document.getElementById(`${inventoryId}-container`)
-  container.querySelectorAll('[data-compact-hidden]').forEach((elem) => {
-    elem.classList.toggle('hidden')
+export const setInventoryCompactMode = (inventoryId: string, isCompact: boolean): void => {
+  getCompactModeAffectedElements(inventoryId).forEach((elem) => {
+    if (isCompact) {
+      elem.classList.add('hidden')
+    } else {
+      elem.classList.remove('hidden')
+    }
   })
 }
 
-export const toggleCompactMode = (): void => {
-  getState()
-    .getInventories()
-    .map((s) => s.id)
-    .forEach(toggleCompactInventory)
+export const toggleGlobalCompactMode = (): void => {
+  const state = getState()
+  const isCompactMode = state.isCompactMode()
+  state.setCompactMode(!isCompactMode)
+
+  state.getInventories().forEach(({ id }) => {
+    setInventoryCompactMode(id, !isCompactMode)
+    state.setInventoryCompactMode(id, !isCompactMode)
+  })
 }
 
 const getInventoryDetails = (inventoryId: string): string => {
@@ -150,9 +162,7 @@ const getInventoryDetails = (inventoryId: string): string => {
 }
 
 export const renderInitialInventory = (inventoryId: string, name?: string): void => {
-  const container = document.getElementById('inventories-container')
-
-  container.appendChild(
+  getInventoryTablesContainer().appendChild(
     createElementFromHtml(`
         <section id="${inventoryId}-container" class="inventory-container px-4 py-4 border shadow-lg">
           <header class="relative">
@@ -188,8 +198,7 @@ export const markSelectedInventory = (inventoryId: string): void => {
     )
   }
 
-  const sectionElement = document.getElementById(`${inventoryId}-container`)
-  sectionElement.classList.add('selected')
+  getInventoryContainer(inventoryId).classList.add('selected')
 
   const containerTitle = document.getElementById('inventory-container-title')
   containerTitle.textContent = getState().getInventory(inventoryId).name
@@ -271,6 +280,10 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
 
   // FIXME to char stats section
   updateSpeedDisplay(inventoryId, baseMovementRate)
+
+  if (inventory.isCompact) {
+    getCompactModeAffectedElements(inventoryId).forEach((elem) => elem.classList.add('hidden'))
+  }
 }
 
 export const updateSpeedDisplay = (inventoryId: string, baseMovementRate: BaseMovementRate): void => {
@@ -285,7 +298,7 @@ export const updateSpeedDisplay = (inventoryId: string, baseMovementRate: BaseMo
  * @notice No direct calls
  */
 export const handleRenderInventories = (): void => {
-  const inventoryTableContainer = document.getElementById('inventories-container')
+  const inventoryTableContainer = getInventoryTablesContainer()
   inventoryTableContainer.innerHTML = ''
 
   getState()
@@ -348,7 +361,7 @@ const bindInventoryCommonControls = (): void => {
   })
 
   document.querySelector('.minimise-inventories-btn')?.addEventListener('click', () => {
-    toggleCompactMode()
+    toggleGlobalCompactMode()
   })
 }
 
