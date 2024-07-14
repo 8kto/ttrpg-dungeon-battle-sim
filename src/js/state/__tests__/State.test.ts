@@ -6,7 +6,7 @@ import {
   DEFAULT_INVENTORY_ID,
   DEFAULT_INVENTORY_ITEMS,
   getState,
-  LOCAL_STORAGE_KEY,
+  LOCAL_STORAGE_KEY, LOCAL_UI_STORAGE_KEY,
   State,
 } from '../State'
 
@@ -35,7 +35,7 @@ describe('State', () => {
 
     it('should serialize and deserialize inventories', () => {
       state.serialize()
-      const serializedInventories = state.getSerializedInventories()
+      const serializedInventories = state.deserializeInventories()
 
       expect(serializedInventories).toEqual({
         [DEFAULT_INVENTORY_ID]: DEFAULT_INVENTORY,
@@ -51,19 +51,26 @@ describe('State', () => {
       State.resetInstance()
       getState()
 
-      expect(localStorageGetItemSpy).toHaveBeenCalledTimes(1)
+      expect(localStorageGetItemSpy).toHaveBeenCalledTimes(2)
       expect(localStorageGetItemSpy).toHaveBeenCalledWith(LOCAL_STORAGE_KEY)
+      expect(localStorageGetItemSpy).toHaveBeenCalledWith(LOCAL_UI_STORAGE_KEY)
     })
 
     it('should restore from localStorage', () => {
-      const json = `{"MainCharacter":{"id":"MainCharacter","name":"Main Character","items":{"Basic accessories":{"cost":0,"name":"Basic accessories","quantity":1,"weight":8}},"character":{"stats":{"Strength":{"Score":11,"ToHit":0,"Damage":0,"Doors":"1-2","Carry":5},"Dexterity":{"Score":9,"MissilesToHit":0,"ArmorClass":0},"Constitution":{"Score":11,"HitPoints":0,"RaiseDeadSurvivalChance":"75%"},"Intelligence":{"Score":6,"MaxAdditionalLanguages":0,"MaxSpellLevel":4,"NewSpellUnderstandingChance":30,"SpellsPerLevel":"2/4"},"Wisdom":{"Score":17},"Charisma":{"Score":8,"MaxNumberOfSpecialHirelings":3},"Gold":110,"HitPoints":6},"characterClass":"Cleric","spells":"All"}}}`
-      localStorage.setItem(LOCAL_STORAGE_KEY, json)
+      const inventoriesJson = `{"MainCharacter":{"id":"MainCharacter","name":"Main Character","items":{"Basic accessories":{"cost":0,"name":"Basic accessories","quantity":1,"weight":8}},"character":{"stats":{"Strength":{"Score":11,"ToHit":0,"Damage":0,"Doors":"1-2","Carry":5},"Dexterity":{"Score":9,"MissilesToHit":0,"ArmorClass":0},"Constitution":{"Score":11,"HitPoints":0,"RaiseDeadSurvivalChance":"75%"},"Intelligence":{"Score":6,"MaxAdditionalLanguages":0,"MaxSpellLevel":4,"NewSpellUnderstandingChance":30,"SpellsPerLevel":"2/4"},"Wisdom":{"Score":17},"Charisma":{"Score":8,"MaxNumberOfSpecialHirelings":3},"Gold":110,"HitPoints":6},"characterClass":"Cleric","spells":"All"}}}`
+      localStorage.setItem(LOCAL_STORAGE_KEY, inventoriesJson)
+
+      const uiStateJson = `{"currentInventoryId": "id-1", "isCompactMode": true}`
+      localStorage.setItem(LOCAL_UI_STORAGE_KEY, uiStateJson)
 
       State.resetInstance()
       const state = getState()
 
-      expect(state.getSerializeInventories()).toEqual(JSON.stringify(JSON.parse(json), null, 2))
-      expect(state.getInventories()).toEqual(Object.values(JSON.parse(json)))
+      expect(state.getInventories()).toEqual(Object.values(JSON.parse(inventoriesJson)))
+
+      expect(state.getSerializedInventories()).toEqual(JSON.stringify(JSON.parse(inventoriesJson), null, 2))
+      expect(state.deserializeUiState()).toEqual(JSON.parse(uiStateJson))
+      expect(state.deserializeInventories()).toEqual(JSON.parse(inventoriesJson))
     })
 
     it('should handle empty localStorage', () => {
