@@ -67,7 +67,4 @@ Contributions are welcome. Code should follow conventions described in [Code Con
 - [ ] Fighter Parrying Ability
 - [ ] daisyUI, dark/light themes
 - [ ] Console log with events like "Intelligence: rolled 3d6 with 12 ..." (?)
-- [ ] Compact mode
-  - [x] Toggle
-  - [ ] Save in state
 - [ ] Reorder inventories
