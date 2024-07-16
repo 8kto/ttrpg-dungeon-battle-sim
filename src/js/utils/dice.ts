@@ -46,6 +46,9 @@ export const getRandomArrayItems = <T = unknown>(arr: Array<T>, count: number): 
   if (count > arr.length) {
     throw new Error('Requested more elements than are present in the array')
   }
+  if (!count) {
+    throw new Error('Count should be more than 0')
+  }
 
   const result: Array<T> = []
   const usedIndices = new Set<number>()
