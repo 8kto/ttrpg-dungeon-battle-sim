@@ -34,6 +34,11 @@ export type ScoredModifierDef = {
   Score: number
 }
 
+/**
+ * Character stats contain not only Scores but also matched modifiers,
+ * not to match it every time it is needed
+ * @see getMatchingScore
+ */
 export type CharacterStats = {
   Strength: StrengthModifierDef & ScoredModifierDef
   Dexterity: DexterityModifierDef & ScoredModifierDef

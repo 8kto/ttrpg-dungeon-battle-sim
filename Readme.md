@@ -68,4 +68,3 @@ Contributions are welcome. Code should follow conventions described in [Code Con
 - [ ] daisyUI, dark/light themes
 - [ ] Console log with events like "Intelligence: rolled 3d6 with 12 ..." (?)
 - [ ] Reorder inventories
-- [ ] State: further normalization of Modifiers
