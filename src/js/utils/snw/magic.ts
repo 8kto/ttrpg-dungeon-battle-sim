@@ -28,5 +28,3 @@ export const getMagicUserSpellsList = (stats: CharacterStats): Record<string, Sp
 
   return res
 }
-
-// TODO save in char stats / state
