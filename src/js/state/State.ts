@@ -15,7 +15,7 @@ export type CharacterOptions = {
 }
 
 export type UiState = {
-  currentInventoryId: string // TODO
+  currentInventoryId: string
   isCompactMode: boolean
 }
 
@@ -41,7 +41,6 @@ export class State {
     [DEFAULT_INVENTORY_ID]: DEFAULT_INVENTORY,
   }
 
-  #currentInventoryId: string = DEFAULT_INVENTORY_ID
   #uiState: UiState = {
     currentInventoryId: DEFAULT_INVENTORY_ID,
     isCompactMode: false,
@@ -55,13 +54,11 @@ export class State {
     const serializedInventories = this.deserializeInventories()
     if (serializedInventories && Object.keys(serializedInventories).length) {
       this.#inventories = serializedInventories
-      this.#currentInventoryId = Object.values(serializedInventories)[0].id
     }
 
     const uiState = this.deserializeUiState()
     if (uiState && Object.keys(uiState).length) {
       this.#uiState = uiState
-      // this.#currentInventoryId = Object.values(serializedInventories)[0].id TODO
     }
   }
 
@@ -122,7 +119,7 @@ export class State {
   }
 
   getCurrentInventoryId(): string {
-    return this.#currentInventoryId
+    return this.#uiState.currentInventoryId
   }
 
   setCurrentInventoryId(id: string): void {
@@ -130,7 +127,7 @@ export class State {
       throw new Error(`Inventory does not exist: ${id}`)
     }
 
-    this.#currentInventoryId = id
+    this.#uiState.currentInventoryId = id
     this.serialize()
   }
 

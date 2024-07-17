@@ -356,7 +356,7 @@ describe('State', () => {
         const deserializeUiState = state.deserializeUiState()
 
         expect(deserializeUiState).toEqual({
-          currentInventoryId: DEFAULT_INVENTORY_ID /*'TEST-1111'*/, // TODO
+          currentInventoryId: DEFAULT_INVENTORY_ID,
           isCompactMode: true,
         })
       })
