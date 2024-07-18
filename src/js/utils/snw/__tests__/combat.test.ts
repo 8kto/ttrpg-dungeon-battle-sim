@@ -1,9 +1,8 @@
 import { CharacterClasses } from '../../../config/snw/CharacterClasses'
 import { CharacterClass, CharacterClassDef } from '../../../domain/snw/CharacterClass'
 import { CharacterStats } from '../../../domain/snw/CharacterStats'
-import { getToHitMelee, getToHitMissiles } from '../combat'
+import { getDamageModifier, getToHitMelee, getToHitMissiles } from '../combat'
 
-// Mock data for CharacterStats
 describe('getToHitMelee', () => {
   it.each([
     [CharacterClass.Assassin, 0],
@@ -36,7 +35,7 @@ describe('getToHitMelee', () => {
   ])('should return the correct negative to-hit value for %s', (characterClass, expectedValue) => {
     const result = getToHitMelee(CharacterClasses[characterClass], {
       Dexterity: { ArmorClass: 0, MissilesToHit: 1, Score: 14 },
-      Strength: { Carry: 0, Damage: 0, Doors: '1-2', Score: 15, ToHit: -2 },
+      Strength: { Carry: -10, Damage: -1, Doors: '1', Score: 4, ToHit: -2 },
     } as CharacterStats)
     expect(result).toBe(expectedValue)
   })
@@ -99,5 +98,46 @@ describe('getToHitMissiles', () => {
       Strength: { Carry: 0, Damage: 0, Doors: '1-2', Score: 15, ToHit: 2 },
     } as CharacterStats)
     expect(result).toBe(3)
+  })
+
+  describe('getDamageModifier', () => {
+    it('should return + for Fighters', () => {
+      const result = getDamageModifier(CharacterClasses.Fighter, {
+        Strength: { Carry: 50, Damage: 3, Doors: '1-5', Score: 18, ToHit: 2 },
+      } as CharacterStats)
+      expect(result).toBe(3)
+    })
+
+    it.each([
+      CharacterClass.Assassin,
+      CharacterClass.Cleric,
+      CharacterClass.Druid,
+      CharacterClass.MagicUser,
+      CharacterClass.Monk,
+      CharacterClass.Paladin,
+      CharacterClass.Ranger,
+      CharacterClass.Thief,
+    ])('should return 0 for non-Fighters %s', (className) => {
+      const result = getDamageModifier(CharacterClasses[className], {
+        Strength: { Carry: 50, Damage: 3, Doors: '1-5', Score: 18, ToHit: 2 },
+      } as CharacterStats)
+      expect(result).toBe(0)
+    })
+
+    it.each([
+      CharacterClass.Assassin,
+      CharacterClass.Cleric,
+      CharacterClass.Druid,
+      CharacterClass.MagicUser,
+      CharacterClass.Monk,
+      CharacterClass.Paladin,
+      CharacterClass.Ranger,
+      CharacterClass.Thief,
+    ])('should return -1 for non-Fighters %s', (className) => {
+      const result = getDamageModifier(CharacterClasses[className], {
+        Strength: { Carry: -10, Damage: -1, Doors: '1', Score: 4, ToHit: -2 },
+      } as CharacterStats)
+      expect(result).toBe(-1)
+    })
   })
 })
