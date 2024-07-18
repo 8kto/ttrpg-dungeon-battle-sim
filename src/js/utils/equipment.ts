@@ -41,7 +41,7 @@ export const getEquipNameSuffix = (item: EquipItem, damageMod?: number): string 
     }
   }
 
-  return sfx ? `<div class="ml-1 text-xs inline-block">${sfx.join('')}</div>` : ''
+  return sfx.length ? `<div class="ml-1 text-xs inline-block">${sfx.join('')}</div>` : ''
 }
 
 export const importEquipSet = (inventory: Inventory, equipSet: EquipSet): void => {
