@@ -2,8 +2,7 @@ import { AllEquipment } from '../config/snw/Equip'
 import { EquipItem, EquipSet, InventoryItemFlag } from '../domain/Equipment'
 import { Inventory } from '../domain/Inventory'
 
-// FIXME not To Hit but DAMAGE
-export const getEquipNameSuffix = (item: EquipItem, toHitMelee?: number, toHitMissile?: number): string => {
+export const getEquipNameSuffix = (item: EquipItem, damageMod?: number): string => {
   const sfx: string[] = []
 
   if (item.ascArmorClass) {
@@ -35,23 +34,11 @@ export const getEquipNameSuffix = (item: EquipItem, toHitMelee?: number, toHitMi
 
   if (item.damage) {
     sfx.push(`<span class="text-alt hover:cursor-help" title="Weapon damage">${item.damage}</span>`)
-
-    const isMelee = item.flags & InventoryItemFlag.TYPE_MELEE
-    const isMissile = item.flags & InventoryItemFlag.TYPE_MISSILE
-
-    if (isMelee && toHitMelee) {
-      sfx.push(`<span class="text-bold text-red-500"  title="To-Hit Melee">`)
-      sfx.push(`${toHitMelee > 0 ? '+' : ''}${toHitMelee}`)
+    if (damageMod) {
+      sfx.push(`<span class="text-bold text-red-500 ml-1 hover:cursor-help"  title="Damage bonus (STR)">`)
+      sfx.push(`${damageMod > 0 ? '+' : ''}${damageMod}`)
       sfx.push(`</span>`)
     }
-    if (isMissile && toHitMissile) {
-      sfx.push(`<span class="text-bold text-red-500 hover:cursor-help" title="To-Hit Missile">`)
-      sfx.push(`${toHitMissile > 0 ? '+' : ''}${toHitMissile}`)
-      sfx.push(`</span>`)
-    }
-
-    // FIXME bolts light?
-    // TODO both
   }
 
   return sfx ? `<div class="ml-1 text-xs inline-block">${sfx.join('')}</div>` : ''

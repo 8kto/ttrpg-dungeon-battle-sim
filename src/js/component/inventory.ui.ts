@@ -7,7 +7,7 @@ import { getEquipNameSuffix } from '../utils/equipment'
 import { dispatchEvent } from '../utils/event'
 import { getInventoryIdFromName } from '../utils/inventory'
 import { createElementFromHtml, scrollToElement } from '../utils/layout'
-import { getToHitMelee, getToHitMissiles } from '../utils/snw/combat'
+import { getDamageModifier } from '../utils/snw/combat'
 import { getBaseMovementRate, getUndergroundSpeed } from '../utils/snw/movement'
 import { getCompactModeAffectedElements, getInventoryContainer, getInventoryTablesContainer } from './domSelectors'
 
@@ -234,19 +234,16 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
   assert(classDef, `Unknown character class: ${inventory.character?.characterClass}`)
   assert(charStats)
 
-  const toHitMelee = getToHitMelee(classDef, charStats)
-  const toHitMissiles = getToHitMissiles(classDef, charStats)
+  const damageMod = getDamageModifier(classDef, charStats)
   let totalWeight = 0
   let totalCost = 0
-
-  console.log(inventory.name, { toHitMelee, toHitMissiles })
 
   Object.values(inventory.items).forEach((item) => {
     const row = inventoryTableBody.insertRow()
     row.className = 'even:bg-gray-50 hover:bg-gen-50'
 
     const nameCell = row.insertCell(0)
-    nameCell.innerHTML = item.name + getEquipNameSuffix(item, toHitMelee, toHitMissiles)
+    nameCell.innerHTML = item.name + getEquipNameSuffix(item, damageMod)
     nameCell.className = cellClassnames
 
     const qtyCell = row.insertCell(1)
