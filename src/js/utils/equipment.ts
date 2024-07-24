@@ -6,7 +6,7 @@ export const getEquipNameSuffix = (item: EquipItem, damageMod?: number): string 
   const sfx: string[] = []
 
   if (item.ascArmorClass) {
-    sfx.push('<span class="text-sub">')
+    sfx.push('<span class="text-alt">')
     sfx.push(`AC ${item.ascArmorClass}`)
     sfx.push('</span>')
   }
@@ -41,7 +41,7 @@ export const getEquipNameSuffix = (item: EquipItem, damageMod?: number): string 
     }
   }
 
-  return sfx.length ? `<div class="ml-1 text-xs inline-block">${sfx.join('')}</div>` : ''
+  return sfx.length ? `<div class="ml-2 text-xs inline-block">${sfx.join('')}</div>` : ''
 }
 
 export const importEquipSet = (inventory: Inventory, equipSet: EquipSet): void => {
