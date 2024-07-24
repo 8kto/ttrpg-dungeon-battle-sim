@@ -2,9 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-html,body {
-  font-family: "Averia Serif Libre", serif;
-  font-weight: 400;
+html,
+body {
+  font-family: 'Averia Serif Libre', serif;
+  font-weight: 300;
   font-style: normal;
 }
 
@@ -19,13 +20,18 @@ html,body {
 
 h1,
 h2 {
-  font-family: "Averia Serif Libre", serif;
+  font-family: 'Averia Serif Libre', serif;
   font-weight: 700;
   color: #77899e;
 }
 
 .font-serif {
   font-family: serif;
+}
+
+.text-details {
+  font-weight: 300;
+  color: #555;
 }
 
 .two-columns {
