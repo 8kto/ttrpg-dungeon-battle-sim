@@ -15,12 +15,14 @@
     {
       "label": "All classes",
       "url": "http://localhost:3000",
-      "onReadyScript": "allClasses.test-e2e.js"
+      "onReadyScript": "allClasses.test-e2e.js",
+      "misMatchThreshold": 0.049
     },
     {
       "label": "All classes in compact mode",
       "url": "http://localhost:3000",
-      "onReadyScript": "allClassesCompact.test-e2e.js"
+      "onReadyScript": "allClassesCompact.test-e2e.js",
+      "misMatchThreshold": 0.049
     },
     {
       "label": "Some inventories in compact mode",
@@ -51,6 +53,5 @@
   "asyncCaptureLimit": 5,
   "asyncCompareLimit": 25,
   "debug": false,
-  "debugWindow": false,
-  "misMatchThreshold": 0.049
+  "debugWindow": false
 }
