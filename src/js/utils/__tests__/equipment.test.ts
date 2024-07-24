@@ -21,7 +21,7 @@ describe('getEquipNameSuffix', () => {
       weight: 1,
     }
     expect(getEquipNameSuffix(item)).toBe(
-      `<div class="ml-2 text-xs inline-block"><span class="text-sub">AC 2</span><span class="mr-1"><span class="font-bold text-sub">†</span></span></div>`,
+      `<div class="ml-2 text-xs inline-block"><span class="text-alt">AC 2</span><span class="mr-1"><span class="font-bold text-sub">†</span></span></div>`,
     )
   })
 
