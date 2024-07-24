@@ -6,7 +6,7 @@ export const getEquipNameSuffix = (item: EquipItem, damageMod?: number): string 
   const sfx: string[] = []
 
   if (item.ascArmorClass) {
-    sfx.push('<span class="text-sub">')
+    sfx.push('<span class="text-alt">')
     sfx.push(`AC ${item.ascArmorClass}`)
     sfx.push('</span>')
   }
