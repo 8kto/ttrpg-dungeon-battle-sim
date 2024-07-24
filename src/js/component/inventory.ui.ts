@@ -2,7 +2,6 @@ import { CharacterClasses } from '../config/snw/CharacterClasses'
 import { CharacterClassDef } from '../domain/snw/CharacterClass'
 import { BaseMovementRate } from '../domain/snw/Movement'
 import { DEFAULT_INVENTORY_ID, getState, State } from '../state/State'
-import { assert } from '../utils/assert'
 import { getEquipNameSuffix } from '../utils/equipment'
 import { dispatchEvent } from '../utils/event'
 import { getInventoryIdFromName } from '../utils/inventory'
@@ -231,10 +230,7 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
 
   const classDef = CharacterClasses[inventory.character?.characterClass] as CharacterClassDef
   const charStats = inventory.character?.stats
-  assert(classDef, `Unknown character class: ${inventory.character?.characterClass}`)
-  assert(charStats)
-
-  const damageMod = getDamageModifier(classDef, charStats)
+  const damageMod = charStats ? getDamageModifier(classDef, charStats) : 0
   let totalWeight = 0
   let totalCost = 0
 
