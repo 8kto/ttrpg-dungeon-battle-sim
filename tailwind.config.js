@@ -19,6 +19,9 @@ module.exports = {
           950: '#29201f',
         },
       },
+      fontFamily: {
+        'averia-serif': ['"Averia Serif Libre"', 'serif'],
+      },
       fontSize: {
         xxs: '0.625rem',
         xxxs: '0.5rem',
