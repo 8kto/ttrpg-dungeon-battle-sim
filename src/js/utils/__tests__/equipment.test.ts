@@ -21,14 +21,14 @@ describe('getEquipNameSuffix', () => {
       weight: 1,
     }
     expect(getEquipNameSuffix(item)).toBe(
-      `<div class="ml-1 text-xs inline-block"><span class="text-sub">AC 2</span><span class="mr-1"><span class="font-bold text-sub">†</span></span></div>`,
+      `<div class="ml-2 text-xs inline-block"><span class="text-sub">AC 2</span><span class="mr-1"><span class="font-bold text-sub">†</span></span></div>`,
     )
   })
 
   it('should return correct suffix for item with damage', () => {
     const item: EquipItem = { ascArmorClass: 0, cost: 1, damage: '1d8', name: 'Sword', weight: 1 }
     expect(getEquipNameSuffix(item)).toBe(
-      '<div class="ml-1 text-xs inline-block"><span class="text-alt hover:cursor-help" title="Weapon damage">1d8</span></div>',
+      '<div class="ml-2 text-xs inline-block"><span class="text-alt hover:cursor-help" title="Weapon damage">1d8</span></div>',
     )
   })
 
@@ -42,7 +42,7 @@ describe('getEquipNameSuffix', () => {
       weight: 1,
     }
     expect(getEquipNameSuffix(item)).toBe(
-      `<div class="ml-1 text-xs inline-block"><span class="mr-1"><span class="font-bold text-sub">‡</span></span><span class="text-alt hover:cursor-help" title="Weapon damage">1d6</span></div>`,
+      `<div class="ml-2 text-xs inline-block"><span class="mr-1"><span class="font-bold text-sub">‡</span></span><span class="text-alt hover:cursor-help" title="Weapon damage">1d6</span></div>`,
     )
   })
 
