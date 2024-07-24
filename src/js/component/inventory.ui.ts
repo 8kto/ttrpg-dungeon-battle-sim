@@ -1,9 +1,12 @@
+import { CharacterClasses } from '../config/snw/CharacterClasses'
+import { CharacterClassDef } from '../domain/snw/CharacterClass'
 import { BaseMovementRate } from '../domain/snw/Movement'
 import { DEFAULT_INVENTORY_ID, getState, State } from '../state/State'
 import { getEquipNameSuffix } from '../utils/equipment'
 import { dispatchEvent } from '../utils/event'
 import { getInventoryIdFromName } from '../utils/inventory'
 import { createElementFromHtml, scrollToElement } from '../utils/layout'
+import { getDamageModifier } from '../utils/snw/combat'
 import { getBaseMovementRate, getUndergroundSpeed } from '../utils/snw/movement'
 import { getCompactModeAffectedElements, getInventoryContainer, getInventoryTablesContainer } from './domSelectors'
 
@@ -225,6 +228,9 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
   const inventoryTableBody = inventoryTableContainer.querySelector<HTMLTableSectionElement>('table tbody')
   inventoryTableBody.innerHTML = ''
 
+  const classDef = CharacterClasses[inventory.character?.characterClass] as CharacterClassDef
+  const charStats = inventory.character?.stats
+  const damageMod = charStats ? getDamageModifier(classDef, charStats) : 0
   let totalWeight = 0
   let totalCost = 0
 
@@ -233,7 +239,7 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
     row.className = 'even:bg-gray-50 hover:bg-gen-50'
 
     const nameCell = row.insertCell(0)
-    nameCell.innerHTML = item.name + getEquipNameSuffix(item)
+    nameCell.innerHTML = item.name + getEquipNameSuffix(item, damageMod)
     nameCell.className = cellClassnames
 
     const qtyCell = row.insertCell(1)
@@ -266,7 +272,6 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
     totalCost += item.cost * item.quantity
   })
 
-  const charStats = inventory.character?.stats
   const carryModifier = charStats?.Strength.Carry || 0
   const baseMovementRate = getBaseMovementRate(totalWeight, carryModifier)
 

@@ -29,3 +29,13 @@ export const getToHitMissiles = (classDef: CharacterClassDef, stats: CharacterSt
 
   return baseToHit + statsToHit
 }
+
+export const getDamageModifier = (classDef: CharacterClassDef, stats: CharacterStats): number => {
+  let damageMod = stats.Strength.Damage
+
+  if (classDef.name !== CharacterClass.Fighter && damageMod > 0) {
+    damageMod = 0
+  }
+
+  return damageMod
+}
