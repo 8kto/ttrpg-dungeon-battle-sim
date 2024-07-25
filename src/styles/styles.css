@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+html,
+body {
+  color: #333;
+  font-family: 'Averia Serif Libre', serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
 .inventory-container {
   border-radius: 5px;
   border-color: #e5e7eb;
@@ -13,13 +21,18 @@
 
 h1,
 h2 {
-  font-family: serif;
-  /*letter-spacing: 1px;*/
+  font-family: 'Averia Serif Libre', serif;
+  font-weight: 700;
   color: #77899e;
 }
 
 .font-serif {
   font-family: serif;
+}
+
+.text-details {
+  font-weight: 300;
+  color: #555;
 }
 
 .two-columns {

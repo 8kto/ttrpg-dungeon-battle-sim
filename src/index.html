@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Character and Inventory generator for Swords & Wizardry (Complete/Revised). Random character generation, equipment lists, inventory management, quick equipment sets, local storage saving, JSON export and more."
+      content="Character and Inventory generator for Swords & Wizardry (Complete). Random character generation, equipment lists, inventory management, quick equipment sets, local storage saving, JSON export and more."
     />
     <meta
       name="keywords"
@@ -18,7 +18,7 @@
     <meta property="og:title" content="Swords & Wizardry: Character generator, Equipment & Inventory" />
     <meta
       property="og:description"
-      content="Character and Inventory generator for Swords & Wizardry (Complete/Revised). Random character generation, equipment lists, inventory management, quick equipment sets, local storage saving, JSON export and more."
+      content="Character and Inventory generator for Swords & Wizardry (Complete). Random character generation, equipment lists, inventory management, quick equipment sets, local storage saving, JSON export and more."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://swords-and-wizardry.ivlev.blog/" />
@@ -30,6 +30,13 @@
     <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body class="bg-gen-50 p-4">
     <noscript> Sorry, JS should be enabled </noscript>
@@ -381,13 +388,13 @@
       <!-- Secondary row A -->
       <div class="char-saving-throw text-sm mb-2">
         <div class="text-gen-800">
-          <span class="font-bold">Saving throw</span>: <span class="char-saving-throw--value"></span>
+          <span class="font-bold">Saving throw</span>: <span class="char-saving-throw--value text-details"></span>
           <span title="Click to see alternative saving throws" class="char-saving-throw--toggle hover:cursor-help"
             >ℹ️</span
           >
         </div>
-        <div class="char-saving-throw--alt-details" hidden></div>
-        <div class="char-saving-throw--details"></div>
+        <div class="char-saving-throw--alt-details text-details" hidden></div>
+        <div class="char-saving-throw--details text-details"></div>
       </div>
 
       <!-- Secondary row B -->
