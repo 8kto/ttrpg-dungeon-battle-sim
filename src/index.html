@@ -171,30 +171,41 @@
           <!-- Export/import -->
           <section id="dump-data-container">
             <div class="max-w-auto my-4">
-              <details class="mb-4 border-b border-gray-200">
+              <details class="mb-4 border-b border-gray-200" open>
                 <summary class="cursor-pointer px-4 py-2 text-gen-800 bg-gen-50 hover:bg-gen-100">
-                  Dump inventory
+                  Characters import & export
                 </summary>
                 <div class="text-sm my-2">
-                  <p>
-                    JSON can be used for sharing the inventories and for manual importing (check the
-                    <code>localStorage</code>)
-                  </p>
-                  <button
-                    id="dump-json-button"
-                    class="text-xs btn bg-gen-500 hover:bg-gen-600 text-white py-2 px-2 m-2 mr-0 rounded"
-                    type="button"
-                  >
-                    Dump JSON
-                  </button>
-                  <button
-                    id="copy-json-button"
-                    class="text-xs btn bg-gen-500 hover:bg-gen-600 text-white py-2 px-2 m-2 ml-0 rounded"
-                    type="button"
-                  >
-                    Copy to clipboard
-                  </button>
-                  <pre id="dump-data-container--json-container" class="m-2 max-h-40 overflow-auto"></pre>
+                  <p>JSON can be used for sharing the characters/inventories.</p>
+                  <div class="my-2 flex gap-x-1">
+                    <button
+                      id="dump-json-button"
+                      class="text-xs btn bg-gen-500 hover:bg-gen-600 text-white py-2 px-2 rounded"
+                      type="button"
+                    >
+                      Export
+                    </button>
+                    <button
+                      id="import-json-button"
+                      class="text-xs btn bg-gen-500 hover:bg-gen-600 text-white py-2 px-2 rounded"
+                      type="button"
+                    >
+                      Import
+                    </button>
+                    <button
+                      id="copy-json-button"
+                      class="text-xs btn bg-gen-100 hover:bg-gen-600 text-gen-500 py-2 px-2 rounded"
+                      type="button"
+                    >
+                      Copy to clipboard
+                    </button>
+                  </div>
+                  <textarea
+                    id="dump-data-container--json-container"
+                    class="m-0 overflow-auto w-full border"
+                    rows="10"
+                    style="white-space: pre; font-family: monospace"
+                  ></textarea>
                 </div>
               </details>
             </div>
