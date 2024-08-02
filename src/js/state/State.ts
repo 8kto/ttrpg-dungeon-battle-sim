@@ -53,7 +53,7 @@ export class State {
 
     const serializedInventories = this.deserializeInventories()
     if (serializedInventories && Object.keys(serializedInventories).length) {
-      this.#inventories = serializedInventories
+      this.setInventories(serializedInventories)
     }
 
     const uiState = this.deserializeUiState()
@@ -242,8 +242,16 @@ export class State {
   isCompactMode(): boolean {
     return this.#uiState.isCompactMode
   }
+
+  // TODO test
+  setInventories(data: Record<string, Inventory>): void {
+    this.#inventories = data
+    this.serialize()
+  }
 }
 
 export const getState = (): State => {
   return State.getInstance()
 }
+
+// TODO try annotations e.g. @serializable
