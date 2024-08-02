@@ -9,3 +9,7 @@ export const getCompactModeAffectedElements = (inventoryId: string): NodeListOf<
 export const getInventoryTablesContainer = (): HTMLElement => {
   return document.getElementById('inventories-container')
 }
+
+export const getDumpJsonContainer = (): HTMLTextAreaElement => {
+  return document.querySelector('#dump-data-container--json-container')
+}

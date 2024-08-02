@@ -1,6 +1,7 @@
 import { AllEquipment } from '../config/snw/Equip'
 import { getState } from '../state/State'
 import { dispatchEvent } from '../utils/event'
+import { getDumpJsonContainer } from './domSelectors'
 
 export const bindConversionControls = (): void => {
   const allowOnlyExistingCheckbox = document.getElementById('equip-import-allow-only-existing') as HTMLInputElement
@@ -43,14 +44,14 @@ export const bindConversionControls = (): void => {
 }
 
 export const bindDumpingControls = (): void => {
-  const container = document.getElementById('dump-data-container--json-container')
+  const inputContainer = getDumpJsonContainer()
 
   document.getElementById('dump-json-button').addEventListener('click', () => {
-    container.textContent = getState().getSerializedInventories()
+    inputContainer.textContent = getState().getSerializedInventories()
   })
 
   document.getElementById('copy-json-button').addEventListener('click', function () {
-    const textToCopy = container.textContent
+    const textToCopy = inputContainer.value
 
     // Create a temporary textarea element to hold the text
     const tempTextArea = document.createElement('textarea')
@@ -68,10 +69,41 @@ export const bindDumpingControls = (): void => {
   })
 }
 
+const bindImportControls = (): void => {
+  const inputContainer: HTMLTextAreaElement = getDumpJsonContainer()
+
+  document.getElementById('import-json-button').addEventListener('click', () => {
+    if (!confirm('Importing JSON will overwrite the existing state.')) {
+      return false
+    }
+
+    let json = null
+
+    try {
+      json = JSON.parse(inputContainer.value)
+    } catch (err) {
+      console.error(err)
+      alert('Error: could not parse the serialized data, check JSON syntax')
+    }
+
+    const keys = Object.keys(json)
+    const inventoryId = json[keys[0]]?.id
+    if (json && inventoryId) {
+      getState().setInventories(json)
+      alert('Success: data imported')
+      dispatchEvent('RenderInventories')
+      dispatchEvent('SelectInventory', { inventoryId })
+    }
+  })
+}
+
 /**
  * Run once
  */
 export const initExportImportUi = (): void => {
   bindConversionControls()
   bindDumpingControls()
+  bindImportControls()
 }
+
+// TODO add some schema for data validation
