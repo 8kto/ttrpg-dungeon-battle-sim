@@ -201,10 +201,13 @@ export const markSelectedInventory = (inventoryId: string): void => {
     )
   }
 
-  getInventoryContainer(inventoryId).classList.add('selected')
+  const inventoryContainer = getInventoryContainer(inventoryId)
+  if (inventoryContainer) {
+    inventoryContainer.classList.add('selected')
+  }
 
   const containerTitle = document.getElementById('inventory-container-title')
-  containerTitle.textContent = getState().getInventory(inventoryId).name
+  containerTitle.textContent = getState().getInventory(inventoryId)?.name ?? 'NA'
 }
 
 /**
