@@ -1,5 +1,11 @@
 import { CharacterClasses, PRIME_ATTR_MIN } from '../../../config/snw/CharacterClasses'
-import { StrengthModifiers } from '../../../config/snw/Modifiers'
+import {
+  CharismaModifiers,
+  ConstitutionModifiers,
+  DexterityModifiers,
+  IntelligenceModifiers,
+  StrengthModifiers,
+} from '../../../config/snw/Modifiers'
 import { AttrScore } from '../../../domain/snw/CharacterClass'
 import { CharacterStats } from '../../../domain/snw/CharacterStats'
 import {
@@ -29,8 +35,92 @@ describe('character utils', () => {
       [16, 16],
       [17, 17],
       [18, 18],
-    ])('should match the expected scores %d => %d', (score, expected) => {
+    ])('should match the expected Strength score %d => %d', (score, expected) => {
       expect(getMatchingScore(StrengthModifiers, score)).toEqual(expected)
+    })
+
+    it.each([
+      [3, 8],
+      [4, 8],
+      [5, 8],
+      [6, 8],
+      [7, 8],
+      [8, 8],
+      [9, 12],
+      [10, 12],
+      [11, 12],
+      [12, 12],
+      [13, 18],
+      [14, 18],
+      [15, 18],
+      [16, 18],
+      [17, 18],
+      [18, 18],
+    ])('should match the expected Dexterity score %d => %d', (score, expected) => {
+      expect(getMatchingScore(DexterityModifiers, score)).toEqual(expected)
+    })
+
+    it.each([
+      [3, 8],
+      [4, 8],
+      [5, 8],
+      [6, 8],
+      [7, 8],
+      [8, 8],
+      [9, 12],
+      [10, 12],
+      [11, 12],
+      [12, 12],
+      [13, 18],
+      [14, 18],
+      [15, 18],
+      [16, 18],
+      [17, 18],
+      [18, 18],
+    ])('should match the expected Constitution score %d => %d', (score, expected) => {
+      expect(getMatchingScore(ConstitutionModifiers, score)).toEqual(expected)
+    })
+
+    it.each([
+      [3, 7],
+      [4, 7],
+      [5, 7],
+      [6, 7],
+      [7, 7],
+      [8, 8],
+      [9, 9],
+      [10, 10],
+      [11, 11],
+      [12, 12],
+      [13, 13],
+      [14, 14],
+      [15, 15],
+      [16, 16],
+      [17, 17],
+      [18, 18],
+    ])('should match the expected Intelligence score %d => %d', (score, expected) => {
+      expect(getMatchingScore(IntelligenceModifiers, score)).toEqual(expected)
+    })
+
+    it.each([
+      [3, 4],
+      [4, 4],
+      [5, 6],
+      [6, 6],
+      [7, 8],
+      [8, 8],
+      [9, 12],
+      [10, 12],
+      [11, 12],
+      [12, 12],
+      [13, 15],
+      [14, 15],
+      [15, 15],
+      [16, 17],
+      [17, 17],
+      [18, 18],
+    ])('should match the expected Charisma score %d => %d', (score, expected) => {
+      expect(getMatchingScore(CharismaModifiers, score)).toEqual(expected)
     })
   })
 
