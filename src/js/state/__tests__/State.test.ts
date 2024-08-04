@@ -62,21 +62,31 @@ describe('State', () => {
       expect(localStorageGetItemSpy).toHaveBeenCalledWith(LOCAL_UI_STORAGE_KEY)
     })
 
-    it('should restore from localStorage', () => {
+    it('should restore inventories from localStorage', () => {
       const inventoriesJson = JSON.stringify({ ClericInventory: clericInventoryMock }, null, 2)
       localStorage.setItem(LOCAL_STORAGE_KEY, inventoriesJson)
-
-      const uiStateJson = `{"currentInventoryId": "id-1", "isCompactMode": true}`
-      localStorage.setItem(LOCAL_UI_STORAGE_KEY, uiStateJson)
 
       State.resetInstance()
       const state = getState()
 
       expect(state.getInventories()).toEqual([clericInventoryMock])
-
       expect(state.getSerializedInventories()).toEqual(inventoriesJson)
-      expect(state.deserializeUiState()).toEqual(JSON.parse(uiStateJson))
       expect(state.deserializeInventories()).toEqual(JSON.parse(inventoriesJson))
+    })
+
+    it('should restore UI state from localStorage', () => {
+      const uiStateJson = `{"currentInventoryId": "id-1", "isCompactMode": true}`
+      localStorage.setItem(LOCAL_UI_STORAGE_KEY, uiStateJson)
+
+      expect(getState().getCurrentInventoryId()).toEqual(DEFAULT_INVENTORY_ID)
+      expect(getState().isCompactMode()).toEqual(false)
+
+      State.resetInstance()
+      const state = getState()
+
+      expect(state.deserializeUiState()).toEqual(JSON.parse(uiStateJson))
+      expect(state.getCurrentInventoryId()).toEqual('id-1')
+      expect(state.isCompactMode()).toEqual(true)
     })
 
     it('should handle empty localStorage', () => {
