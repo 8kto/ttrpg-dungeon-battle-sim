@@ -44,7 +44,7 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 - [x] Saves inventory in the browser's local storage, meaning the selected items will persist after a page reload
 - [x] Displays help on encumbrance and speed
 - [x] Converts text (which can be copied from other sources) into equipment and adds it to the inventory
-- [x] Exports inventories as JSON, which can be manually added to the browser's storage (dev tools). I didn’t have time yet to write a more convenient import feature.
+- [x] Exports and import characters and their inventories
 - [x] Custom items
 - [x] Builds with WMR
 
@@ -57,7 +57,6 @@ Contributions are welcome. Code should follow conventions described in [Code Con
 - [ ] Mobiles support (?)
 - [ ] Languages support (?)
 - [ ] Add coins
-- [ ] More convenient Import
 - [ ] New random character: adjust heuristics (drop hopeless, pick random properly)
 - [ ] Race
   - [ ] Half elves cannot be pure Fighters or MU, only listed classes (and other races?)
