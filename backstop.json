@@ -9,6 +9,11 @@
   ],
   "scenarios": [
     {
+      "label": "Clean local storage",
+      "url": "http://localhost:3000/",
+      "onReadyScript": "cleanLocalStorage.test-e2e.js"
+    },
+    {
       "label": "Initial",
       "url": "http://localhost:3000/"
     },
