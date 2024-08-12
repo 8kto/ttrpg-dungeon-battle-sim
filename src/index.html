@@ -82,12 +82,7 @@
               class="input bg-gen-50 p-2 border border-gray-300 rounded-t sm:rounded-l sm:rounded-t-none text-gen-600 flex-grow"
               value="Character Name"
             />
-            <button
-              id="add-inventory-button"
-              class="btn btn-primary"
-            >
-              Add&nbsp;Character
-            </button>
+            <button id="add-inventory-button" class="btn btn-primary">Add&nbsp;Character</button>
           </section>
 
           <!-- Add custom item -->
@@ -110,12 +105,7 @@
               class="input bg-gen-50 p-2 border border-gray-300 text-gen-400 w-full sm:w-28"
               value=""
             />
-            <button
-              id="add-new-item-button"
-              class="btn btn-secondary"
-            >
-              Add&nbsp;Item
-            </button>
+            <button id="add-new-item-button" class="btn btn-secondary">Add&nbsp;Item</button>
           </section>
 
           <!-- Weapons help -->
@@ -129,11 +119,7 @@
 
           <section class="inventory-controls mt-0 mb-2 text-white text-sm">
             <div class="flex justify-end">
-              <button
-                class="minimise-inventories-btn btn btn-xs text-xs"
-              >
-                Compact mode
-              </button>
+              <button class="minimise-inventories-btn btn btn-xs text-xs">Compact mode</button>
             </div>
           </section>
 
@@ -149,17 +135,10 @@
                 </summary>
 
                 <div class="flex items-center my-4 w-full py-2">
-                  <select
-                    id="equip-set-dropdown"
-                    class="select select-bordered w-full"
-                  >
+                  <select id="equip-set-dropdown" class="select select-bordered w-full">
                     <option value="" class="text-base">Select a set</option>
                   </select>
-                  <button
-                    id="import-equip-set-button"
-                    class="btn btn-primary w-32 rounded-none"
-                    type="button"
-                  >
+                  <button id="import-equip-set-button" class="btn btn-primary w-32 rounded-none" type="button">
                     Import
                   </button>
                 </div>
@@ -223,9 +202,7 @@
                     <thead class="bg-base-300">
                       <tr>
                         <th class="text-left uppercase">Weight Carried</th>
-                        <th class="text-left uppercase">
-                          Base Movement Rate
-                        </th>
+                        <th class="text-left uppercase">Base Movement Rate</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -248,7 +225,7 @@
                     </tbody>
                   </table>
                   <table class="mb-4 shadow-md text-sm table table-zebra">
-                    <thead class="bg-base-300 ">
+                    <thead class="bg-base-300">
                       <tr>
                         <th class="uppercase">Description</th>
                         <th class="uppercase w-64">Speed</th>
@@ -256,7 +233,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                    <tr>
+                      <tr>
                         <td>Walking</td>
                         <td>Base movement rate * 20 feet/turn</td>
                         <td>Mapping and careful observation of the surroundings are possible.</td>
@@ -270,7 +247,7 @@
                           The sound of running may attract the attention of enemies.
                         </td>
                       </tr>
-                    <tr>
+                      <tr>
                         <td>Combat</td>
                         <td>
                           (Base movement rate / 3) * 10 feet <br />
@@ -278,9 +255,7 @@
                           [9] = 30ft<br />
                           [12] = 40ft
                         </td>
-                        <td>
-                          Dashing around, battling your foes. Alternatively, running for your life.
-                        </td>
+                        <td>Dashing around, battling your foes. Alternatively, running for your life.</td>
                       </tr>
                     </tbody>
                   </table>
@@ -308,12 +283,7 @@
                     placeholder="Enter each item on a new line"
                   ></textarea>
 
-                  <button
-                    id="convert-button"
-                    class="btn btn-primary"
-                  >
-                    Add items
-                  </button>
+                  <button id="convert-button" class="btn btn-primary">Add items</button>
                   <div id="error-output" class="my-4 text-red-500"></div>
                 </div>
               </details>
@@ -361,14 +331,10 @@
     <!-- New random char controls -->
     <template id="template-new-char-controls">
       <section class="inventory-controls-top-section mt-4 text-gen-800 text-sm flex gap-x-1">
-        <button
-          class="add-new-random-char-btn btn btn-sm btn-primary flex items-center"
-        >
+        <button class="add-new-random-char-btn btn btn-sm btn-primary flex items-center">
           <span class="block px-2 py-1">♻ Generate random character</span>
         </button>
-        <button
-          class="save-char-btn text-xs btn btn-sm btn-accent"
-        >
+        <button class="save-char-btn text-xs btn btn-sm btn-accent">
           <span class="block px-2 py-1">Save</span>
         </button>
       </section>
