@@ -20,7 +20,8 @@ body {
 }
 
 h1,
-h2 {
+h2,
+h3 {
   font-family: 'Averia Serif Libre', serif;
   font-weight: 700;
   color: #77899e;
