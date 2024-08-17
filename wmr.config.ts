@@ -13,13 +13,4 @@ export default defineConfig({
   public: 'src',
   sourcemap: true,
   typescript: true,
-  middleware: [
-    // Custom middleware to serve files from the `build` directory during development
-    function (req, res, next) {
-      if (req.url.startsWith('/styles/')) {
-        req.url = '/build' + req.url;
-      }
-      next();
-    }
-  ]
 })
