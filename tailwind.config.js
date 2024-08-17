@@ -5,14 +5,52 @@ module.exports = {
   // daisyUI config (optional - here are the default values)
   daisyui: {
     themes: [
-      'light',
       'dark',
-      'retro',
       {
         emerald: {
           ...require('daisyui/src/theming/themes')['emerald'],
           '--rounded-btn': '0.25rem', // border radius rounded-btn utility class, used in buttons and similar element
           '--rounded-box': '0.25rem',
+        },
+      },
+      {
+        'retroclone': {
+          'primary' : '#ee9a95',
+          'primary-focus' : '#e76b65',
+          'primary-content' : '#252223',
+
+          'secondary' : '#a4cbb4',
+          'secondary-focus' : '#85b79a',
+          'secondary-content' : '#252223',
+
+          'accent' : '#ebdc99',
+          'accent-focus' : '#e1cb6b',
+          'accent-content' : '#252223',
+
+          'neutral' : '#7c725a',
+          'neutral-focus' : '#423d33',
+          'neutral-content' : '#e4d8b4',
+
+          'base-100' : '#fff',
+          'base-200' : '#eee',
+          'base-300' : '#ddd',
+          'base-content' : '#252223',
+
+          'info' : '#1c92f2',
+          'success' : '#009485',
+          'warning' : '#ff9900',
+          'error' : '#ff5724',
+
+          '--rounded-box': '.25rem',
+          '--rounded-btn': '.25rem',
+          '--rounded-badge': '.25rem',
+
+          '--animation-btn': '.25s',
+          '--animation-input': '.2s',
+
+          '--btn-text-case': 'uppercase',
+          '--navbar-padding': '.5rem',
+          '--border-btn': '1px',
         },
       },
     ], // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
