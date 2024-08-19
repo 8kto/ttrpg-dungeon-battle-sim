@@ -1,0 +1,32 @@
+.inventory-container {
+  border-radius: 5px;
+  border-color: #e5e7eb;
+}
+
+.inventory-container.selected {
+  @apply border-primary;
+}
+
+.textarea-json {
+  white-space: pre;
+  font-family: monospace;
+}
+
+.inventory-column {
+  details {
+    @apply mb-4;
+    @apply border-b border-gray-200;
+    @apply border-gray-200;
+  }
+
+  summary {
+    @apply cursor-pointer;
+    @apply px-4;
+    @apply py-2;
+    @apply bg-neutral-content;
+
+    &:hover {
+      @apply bg-accent;
+    }
+  }
+}

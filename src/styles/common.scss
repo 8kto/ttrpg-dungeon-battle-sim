@@ -4,27 +4,14 @@
 
 html,
 body {
-  color: #333;
-  font-family: 'Averia Serif Libre', serif;
   font-weight: 400;
   font-style: normal;
-}
-
-.inventory-container {
-  border-radius: 5px;
-  border-color: #e5e7eb;
-}
-
-.inventory-container.selected {
-  border-color: #bbb;
 }
 
 h1,
 h2,
 h3 {
-  font-family: 'Averia Serif Libre', serif;
   font-weight: 700;
-  color: #77899e;
 }
 
 .font-serif {
@@ -106,6 +93,7 @@ div:empty {
 .column-count-2 {
   columns: 2;
 }
+
 .break-inside-avoid {
   break-inside: avoid;
 }
