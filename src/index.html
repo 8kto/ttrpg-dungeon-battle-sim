@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns="http://www.w3.org/1999/html" data-theme="retroclone">
+<html lang="en" xmlns="http://www.w3.org/1999/html" data-theme="retrogame">
   <head>
     <meta charset="UTF-8" />
     <title>Swords & Wizardry: Character generator, Equipment & Inventory</title>
@@ -34,14 +34,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
-  </head>
-  <body class="bg-base-50 text-base-content p-4">
-    <noscript> Sorry, JS should be enabled </noscript>
-
-    <header class="flex items-center justify-center w-full min-w-full overflow-x-auto no-scrollbar flex-col">
-      <pre
-        class="overflow-x-auto no-scrollbar m-auto text-alt text-xxs sm:text-sm md:text-base lg:text-lg"
-      ><a href="/" class="transition-gradient block">
+    <script>
+      /*
                            _                         _                  _
                           | |       ___             (_)                | |
  _____      _____  _ __ __| |___   ( _ )   __      ___ ______ _ _ __ __| |_ __ _   _
@@ -50,20 +44,28 @@
 |___/ \_/\_/ \___/|_|  \__,_|___/  \___/\/   \_/\_/ |_/___\__,_|_|  \__,_|_|   \__, |
                                                                                 __/ |
                                                                                |___/
-      </a></pre>
-      <h1 class="text-2xl text-primary text-center mb-2">Character Generator</h1>
-      <h2 class="text-xl text-secondary text-center mb-4">Unofficial tool</h2>
+       */
+    </script>
+  </head>
+  <body class="bg-neutral text-base-content p-4">
+    <noscript> Sorry, JS should be enabled </noscript>
+
+    <header class="mb-4 text-center">
+      <h1 class="text-alt text-3xl sm:text-sm md:text-base lg:text-3xl mb-2">
+        <a href="/" class="transition-gradient block"> Swords & Wizardry CR </a>
+      </h1>
+      <h2 class="text-xl text-secondary">Character Generator / Unofficial tool</h2>
     </header>
     <main class="mx-auto w-full max-w-screen-2xl flex-grow px-2.5 sm:px-6 lg:px-8 mb-4">
       <div class="page-content flex flex-row justify-between gap-4">
         <!-- Equipment Container -->
         <section
           id="equipment-container"
-          class="equip-column bg-white flex-1 p-4 border shadow-lg rounded-lg"
+          class="equip-column bg-white flex-grow-0 flex-shrink-0 w-1/2 p-4 border shadow-lg rounded-lg"
         ></section>
 
         <!-- Inventory Container -->
-        <section class="inventory-column bg-white flex-1 p-4 border shadow-lg rounded-lg">
+        <section class="inventory-column bg-white flex-grow-0 flex-shrink-0 w-1/2 p-4 border shadow-lg rounded-lg">
           <!-- Section to Add or Remove Inventories -->
           <section class="my-4 flex flex-col sm:flex-row text-sm w-full sm:w-2/3">
             <div class="join w-full">
@@ -275,7 +277,7 @@
           </section>
         </section>
       </div>
-      <footer class="text-base">
+      <footer class="text-secondary">
         <div class="mx-auto max-w-screen-2xl px-4 py-6 sm:px-6 lg:px-8">
           <div class="flex flex-col items-center justify-between">
             <div class="mb-4 max-w-full whitespace-normal break-words text-base">
@@ -288,14 +290,14 @@
               </a>
             </div>
             <div>
-              <p title="Disclaimer" class="text-center text-sm text-gen-800">
+              <p title="Disclaimer" class="text-center text-sm">
                 This is an unofficial tool for "Swords and Wizardry" and is not endorsed by the game's publishers.
                 <br />
                 All related trademarks belong to their respective owners.
               </p>
             </div>
             <div class="flex items-center my-2">
-              <div class="inline-block text-sm text-alt">
+              <div class="inline-block text-sm text-accent">
                 <span class="">&copy; 2024 </span>
                 <a
                   href="https://ivlev.blog/"

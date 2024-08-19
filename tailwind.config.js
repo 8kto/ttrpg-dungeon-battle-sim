@@ -54,6 +54,47 @@ module.exports = {
           '--navbar-padding': '.5rem',
           '--border-btn': '1px',
         },
+        retrogame: {
+          primary: '#aa5574',
+          'primary-focus': '#ed697b',
+          't-primary-focus': '#ed697b',
+          'primary-content': '#fff',
+
+          secondary: '#34acba',
+          'secondary-focus': '#72dcba',
+          'bg-secondary-focus': '#72dcba',
+          'secondary-content': '#fff',
+
+          accent: '#ffe07e',
+          'accent-focus': '#e1cb6b',
+          'accent-content': '#252223',
+
+          neutral: '#2e242a',
+          'neutral-focus': '#72464b',
+          'neutral-content': '#e4d8b4',
+
+          'base-50': '#f5f4f1',
+          'base-100': '#e6e2db',
+          'base-200': '#cec7ba',
+          'base-300': '#b2a592',
+          'base-content': '#252223',
+
+          info: '#1c92f2',
+          success: '#009485',
+          warning: '#ff9900',
+          error: '#ff5724',
+
+          '--rounded-box': '.25rem',
+          '--rounded-btn': '.25rem',
+          '--rounded-badge': '.25rem',
+
+          '--animation-btn': '.25s',
+          '--animation-input': '.2s',
+
+          '--btn-text-case': 'uppercase',
+          '--navbar-padding': '.5rem',
+          '--border-btn': '1px',
+        },
       },
     ], // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
     base: true, // applies background color and foreground color for root element by default
@@ -66,6 +107,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        'text-primary-focus': '#ed697b',
         gen: {
           50: '#f5f4f1',
           100: '#e6e2db',

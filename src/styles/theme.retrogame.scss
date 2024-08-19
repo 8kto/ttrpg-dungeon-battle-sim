@@ -1,9 +1,28 @@
+html {
+  font-size: 15px;
+}
+
 html,
 body {
-  color: #333;
-  font-family: 'Press Start 2P', system-ui;
+  font-family: 'Press Start 2P', system-ui, sans-serif;
   font-weight: 400;
   font-style: normal;
+}
+
+body {
+  font-size: 1rem;
+}
+
+.body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 128px;
+  background-image: url('../images/tiles/rhomb-top.png');
+  background-repeat: repeat;
+  background-size: 80px 80px; /* 64px tile + 16px gap */
 }
 
 h1,
@@ -14,7 +33,36 @@ h3 {
 }
 
 .press-start-2p-regular {
-  font-family: 'Press Start 2P', system-ui;
+  font-family: 'Press Start 2P', system-ui, sans-serif;
   font-weight: 400;
   font-style: normal;
+}
+
+.textarea-json {
+  white-space: pre;
+  font-family: 'Press Start 2P', monospace, sans-serif;
+}
+
+.text-alt {
+  color: #e76b65;
+}
+
+.hover\:text-alt:hover {
+  color: #a13d68;
+}
+
+.bg-alt {
+  background-color: #a13d68;
+}
+
+.text-sub {
+  color: #cea181;
+}
+
+.border-alt {
+  border: 1px solid #a13d68;
+}
+
+.text-details {
+  color: #7c725a;
 }
