@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "wmr --reload",
-    "build:styles": "npx tailwindcss -i ./src/styles/styles.css -o ./src/styles/styles.processed.css",
+    "build:styles": "npx tailwindcss -i src/styles/styles.scss -o ./src/styles/styles.processed.css",
     "build": "yarn build:styles && wmr build --sourcemap --minify",
     "serve": "wmr serve",
     "deploy": "scripts/deploy.sh",
@@ -15,7 +15,7 @@
     "format:fix": "yarn eslint --fix && prettier --write .",
     "test": "jest",
     "test:coverage": "jest --collectCoverage",
-    "dev:styles": "npx tailwindcss -i ./src/styles/styles.css -o ./src/styles/styles.processed.css --watch",
+    "dev:styles": "npx tailwindcss -i src/styles/styles.scss -o ./src/styles/styles.processed.css --watch",
     "todos": "egrep --color=always -i '(TODO|FIXME)' -r src/",
     "test:vr": "backstop test",
     "weok": "yarn tsc && yarn lint && yarn format && yarn test && echo WE OK"
