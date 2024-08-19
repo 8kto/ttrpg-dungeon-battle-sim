@@ -24,7 +24,7 @@
     <meta property="og:url" content="https://swords-and-wizardry.ivlev.blog/" />
 
     <script src="js/component/ui.ts" type="module"></script>
-    <link rel="stylesheet" href="/styles/styles.processed.css" />
+    <link rel="stylesheet" href="./styles/styles.processed.css" />
     <link rel="manifest" href="./site.webmanifest" />
 
     <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png" />
@@ -33,12 +33,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Averia+Serif+Libre:wght@300;400;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
   </head>
-  <body class="bg-base-100 text-base-content p-4">
+  <body class="bg-base-50 text-base-content p-4">
     <noscript> Sorry, JS should be enabled </noscript>
 
     <header class="flex items-center justify-center w-full min-w-full overflow-x-auto no-scrollbar flex-col">
@@ -60,10 +57,13 @@
     <main class="mx-auto w-full max-w-screen-2xl flex-grow px-2.5 sm:px-6 lg:px-8 mb-4">
       <div class="page-content flex flex-row justify-between gap-4">
         <!-- Equipment Container -->
-        <section id="equipment-container" class="flex-1 p-4 border shadow-lg rounded-lg"></section>
+        <section
+          id="equipment-container"
+          class="equip-column bg-white flex-1 p-4 border shadow-lg rounded-lg"
+        ></section>
 
         <!-- Inventory Container -->
-        <section id="inventory-container" class="flex-1 p-4 border shadow-lg rounded-lg">
+        <section class="inventory-column bg-white flex-1 p-4 border shadow-lg rounded-lg">
           <!-- Section to Add or Remove Inventories -->
           <section class="my-4 flex flex-col sm:flex-row text-sm w-full sm:w-2/3">
             <div class="join w-full">
@@ -102,13 +102,13 @@
                 value=""
               />
               <div class="indicator">
-                <button id="add-new-item-button" class="btn join-item">Add&nbsp;Item</button>
+                <button id="add-new-item-button" class="btn btn-primary join-item">Add&nbsp;Item</button>
               </div>
             </div>
           </section>
 
           <!-- Weapons help -->
-          <section class="my-4 text-accent">
+          <section class="my-4 text-primary">
             <ul class="text-sm">
               <li><span class="text-red-800">*</span> When wielded two-handed, gain +1 damage bonus</li>
               <li><span class="text-red-800">†</span> Can be used as either a one-handed or two-handed weapon</li>
@@ -128,8 +128,8 @@
           <!-- Equipment sets -->
           <section id="equip-sets-section">
             <div class="max-w-auto">
-              <details class="mb-4 border-b border-gray-200">
-                <summary class="cursor-pointer px-4 py-2 bg-base-200 hover:bg-base-300">Import Equipment set</summary>
+              <details>
+                <summary>Import Equipment set</summary>
 
                 <div class="flex items-center my-4 w-full py-2">
                   <select id="equip-set-dropdown" class="select select-bordered w-full">
@@ -147,15 +147,15 @@
           <!-- Export/import -->
           <section id="dump-data-container">
             <div class="max-w-auto my-4">
-              <details class="mb-4 border-b border-gray-200">
-                <summary class="cursor-pointer px-4 py-2 bg-base-200 hover:bg-base-300">
-                  Characters import & export
-                </summary>
+              <details>
+                <summary>Characters import & export</summary>
                 <div class="text-sm my-2">
                   <div class="join">
-                    <button id="dump-json-button" class="btn join-item" type="button">Export</button>
-                    <button id="import-json-button" class="btn join-item" type="button">Import</button>
-                    <button id="copy-json-button" class="btn join-item" type="button">Copy to clipboard</button>
+                    <button id="dump-json-button" class="btn btn-primary join-item" type="button">Export</button>
+                    <button id="import-json-button" class="btn btn-primary join-item" type="button">Import</button>
+                    <button id="copy-json-button" class="btn btn-secondary join-item" type="button">
+                      Copy to clipboard
+                    </button>
                   </div>
 
                   <label class="form-control">
@@ -165,10 +165,9 @@
 
                     <textarea
                       id="dump-data-container--json-container"
-                      class="textarea textarea-bordered overflow-auto w-full h-36"
+                      class="textarea textarea-json textarea-bordered overflow-auto w-full h-36"
                       placeholder="Data in JSON format"
                       rows="10"
-                      style="white-space: pre; font-family: monospace"
                     ></textarea>
                   </label>
                 </div>
@@ -179,8 +178,8 @@
           <!-- Movement/speed help -->
           <section id="movement-container">
             <div class="max-w-auto">
-              <details class="mb-4 border-b border-gray-200">
-                <summary class="cursor-pointer px-4 py-2 bg-base-200 hover:bg-base-300">ℹ️ Base Movement Rate</summary>
+              <details>
+                <summary>ℹ️ Base Movement Rate</summary>
                 <div class="my-2">
                   <table class="mb-4 text-sm table table-zebra">
                     <thead class="bg-base-300">
@@ -246,8 +245,8 @@
                 </div>
               </details>
 
-              <details class="mb-4">
-                <summary class="cursor-pointer px-4 py-2 bg-base-200 hover:bg-base-300">Add Equipment by Name</summary>
+              <details>
+                <summary>Add Equipment by Name</summary>
                 <div class="py-2">
                   <div class="mb-2">
                     <input type="checkbox" id="equip-import-allow-only-existing" class="mr-2" checked />
@@ -262,7 +261,7 @@
                     </div>
                     <textarea
                       id="equipment-input"
-                      class="w-full p-2 border-2 border-gray-300 rounded mb-4"
+                      class="textarea textarea-json textarea-bordered w-full mb-4"
                       rows="6"
                       placeholder="Enter each item on a new line"
                     ></textarea>
@@ -315,7 +314,7 @@
     <!-- Templates -->
     <!-- New random char controls -->
     <template id="template-new-char-controls">
-      <section class="inventory-controls-top-section mt-4 text-gen-800 text-sm flex gap-x-1">
+      <section class="inventory-controls-top-section mt-4 text-sm flex gap-x-1">
         <button class="add-new-random-char-btn btn btn-sm btn-primary flex items-center">
           <span class="block px-2 py-1">♻ Generate random character</span>
         </button>
@@ -327,147 +326,153 @@
 
     <!-- Character Stats -->
     <template id="template-char-stats">
-      <p class="mb-2 text-gray-600"><span class="char-class text-alt"></span>, level 1</p>
-      <!-- Primary row -->
-      <div class="flex gap-x-2.5 mb-2">
-        <div class="text-gen-800 text-sm"><span class="font-bold">HP</span>: <span class="char-hp"></span></div>
-        <div class="text-gen-800 text-sm"><span class="font-bold">Armor</span>: <span class="char-ac"></span></div>
-        <div class="text-gen-800 text-sm">
-          <span class="font-bold">To-Hit:</span>
-          <div
-            class="inline-block underline underline-offset-4 decoration-dashed decoration-gray-300 hover:cursor-help"
-          >
-            <span class="mr-1.5" title="Quick Ascending AC Basic To-Hit"
-              >Mêlée: <span class="char-to-hit--melee"></span
-            ></span>
-            <span title="Quick Ascending AC To-Hit for missiles"
-              >Missiles: <span class="char-to-hit--missiles"></span
-            ></span>
+      <div class="bg-white">
+        <p class="mb-2 text-gray-600"><span class="char-class text-primary"></span>, level 1</p>
+        <!-- Primary row -->
+        <div class="flex gap-x-2.5 mb-2">
+          <div class="text-gen-800 text-sm"><span class="font-bold">HP</span>: <span class="char-hp"></span></div>
+          <div class="text-gen-800 text-sm"><span class="font-bold">Armor</span>: <span class="char-ac"></span></div>
+          <div class="text-gen-800 text-sm">
+            <span class="font-bold">To-Hit:</span>
+            <div
+              class="inline-block underline underline-offset-4 decoration-dashed decoration-gray-300 hover:cursor-help"
+            >
+              <span class="mr-1.5" title="Quick Ascending AC Basic To-Hit"
+                >Mêlée: <span class="char-to-hit--melee"></span
+              ></span>
+              <span title="Quick Ascending AC To-Hit for missiles"
+                >Missiles: <span class="char-to-hit--missiles"></span
+              ></span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Secondary row A -->
-      <div class="char-saving-throw text-sm mb-2">
-        <div class="text-gen-800">
-          <span class="font-bold">Saving throw</span>: <span class="char-saving-throw--value text-details"></span>
-          <span title="Click to see alternative saving throws" class="char-saving-throw--toggle hover:cursor-help"
-            >ℹ️</span
-          >
-        </div>
-        <div class="char-saving-throw--alt-details text-details" hidden></div>
-        <div class="char-saving-throw--details text-details"></div>
-      </div>
-
-      <!-- Secondary row B -->
-      <div data-compact-hidden class="flex gap-x-2.5 mb-2 text-sm">
-        <div class="text-gen-800"><span class="font-bold">EXP bonus</span>: <span class="char-exp-bonus"></span>%</div>
-        <div class="text-gen-800"><span class="font-bold">Hit Die</span>: d<span class="char-hd"></span></div>
-      </div>
-
-      <!-- 3rd row -->
-      <div data-compact-hidden class="flex gap-x-2.5 mb-2">
-        <div class="text-gen-800 text-sm"><span class="font-bold">Gold</span>: <span class="char-gold"></span> GP</div>
-      </div>
-      <div class="text-sm mb-2" hidden></div>
-
-      <!-- Other details -->
-      <div data-compact-hidden class="flex flex-wrap gap-4 mb-2">
-        <div class="w-1/3">
-          <div class="char-stats--armor text-sm" hidden></div>
+        <!-- Secondary row A -->
+        <div class="char-saving-throw text-sm mb-2">
+          <div class="text-gen-800">
+            <span class="font-bold">Saving throw</span>: <span class="char-saving-throw--value text-details"></span>
+            <span title="Click to see alternative saving throws" class="char-saving-throw--toggle hover:cursor-help"
+              >ℹ️</span
+            >
+          </div>
+          <div class="char-saving-throw--alt-details text-details" hidden></div>
+          <div class="char-saving-throw--details text-details"></div>
         </div>
 
-        <div class="flex-1 w-2/3">
-          <div class="char-stats--alignment text-sm" hidden></div>
-          <div class="char-stats--races text-sm" hidden></div>
+        <!-- Secondary row B -->
+        <div data-compact-hidden class="flex gap-x-2.5 mb-2 text-sm">
+          <div class="text-gen-800">
+            <span class="font-bold">EXP bonus</span>: <span class="char-exp-bonus"></span>%
+          </div>
+          <div class="text-gen-800"><span class="font-bold">Hit Die</span>: d<span class="char-hd"></span></div>
         </div>
-      </div>
 
-      <!-- Caster details -->
-      <div data-compact-hidden class="char-stats--caster-details text-sm mb-2" hidden>
-        <div class="h-1 border-t border-gray-300 my-4">&nbsp;</div>
-        <div class="char-stats--caster-details flex flex-wrap gap-2">
-          <div class="char-stats--caster-details-col-1 w-1/3"></div>
-          <div class="char-stats--caster-details-col-2 flex-1 w-2/3"></div>
+        <!-- 3rd row -->
+        <div data-compact-hidden class="flex gap-x-2.5 mb-2">
+          <div class="text-gen-800 text-sm">
+            <span class="font-bold">Gold</span>: <span class="char-gold"></span> GP
+          </div>
         </div>
-      </div>
+        <div class="text-sm mb-2" hidden></div>
 
-      <div data-compact-hidden class="grid md:grid-cols-3 gap-2 bg-white my-4">
-        <div class="flex flex-col md:col-span-1">
-          <table class="table-stats table table-zebra table-fixed border border-gray-300 flex-grow">
-            <tbody>
-              <tr class="col-stat-Strength">
-                <td>STRENGTH</td>
-                <td class="px-4 py-2 w-1/3"></td>
-              </tr>
-              <tr class="col-stat-Dexterity">
-                <td>DEXTERITY</td>
-                <td class="px-4 py-2 w-1/3"></td>
-              </tr>
-              <tr class="col-stat-Constitution">
-                <td>CONSTITUTION</td>
-                <td class="px-4 py-2 w-1/3"></td>
-              </tr>
-              <tr class="col-stat-Intelligence">
-                <td>INTELLIGENCE</td>
-                <td class="px-4 py-2 w-1/3"></td>
-              </tr>
-              <tr class="col-stat-Wisdom">
-                <td>WISDOM</td>
-                <td class="px-4 py-2 w-1/3"></td>
-              </tr>
-              <tr class="col-stat-Charisma">
-                <td>CHARISMA</td>
-                <td class="px-4 py-2 w-1/3"></td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- Other details -->
+        <div data-compact-hidden class="flex flex-wrap gap-4 mb-2">
+          <div class="w-1/3">
+            <div class="char-stats--armor text-sm" hidden></div>
+          </div>
+
+          <div class="flex-1 w-2/3">
+            <div class="char-stats--alignment text-sm" hidden></div>
+            <div class="char-stats--races text-sm" hidden></div>
+          </div>
         </div>
-        <div class="flex flex-col md:col-span-2">
-          <table class="table-bonuses table table-zebra w-full table-fixed border border-gray-300 flex-grow text-sm">
-            <tbody>
-              <tr class="col-bonus-ToHit">
-                <td>Bonus to Hit (STR)</td>
-                <td class="px-4 py-2 w-1/3"></td>
-              </tr>
-              <tr class="col-bonus-Doors">
-                <td>Open Doors (STR)</td>
-                <td class="px-4 py-2 w-1/3"></td>
-              </tr>
-              <tr class="col-bonus-Damage">
-                <td>Damage Bonus (STR)</td>
-                <td class="px-4 py-2 w-1/3"></td>
-              </tr>
-              <tr class="col-bonus-Carry">
-                <td>Carry Modifier (STR)</td>
-                <td class="px-4 py-2 w-1/3"></td>
-              </tr>
-              <tr class="col-bonus-MissilesToHit">
-                <td>Bonus to Missiles (DEX)</td>
-                <td class="px-4 py-2 w-1/3"></td>
-              </tr>
-              <tr class="col-bonus-ArmorClass">
-                <td>Armor Bonus (DEX)</td>
-                <td class="px-4 py-2 w-1/3"></td>
-              </tr>
-              <tr class="col-bonus-HitPoints">
-                <td>Hit Point Bonus (CON)</td>
-                <td class="px-4 py-2 w-1/3"></td>
-              </tr>
-              <tr class="col-bonus-RaiseDeadSurvivalChance">
-                <td>Raise Dead Survival (CON)</td>
-                <td class="px-4 py-2 w-1/3"></td>
-              </tr>
-              <tr class="col-bonus-MaxAdditionalLanguages">
-                <td>Additional Languages</td>
-                <td class="px-4 py-2 w-1/3"></td>
-              </tr>
-              <tr class="col-bonus-MaxNumberOfSpecialHirelings">
-                <td>Max # of Special Hirelings</td>
-                <td class="px-4 py-2 w-1/3"></td>
-              </tr>
-            </tbody>
-          </table>
+
+        <!-- Caster details -->
+        <div data-compact-hidden class="char-stats--caster-details text-sm mb-2" hidden>
+          <div class="h-1 border-t border-gray-300 my-4">&nbsp;</div>
+          <div class="char-stats--caster-details flex flex-wrap gap-2">
+            <div class="char-stats--caster-details-col-1 w-1/3"></div>
+            <div class="char-stats--caster-details-col-2 flex-1 w-2/3"></div>
+          </div>
+        </div>
+
+        <div data-compact-hidden class="grid md:grid-cols-3 gap-2 bg-white my-4">
+          <div class="flex flex-col md:col-span-1">
+            <table class="table-stats table table-zebra table-fixed border border-gray-300 flex-grow">
+              <tbody>
+                <tr class="col-stat-Strength">
+                  <td>STRENGTH</td>
+                  <td class="px-4 py-2 w-1/3"></td>
+                </tr>
+                <tr class="col-stat-Dexterity">
+                  <td>DEXTERITY</td>
+                  <td class="px-4 py-2 w-1/3"></td>
+                </tr>
+                <tr class="col-stat-Constitution">
+                  <td>CONSTITUTION</td>
+                  <td class="px-4 py-2 w-1/3"></td>
+                </tr>
+                <tr class="col-stat-Intelligence">
+                  <td>INTELLIGENCE</td>
+                  <td class="px-4 py-2 w-1/3"></td>
+                </tr>
+                <tr class="col-stat-Wisdom">
+                  <td>WISDOM</td>
+                  <td class="px-4 py-2 w-1/3"></td>
+                </tr>
+                <tr class="col-stat-Charisma">
+                  <td>CHARISMA</td>
+                  <td class="px-4 py-2 w-1/3"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="flex flex-col md:col-span-2">
+            <table class="table-bonuses table table-zebra w-full table-fixed border border-gray-300 flex-grow text-sm">
+              <tbody>
+                <tr class="col-bonus-ToHit">
+                  <td>Bonus to Hit (STR)</td>
+                  <td class="px-4 py-2 w-1/3"></td>
+                </tr>
+                <tr class="col-bonus-Doors">
+                  <td>Open Doors (STR)</td>
+                  <td class="px-4 py-2 w-1/3"></td>
+                </tr>
+                <tr class="col-bonus-Damage">
+                  <td>Damage Bonus (STR)</td>
+                  <td class="px-4 py-2 w-1/3"></td>
+                </tr>
+                <tr class="col-bonus-Carry">
+                  <td>Carry Modifier (STR)</td>
+                  <td class="px-4 py-2 w-1/3"></td>
+                </tr>
+                <tr class="col-bonus-MissilesToHit">
+                  <td>Bonus to Missiles (DEX)</td>
+                  <td class="px-4 py-2 w-1/3"></td>
+                </tr>
+                <tr class="col-bonus-ArmorClass">
+                  <td>Armor Bonus (DEX)</td>
+                  <td class="px-4 py-2 w-1/3"></td>
+                </tr>
+                <tr class="col-bonus-HitPoints">
+                  <td>Hit Point Bonus (CON)</td>
+                  <td class="px-4 py-2 w-1/3"></td>
+                </tr>
+                <tr class="col-bonus-RaiseDeadSurvivalChance">
+                  <td>Raise Dead Survival (CON)</td>
+                  <td class="px-4 py-2 w-1/3"></td>
+                </tr>
+                <tr class="col-bonus-MaxAdditionalLanguages">
+                  <td>Additional Languages</td>
+                  <td class="px-4 py-2 w-1/3"></td>
+                </tr>
+                <tr class="col-bonus-MaxNumberOfSpecialHirelings">
+                  <td>Max # of Special Hirelings</td>
+                  <td class="px-4 py-2 w-1/3"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </template>
