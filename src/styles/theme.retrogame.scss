@@ -165,3 +165,10 @@ h3 {
   --tab-color: white;
   @apply bg-neutral;
 }
+
+.table-stats td,
+.table-bonuses td {
+  @apply text-base;
+  @apply md:text-sm;
+  text-overflow: ellipsis;
+}
