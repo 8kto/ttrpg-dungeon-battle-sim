@@ -51,18 +51,24 @@
     <noscript> Sorry, JS should be enabled </noscript>
 
     <header class="mb-4 text-center">
-      <h1 class="text-alt text-3xl sm:text-sm md:text-base lg:text-3xl mb-2">
+      <h1 class="text-alt text-3xl mb-2">
         <a href="/" class="transition-gradient block"> Swords & Wizardry CR </a>
       </h1>
       <h2 class="text-xl text-secondary">Character Generator / Unofficial tool</h2>
     </header>
     <main class="mx-auto w-full max-w-screen-2xl flex-grow px-2.5 sm:px-6 lg:px-8 mb-4">
-      <div class="page-content flex flex-row justify-between gap-4">
+      <div class="page-content flex flex-col md:flex-row justify-between gap-4">
+        <!-- Tab Navigation (visible on small screens) -->
+        <div class="tabs tabs-content-columns tabs-boxed" role="tablist">
+          <a href="#equipment-container" class="tab tab-bordered tab-active">Equipment</a>
+          <a href="#inventory-container-column" class="tab tab-bordered">Inventory</a>
+        </div>
+
         <!-- Equipment Container -->
         <section id="equipment-container" class="page-content-column equip-column"></section>
 
         <!-- Inventory Container -->
-        <section class="page-content-column inventory-column">
+        <section id="inventory-container-column" class="page-content-column inventory-column">
           <!-- Section to Add or Remove Inventories -->
           <section class="my-4 flex flex-col sm:flex-row text-sm w-full sm:w-2/3">
             <div class="join w-full">

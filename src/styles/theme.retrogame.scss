@@ -10,8 +10,9 @@ body {
 }
 
 body {
-  @apply text-base;
+  @apply text-xs;
   @apply md:text-sm;
+  @apply xl:text-base;
 }
 
 .body::before {
@@ -66,6 +67,30 @@ h3 {
 
 .page-content-column {
   @apply bg-white flex-grow-0 flex-shrink-0 w-1/2 p-4 border;
+}
+
+.page-content-column {
+  width: 100%; /* Make sure the content takes full width in the tab */
+  flex-shrink: 0;
+  flex-grow: 0;
+  border-width: 1px;
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .page-content-column {
+    width: 50%; /* Restore the side-by-side layout for larger screens */
+  }
+
+  .tabs-content-columns {
+    display: none;
+  }
+
+  .inventory-column {
+    display: block;
+  }
 }
 
 .text-details {
@@ -133,4 +158,9 @@ h3 {
 
 .char-saving-throw--details {
   @apply text-xs;
+}
+
+.tabs-content-columns .tab {
+  --tab-color: white;
+  @apply bg-neutral;
 }
