@@ -84,9 +84,9 @@ module.exports = {
           warning: '#ff9900',
           error: '#ff5724',
 
-          '--rounded-box': '.25rem',
-          '--rounded-btn': '.25rem',
-          '--rounded-badge': '.25rem',
+          '--rounded-box': '0rem',
+          '--rounded-btn': '0rem',
+          '--rounded-badge': '0rem',
 
           '--animation-btn': '.25s',
           '--animation-input': '.2s',

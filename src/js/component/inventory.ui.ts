@@ -26,22 +26,22 @@ const getInventoryTable = (inventoryId: string): string => {
 }
 
 const getInventoryControlsSection = (inventoryId: string): string => {
-  return `<section class="inventory-controls mt-0 text-gen-800 text-sm absolute top-0 right-0">
-            <div class="flex justify-end">
-              <button id="${inventoryId}-rename-inventory" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white rounded-l hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
-                <span role="img" title="Rename inventory" aria-label="Rename inventory" class="block px-2 py-1">Rename</span>
+  return `<section class="inventory-controls">
+            <div class="flex justify-end join">
+              <button id="${inventoryId}-rename-inventory" class="join-item inventory-controls-btn">
+                Rename
               </button>
-              <button id="${inventoryId}-remove-char" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
-                <span role="img" title="Remove character" aria-label="Remove character" class="block px-2 py-1">Remove character</span>
+              <button id="${inventoryId}-remove-char" class="join-item inventory-controls-btn" title="Reset character, keep inventory">
+                Remove character
               </button>
-              <button id="${inventoryId}-reset-inventory" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
-                <span role="img" title="Reset inventory items" aria-label="Reset inventory items" class="block px-2 py-1">Reset</span>
+              <button id="${inventoryId}-reset-inventory" class="join-item inventory-controls-btn" title="Reset inventory items">
+                Reset
               </button>
-              <button id="${inventoryId}-minimise-inventory" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
-                <span role="img" title="Minimise inventory" aria-label="Minimise inventory" class="block px-2 py-1">➖</span>
+              <button id="${inventoryId}-minimise-inventory" class="join-item inventory-controls-btn">
+                <span role="img" title="Minimise inventory" aria-label="Minimise inventory">➖</span>
               </button>
-              <button id="${inventoryId}-remove-inventory" class="text-xs bg-white border text-gen-400 hover:text-white rounded-r hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
-                <span role="img" title="Remove inventory" aria-label="Remove inventory" class="block px-3 py-1.5">❌</span>
+              <button id="${inventoryId}-remove-inventory" class="join-item inventory-controls-btn">
+                <span role="img" title="Remove inventory" aria-label="Remove inventory">❌</span>
               </button>
             </div>
           </section>`
@@ -154,12 +154,12 @@ const getInventoryDetails = (inventoryId: string): string => {
     ? ''
     : `&nbsp;<span>(Carry modifier: ${carryModifier < 0 ? carryModifier : `+${carryModifier}`} pounds)</span>`
 
-  return `<div class="text-sm mb-2">
+  return `<div class="movement-details">
             <p data-compact-hidden>Total Weight: <span id="${inventoryId}-total-weight" class="font-semibold">0</span> pounds${carryFragment}</p>
             <p data-compact-hidden>Total Cost: <span id="${inventoryId}-total-cost" class="font-semibold">0</span> gold pieces</p>
-            <p>Base movement rate: <span id="${inventoryId}-base-movement-rate" class="font-semibold">0</span></p>
+            <p class="base-movement-rate-container">Base movement rate: <span id="${inventoryId}-base-movement-rate" class="text-details">0</span></p>
             <p>
-              <span class="">Underground speed</span>, feet per turn: <span id="${inventoryId}-speed-feet-per-turn" class="text-gen-800">...</span>
+              <span class="text-secondary">Underground speed</span>, feet/turn: <span id="${inventoryId}-speed-feet-per-turn" class="movement-details-wrapper">...</span>
             </p>
           </div>`
 }
@@ -167,12 +167,12 @@ const getInventoryDetails = (inventoryId: string): string => {
 export const renderInitialInventory = (inventoryId: string, name?: string): void => {
   getInventoryTablesContainer().appendChild(
     createElementFromHtml(`
-        <section id="${inventoryId}-container" class="inventory-container px-4 py-4 border shadow-lg">
+        <section id="${inventoryId}-container" class="inventory-container">
           <header class="relative">
             ${getInventoryControlsSection(inventoryId)}
             <h2
               id="${inventoryId}-header"
-              class="inventory-header text-2xl mb-4 hover:text-red-700 hover:cursor-pointer"
+              class="inventory-header"
               title="Click to select"
             >${name ?? inventoryId}</h2>
             <div class="char-stats my-2">
@@ -293,10 +293,11 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
 
 export const updateSpeedDisplay = (inventoryId: string, baseMovementRate: BaseMovementRate): void => {
   const speeds = getUndergroundSpeed(baseMovementRate)
-  document.getElementById(`${inventoryId}-speed-feet-per-turn`).innerHTML =
-    `Walking: <span class="text-alt">${speeds.walking}</span>` +
-    ` • Running: <span class="text-alt">${speeds.running}</span>` +
-    ` • Combat: <span class="text-alt">${speeds.combat}</span>`
+  document.getElementById(`${inventoryId}-speed-feet-per-turn`).innerHTML = [
+    `<span class="movement-details-item">Walking: <span class="movement-details-item__number">${speeds.walking}</span></span>`,
+    `<span class="movement-details-item">Running: <span class="movement-details-item__number">${speeds.running}</span></span>`,
+    `<span class="movement-details-item">Combat: <span class="movement-details-item__number">${speeds.combat}</span></span>`,
+  ].join(' • ')
 }
 
 /**

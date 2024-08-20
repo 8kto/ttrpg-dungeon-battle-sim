@@ -1,6 +1,6 @@
-html {
-  font-size: 15px;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 html,
 body {
@@ -10,7 +10,8 @@ body {
 }
 
 body {
-  font-size: 1rem;
+  @apply text-base;
+  @apply md:text-sm;
 }
 
 .body::before {
@@ -63,6 +64,73 @@ h3 {
   border: 1px solid #a13d68;
 }
 
+.page-content-column {
+  @apply bg-white flex-grow-0 flex-shrink-0 w-1/2 p-4 border;
+}
+
 .text-details {
   color: #7c725a;
+}
+
+.inventory-container {
+  @apply bg-white;
+  @apply border;
+}
+
+.minimise-inventories-btn {
+  height: 1.5rem;
+  min-height: 1.5rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  @apply text-xs;
+  @apply md:text-xxxs;
+}
+
+.inventory-controls {
+  @apply mt-0;
+}
+
+.inventory-controls-btn {
+  @apply bg-white;
+  @apply hover:text-white hover:bg-gen-300;
+  @apply focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0;
+  @apply text-xs text-gen-400;
+  @apply border;
+  @apply px-2 py-1;
+}
+
+.inventory-header {
+  @apply mx-4 my-2;
+  @apply text-gen-700 text-2xl mb-4 hover:text-red-700 hover:cursor-pointer;
+}
+
+.char-stats {
+  @apply mx-4 my-2;
+}
+
+.base-movement-rate-container {
+  @apply text-base;
+}
+
+.movement-details-wrapper {
+  @apply block;
+}
+
+.movement-details {
+  @apply text-xs mx-4 my-2;
+}
+
+.movement-details-item {
+}
+
+.movement-details-item__number {
+  @apply text-alt;
+}
+
+.char-saving-throw {
+  @apply text-base mb-2;
+}
+
+.char-saving-throw--details {
+  @apply text-xs;
 }

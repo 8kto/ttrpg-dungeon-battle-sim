@@ -38,3 +38,42 @@ h3 {
 .border-alt {
   border: 1px solid #a13d68;
 }
+
+.inventory-container {
+  border-radius: 5px;
+  border-color: #e5e7eb;
+  @apply bg-white px-4 py-4 border shadow-lg;
+}
+
+.page-content-column {
+  @apply bg-white flex-grow-0 flex-shrink-0 w-1/2 p-4 border shadow-lg rounded-lg;
+}
+
+.minimise-inventories-btn {
+  @apply btn-xs;
+}
+
+.inventory-controls {
+  @apply mt-0 absolute top-0 right-0;
+}
+
+.inventory-controls-btn {
+  @apply bg-white;
+  @apply hover:text-white hover:bg-gen-300;
+  @apply focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0;
+  @apply text-xs text-gen-400;
+  @apply border border-r-0;
+}
+
+.inventory-header {
+  @apply px-4 py-2;
+  @apply text-gen-700 text-2xl mb-4 hover:text-red-700 hover:cursor-pointer;
+}
+
+.movement-details {
+  @apply text-sm mb-2;
+}
+
+.char-saving-throw {
+  @apply text-sm mb-2;
+}

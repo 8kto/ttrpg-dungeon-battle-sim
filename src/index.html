@@ -59,13 +59,10 @@
     <main class="mx-auto w-full max-w-screen-2xl flex-grow px-2.5 sm:px-6 lg:px-8 mb-4">
       <div class="page-content flex flex-row justify-between gap-4">
         <!-- Equipment Container -->
-        <section
-          id="equipment-container"
-          class="equip-column bg-white flex-grow-0 flex-shrink-0 w-1/2 p-4 border shadow-lg rounded-lg"
-        ></section>
+        <section id="equipment-container" class="page-content-column equip-column"></section>
 
         <!-- Inventory Container -->
-        <section class="inventory-column bg-white flex-grow-0 flex-shrink-0 w-1/2 p-4 border shadow-lg rounded-lg">
+        <section class="page-content-column inventory-column">
           <!-- Section to Add or Remove Inventories -->
           <section class="my-4 flex flex-col sm:flex-row text-sm w-full sm:w-2/3">
             <div class="join w-full">
@@ -120,7 +117,7 @@
 
           <section class="inventory-controls mt-0 mb-2 text-white text-sm">
             <div class="flex justify-end">
-              <button class="minimise-inventories-btn btn btn-xs">Compact mode</button>
+              <button class="minimise-inventories-btn btn">Compact mode</button>
             </div>
           </section>
 
@@ -350,8 +347,8 @@
         </div>
 
         <!-- Secondary row A -->
-        <div class="char-saving-throw text-sm mb-2">
-          <div class="text-gen-800">
+        <div class="char-saving-throw">
+          <div class="">
             <span class="font-bold">Saving throw</span>: <span class="char-saving-throw--value text-details"></span>
             <span title="Click to see alternative saving throws" class="char-saving-throw--toggle hover:cursor-help"
               >ℹ️</span
@@ -363,17 +360,13 @@
 
         <!-- Secondary row B -->
         <div data-compact-hidden class="flex gap-x-2.5 mb-2 text-sm">
-          <div class="text-gen-800">
-            <span class="font-bold">EXP bonus</span>: <span class="char-exp-bonus"></span>%
-          </div>
-          <div class="text-gen-800"><span class="font-bold">Hit Die</span>: d<span class="char-hd"></span></div>
+          <div class=""><span class="font-bold">EXP bonus</span>: <span class="char-exp-bonus"></span>%</div>
+          <div class=""><span class="font-bold">Hit Die</span>: d<span class="char-hd"></span></div>
         </div>
 
         <!-- 3rd row -->
         <div data-compact-hidden class="flex gap-x-2.5 mb-2">
-          <div class="text-gen-800 text-sm">
-            <span class="font-bold">Gold</span>: <span class="char-gold"></span> GP
-          </div>
+          <div class="text-sm"><span class="font-bold">Gold</span>: <span class="char-gold"></span> GP</div>
         </div>
         <div class="text-sm mb-2" hidden></div>
 
