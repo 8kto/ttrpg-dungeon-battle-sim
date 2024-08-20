@@ -13,6 +13,7 @@ body {
   @apply text-xs;
   @apply md:text-sm;
   @apply xl:text-base;
+  color: #888;
 }
 
 .body::before {
