@@ -375,8 +375,10 @@ const bindInventoryCommonControls = (): void => {
  * @notice No direct calls
  */
 export const handleSelectInventory = (inventoryId: string): void => {
-  getState().setCurrentInventoryId(inventoryId)
+  const state = getState()
+  state.setCurrentInventoryId(inventoryId)
   markSelectedInventory(inventoryId)
+  state.serialize()
 }
 
 /**
