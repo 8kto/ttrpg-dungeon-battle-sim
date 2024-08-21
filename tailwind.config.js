@@ -57,7 +57,7 @@ module.exports = {
         retrogame: {
           primary: '#aa5574',
           'primary-focus': '#ed697b',
-          't-primary-focus': '#ed697b',
+          '--text-primary-focus': '#ed697b',
           'primary-content': '#fff',
 
           secondary: '#34acba',

@@ -11,11 +11,11 @@ import { getBaseMovementRate, getUndergroundSpeed } from '../utils/snw/movement'
 import { getCompactModeAffectedElements, getInventoryContainer, getInventoryTablesContainer } from './domSelectors'
 
 const getInventoryTable = (inventoryId: string): string => {
-  return `<table data-compact-hidden id="${inventoryId}-table-container" class="table min-w-full bg-white rounded my-4">
+  return `<table data-compact-hidden id="${inventoryId}-table-container" class="table min-w-full bg-white rounded my-4 mb-6 mx-4">
               <thead class="bg-gen-100 text-left">
                   <tr>
                       <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/2">Name</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Quantity</th>
+                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">QTY</th>
                       <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Total Weight</th>
                       <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Total Cost</th>
                       <th class="px-2 py-3 text-center text-xs font-medium uppercase w-1/6">Actions</th>
@@ -154,7 +154,7 @@ const getInventoryDetails = (inventoryId: string): string => {
     ? ''
     : `&nbsp;<span>(Carry modifier: ${carryModifier < 0 ? carryModifier : `+${carryModifier}`} pounds)</span>`
 
-  return `<div class="movement-details">
+  return `<div class="char-stats-row movement-details">
             <p data-compact-hidden>Total Weight: <span id="${inventoryId}-total-weight" class="font-semibold">0</span> pounds${carryFragment}</p>
             <p data-compact-hidden>Total Cost: <span id="${inventoryId}-total-cost" class="font-semibold">0</span> gold pieces</p>
             <p class="base-movement-rate-container">Base movement rate: <span id="${inventoryId}-base-movement-rate" class="text-details">0</span></p>
@@ -180,7 +180,9 @@ export const renderInitialInventory = (inventoryId: string, name?: string): void
               <div class="char-stats--container mb-2"></div>
             </div>
           </header>
-          ${getInventoryTable(inventoryId)}
+          <div class="overflow-auto">
+            ${getInventoryTable(inventoryId)}
+          </div>
           ${getInventoryDetails(inventoryId)}
         </section>
     `),
@@ -236,7 +238,7 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
 
   Object.values(inventory.items).forEach((item) => {
     const row = inventoryTableBody.insertRow()
-    row.className = 'even:bg-gray-50 hover:bg-gen-50'
+    row.className = 'even:bg-gray-50 hover:bg-gen-50 text-xs'
 
     const nameCell = row.insertCell(0)
     nameCell.innerHTML = item.name + getEquipNameSuffix(item, damageMod)
@@ -256,8 +258,8 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
 
     // Create and append the Remove button
     const removeButton = document.createElement('button')
-    removeButton.textContent = 'Remove'
-    removeButton.className = 'px-4 py-1 text-sm text-red-800 hover:text-red-500'
+    removeButton.textContent = 'DEL'
+    removeButton.className = 'px-4 py-1 text-sm text-sub hover:text-red-500'
     removeButton.onclick = (): void => {
       getState().removeFromInventory(inventoryId, item.name)
       dispatchEvent('RenderInventory', { inventoryId, inventoryName })

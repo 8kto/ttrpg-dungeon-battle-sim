@@ -135,14 +135,10 @@ export const renderCasterDetails = (
 
 const renderArmorDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
   container.appendChild(
-    createElementFromHtml(
-      `<p><span class="font-bold text-gen-800">Armor</span>: <span class="text-details">${classDef.ArmorPermitted}</span></p>`,
-    ),
+    createElementFromHtml(`<p>Armor: <span class="text-details">${classDef.ArmorPermitted}</span></p>`),
   )
   container.appendChild(
-    createElementFromHtml(
-      `<p><span class="font-bold text-gen-800">Weapons</span>: <span class="text-details">${classDef.WeaponsPermitted}</span></p>`,
-    ),
+    createElementFromHtml(`<p>Weapons: <span class="text-details">${classDef.WeaponsPermitted}</span></p>`),
   )
   container.removeAttribute('hidden')
 }
@@ -150,20 +146,14 @@ const renderArmorDetails = (container: HTMLElement, classDef: CharacterClassDef)
 const renderAlignmentDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
   const alignment = classDef.Alignment.length === 3 ? 'Any' : classDef.Alignment.join(', ')
   container.appendChild(
-    createElementFromHtml(
-      `<p><span class="font-bold text-gen-800">Suggested alignment</span>: <span class="text-details">${alignment}</span></p>`,
-    ),
+    createElementFromHtml(`<p>Suggested alignment: <span class="text-details">${alignment}</span></p>`),
   )
   container.removeAttribute('hidden')
 }
 
 const renderRacesDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
   const races = classDef.Race.length === 3 ? 'Any' : classDef.Race.join(', ')
-  container.appendChild(
-    createElementFromHtml(
-      `<p><span class="font-bold text-gen-800">Suggested races</span>: <span class="text-details">${races}</span></p>`,
-    ),
-  )
+  container.appendChild(createElementFromHtml(`<p>Suggested races: <span class="text-details">${races}</span></p>`))
   container.removeAttribute('hidden')
 }
 
@@ -175,12 +165,13 @@ const renderArmorClassDetails = (
   const armorClass = getCharArmorClass(stats, items)
 
   container.innerHTML = [
-    armorClass.armor,
     '<span class="underline underline-offset-4 decoration-dashed decoration-gray-300 hover:cursor-help" title="Descending AC [Ascending AC]">',
-    'AC',
+    '<span class="text-details">',
     armorClass.dac,
     `[${armorClass.aac}]`,
     '</span>',
+    '</span>',
+    armorClass.armor,
   ].join(' ')
 }
 

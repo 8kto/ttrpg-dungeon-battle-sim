@@ -95,7 +95,8 @@ h3 {
 }
 
 .text-details {
-  color: #7c725a;
+  //color: #7c725a;
+  color: #cea181;
 }
 
 .inventory-container {
@@ -168,6 +169,10 @@ h3 {
   @apply bg-neutral;
 }
 
+.table :where(thead, tfoot) {
+  white-space: normal;
+}
+
 .table-stats td,
 .table-bonuses td {
   @apply text-base;
@@ -182,4 +187,8 @@ h3 {
   &.selected {
     @apply border-secondary;
   }
+}
+
+.char-stats-row {
+  @apply mb-4;
 }

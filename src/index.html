@@ -329,48 +329,54 @@
 
     <!-- Character Stats -->
     <template id="template-char-stats">
-      <div class="bg-white">
-        <p class="mb-2 text-gray-600"><span class="char-class text-primary"></span>, level 1</p>
+      <div class="bg-white text-gray-600">
+        <div class="char-stats-row"><span class="char-class text-primary"></span>, level 1</div>
         <!-- Primary row -->
-        <div class="flex gap-x-2.5 mb-2">
-          <div class="text-gen-800 text-sm"><span class="font-bold">HP</span>: <span class="char-hp"></span></div>
-          <div class="text-gen-800 text-sm"><span class="font-bold">Armor</span>: <span class="char-ac"></span></div>
-          <div class="text-gen-800 text-sm">
-            <span class="font-bold">To-Hit:</span>
-            <div
-              class="inline-block underline underline-offset-4 decoration-dashed decoration-gray-300 hover:cursor-help"
-            >
-              <span class="mr-1.5" title="Quick Ascending AC Basic To-Hit"
-                >Mêlée: <span class="char-to-hit--melee"></span
-              ></span>
-              <span title="Quick Ascending AC To-Hit for missiles"
-                >Missiles: <span class="char-to-hit--missiles"></span
-              ></span>
-            </div>
+        <div class="char-stats-row flex gap-x-4 text-sm">
+          <div><span class="">HP</span>:<span class="char-hp text-details"></span></div>
+          <div><span class="">Armor Class</span>: <span class="char-ac"></span></div>
+        </div>
+
+        <!-- Primary row B-->
+        <div class="char-stats-row text-sm">
+          To-Hit:
+          <div
+            class="inline-block underline underline-offset-4 decoration-dashed decoration-gray-300 hover:cursor-help"
+          >
+            <span class="mr-1.5" title="Quick Ascending AC Basic To-Hit">
+              Mêlée: <span class="char-to-hit--melee text-details"></span>
+            </span>
+            <span title="Quick Ascending AC To-Hit for missiles">
+              Missiles: <span class="char-to-hit--missiles text-details"></span>
+            </span>
           </div>
         </div>
 
         <!-- Secondary row A -->
-        <div class="char-saving-throw">
-          <div class="">
-            <span class="font-bold">Saving throw</span>: <span class="char-saving-throw--value text-details"></span>
+        <div class="char-stats-row char-saving-throw">
+          <div class="flex items-center">
+            Saving throw: <span class="char-saving-throw--value text-details"></span>
             <span title="Click to see alternative saving throws" class="char-saving-throw--toggle hover:cursor-help"
               >ℹ️</span
             >
           </div>
-          <div class="char-saving-throw--alt-details text-details" hidden></div>
-          <div class="char-saving-throw--details text-details"></div>
+          <div class="char-saving-throw--alt-details text-details text-xs" hidden></div>
+          <div class="char-saving-throw--details text-neutral-500"></div>
         </div>
 
         <!-- Secondary row B -->
-        <div data-compact-hidden class="flex gap-x-2.5 mb-2 text-sm">
-          <div class=""><span class="font-bold">EXP bonus</span>: <span class="char-exp-bonus"></span>%</div>
-          <div class=""><span class="font-bold">Hit Die</span>: d<span class="char-hd"></span></div>
+        <div data-compact-hidden class="char-stats-row flex gap-x-3 text-sm">
+          <div class="">
+            EXP bonus: <span class="text-details"><span class="char-exp-bonus"></span>%</span>
+          </div>
+          <div class="">
+            Hit Die: <span class="text-details">d<span class="char-hd"></span></span>
+          </div>
         </div>
 
         <!-- 3rd row -->
-        <div data-compact-hidden class="flex gap-x-2.5 mb-2">
-          <div class="text-sm"><span class="font-bold">Gold</span>: <span class="char-gold"></span> GP</div>
+        <div data-compact-hidden class="char-stats-row flex gap-x-2.5">
+          <div class="text-sm">Gold: <span class="char-gold text-details"></span> GP</div>
         </div>
         <div class="text-sm mb-2" hidden></div>
 
