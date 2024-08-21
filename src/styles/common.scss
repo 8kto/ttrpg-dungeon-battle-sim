@@ -14,6 +14,14 @@ h3 {
   font-weight: 700;
 }
 
+.input:focus,
+.input:focus-within {
+  outline-style: solid;
+  outline-width: 0;
+  outline-offset: 0;
+  @apply bg-neutral-content;
+}
+
 .font-serif {
   font-family: serif;
 }
