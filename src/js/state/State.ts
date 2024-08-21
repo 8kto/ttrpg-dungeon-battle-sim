@@ -53,7 +53,7 @@ export class State {
 
     const serializedInventories = this.deserializeInventories()
     if (serializedInventories && Object.keys(serializedInventories).length) {
-      this.setInventories(serializedInventories)
+      this.#inventories = serializedInventories
     }
 
     const uiState = this.deserializeUiState()
