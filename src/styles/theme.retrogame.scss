@@ -31,6 +31,10 @@ h3 {
   color: #77899e;
 }
 
+.input {
+  border-width: 0;
+}
+
 .press-start-2p-regular {
   font-family: 'Press Start 2P', system-ui, sans-serif;
   font-weight: 400;
@@ -106,6 +110,7 @@ h3 {
   padding-right: 0.75rem;
   @apply text-xs;
   @apply md:text-xxxs;
+  @apply text-white;
 }
 
 .inventory-controls {
@@ -114,16 +119,17 @@ h3 {
 
 .inventory-controls-btn {
   @apply bg-white;
-  @apply hover:text-white hover:bg-gen-300;
+  @apply hover:text-white hover:bg-primary;
   @apply focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0;
   @apply text-xs text-gen-400;
-  @apply border;
+  @apply border border-neutral-content;
   @apply px-2 py-1;
 }
 
 .inventory-header {
   @apply mx-4 my-2;
   @apply text-gen-700 text-2xl mb-4 hover:text-red-700 hover:cursor-pointer;
+  @apply flex items-center;
 }
 
 .char-stats {

@@ -106,6 +106,9 @@ module.exports = {
   },
   theme: {
     extend: {
+      screens: {
+        xxl: '1440px',
+      },
       colors: {
         'text-primary-focus': '#ed697b',
         gen: {

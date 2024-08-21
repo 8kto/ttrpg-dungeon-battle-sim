@@ -392,3 +392,5 @@ export const initInventoryUi = (): void => {
 
   bindInventoryCommonControls()
 }
+
+// FIXME when Remove char btn cancelled - inserts random generate btn anyway
