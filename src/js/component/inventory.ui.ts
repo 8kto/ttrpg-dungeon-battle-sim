@@ -27,20 +27,23 @@ const getInventoryTable = (inventoryId: string): string => {
 
 const getInventoryControlsSection = (inventoryId: string): string => {
   return `<section class="inventory-controls">
-            <div class="flex justify-end join">
-              <button id="${inventoryId}-rename-inventory" class="join-item inventory-controls-btn">
-                Rename
-              </button>
-              <button id="${inventoryId}-remove-char" class="join-item inventory-controls-btn" title="Reset character, keep inventory">
-                Remove character
-              </button>
-              <button id="${inventoryId}-reset-inventory" class="join-item inventory-controls-btn" title="Reset inventory items">
-                Reset
-              </button>
+            <div class="flex justify-end join relative items-stretch">
+              <!-- Hamburger Button with Dropdown -->
+              <div class="dropdown dropdown-end flex">
+                <label tabindex="0" class="join-item inventory-controls-btn flex items-center cursor-pointer first">
+                  <span role="img" aria-label="Menu" title="Menu">☰</span>
+                </label>
+                <ul role="menu" tabindex="0" class="dropdown-content menu p-2 bg-neutral-content rounded-box w-52 mt-6">
+                  <li><a id="${inventoryId}-rename-inventory" class="inventory-controls-btn">Rename</a></li>
+                  <li><a id="${inventoryId}-remove-char" class="inventory-controls-btn" title="Reset character, keep inventory">Remove character</a></li>
+                  <li><a id="${inventoryId}-reset-inventory" class="inventory-controls-btn" title="Reset inventory items">Reset</a></li>
+                </ul>
+              </div>
+
               <button id="${inventoryId}-minimise-inventory" class="join-item inventory-controls-btn">
                 <span role="img" title="Minimise inventory" aria-label="Minimise inventory">➖</span>
               </button>
-              <button id="${inventoryId}-remove-inventory" class="join-item inventory-controls-btn">
+              <button id="${inventoryId}-remove-inventory" class="join-item inventory-controls-btn last">
                 <span role="img" title="Remove inventory" aria-label="Remove inventory">❌</span>
               </button>
             </div>

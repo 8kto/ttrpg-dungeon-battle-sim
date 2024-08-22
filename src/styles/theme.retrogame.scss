@@ -122,9 +122,35 @@ h3 {
   @apply bg-white;
   @apply hover:text-white hover:bg-primary;
   @apply focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0;
-  @apply text-xs text-gen-400;
-  @apply border border-neutral-content;
-  @apply px-2 py-1;
+  @apply text-xs text-primary;
+  @apply border-0 border-neutral-content border-r-4 border-b-4;
+  @apply px-2 py-2;
+  width: 34px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+
+  &.last {
+    @apply border-r-0;
+    width: 30px;
+  }
+  &.first {
+    @apply border-l-4;
+    width: 38px;
+  }
+
+  & > span {
+    margin: 0 auto;
+  }
+}
+
+.dropdown-content .inventory-controls-btn {
+  @apply border;
+  text-align: left;
+
+  width: auto;
+  height: auto;
 }
 
 .inventory-header {
