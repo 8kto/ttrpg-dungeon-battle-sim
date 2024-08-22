@@ -57,12 +57,10 @@ module.exports = {
         retrogame: {
           primary: '#aa5574',
           'primary-focus': '#ed697b',
-          '--text-primary-focus': '#ed697b',
           'primary-content': '#fff',
 
           secondary: '#34acba',
           'secondary-focus': '#72dcba',
-          'bg-secondary-focus': '#72dcba',
           'secondary-content': '#fff',
 
           accent: '#ffe07e',
@@ -110,7 +108,10 @@ module.exports = {
         xxl: '1440px',
       },
       colors: {
-        'text-primary-focus': '#ed697b',
+        'primary-focus': '#ed697b',
+        'secondary-focus': '#72dcba',
+        'accent-focus': '#e1cb6b',
+        'neutral-focus': '#72464b',
         gen: {
           50: '#f5f4f1',
           100: '#e6e2db',
