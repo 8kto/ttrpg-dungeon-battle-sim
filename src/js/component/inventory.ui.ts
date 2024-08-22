@@ -11,7 +11,7 @@ import { getBaseMovementRate, getUndergroundSpeed } from '../utils/snw/movement'
 import { getCompactModeAffectedElements, getInventoryContainer, getInventoryTablesContainer } from './domSelectors'
 
 const getInventoryTable = (inventoryId: string): string => {
-  return `<table data-compact-hidden id="${inventoryId}-table-container" class="table min-w-full bg-white rounded my-4 mb-6 mx-4">
+  return `<table data-compact-hidden id="${inventoryId}-table-container" class="table border-4 border-neutral-content min-w-full bg-white rounded my-4 mb-6 mx-4">
             <thead class="bg-neutral-content text-left">
               <tr class="text-xs uppercase">
                 <th class="font-normal pl-4 pr-1 py-3 min-w-[150px] w-6/12">Name</th>
@@ -171,7 +171,7 @@ export const renderInitialInventory = (inventoryId: string, name?: string): void
   getInventoryTablesContainer().appendChild(
     createElementFromHtml(`
         <section id="${inventoryId}-container" class="inventory-container">
-          <header class="relative">
+          <header>
             ${getInventoryControlsSection(inventoryId)}
             <h2
               id="${inventoryId}-header"
@@ -184,6 +184,7 @@ export const renderInitialInventory = (inventoryId: string, name?: string): void
             </div>
           </header>
           <div class="overflow-auto">
+            <h3 class="mt-4 mb-2 mx-4 text-primary">Inventory</h3>
             ${getInventoryTable(inventoryId)}
           </div>
           ${getInventoryDetails(inventoryId)}

@@ -109,6 +109,7 @@ export const renderCasterDetails = (
     const elem = document.createElement('p')
     const formatted = getTitleFromId(key)
 
+    elem.classList.add('mb-2')
     elem.innerHTML = `${formatted}: <span class="text-alt">${value}</span>`
 
     return elem

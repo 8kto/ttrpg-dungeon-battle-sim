@@ -215,6 +215,20 @@ h3 {
   white-space: normal;
 }
 
+.table tbody tr,
+.table tbody tr.active:nth-child(odd),
+.table-zebra tbody tr:nth-child(odd) {
+  @apply bg-white;
+  @apply border-0;
+}
+
+.table tbody tr.active,
+.table tbody tr.active:nth-child(even),
+.table-zebra tbody tr:nth-child(even) {
+  @apply bg-gray-50;
+  @apply border-0;
+}
+
 .table-stats td,
 .table-bonuses td {
   @apply text-base;
