@@ -3,6 +3,7 @@ body {
   font-family: 'Press Start 2P', system-ui, sans-serif;
   font-weight: 400;
   font-style: normal;
+  word-spacing: -0.25rem;
 }
 
 body {
@@ -19,7 +20,7 @@ body {
   left: 0;
   width: 100%;
   height: 128px;
-  background-image: url('../images/tiles/rhomb-top.png');
+  //background-image: url('../images/tiles/rhomb-top.png');
   background-repeat: repeat;
   background-size: 80px 80px; /* 64px tile + 16px gap */
 }
@@ -50,8 +51,10 @@ h3 {
   color: #e76b65;
 }
 
-.hover\:text-alt:hover {
-  color: #a13d68;
+.hover\:text-alt {
+  &:hover {
+    color: #a13d68;
+  }
 }
 
 .bg-alt {
@@ -112,6 +115,12 @@ h3 {
   @apply text-xs;
   @apply md:text-xxxs;
   @apply text-white;
+  @apply bg-secondary;
+  @apply border-0;
+
+  &:hover {
+    @apply bg-secondary-focus;
+  }
 }
 
 .inventory-controls {
@@ -154,9 +163,15 @@ h3 {
 }
 
 .inventory-header {
-  @apply mx-4 my-2;
-  @apply text-gen-700 text-2xl mb-4 hover:text-red-700 hover:cursor-pointer;
+  @apply mx-4 mb-4 mt-0;
+  @apply text-2xl text-sub;
+  @apply hover:cursor-pointer;
   @apply flex items-center;
+
+  &:hover,
+  .inventory-container.selected & {
+    @apply text-alt;
+  }
 }
 
 .char-stats {
@@ -173,6 +188,7 @@ h3 {
 
 .movement-details {
   @apply text-xs mx-4 my-2;
+  @apply text-gray-600;
 }
 
 .movement-details-item {

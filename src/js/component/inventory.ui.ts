@@ -12,16 +12,16 @@ import { getCompactModeAffectedElements, getInventoryContainer, getInventoryTabl
 
 const getInventoryTable = (inventoryId: string): string => {
   return `<table data-compact-hidden id="${inventoryId}-table-container" class="table min-w-full bg-white rounded my-4 mb-6 mx-4">
-              <thead class="bg-gen-100 text-left">
-                  <tr>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/2">Name</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">QTY</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Total Weight</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Total Cost</th>
-                      <th class="px-2 py-3 text-center text-xs font-medium uppercase w-1/6">Actions</th>
-                  </tr>
-              </thead>
-              <tbody></tbody>
+            <thead class="bg-neutral-content text-left">
+              <tr class="text-xs uppercase">
+                <th class="font-normal pl-4 pr-1 py-3 min-w-[150px] w-6/12">Name</th>
+                <th class="font-normal px-2 py-3 w-1/12">QTY</th>
+                <th class="font-normal px-2 py-3 w-2/12">Total Weight</th>
+                <th class="font-normal px-2 py-3 w-2/12">Total Cost</th>
+                <th class="font-normal px-2 py-3 w-1/12">Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
           </table>`
 }
 
@@ -159,10 +159,10 @@ const getInventoryDetails = (inventoryId: string): string => {
 
   return `<div class="char-stats-row movement-details">
             <p data-compact-hidden>Total Weight: <span id="${inventoryId}-total-weight" class="font-semibold">0</span> pounds${carryFragment}</p>
-            <p data-compact-hidden>Total Cost: <span id="${inventoryId}-total-cost" class="font-semibold">0</span> gold pieces</p>
+            <p data-compact-hidden  class="mb-4">Total Cost: <span id="${inventoryId}-total-cost" class="font-semibold">0</span> gold pieces</p>
             <p class="base-movement-rate-container">Base movement rate: <span id="${inventoryId}-base-movement-rate" class="text-details">0</span></p>
             <p>
-              <span class="text-secondary">Underground speed</span>, feet/turn: <span id="${inventoryId}-speed-feet-per-turn" class="movement-details-wrapper">...</span>
+              <span class="">Underground speed</span>, feet/turn: <span id="${inventoryId}-speed-feet-per-turn" class="movement-details-wrapper">...</span>
             </p>
           </div>`
 }

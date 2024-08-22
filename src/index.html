@@ -78,7 +78,7 @@
                 placeholder="Character Name"
                 pattern="^[A-Za-z_][A-Za-z0-9\-_ ]*$"
                 required
-                class="input input-bordered flex-grow w-full mb-2 md:mb-0"
+                class="input input-bordered focus:text-primary-content flex-grow w-full mb-2 md:mb-0"
                 value="Character Name"
               />
               <button id="add-inventory-button" class="btn btn-primary w-full md:w-auto md:px-6">Add</button>
@@ -93,7 +93,7 @@
                 type="text"
                 placeholder="Item name"
                 required
-                class="input input-bordered flex-grow w-full mb-2 md:mb-0"
+                class="input input-bordered focus:text-primary-content flex-grow w-full mb-2 md:mb-0"
                 value=""
               />
               <input
@@ -103,7 +103,7 @@
                 max="300"
                 placeholder="Weight, lbs."
                 required
-                class="input input-bordered flex-grow w-full mb-2 md:mb-0"
+                class="input input-bordered focus:text-primary-content flex-grow w-full mb-2 md:mb-0"
                 value=""
               />
               <button id="add-new-item-button" class="btn btn-primary w-full md:w-auto md:px-6">Add</button>
@@ -330,7 +330,7 @@
     <!-- Character Stats -->
     <template id="template-char-stats">
       <div class="bg-white text-gray-600">
-        <div class="char-stats-row"><span class="char-class text-primary"></span>, level 1</div>
+        <div class="char-stats-row"><span class="char-class"></span>, level 1</div>
         <!-- Primary row -->
         <div class="char-stats-row flex gap-x-4 text-sm">
           <div><span class="">HP</span>:<span class="char-hp text-details"></span></div>
