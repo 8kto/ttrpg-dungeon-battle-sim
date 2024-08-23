@@ -116,6 +116,18 @@ module.exports = {
           900: '#4a3d39',
           950: '#29201f',
         },
+        ntrl: {
+          50: '#eae0e2', // Very light neutral (light purple)
+          100: '#d5c2c6', // Light neutral
+          200: '#bfa4a9', // Lighter neutral
+          300: '#a9878c', // Light medium neutral
+          400: '#936a70', // Medium neutral
+          500: '#7d4d54', // Base neutral
+          600: '#67313a', // Darker medium neutral
+          700: '#502528', // Dark neutral
+          800: '#3a1a1d', // Darker neutral
+          900: '#2e242a', // Original very dark purple neutral
+        },
       },
       fontFamily: {
         'averia-serif': ['"Averia Serif Libre"', 'serif'],
