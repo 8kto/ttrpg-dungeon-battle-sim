@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" xmlns="http://www.w3.org/1999/html" data-theme="retrogame">
+<html lang="en" xmlns="http://www.w3.org/1999/html" data-theme="retrogame" class="bg-ntrl-800">
   <head>
     <meta charset="UTF-8" />
     <title>Swords & Wizardry: Character generator, Equipment & Inventory</title>
@@ -47,16 +47,16 @@
        */
     </script>
   </head>
-  <body class="bg-neutral text-base-content p-4">
+  <body class="text-base-content">
     <noscript> Sorry, JS should be enabled </noscript>
 
-    <header class="mb-4 text-center">
+    <header class="my-4 text-center">
       <h1 class="text-alt text-3xl mb-2">
         <a href="/" class="transition-gradient block"> Swords & Wizardry CR </a>
       </h1>
       <h2 class="text-xl text-secondary">Character Generator / Unofficial tool</h2>
     </header>
-    <main class="mx-auto w-full max-w-screen-2xl flex-grow px-2.5 sm:px-6 lg:px-8 mb-4">
+    <main class="mx-auto w-full max-w-screen-2xl flex-grow px-2 sm:px-6 lg:px-8 mb-4">
       <div class="page-content flex flex-col md:flex-row justify-between gap-4">
         <!-- Tab Navigation (visible on small screens) -->
         <div class="tabs tabs-content-columns tabs-boxed" role="tablist">
@@ -78,7 +78,7 @@
                 placeholder="Character Name"
                 pattern="^[A-Za-z_][A-Za-z0-9\-_ ]*$"
                 required
-                class="input input-bordered focus:text-primary-content flex-grow w-full mb-2 md:mb-0"
+                class="input input-bordered text-neutral-500 focus:text-primary-content flex-grow w-full mb-2 md:mb-0"
                 value="Character Name"
               />
               <button id="add-inventory-button" class="btn btn-primary w-full md:w-auto md:px-6">Add</button>

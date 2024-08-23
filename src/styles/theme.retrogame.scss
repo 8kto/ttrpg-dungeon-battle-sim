@@ -1,3 +1,12 @@
+:root {
+  --primary-color: theme('colors.primary');
+  --primary-focus-color: theme('colors.primary-focus');
+  --neutral-color: theme('colors.neutral');
+  --neutral-focus-color: theme('colors.neutral-focus');
+  --alt-color: #e76b65;
+  --sub-color: #cea181;
+}
+
 html,
 body {
   font-family: 'Press Start 2P', system-ui, sans-serif;
@@ -11,6 +20,36 @@ body {
   @apply md:text-sm;
   @apply xl:text-base;
   color: #888;
+}
+
+/* Apply those custom properties using @apply */
+::-webkit-scrollbar {
+  width: 12px;
+  @apply bg-neutral;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--primary-color);
+  border: 2px solid var(--neutral-color);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--primary-focus-color);
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-neutral-focus;
+}
+
+::-webkit-scrollbar-corner {
+  @apply bg-neutral;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-color) var(--neutral-color);
 }
 
 .body::before {
@@ -29,7 +68,12 @@ h1,
 h2,
 h3 {
   font-weight: 700;
-  color: #77899e;
+  letter-spacing: 0.1rem;
+}
+
+h1 {
+  text-transform: uppercase;
+  letter-spacing: 0.125rem;
 }
 
 .input {
@@ -48,25 +92,25 @@ h3 {
 }
 
 .text-alt {
-  color: #e76b65;
+  color: var(--alt-color);
 }
 
 .hover\:text-alt {
   &:hover {
-    color: #a13d68;
+    color: var(--alt-color);
   }
 }
 
 .bg-alt {
-  background-color: #a13d68;
+  background-color: var(--alt-color);
 }
 
 .text-sub {
-  color: #cea181;
+  color: var(--sub-color);
 }
 
 .border-alt {
-  border: 1px solid #a13d68;
+  border: 1px solid var(--alt-color);
 }
 
 .page-content-column {
@@ -98,8 +142,7 @@ h3 {
 }
 
 .text-details {
-  //color: #7c725a;
-  color: #cea181;
+  color: var(--sub-color);
 }
 
 .inventory-container {
@@ -140,6 +183,10 @@ h3 {
   align-items: center;
   text-align: center;
 
+  .inventory-container.selected & {
+    @apply border-secondary;
+  }
+
   &.last {
     @apply border-r-0;
     width: 30px;
@@ -160,6 +207,10 @@ h3 {
 
   width: auto;
   height: auto;
+
+  .inventory-container.selected & {
+    @apply border-neutral-content;
+  }
 }
 
 .inventory-header {

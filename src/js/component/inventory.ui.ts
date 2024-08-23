@@ -184,7 +184,7 @@ export const renderInitialInventory = (inventoryId: string, name?: string): void
             </div>
           </header>
           <div class="overflow-auto">
-            <h3 class="mt-4 mb-2 mx-4 text-primary">Inventory</h3>
+            <h3 data-compact-hidden class="mt-4 mb-2 mx-4 text-alt text-xl">Inventory</h3>
             ${getInventoryTable(inventoryId)}
           </div>
           ${getInventoryDetails(inventoryId)}
