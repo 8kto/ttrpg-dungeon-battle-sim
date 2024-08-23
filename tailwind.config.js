@@ -2,17 +2,8 @@
 module.exports = {
   content: ['./src/**/*.{html,js,ts}'],
   plugins: [require('daisyui')],
-  // daisyUI config (optional - here are the default values)
   daisyui: {
     themes: [
-      'dark',
-      {
-        emerald: {
-          ...require('daisyui/src/theming/themes')['emerald'],
-          '--rounded-btn': '0.25rem', // border radius rounded-btn utility class, used in buttons and similar element
-          '--rounded-box': '0.25rem',
-        },
-      },
       {
         retroclone: {
           primary: '#ee9a95',
