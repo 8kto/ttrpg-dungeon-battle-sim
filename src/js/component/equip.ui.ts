@@ -10,7 +10,7 @@ export const getEquipTableSection = (categoryName: string): string => `
         <section id="${getInventoryIdFromName(categoryName)}-section" class="mb-8">
             <h2 class="text-2xl text-alt font-bold mb-4">${categoryName}</h2>
             <div class="overflow-auto">
-              <table class="min-w-full bg-white rounded">
+              <table class="min-w-full bg-white">
                   <thead class="bg-neutral-content text-left">
                       <tr>
                           <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/2">Name</th>

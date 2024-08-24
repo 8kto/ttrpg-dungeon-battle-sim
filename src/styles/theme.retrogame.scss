@@ -266,6 +266,10 @@ h1 {
   white-space: normal;
 }
 
+.table th {
+  @apply font-normal text-base-content;
+}
+
 .table tbody tr,
 .table tbody tr.active:nth-child(odd),
 .table-zebra tbody tr:nth-child(odd) {
@@ -301,6 +305,9 @@ h1 {
 }
 
 .inventory-column {
+  details {
+    border: 0;
+  }
   summary {
     @apply text-sm sm:text-base;
   }

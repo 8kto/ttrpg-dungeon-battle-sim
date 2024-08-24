@@ -11,7 +11,7 @@ import { getBaseMovementRate, getUndergroundSpeed } from '../utils/snw/movement'
 import { getCompactModeAffectedElements, getInventoryContainer, getInventoryTablesContainer } from './domSelectors'
 
 const getInventoryTable = (inventoryId: string): string => {
-  return `<table data-compact-hidden id="${inventoryId}-table-container" class="table border-4 border-neutral-content min-w-full bg-white rounded my-4 mb-6 mx-4">
+  return `<table data-compact-hidden id="${inventoryId}-table-container" class="table border-neutral-content min-w-full bg-white rounded my-4 mb-6 mx-4">
             <thead class="bg-neutral-content text-left">
               <tr class="text-xs uppercase">
                 <th class="font-normal pl-4 pr-1 py-3 min-w-[150px] w-6/12">Name</th>
@@ -36,7 +36,7 @@ const getInventoryControlsSection = (inventoryId: string): string => {
                 <ul role="menu" tabindex="0" class="dropdown-content menu p-2 bg-neutral-content rounded-box w-52 mt-6">
                   <li><a id="${inventoryId}-rename-inventory" class="inventory-controls-btn">Rename</a></li>
                   <li><a id="${inventoryId}-remove-char" class="inventory-controls-btn" title="Reset character, keep inventory">Remove character</a></li>
-                  <li><a id="${inventoryId}-reset-inventory" class="inventory-controls-btn" title="Reset inventory items">Reset</a></li>
+                  <li><a id="${inventoryId}-reset-inventory" class="inventory-controls-btn" title="Reset inventory items">Reset inventory</a></li>
                 </ul>
               </div>
 
