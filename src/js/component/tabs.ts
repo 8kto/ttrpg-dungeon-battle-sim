@@ -1,5 +1,5 @@
 const bindTabControls = (): void => {
-  document.querySelectorAll('.tabs a').forEach((tab) => {
+  document.querySelectorAll('.tabs-content-columns a').forEach((tab) => {
     tab.addEventListener('click', function (e: Event) {
       e.preventDefault()
       const targetId = this.getAttribute('href')
@@ -11,7 +11,7 @@ const bindTabControls = (): void => {
       })
 
       // Remove active class from all tabs
-      document.querySelectorAll('.tabs a').forEach((tab) => {
+      document.querySelectorAll('.tabs-content-columns a').forEach((tab) => {
         tab.classList.remove('tab-active')
       })
 
@@ -23,6 +23,25 @@ const bindTabControls = (): void => {
   })
 }
 
+const cleanup = (): void => {
+  document.querySelectorAll('.page-content-column').forEach((element) => {
+    element.classList.remove('hidden')
+  })
+}
+
+const bindResize = (): void => {
+  const resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.contentRect.width >= 768) {
+        cleanup()
+      }
+    }
+  })
+
+  resizeObserver.observe(document.documentElement)
+}
+
 export const initTabs = (): void => {
   bindTabControls()
+  bindResize()
 }
