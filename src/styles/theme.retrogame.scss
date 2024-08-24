@@ -118,7 +118,7 @@ h1 {
 }
 
 .page-content-column {
-  width: 100%; /* Make sure the content takes full width in the tab */
+  /*width: 100%; /* Make sure the content takes full width in the tab */
   flex-shrink: 0;
   flex-grow: 0;
   border-width: 1px;
@@ -129,7 +129,7 @@ h1 {
 
 @media (min-width: 768px) {
   .page-content-column {
-    width: 50%; /* Restore the side-by-side layout for larger screens */
+   /*width: 50%;*/ /* Restore the side-by-side layout for larger screens */
   }
 
   .tabs-content-columns {
@@ -352,4 +352,12 @@ h1 {
 
 .text-details--alt {
   @apply text-neutral-400;
+}
+
+.page-footer {
+  @apply text-secondary;
+  @apply border-gray-500 border-dashed border-2;
+  @apply px-4 py-6;
+  @apply mx-auto my-4;
+  @apply w-full;
 }
