@@ -10,7 +10,7 @@ export const getEquipTableSection = (categoryName: string): string => `
         <section id="${getInventoryIdFromName(categoryName)}-section" class="mb-8">
             <h2 class="text-2xl text-alt font-bold mb-4">${categoryName}</h2>
             <div class="overflow-auto">
-              <table class="min-w-full bg-white">
+              <table class="table table-zebra min-w-full bg-white table-snw-gen">
                   <thead class="bg-neutral-content text-left">
                       <tr>
                           <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/2">Name</th>
@@ -26,9 +26,8 @@ export const getEquipTableSection = (categoryName: string): string => `
 
 const addEquipRow = (tableBody: HTMLTableSectionElement, item: EquipItem): void => {
   const row = tableBody.insertRow()
-  row.className = 'even:bg-gray-50 hover:bg-gen-50'
 
-  const cellClassnames = 'px-4 py-1'
+  const cellClassnames = 'table-snw-gen-cell'
 
   // Create and set properties for the name cell
   const nameCell = row.insertCell(0)
@@ -49,7 +48,7 @@ const addEquipRow = (tableBody: HTMLTableSectionElement, item: EquipItem): void 
   // Create and set properties for the button cell
   const addButton = document.createElement('button')
   addButton.textContent = 'Add'
-  addButton.className = 'px-4 text-sm text-left font-medium text-sub hover:text-alt uppercase'
+  addButton.className = 'text-sm font-medium text-sub hover:text-alt uppercase'
   addButton.onclick = (): void => {
     const state = getState()
     const inventoryId = state.getCurrentInventoryId()
@@ -60,7 +59,7 @@ const addEquipRow = (tableBody: HTMLTableSectionElement, item: EquipItem): void 
 
   const actionsCell = row.insertCell(3)
   actionsCell.appendChild(addButton)
-  actionsCell.className = `${cellClassnames} text-center px-2 w-16`
+  actionsCell.className = `${cellClassnames} text-center w-16`
 }
 
 export const renderEquipCategorySection = (container: HTMLElement, categoryName: string, items: EquipItem[]): void => {

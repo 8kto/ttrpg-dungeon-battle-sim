@@ -270,6 +270,31 @@ h1 {
   @apply font-normal text-base-content;
 }
 
+.table-snw-gen {
+  @apply text-sm;
+
+  th,
+  td {
+    @apply pl-2 pr-2;
+    @apply py-2;
+
+    &:first-of-type {
+      @apply pl-4;
+    }
+    &:last-of-type {
+      @apply pr-4;
+    }
+  }
+}
+
+.table-snw-gen-cell {
+  @apply px-4 py-2;
+}
+
+.table-snw-gen-cell--inventory {
+  @apply px-4 py-1;
+}
+
 .table tbody tr,
 .table tbody tr.active:nth-child(odd),
 .table-zebra tbody tr:nth-child(odd) {
@@ -282,6 +307,12 @@ h1 {
 .table-zebra tbody tr:nth-child(even) {
   @apply bg-gray-50;
   @apply border-0;
+}
+
+.table-zebra {
+  tbody tr:hover {
+    @apply bg-gray-100 !important;
+  }
 }
 
 .table-stats td,

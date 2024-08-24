@@ -11,7 +11,7 @@ import { getBaseMovementRate, getUndergroundSpeed } from '../utils/snw/movement'
 import { getCompactModeAffectedElements, getInventoryContainer, getInventoryTablesContainer } from './domSelectors'
 
 const getInventoryTable = (inventoryId: string): string => {
-  return `<table data-compact-hidden id="${inventoryId}-table-container" class="table border-neutral-content min-w-full bg-white rounded my-4 mb-6 mx-4">
+  return `<table data-compact-hidden id="${inventoryId}-table-container" class="table table-zebra table-snw-gen border-neutral-content min-w-full bg-white rounded my-4 mb-6 mx-4">
             <thead class="bg-neutral-content text-left">
               <tr class="text-xs uppercase">
                 <th class="font-normal pl-4 pr-1 py-3 min-w-[150px] w-6/12">Name</th>
@@ -224,7 +224,7 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
     return
   }
 
-  const cellClassnames = 'px-4 py-1'
+  const cellClassnames = 'table-snw-gen-cell--inventory'
   let inventoryTableContainer = document.querySelector(`#${inventoryId}-table-container`)
   if (!inventoryTableContainer) {
     renderInitialInventory(inventoryId, inventoryName)
@@ -242,7 +242,6 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
 
   Object.values(inventory.items).forEach((item) => {
     const row = inventoryTableBody.insertRow()
-    row.className = 'even:bg-gray-50 hover:bg-gen-50 text-xs'
 
     const nameCell = row.insertCell(0)
     nameCell.innerHTML = item.name + getEquipNameSuffix(item, damageMod)
@@ -272,7 +271,7 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
 
     const actionsCell = row.insertCell(4)
     actionsCell.appendChild(removeButton)
-    actionsCell.className = `${cellClassnames} text-center px-2 w-16`
+    actionsCell.className = `${cellClassnames} text-center w-16`
 
     totalWeight += item.weight * item.quantity
     totalCost += item.cost * item.quantity
