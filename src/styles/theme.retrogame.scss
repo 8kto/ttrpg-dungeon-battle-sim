@@ -299,3 +299,9 @@ h1 {
 .char-stats-row {
   @apply mb-4;
 }
+
+.inventory-column {
+  summary {
+    @apply text-sm sm:text-base;
+  }
+}

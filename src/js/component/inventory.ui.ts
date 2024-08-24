@@ -263,7 +263,7 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
     // Create and append the Remove button
     const removeButton = document.createElement('button')
     removeButton.textContent = 'DEL'
-    removeButton.className = 'px-4 py-1 text-sm text-sub hover:text-red-500'
+    removeButton.className = 'px-4 py-1 text-sm text-sub hover:text-alt'
     removeButton.onclick = (): void => {
       getState().removeFromInventory(inventoryId, item.name)
       dispatchEvent('RenderInventory', { inventoryId, inventoryName })
