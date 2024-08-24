@@ -254,7 +254,7 @@ h1 {
 }
 
 .char-saving-throw--details {
-  @apply text-xs;
+  @apply text-sm;
 }
 
 .tabs-content-columns .tab {
@@ -339,7 +339,17 @@ h1 {
   details {
     border: 0;
   }
+
   summary {
     @apply text-sm sm:text-base;
+    background: theme('colors.neutral-content');
+
+    &:hover {
+      @apply bg-accent;
+    }
   }
+}
+
+.text-details--alt {
+  @apply text-neutral-400;
 }

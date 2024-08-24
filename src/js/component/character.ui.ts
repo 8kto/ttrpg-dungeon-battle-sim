@@ -172,7 +172,9 @@ const renderArmorClassDetails = (
     `[${armorClass.aac}]`,
     '</span>',
     '</span>',
+    '<span class="text-details--alt">',
     armorClass.armor,
+    '</span>',
   ].join(' ')
 }
 
