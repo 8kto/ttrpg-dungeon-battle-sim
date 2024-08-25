@@ -5,6 +5,7 @@ import { assert } from '../assert'
 
 const MAGIC_DEFAULT_LEVEL = 1
 
+// FIXME display + for positive numbers
 export const getToHitMelee = (classDef: CharacterClassDef, stats: CharacterStats): number => {
   const baseToHit = QuickAscendingArmorClassBaseToHit[MAGIC_DEFAULT_LEVEL][classDef.name]
   assert(typeof baseToHit === 'number' && !isNaN(baseToHit), `Cannot get Base To-Hit for class: ${classDef.name}`)
