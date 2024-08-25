@@ -118,11 +118,8 @@ h1 {
 }
 
 .page-content-column {
-  @apply bg-white flex-grow-0 flex-shrink-0 w-1/2 p-4 border;
-}
-
-.page-content-column {
-  /*width: 100%; /* Make sure the content takes full width in the tab */
+  @apply bg-white flex-grow-0 flex-shrink-0 p-4 border;
+  width: 100%;
   flex-shrink: 0;
   flex-grow: 0;
   border-width: 1px;
@@ -133,7 +130,8 @@ h1 {
 
 @media (min-width: 768px) {
   .page-content-column {
-    /*width: 50%;*/ /* Restore the side-by-side layout for larger screens */
+    width: 49.25%;
+    /*width: calc(50% - 8px);*/
   }
 
   .tabs-content-columns {
