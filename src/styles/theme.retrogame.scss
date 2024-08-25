@@ -22,6 +22,10 @@ body {
   color: #888;
 }
 
+ul {
+  list-style-type: square;
+}
+
 /* Apply those custom properties using @apply */
 ::-webkit-scrollbar {
   width: 12px;
@@ -238,7 +242,7 @@ h1 {
 }
 
 .movement-details {
-  @apply text-xs mx-4 my-2;
+  @apply text-sm mx-4 my-2;
   @apply text-gray-600;
 }
 
@@ -361,8 +365,6 @@ h1 {
   @apply mx-auto my-4;
   @apply w-full;
 }
-
-/* TODO square list style */
 
 .label-text {
   overflow-wrap: break-word;

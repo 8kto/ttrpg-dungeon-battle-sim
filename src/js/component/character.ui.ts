@@ -187,10 +187,10 @@ const renderSavingThrowDetails = (container: HTMLElement, classDef: CharacterCla
 
   const altList = Object.entries(classDef.SavingThrow.alternative)
     .map(([key, def]) => {
-      return `<li class="p-1">${getTitleFromId(key)}: ${def}</li>`
+      return `<li class="">${getTitleFromId(key)}: <span class="text-details">${def}</span></li>`
     })
     .join('')
-  altDetailsContainer.innerHTML = `<ul class="list-disc list-inside ml-2">${altList}</ul>`
+  altDetailsContainer.innerHTML = `<ul class="list-square list-inside ml-2 text-details--alt">${altList}</ul>`
 
   let toggled = false
   toggleButton.addEventListener('click', () => {

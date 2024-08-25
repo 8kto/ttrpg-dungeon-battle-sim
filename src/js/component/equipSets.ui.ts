@@ -20,7 +20,7 @@ export const renderEquipSets = (): void => {
 const renderEquipSetTable = (container: HTMLElement, selectedKey: string): void => {
   const selectedSet = EquipSets[selectedKey]
   const itemList = document.createElement('ul')
-  itemList.className = 'list-disc list-inside two-columns'
+  itemList.className = 'list-square list-inside two-columns'
 
   selectedSet.items.forEach((item) => {
     const listItem = document.createElement('li')

@@ -155,11 +155,11 @@ const getInventoryDetails = (inventoryId: string): string => {
   const carryModifier = inventory.character?.stats?.Strength?.Carry || 0
   const carryFragment = !carryModifier
     ? ''
-    : `&nbsp;<span>(Carry modifier: ${carryModifier < 0 ? carryModifier : `+${carryModifier}`} pounds)</span>`
+    : `&nbsp;<span>(Carry modifier: <span class="text-details">${carryModifier < 0 ? carryModifier : `+${carryModifier}`}</span> pounds)</span>`
 
   return `<div class="char-stats-row movement-details">
-            <p data-compact-hidden>Total Weight: <span id="${inventoryId}-total-weight" class="font-semibold">0</span> pounds${carryFragment}</p>
-            <p data-compact-hidden  class="mb-4">Total Cost: <span id="${inventoryId}-total-cost" class="font-semibold">0</span> gold pieces</p>
+            <p data-compact-hidden>Total Weight: <span id="${inventoryId}-total-weight" class="text-details">0</span> pounds${carryFragment}</p>
+            <p data-compact-hidden  class="mb-4">Total Cost: <span id="${inventoryId}-total-cost" class="text-details">0</span> gold pieces</p>
             <p class="base-movement-rate-container">Base movement rate: <span id="${inventoryId}-base-movement-rate" class="text-details">0</span></p>
             <p>
               <span class="">Underground speed</span>, feet/turn: <span id="${inventoryId}-speed-feet-per-turn" class="movement-details-wrapper">...</span>
@@ -299,9 +299,9 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
 export const updateSpeedDisplay = (inventoryId: string, baseMovementRate: BaseMovementRate): void => {
   const speeds = getUndergroundSpeed(baseMovementRate)
   document.getElementById(`${inventoryId}-speed-feet-per-turn`).innerHTML = [
-    `<span class="movement-details-item">Walking: <span class="movement-details-item__number">${speeds.walking}</span></span>`,
-    `<span class="movement-details-item">Running: <span class="movement-details-item__number">${speeds.running}</span></span>`,
-    `<span class="movement-details-item">Combat: <span class="movement-details-item__number">${speeds.combat}</span></span>`,
+    `<span class="movement-details-item text-details--alt">Walking: <span class="movement-details-item__number">${speeds.walking}</span></span>`,
+    `<span class="movement-details-item text-details--alt">Running: <span class="movement-details-item__number">${speeds.running}</span></span>`,
+    `<span class="movement-details-item text-details--alt">Combat: <span class="movement-details-item__number">${speeds.combat}</span></span>`,
   ].join(' • ')
 }
 
