@@ -259,6 +259,12 @@ h1 {
   @apply text-sm;
 }
 
+.emoji-icon {
+  vertical-align: middle;
+  position: relative;
+  top: -0.25rem;
+}
+
 .tabs-content-columns .tab {
   --tab-color: white;
   @apply bg-neutral;
