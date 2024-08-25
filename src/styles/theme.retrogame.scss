@@ -271,7 +271,7 @@ h1 {
 }
 
 .table th {
-  @apply font-normal text-base-content;
+  @apply font-normal text-neutral-500;
 }
 
 .table-snw-gen {
@@ -319,12 +319,24 @@ h1 {
   }
 }
 
-.table-stats td,
-.table-bonuses td {
+.table-stats tbody td,
+.table-bonuses tbody td {
   @apply text-base;
   @apply md:text-sm;
-  @apply px-4 py-2;
+  @apply py-2;
   text-overflow: ellipsis;
+
+  &:first-of-type {
+    @apply pl-4 pr-2;
+  }
+  &:last-of-type {
+    @apply pl-1 pr-2;
+  }
+}
+
+.table-stats tbody td {
+  &:last-of-type {
+  }
 }
 
 .inventory-container {

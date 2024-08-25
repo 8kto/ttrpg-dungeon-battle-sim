@@ -13,10 +13,10 @@ export const getEquipTableSection = (categoryName: string): string => `
               <table class="table table-zebra min-w-full bg-white table-snw-gen">
                   <thead class="bg-neutral-content text-left">
                       <tr>
-                          <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/2">Name</th>
-                          <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Weight</th>
-                          <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Cost, gp</th>
-                          <th class="px-2 py-3 text-center text-xs font-medium uppercase w-1/6">Actions</th>
+                          <th class="uppercase w-1/2">Name</th>
+                          <th class="uppercase w-1/6">Weight</th>
+                          <th class="uppercase w-1/6">Cost, gp</th>
+                          <th class="text-center uppercase w-1/6">Actions</th>
                       </tr>
                   </thead>
                   <tbody></tbody>
@@ -81,3 +81,7 @@ export const initEquipUi = (): void => {
   renderEquipCategorySection(equipmentContainer, 'Weapons', Weapons)
   renderEquipCategorySection(equipmentContainer, 'Equipment', Equip)
 }
+
+// FIXME inventory table
+// TODO weapons help block
+// TODO add item to menu
