@@ -71,15 +71,14 @@ const renderSpellsList = (container: HTMLElement, inventory: Inventory): void =>
     list.appendChild(
       createElementFromHtml(
         [
-          `<li class="break-inside-avoid text-alt flex">`,
-          `<label for="${inventoryId}-${spellName}">`,
-          `<input class="char-spells-list--item mr-2" type="checkbox" name=""`,
+          `<li class="break-inside-avoid text-details flex items-stretch">`,
+          `<label for="${inventoryId}-${spellName}" class="flex items-center">`,
+          `<input class="char-spells-list--item mr-2 flex-shrink-0" type="checkbox" name=""`,
           `id="${inventoryId}-${spellName}" `,
           `value="${spellName}"`,
+          `title="Check to prepare a spell"`,
           prepared?.includes(spellName) ? 'checked' : '',
-          `>`,
-          spellName,
-          `<label>`,
+          `><span class="label-text">${spellName}</span></label>`,
           `</li>`,
         ].join(' '),
       ),
@@ -109,8 +108,7 @@ export const renderCasterDetails = (
     const elem = document.createElement('p')
     const formatted = getTitleFromId(key)
 
-    elem.classList.add('mb-2')
-    elem.innerHTML = `${formatted}: <span class="text-alt">${value}</span>`
+    elem.innerHTML = `${formatted}: <span class="text-details">${value}</span>`
 
     return elem
   }
