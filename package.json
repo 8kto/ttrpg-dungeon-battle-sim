@@ -5,7 +5,8 @@
   "author": "8kto <ifhtagn@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "concurrently \"wmr --reload\" \"yarn dev:styles\"",
+    "dev": "wmr --reload",
+    "dev-all": "concurrently \"yarn dev\" \"yarn dev:styles\"",
     "build:styles": "npx tailwindcss -i src/styles/styles.scss -o ./src/styles/styles.processed.css",
     "build": "yarn build:styles && wmr build --sourcemap --minify",
     "serve": "wmr serve",
