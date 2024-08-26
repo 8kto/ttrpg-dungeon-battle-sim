@@ -267,6 +267,10 @@ h1 {
   .btn-sm & {
     top: -0.1rem;
   }
+
+  &.emoji-icon--header {
+    top: -0.15rem;
+  }
 }
 
 .tabs-content-columns .tab {

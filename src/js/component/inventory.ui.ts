@@ -203,7 +203,9 @@ export const markSelectedInventory = (inventoryId: string): void => {
   const headerElement = document.getElementById(`${inventoryId}-header`)
   if (headerElement) {
     headerElement.appendChild(
-      createElementFromHtml(`<span class="text-alt selected text-sm ml-2" title="Selected character">🛡️</span>`),
+      createElementFromHtml(
+        `<span class="text-alt selected text-sm ml-2 emoji-icon emoji-icon--header" title="Selected character">🛡️</span>`,
+      ),
     )
   }
 
@@ -399,3 +401,4 @@ export const initInventoryUi = (): void => {
 }
 
 // FIXME when Remove char btn cancelled - inserts random generate btn anyway
+// TODO e2e with mobiles -- click on Inventory first
