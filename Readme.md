@@ -47,6 +47,7 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 - [x] Exports and import characters and their inventories
 - [x] Custom items
 - [x] Builds with WMR
+- [x] Mobiles support (limited, desktop is the prio)
 
 ## Contributions
 
@@ -54,7 +55,6 @@ Contributions are welcome. Code should follow conventions described in [Code Con
 
 ### TODO
 
-- [ ] Mobiles support (?)
 - [ ] Languages support (?)
 - [ ] Add coins
 - [ ] New random character: adjust heuristics (drop hopeless, pick random properly)
@@ -63,6 +63,6 @@ Contributions are welcome. Code should follow conventions described in [Code Con
 - [ ] Char: edit numbers
 - [ ] Generate with strict 0e attrs
 - [ ] Fighter Parrying Ability
-- [ ] daisyUI, dark/light themes
+- [ ] lighter font/dark themes (?)
 - [ ] Console log with events like "Intelligence: rolled 3d6 with 12 ..." (?)
 - [ ] Reorder inventories
