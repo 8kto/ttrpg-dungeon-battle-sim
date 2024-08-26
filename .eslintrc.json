@@ -70,6 +70,13 @@
       }
     },
     {
+      "files": ["./*.ts", "./*.js"],
+      "rules": {
+        "sort-keys-fix/sort-keys-fix": "off",
+        "@typescript-eslint/no-var-requires": "off"
+      }
+    },
+    {
       "files": ["src/**/*.test.ts"],
       "rules": {
         "@typescript-eslint/ban-ts-comment": "off"

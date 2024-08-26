@@ -18,7 +18,7 @@
     "lib": ["ESNext", "DOM"],
     "baseUrl": "src"
   },
-  "include": ["node_modules/wmr/types.d.ts", "src/**/*", "tests_visual_regression/tests/**/*"],
+  "include": ["node_modules/wmr/types.d.ts", "src/**/*", "tests_visual_regression/tests/**/*", "./*.ts", "./*.js"],
   "typeAcquisition": {
     "enable": true
   }

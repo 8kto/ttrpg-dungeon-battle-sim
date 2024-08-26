@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "wmr --reload",
-    "build:styles": "npx tailwindcss -i ./src/styles/styles.css -o ./src/styles/styles.processed.css",
+    "dev-all": "concurrently \"yarn dev\" \"yarn dev:styles\"",
+    "build:styles": "npx tailwindcss -i src/styles/styles.scss -o ./src/styles/styles.processed.css",
     "build": "yarn build:styles && wmr build --sourcemap --minify",
     "serve": "wmr serve",
     "deploy": "scripts/deploy.sh",
@@ -15,7 +16,7 @@
     "format:fix": "yarn eslint --fix && prettier --write .",
     "test": "jest",
     "test:coverage": "jest --collectCoverage",
-    "dev:styles": "npx tailwindcss -i ./src/styles/styles.css -o ./src/styles/styles.processed.css --watch",
+    "dev:styles": "npx tailwindcss -i src/styles/styles.scss -o ./src/styles/styles.processed.css --watch",
     "todos": "egrep --color=always -i '(TODO|FIXME)' -r src/",
     "test:vr": "backstop test",
     "weok": "yarn tsc && yarn lint && yarn format && yarn test && echo WE OK"
@@ -29,6 +30,8 @@
     "@typescript-eslint/parser": "^7.14.1",
     "babel-jest": "^29.7.0",
     "backstopjs": "^6.3.23",
+    "concurrently": "^8.2.2",
+    "daisyui": "^4.12.10",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-import-resolver-typescript": "^3.6.1",

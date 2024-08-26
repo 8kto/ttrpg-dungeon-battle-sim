@@ -11,37 +11,40 @@ import { getBaseMovementRate, getUndergroundSpeed } from '../utils/snw/movement'
 import { getCompactModeAffectedElements, getInventoryContainer, getInventoryTablesContainer } from './domSelectors'
 
 const getInventoryTable = (inventoryId: string): string => {
-  return `<table data-compact-hidden id="${inventoryId}-table-container" class="min-w-full bg-white shadow-md rounded my-4">
-              <thead class="bg-gen-100 text-left">
-                  <tr>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/2">Name</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Quantity</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Total Weight</th>
-                      <th class="px-4 py-3 text-left text-xs font-medium uppercase w-1/6">Total Cost</th>
-                      <th class="px-2 py-3 text-center text-xs font-medium uppercase w-1/6">Actions</th>
-                  </tr>
-              </thead>
-              <tbody></tbody>
+  return `<table data-compact-hidden id="${inventoryId}-table-container" class="table table-zebra table-snw-gen border-neutral-content min-w-full bg-white rounded my-4 mb-6 mx-4">
+            <thead class="bg-neutral-content text-left">
+              <tr class="text-xs uppercase">
+                <th class="font-normal pl-4 pr-1 py-3 min-w-[150px] w-6/12">Name</th>
+                <th class="font-normal px-2 py-3 w-1/12">QTY</th>
+                <th class="font-normal px-2 py-3 w-2/12">Total Weight</th>
+                <th class="font-normal px-2 py-3 w-2/12">Total Cost</th>
+                <th class="font-normal px-2 py-3 w-1/12">Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
           </table>`
 }
 
 const getInventoryControlsSection = (inventoryId: string): string => {
-  return `<section class="inventory-controls mt-0 text-gen-800 text-sm absolute top-0 right-0">
-            <div class="flex justify-end">
-              <button id="${inventoryId}-rename-inventory" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white rounded-l hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
-                <span role="img" title="Rename inventory" aria-label="Rename inventory" class="block px-2 py-1">Rename</span>
+  return `<section class="inventory-controls">
+            <div class="flex justify-end join relative items-stretch">
+              <!-- Hamburger Button with Dropdown -->
+              <div class="dropdown dropdown-end flex">
+                <label tabindex="0" class="join-item inventory-controls-btn flex items-center cursor-pointer first">
+                  <span role="img" aria-label="Menu" title="Menu">☰</span>
+                </label>
+                <ul role="menu" tabindex="0" class="dropdown-content menu p-2 bg-neutral-content rounded-box w-52 mt-6">
+                  <li><a id="${inventoryId}-rename-inventory" class="inventory-controls-btn">Rename</a></li>
+                  <li><a id="${inventoryId}-remove-char" class="inventory-controls-btn" title="Reset character, keep inventory">Remove character</a></li>
+                  <li><a id="${inventoryId}-reset-inventory" class="inventory-controls-btn" title="Reset inventory items">Reset inventory</a></li>
+                </ul>
+              </div>
+
+              <button id="${inventoryId}-minimise-inventory" class="join-item inventory-controls-btn">
+                <span role="img" title="Minimise inventory" aria-label="Minimise inventory">➖</span>
               </button>
-              <button id="${inventoryId}-remove-char" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
-                <span role="img" title="Remove character" aria-label="Remove character" class="block px-2 py-1">Remove character</span>
-              </button>
-              <button id="${inventoryId}-reset-inventory" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
-                <span role="img" title="Reset inventory items" aria-label="Reset inventory items" class="block px-2 py-1">Reset</span>
-              </button>
-              <button id="${inventoryId}-minimise-inventory" class="text-xs bg-white border border-r-0 text-gen-400 hover:text-white hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
-                <span role="img" title="Minimise inventory" aria-label="Minimise inventory" class="block px-2 py-1">➖</span>
-              </button>
-              <button id="${inventoryId}-remove-inventory" class="text-xs bg-white border text-gen-400 hover:text-white rounded-r hover:bg-gen-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-0">
-                <span role="img" title="Remove inventory" aria-label="Remove inventory" class="block px-3 py-1.5">❌</span>
+              <button id="${inventoryId}-remove-inventory" class="join-item inventory-controls-btn last">
+                <span role="img" title="Remove inventory" aria-label="Remove inventory">❌</span>
               </button>
             </div>
           </section>`
@@ -152,14 +155,14 @@ const getInventoryDetails = (inventoryId: string): string => {
   const carryModifier = inventory.character?.stats?.Strength?.Carry || 0
   const carryFragment = !carryModifier
     ? ''
-    : `&nbsp;<span>(Carry modifier: ${carryModifier < 0 ? carryModifier : `+${carryModifier}`} pounds)</span>`
+    : `&nbsp;<span>(Carry modifier: <span class="text-details">${carryModifier < 0 ? carryModifier : `+${carryModifier}`}</span> pounds)</span>`
 
-  return `<div class="text-sm mb-2">
-            <p data-compact-hidden>Total Weight: <span id="${inventoryId}-total-weight" class="font-semibold">0</span> pounds${carryFragment}</p>
-            <p data-compact-hidden>Total Cost: <span id="${inventoryId}-total-cost" class="font-semibold">0</span> gold pieces</p>
-            <p>Base movement rate: <span id="${inventoryId}-base-movement-rate" class="font-semibold">0</span></p>
+  return `<div class="char-stats-row movement-details">
+            <p data-compact-hidden>Total Weight: <span id="${inventoryId}-total-weight" class="text-details">0</span> pounds${carryFragment}</p>
+            <p data-compact-hidden  class="mb-4">Total Cost: <span id="${inventoryId}-total-cost" class="text-details">0</span> gold pieces</p>
+            <p class="base-movement-rate-container">Base movement rate: <span id="${inventoryId}-base-movement-rate" class="text-details">0</span></p>
             <p>
-              <span class="">Underground speed</span>, feet per turn: <span id="${inventoryId}-speed-feet-per-turn" class="text-gen-800">...</span>
+              <span class="">Underground speed</span>, feet/turn: <span id="${inventoryId}-speed-feet-per-turn" class="movement-details-wrapper">...</span>
             </p>
           </div>`
 }
@@ -167,20 +170,23 @@ const getInventoryDetails = (inventoryId: string): string => {
 export const renderInitialInventory = (inventoryId: string, name?: string): void => {
   getInventoryTablesContainer().appendChild(
     createElementFromHtml(`
-        <section id="${inventoryId}-container" class="inventory-container px-4 py-4 border shadow-lg">
-          <header class="relative">
+        <section id="${inventoryId}-container" class="inventory-container">
+          <header>
             ${getInventoryControlsSection(inventoryId)}
-            <h3
+            <h2
               id="${inventoryId}-header"
-              class="inventory-header text-lg text-alt mb-4 hover:text-red-700 hover:cursor-pointer"
+              class="inventory-header"
               title="Click to select"
-            >${name ?? inventoryId}</h3>
+            >${name ?? inventoryId}</h2>
             <div class="char-stats my-2">
               <div class="char-stats--controls mb-2"></div>
               <div class="char-stats--container mb-2"></div>
             </div>
           </header>
-          ${getInventoryTable(inventoryId)}
+          <div class="overflow-auto">
+            <h3 data-compact-hidden class="mt-4 mb-2 mx-4 text-alt text-xl">Inventory</h3>
+            ${getInventoryTable(inventoryId)}
+          </div>
           ${getInventoryDetails(inventoryId)}
         </section>
     `),
@@ -205,9 +211,6 @@ export const markSelectedInventory = (inventoryId: string): void => {
   if (inventoryContainer) {
     inventoryContainer.classList.add('selected')
   }
-
-  const containerTitle = document.getElementById('inventory-container-title')
-  containerTitle.textContent = getState().getInventory(inventoryId)?.name ?? 'NA'
 }
 
 /**
@@ -221,7 +224,7 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
     return
   }
 
-  const cellClassnames = 'px-4 py-1'
+  const cellClassnames = 'table-snw-gen-cell--inventory'
   let inventoryTableContainer = document.querySelector(`#${inventoryId}-table-container`)
   if (!inventoryTableContainer) {
     renderInitialInventory(inventoryId, inventoryName)
@@ -239,7 +242,6 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
 
   Object.values(inventory.items).forEach((item) => {
     const row = inventoryTableBody.insertRow()
-    row.className = 'even:bg-gray-50 hover:bg-gen-50'
 
     const nameCell = row.insertCell(0)
     nameCell.innerHTML = item.name + getEquipNameSuffix(item, damageMod)
@@ -259,8 +261,8 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
 
     // Create and append the Remove button
     const removeButton = document.createElement('button')
-    removeButton.textContent = 'Remove'
-    removeButton.className = 'px-4 py-1 text-sm text-red-800 hover:text-red-500'
+    removeButton.textContent = 'DEL'
+    removeButton.className = 'px-4 py-1 text-sm text-sub hover:text-alt'
     removeButton.onclick = (): void => {
       getState().removeFromInventory(inventoryId, item.name)
       dispatchEvent('RenderInventory', { inventoryId, inventoryName })
@@ -269,7 +271,7 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
 
     const actionsCell = row.insertCell(4)
     actionsCell.appendChild(removeButton)
-    actionsCell.className = `${cellClassnames} text-center px-2 w-16`
+    actionsCell.className = `${cellClassnames} text-center w-16`
 
     totalWeight += item.weight * item.quantity
     totalCost += item.cost * item.quantity
@@ -296,10 +298,11 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
 
 export const updateSpeedDisplay = (inventoryId: string, baseMovementRate: BaseMovementRate): void => {
   const speeds = getUndergroundSpeed(baseMovementRate)
-  document.getElementById(`${inventoryId}-speed-feet-per-turn`).innerHTML =
-    `Walking: <span class="text-alt">${speeds.walking}</span>` +
-    ` • Running: <span class="text-alt">${speeds.running}</span>` +
-    ` • Combat: <span class="text-alt">${speeds.combat}</span>`
+  document.getElementById(`${inventoryId}-speed-feet-per-turn`).innerHTML = [
+    `<span class="movement-details-item text-details--alt">Walking: <span class="movement-details-item__number">${speeds.walking}</span></span>`,
+    `<span class="movement-details-item text-details--alt">Running: <span class="movement-details-item__number">${speeds.running}</span></span>`,
+    `<span class="movement-details-item text-details--alt">Combat: <span class="movement-details-item__number">${speeds.combat}</span></span>`,
+  ].join(' • ')
 }
 
 /**
@@ -377,8 +380,10 @@ const bindInventoryCommonControls = (): void => {
  * @notice No direct calls
  */
 export const handleSelectInventory = (inventoryId: string): void => {
-  getState().setCurrentInventoryId(inventoryId)
+  const state = getState()
+  state.setCurrentInventoryId(inventoryId)
   markSelectedInventory(inventoryId)
+  state.serialize()
 }
 
 /**
@@ -392,3 +397,5 @@ export const initInventoryUi = (): void => {
 
   bindInventoryCommonControls()
 }
+
+// FIXME when Remove char btn cancelled - inserts random generate btn anyway

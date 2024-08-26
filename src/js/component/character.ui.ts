@@ -71,15 +71,14 @@ const renderSpellsList = (container: HTMLElement, inventory: Inventory): void =>
     list.appendChild(
       createElementFromHtml(
         [
-          `<li class="break-inside-avoid text-alt flex">`,
-          `<label for="${inventoryId}-${spellName}">`,
-          `<input class="char-spells-list--item mr-2" type="checkbox" name=""`,
+          `<li class="break-inside-avoid text-details flex items-stretch">`,
+          `<label for="${inventoryId}-${spellName}" class="flex items-center">`,
+          `<input class="char-spells-list--item mr-2 flex-shrink-0" type="checkbox" name=""`,
           `id="${inventoryId}-${spellName}" `,
           `value="${spellName}"`,
+          `title="Check to prepare a spell"`,
           prepared?.includes(spellName) ? 'checked' : '',
-          `>`,
-          spellName,
-          `<label>`,
+          `><span class="label-text">${spellName}</span></label>`,
           `</li>`,
         ].join(' '),
       ),
@@ -109,7 +108,7 @@ export const renderCasterDetails = (
     const elem = document.createElement('p')
     const formatted = getTitleFromId(key)
 
-    elem.innerHTML = `${formatted}: <span class="text-alt">${value}</span>`
+    elem.innerHTML = `${formatted}: <span class="text-details">${value}</span>`
 
     return elem
   }
@@ -135,14 +134,10 @@ export const renderCasterDetails = (
 
 const renderArmorDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
   container.appendChild(
-    createElementFromHtml(
-      `<p><span class="font-bold text-gen-800">Armor</span>: <span class="text-details">${classDef.ArmorPermitted}</span></p>`,
-    ),
+    createElementFromHtml(`<p>Armor: <span class="text-details">${classDef.ArmorPermitted}</span></p>`),
   )
   container.appendChild(
-    createElementFromHtml(
-      `<p><span class="font-bold text-gen-800">Weapons</span>: <span class="text-details">${classDef.WeaponsPermitted}</span></p>`,
-    ),
+    createElementFromHtml(`<p>Weapons: <span class="text-details">${classDef.WeaponsPermitted}</span></p>`),
   )
   container.removeAttribute('hidden')
 }
@@ -150,20 +145,14 @@ const renderArmorDetails = (container: HTMLElement, classDef: CharacterClassDef)
 const renderAlignmentDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
   const alignment = classDef.Alignment.length === 3 ? 'Any' : classDef.Alignment.join(', ')
   container.appendChild(
-    createElementFromHtml(
-      `<p><span class="font-bold text-gen-800">Suggested alignment</span>: <span class="text-details">${alignment}</span></p>`,
-    ),
+    createElementFromHtml(`<p>Suggested alignment: <span class="text-details">${alignment}</span></p>`),
   )
   container.removeAttribute('hidden')
 }
 
 const renderRacesDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
   const races = classDef.Race.length === 3 ? 'Any' : classDef.Race.join(', ')
-  container.appendChild(
-    createElementFromHtml(
-      `<p><span class="font-bold text-gen-800">Suggested races</span>: <span class="text-details">${races}</span></p>`,
-    ),
-  )
+  container.appendChild(createElementFromHtml(`<p>Suggested races: <span class="text-details">${races}</span></p>`))
   container.removeAttribute('hidden')
 }
 
@@ -175,11 +164,14 @@ const renderArmorClassDetails = (
   const armorClass = getCharArmorClass(stats, items)
 
   container.innerHTML = [
-    armorClass.armor,
     '<span class="underline underline-offset-4 decoration-dashed decoration-gray-300 hover:cursor-help" title="Descending AC [Ascending AC]">',
-    'AC',
+    '<span class="text-details">',
     armorClass.dac,
     `[${armorClass.aac}]`,
+    '</span>',
+    '</span>',
+    '<span class="text-details--alt">',
+    armorClass.armor,
     '</span>',
   ].join(' ')
 }
@@ -195,10 +187,10 @@ const renderSavingThrowDetails = (container: HTMLElement, classDef: CharacterCla
 
   const altList = Object.entries(classDef.SavingThrow.alternative)
     .map(([key, def]) => {
-      return `<li class="p-1">${getTitleFromId(key)}: ${def}</li>`
+      return `<li class="">${getTitleFromId(key)}: <span class="text-details">${def}</span></li>`
     })
     .join('')
-  altDetailsContainer.innerHTML = `<ul class="list-disc list-inside ml-2">${altList}</ul>`
+  altDetailsContainer.innerHTML = `<ul class="list-square list-inside ml-2 text-details--alt">${altList}</ul>`
 
   let toggled = false
   toggleButton.addEventListener('click', () => {

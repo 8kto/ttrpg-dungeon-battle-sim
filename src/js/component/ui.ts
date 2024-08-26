@@ -4,9 +4,11 @@ import { initEquipSetsUi } from './equipSets.ui'
 import { initExportImportUi } from './export.ui'
 import { initInventoryUi } from './inventory.ui'
 import { subscribeToEvents } from './subscriptions'
+import { initTabs } from './tabs'
 import { renderErrorMessage } from './utils'
 
 const main = (): void => {
+  initTabs()
   subscribeToEvents()
   initEquipUi()
   initInventoryUi()
