@@ -310,6 +310,7 @@ export const handleRemoveCharacter = (inventoryId: string): void => {
 
     dispatchEvent('RenderInventories')
     dispatchEvent('SelectInventory', { inventoryId: inventory.id })
+    dispatchEvent('RenderNewCharacterControlsSection', { inventoryId: inventory.id })
   }
 }
 

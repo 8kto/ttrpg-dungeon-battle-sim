@@ -7,7 +7,12 @@ import {
   handleRenderNewCharControlsSection,
   handleRenderNewRandomCharacter,
 } from './character.ui'
-import { handleRenderInventories, handleRenderInventory, handleSelectInventory } from './inventory.ui'
+import {
+  handleRenderInventories,
+  handleRenderInventory,
+  handleSelectInventory,
+  handleSetInventoryCompactMode,
+} from './inventory.ui'
 
 /**
  * Run once
@@ -42,6 +47,7 @@ export const subscribeToEvents = (): void => {
   subscribe('RenderNewCharacterControlsSection', (event: CustomEvent<{ inventoryId: string }>) => {
     assert(event.detail.inventoryId, 'No inventory ID passed')
     handleRenderNewCharControlsSection(event.detail.inventoryId)
+    dispatchEvent('SetCompactMode', { compactMode: false, inventoryId: event.detail.inventoryId })
   })
 
   subscribe('RenderNewRandomCharacter', (event: CustomEvent<{ inventoryId: string }>) => {
@@ -58,6 +64,12 @@ export const subscribeToEvents = (): void => {
   subscribe('RemoveCharacter', (event: CustomEvent<{ inventoryId: string }>) => {
     assert(event.detail.inventoryId, 'No inventory ID passed')
     handleRemoveCharacter(event.detail.inventoryId)
-    dispatchEvent('RenderNewCharacterControlsSection', { inventoryId: event.detail.inventoryId })
+  })
+
+  subscribe('SetCompactMode', (event: CustomEvent<{ inventoryId: string; compactMode: boolean }>) => {
+    assert(event.detail.inventoryId, 'No inventory ID passed')
+    const { compactMode, inventoryId } = event.detail
+
+    handleSetInventoryCompactMode(inventoryId, compactMode)
   })
 }

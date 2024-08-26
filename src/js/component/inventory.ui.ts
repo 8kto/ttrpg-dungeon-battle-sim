@@ -124,12 +124,11 @@ export const bindInventoryControls = (inventoryId: string): void => {
     const inventory = state.getInventory(inventoryId)
     const compactMode = !inventory.isCompact
 
-    setInventoryCompactMode(inventoryId, compactMode)
-    getState().setInventoryCompactMode(inventoryId, compactMode)
+    dispatchEvent('SetCompactMode', { compactMode, inventoryId })
   })
 }
 
-export const setInventoryCompactMode = (inventoryId: string, isCompact: boolean): void => {
+export const handleSetInventoryCompactMode = (inventoryId: string, isCompact: boolean): void => {
   getCompactModeAffectedElements(inventoryId).forEach((elem) => {
     if (isCompact) {
       elem.classList.add('hidden')
@@ -137,6 +136,8 @@ export const setInventoryCompactMode = (inventoryId: string, isCompact: boolean)
       elem.classList.remove('hidden')
     }
   })
+
+  getState().setInventoryCompactMode(inventoryId, isCompact)
 }
 
 export const toggleGlobalCompactMode = (): void => {
@@ -145,7 +146,7 @@ export const toggleGlobalCompactMode = (): void => {
   state.setCompactMode(!isCompactMode)
 
   state.getInventories().forEach(({ id }) => {
-    setInventoryCompactMode(id, !isCompactMode)
+    handleSetInventoryCompactMode(id, !isCompactMode)
     state.setInventoryCompactMode(id, !isCompactMode)
   })
 }
@@ -400,5 +401,4 @@ export const initInventoryUi = (): void => {
   bindInventoryCommonControls()
 }
 
-// FIXME when Remove char btn cancelled - inserts random generate btn anyway
 // TODO e2e with mobiles -- click on Inventory first
