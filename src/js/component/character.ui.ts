@@ -71,9 +71,9 @@ const renderSpellsList = (container: HTMLElement, inventory: Inventory): void =>
     list.appendChild(
       createElementFromHtml(
         [
-          `<li class="break-inside-avoid text-details flex items-stretch">`,
+          `<li class="break-inside-avoid text-details flex items-stretch mb-1">`,
           `<label for="${inventoryId}-${spellName}" class="flex items-center">`,
-          `<input class="char-spells-list--item mr-2 flex-shrink-0" type="checkbox" name=""`,
+          `<input class="char-spells-list--item mr-2 flex-shrink-0 checkbox border-4" type="checkbox" name=""`,
           `id="${inventoryId}-${spellName}" `,
           `value="${spellName}"`,
           `title="Check to prepare a spell"`,
