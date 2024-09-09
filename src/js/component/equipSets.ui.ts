@@ -2,6 +2,7 @@ import { EquipSets } from '../config/snw/EquipSets'
 import { getState } from '../state/State'
 import { importEquipSet } from '../utils/equipment'
 import { dispatchEvent } from '../utils/event'
+import { showModal } from './modal'
 
 export const renderEquipSets = (): void => {
   const dropdown = document.getElementById('equip-set-dropdown') as HTMLSelectElement
@@ -35,12 +36,31 @@ const bindEquipSetImportControls = (): void => {
   const dropdown = document.getElementById('equip-set-dropdown') as HTMLSelectElement
   const state = getState()
 
-  document.getElementById('import-equip-set-button').addEventListener('click', () => {
+  document.getElementById('import-equip-set-button').addEventListener('click', async () => {
+    const inventory = state.getInventory(state.getCurrentInventoryId())
+
+    const isConfirmed = await showModal({
+      message: `Import equipment set for ${inventory.name}?`,
+      title: 'Equipment set',
+      type: 'confirm',
+    })
+
+    if (!isConfirmed) {
+      return
+    }
+
     const equipSet = dropdown.value
     if (equipSet in EquipSets) {
-      importEquipSet(state.getInventory(state.getCurrentInventoryId()), EquipSets[equipSet])
+      importEquipSet(inventory, EquipSets[equipSet])
       state.serialize()
       dispatchEvent('RenderInventories')
+      dispatchEvent('SelectInventory', { inventoryId: inventory.id })
+    } else {
+      await showModal({
+        message: `No set is selected`,
+        title: 'Equipment set',
+        type: 'modal',
+      })
     }
 
     dropdown.value = ''
