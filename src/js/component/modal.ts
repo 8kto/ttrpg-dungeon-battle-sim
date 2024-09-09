@@ -58,7 +58,7 @@ const createInputFields = (fields: InputField[], container: HTMLElement): void =
 
     if (typeof defaultValue !== 'undefined') {
       const input = label.querySelector('input')!
-      input.value = defaultValue.toString()
+      input.value = defaultValue.toString().trim()
     }
 
     container.appendChild(label)
