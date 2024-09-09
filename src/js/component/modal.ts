@@ -69,6 +69,33 @@ const extractFormData = (form: HTMLFormElement): Record<string, string> => {
   return Object.fromEntries(new FormData(form)) as Record<string, string>
 }
 
+const bindModalControls = (dialogElement: HTMLDialogElement): void => {
+  const cancelButton = dialogElement.querySelector('.modal-cancel-btn')
+
+  cancelButton.addEventListener('click', () => {
+    dialogElement.returnValue = ReturnValue.cancel
+    dialogElement.close()
+  })
+
+  // Close the dialog when clicking outside
+  dialogElement.addEventListener('click', (event) => {
+    if (event.target === dialogElement) {
+      dialogElement.returnValue = ReturnValue.cancel
+      dialogElement.close()
+    }
+  })
+
+  // Close the dialog when the Escape key is pressed
+  const handleEscapeKey = (event: KeyboardEvent): void => {
+    if (event.key === 'Escape') {
+      dialogElement.returnValue = ReturnValue.cancel
+      dialogElement.close()
+    }
+  }
+
+  document.addEventListener('keydown', handleEscapeKey)
+}
+
 export const showModal: ShowModalFn = async <T = boolean | Record<string, string>>({
   fields = [],
   message,
@@ -82,10 +109,9 @@ export const showModal: ShowModalFn = async <T = boolean | Record<string, string
 
   const clone = document.importNode(template.content, true)
   const dialogElement = clone.querySelector<HTMLDialogElement>('dialog')
-  const modalBodyElement = clone.querySelector<HTMLDivElement>('.modal-body')
-  const titleElement = clone.querySelector('.modal-title')
-  const actionButton = clone.querySelector('.modal-action-btn')
-  const cancelButton = clone.querySelector('.modal-cancel-btn')
+  const modalBodyElement = dialogElement.querySelector<HTMLDivElement>('.modal-body')
+  const titleElement = dialogElement.querySelector('.modal-title')
+  const actionButton = dialogElement.querySelector('.modal-action-btn')
 
   if (!dialogElement || !modalBodyElement || !titleElement || !actionButton) {
     throw new Error('Modal layout is incomplete')
@@ -104,12 +130,8 @@ export const showModal: ShowModalFn = async <T = boolean | Record<string, string
   actionButton.textContent = modalActionButtons[type] || modalActionButtons.default
   dialogElement.returnValue = ReturnValue.initialValue
 
+  bindModalControls(dialogElement)
   document.body.appendChild(dialogElement)
-
-  cancelButton.addEventListener('click', () => {
-    dialogElement.returnValue = ReturnValue.cancel
-    dialogElement.close()
-  })
 
   const promise = new Promise<T>((resolve, reject) => {
     dialogElement.addEventListener('close', () => {
