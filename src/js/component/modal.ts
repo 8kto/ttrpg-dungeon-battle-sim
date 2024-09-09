@@ -112,6 +112,7 @@ export const showModal: ShowModalFn = async <T = boolean | Record<string, string
   const modalBodyElement = dialogElement.querySelector<HTMLDivElement>('.modal-body')
   const titleElement = dialogElement.querySelector('.modal-title')
   const actionButton = dialogElement.querySelector('.modal-action-btn')
+  const cancelButton = dialogElement.querySelector('.modal-cancel-btn')
 
   if (!dialogElement || !modalBodyElement || !titleElement || !actionButton) {
     throw new Error('Modal layout is incomplete')
@@ -125,6 +126,9 @@ export const showModal: ShowModalFn = async <T = boolean | Record<string, string
   }
   if (fields?.length) {
     createInputFields(fields, modalBodyElement)
+  }
+  if (type === 'modal') {
+    cancelButton.classList.add('hidden')
   }
 
   actionButton.textContent = modalActionButtons[type] || modalActionButtons.default
