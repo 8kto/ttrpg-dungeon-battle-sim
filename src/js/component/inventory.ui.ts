@@ -9,6 +9,7 @@ import { createElementFromHtml, scrollToElement } from '../utils/layout'
 import { getDamageModifier } from '../utils/snw/combat'
 import { getBaseMovementRate, getUndergroundSpeed } from '../utils/snw/movement'
 import { getCompactModeAffectedElements, getInventoryContainer, getInventoryTablesContainer } from './domSelectors'
+import { showModal } from './modal'
 
 const getInventoryTable = (inventoryId: string): string => {
   return `<table data-compact-hidden id="${inventoryId}-table-container" class="table table-zebra table-snw-gen border-neutral-content min-w-full bg-white rounded my-4 mb-6 mx-4">
@@ -72,11 +73,17 @@ export const bindInventoryControls = (inventoryId: string): void => {
     dispatchEvent('SelectInventory', { inventoryId })
   })
 
-  document.getElementById(`${inventoryId}-remove-inventory`).addEventListener('click', () => {
+  document.getElementById(`${inventoryId}-remove-inventory`).addEventListener('click', async () => {
     const state = getState()
     const inventory = state.getInventory(inventoryId)
 
-    if (confirm(`Remove inventory for ${inventory.name}?`)) {
+    const isConfirmed = await showModal({
+      message: 'Both inventory and character will be removed',
+      title: `Remove ${inventory.name}?`,
+      type: 'confirm',
+    })
+
+    if (isConfirmed) {
       state.removeInventory(inventoryId)
 
       const selected = state.getInventories()[0]
@@ -91,23 +98,45 @@ export const bindInventoryControls = (inventoryId: string): void => {
     }
   })
 
-  document.getElementById(`${inventoryId}-reset-inventory`).addEventListener('click', () => {
+  document.getElementById(`${inventoryId}-reset-inventory`).addEventListener('click', async () => {
     const state = getState()
     const inventory = state.getInventory(inventoryId)
 
-    if (confirm(`Reset inventory items for ${inventory.name}?`)) {
+    const isConfirmed = await showModal({
+      message: `Reset inventory items for ${inventory.name}?`,
+      title: 'Reset',
+      type: 'confirm',
+    })
+
+    if (isConfirmed) {
       state.resetInventoryItems(inventoryId)
       dispatchEvent('RenderInventories')
       dispatchEvent('SelectInventory', { inventoryId })
     }
   })
 
-  document.getElementById(`${inventoryId}-rename-inventory`).addEventListener('click', () => {
+  document.getElementById(`${inventoryId}-rename-inventory`).addEventListener('click', async () => {
     const state = getState()
     const inventory = state.getInventory(inventoryId)
-    const name = prompt(`Enter new name`, inventory.name)
 
-    if (name) {
+    const res = await showModal({
+      fields: [
+        {
+          defaultValue: inventory.name,
+          name: 'name',
+          title: 'New name',
+        },
+      ],
+      title: `Enter new name for ${inventory.name}`,
+      type: 'prompt',
+    })
+
+    if (res === false) {
+      return
+    }
+
+    const { name } = res
+    if (name && typeof name === 'string') {
       inventory.name = name
       state.setInventory(inventoryId, inventory)
       dispatchEvent('RenderInventories')

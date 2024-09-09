@@ -88,7 +88,6 @@ const bindImportControls = (): void => {
       return false
     }
 
-
     let json = null
 
     try {
