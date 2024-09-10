@@ -56,7 +56,7 @@ const bindEquipSetImportControls = (): void => {
       dispatchEvent('RenderInventories')
       dispatchEvent('SelectInventory', { inventoryId: inventory.id })
     } else {
-      await showModal({
+      void showModal({
         message: `No set is selected`,
         title: 'Equipment set',
         type: 'modal',

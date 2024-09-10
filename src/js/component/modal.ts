@@ -40,7 +40,6 @@ const modalActionButtons: Record<string, string> = {
 
 const createInputFields = (fields: InputField[], container: HTMLElement): void => {
   fields.forEach(({ defaultValue, name, placeholder, title, valueType }) => {
-    // Use the createElementFromHtml utility to create the label and input structure
     const label = createElementFromHtml<HTMLLabelElement>(`
       <label class="form-control w-full">
         <div class="label">

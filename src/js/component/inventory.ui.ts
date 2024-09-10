@@ -139,7 +139,7 @@ export const bindInventoryControls = (inventoryId: string): void => {
       type: 'prompt',
     })
 
-    if (res === false) {
+    if (!res) {
       return
     }
 
