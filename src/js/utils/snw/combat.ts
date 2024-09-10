@@ -5,8 +5,7 @@ import { assert } from '../assert'
 
 const MAGIC_DEFAULT_LEVEL = 1
 
-// FIXME display + for positive numbers
-export const getToHitMelee = (classDef: CharacterClassDef, stats: CharacterStats): number => {
+export const getToHitMelee = (classDef: CharacterClassDef, stats: CharacterStats): string => {
   const baseToHit = QuickAscendingArmorClassBaseToHit[MAGIC_DEFAULT_LEVEL][classDef.name]
   assert(typeof baseToHit === 'number' && !isNaN(baseToHit), `Cannot get Base To-Hit for class: ${classDef.name}`)
 
@@ -15,10 +14,12 @@ export const getToHitMelee = (classDef: CharacterClassDef, stats: CharacterStats
     statsToHit = 0
   }
 
-  return baseToHit + statsToHit
+  const res = baseToHit + statsToHit
+
+  return res <= 0 ? res.toString() : `+${res}`
 }
 
-export const getToHitMissiles = (classDef: CharacterClassDef, stats: CharacterStats): number => {
+export const getToHitMissiles = (classDef: CharacterClassDef, stats: CharacterStats): string => {
   const baseToHit = QuickAscendingArmorClassBaseToHit[MAGIC_DEFAULT_LEVEL][classDef.name]
   assert(typeof baseToHit === 'number' && !isNaN(baseToHit), `Cannot get Base To-Hit for class: ${classDef.name}`)
 
@@ -28,15 +29,17 @@ export const getToHitMissiles = (classDef: CharacterClassDef, stats: CharacterSt
     statsToHit += stats.Strength.ToHit
   }
 
-  return baseToHit + statsToHit
+  const res = baseToHit + statsToHit
+
+  return res <= 0 ? res.toString() : `+${res}`
 }
 
-export const getDamageModifier = (classDef: CharacterClassDef, stats: CharacterStats): number => {
+export const getDamageModifier = (classDef: CharacterClassDef, stats: CharacterStats): string => {
   let damageMod = stats.Strength.Damage
 
   if (classDef.name !== CharacterClass.Fighter && damageMod > 0) {
     damageMod = 0
   }
 
-  return damageMod
+  return damageMod <= 0 ? damageMod.toString() : `+${damageMod}`
 }
