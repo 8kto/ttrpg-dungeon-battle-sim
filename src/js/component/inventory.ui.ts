@@ -464,4 +464,3 @@ export const initInventoryUi = (): void => {
 }
 
 // TODO e2e with mobiles -- click on Inventory first
-// TODO + Button e.g. for arrows
