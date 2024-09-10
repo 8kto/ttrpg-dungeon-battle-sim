@@ -48,6 +48,7 @@ Current URL: https://swords-and-wizardry.ivlev.blog/
 - [x] Custom items
 - [x] Builds with WMR
 - [x] Mobiles support (limited, desktop is the prio)
+- [x] Cool retro pixel UI (well, designers needed)
 
 ## Contributions
 

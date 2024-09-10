@@ -2,6 +2,7 @@ import { AllEquipment } from '../config/snw/Equip'
 import { getState } from '../state/State'
 import { dispatchEvent } from '../utils/event'
 import { getDumpJsonContainer } from './domSelectors'
+import { showModal } from './modal'
 
 export const bindConversionControls = (): void => {
   const allowOnlyExistingCheckbox = document.getElementById('equip-import-allow-only-existing') as HTMLInputElement
@@ -65,15 +66,25 @@ export const bindDumpingControls = (): void => {
     // Remove the temporary textarea element
     document.body.removeChild(tempTextArea)
 
-    alert('Copied to clipboard!')
+    void showModal({
+      message: 'Copied to clipboard!',
+      title: 'Import',
+      type: 'modal',
+    })
   })
 }
 
 const bindImportControls = (): void => {
   const inputContainer: HTMLTextAreaElement = getDumpJsonContainer()
 
-  document.getElementById('import-json-button').addEventListener('click', () => {
-    if (!confirm('Importing JSON will overwrite the existing state.')) {
+  document.getElementById('import-json-button').addEventListener('click', async () => {
+    const isConfirmed = await showModal({
+      message: `Importing JSON will overwrite the existing state`,
+      title: 'Import',
+      type: 'confirm',
+    })
+
+    if (!isConfirmed) {
       return false
     }
 
@@ -83,14 +94,24 @@ const bindImportControls = (): void => {
       json = JSON.parse(inputContainer.value)
     } catch (err) {
       console.error(err)
-      alert('Error: could not parse the serialized data, check JSON syntax')
+      void showModal({
+        message: 'Error: could not parse the serialized data, check JSON syntax',
+        title: 'Import',
+        type: 'modal',
+      })
+
+      return false
     }
 
     const keys = Object.keys(json)
     const inventoryId = json[keys[0]]?.id
     if (json && inventoryId) {
       getState().setInventories(json)
-      alert('Success: data imported')
+      void showModal({
+        message: 'Success: data imported',
+        title: 'Import',
+        type: 'modal',
+      })
       dispatchEvent('RenderInventories')
       dispatchEvent('SelectInventory', { inventoryId })
     }

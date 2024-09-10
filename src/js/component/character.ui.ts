@@ -20,6 +20,7 @@ import { getToHitMelee, getToHitMissiles } from '../utils/snw/combat'
 import { getExperienceBonus } from '../utils/snw/experience'
 import { getMagicUserSpellsList } from '../utils/snw/magic'
 import { getCompactModeAffectedElements } from './domSelectors'
+import { showModal } from './modal'
 
 const getRootContainer = (inventoryId: string): HTMLElement => {
   const elem = document.querySelector<HTMLElement>(`#${inventoryId}-container .char-stats`)
@@ -301,11 +302,17 @@ export const handleRenderCharacterSection = (inventoryId: string): void => {
 /**
  * @notice No direct calls
  */
-export const handleRemoveCharacter = (inventoryId: string): void => {
+export const handleRemoveCharacter = async (inventoryId: string): Promise<void> => {
   const state = getState()
   const inventory = state.getInventory(inventoryId)
 
-  if (confirm(`Remove character ${inventory.name}? The inventory will remain available.`)) {
+  const isConfirmed = await showModal({
+    message: `The inventory will remain available.`,
+    title: `Remove character ${inventory.name}?`,
+    type: 'confirm',
+  })
+
+  if (isConfirmed) {
     state.removeCharacter(inventoryId)
 
     dispatchEvent('RenderInventories')

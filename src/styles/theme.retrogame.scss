@@ -80,8 +80,12 @@ h1 {
   letter-spacing: 0.125rem;
 }
 
-.input {
+.input:not(.input-bordered) {
   border-width: 0;
+}
+
+.input-bordered {
+  border-width: 4px;
 }
 
 .press-start-2p-regular {

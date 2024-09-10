@@ -9,6 +9,7 @@ import { createElementFromHtml, scrollToElement } from '../utils/layout'
 import { getDamageModifier } from '../utils/snw/combat'
 import { getBaseMovementRate, getUndergroundSpeed } from '../utils/snw/movement'
 import { getCompactModeAffectedElements, getInventoryContainer, getInventoryTablesContainer } from './domSelectors'
+import { showModal } from './modal'
 
 const getInventoryTable = (inventoryId: string): string => {
   return `<table data-compact-hidden id="${inventoryId}-table-container" class="table table-zebra table-snw-gen border-neutral-content min-w-full bg-white rounded my-4 mb-6 mx-4">
@@ -23,6 +24,14 @@ const getInventoryTable = (inventoryId: string): string => {
             </thead>
             <tbody></tbody>
           </table>`
+}
+
+const getInventoryTableControls = (inventoryId: string): string => {
+  return `
+    <div data-compact-hidden class="mx-4 flex justify-end join relative items-stretch">
+      <button id="${inventoryId}-add-custom-item" class="btn btn-primary btn-xs">Add custom item</button>
+    </div>
+  `
 }
 
 const getInventoryControlsSection = (inventoryId: string): string => {
@@ -72,11 +81,17 @@ export const bindInventoryControls = (inventoryId: string): void => {
     dispatchEvent('SelectInventory', { inventoryId })
   })
 
-  document.getElementById(`${inventoryId}-remove-inventory`).addEventListener('click', () => {
+  document.getElementById(`${inventoryId}-remove-inventory`).addEventListener('click', async () => {
     const state = getState()
     const inventory = state.getInventory(inventoryId)
 
-    if (confirm(`Remove inventory for ${inventory.name}?`)) {
+    const isConfirmed = await showModal({
+      message: 'Both inventory and character will be removed',
+      title: `Remove ${inventory.name}?`,
+      type: 'confirm',
+    })
+
+    if (isConfirmed) {
       state.removeInventory(inventoryId)
 
       const selected = state.getInventories()[0]
@@ -91,23 +106,45 @@ export const bindInventoryControls = (inventoryId: string): void => {
     }
   })
 
-  document.getElementById(`${inventoryId}-reset-inventory`).addEventListener('click', () => {
+  document.getElementById(`${inventoryId}-reset-inventory`).addEventListener('click', async () => {
     const state = getState()
     const inventory = state.getInventory(inventoryId)
 
-    if (confirm(`Reset inventory items for ${inventory.name}?`)) {
+    const isConfirmed = await showModal({
+      message: `Reset inventory items for ${inventory.name}?`,
+      title: 'Reset',
+      type: 'confirm',
+    })
+
+    if (isConfirmed) {
       state.resetInventoryItems(inventoryId)
       dispatchEvent('RenderInventories')
       dispatchEvent('SelectInventory', { inventoryId })
     }
   })
 
-  document.getElementById(`${inventoryId}-rename-inventory`).addEventListener('click', () => {
+  document.getElementById(`${inventoryId}-rename-inventory`).addEventListener('click', async () => {
     const state = getState()
     const inventory = state.getInventory(inventoryId)
-    const name = prompt(`Enter new name`, inventory.name)
 
-    if (name) {
+    const res = await showModal({
+      fields: [
+        {
+          defaultValue: inventory.name,
+          name: 'name',
+          title: 'New name',
+        },
+      ],
+      title: `Enter new name for ${inventory.name}`,
+      type: 'prompt',
+    })
+
+    if (!res) {
+      return
+    }
+
+    const { name } = res
+    if (name && typeof name === 'string') {
       inventory.name = name
       state.setInventory(inventoryId, inventory)
       dispatchEvent('RenderInventories')
@@ -125,6 +162,48 @@ export const bindInventoryControls = (inventoryId: string): void => {
     const compactMode = !inventory.isCompact
 
     dispatchEvent('SetCompactMode', { compactMode, inventoryId })
+  })
+}
+
+export const bindInventoryTableControls = (inventoryId: string): void => {
+  document.getElementById(`${inventoryId}-add-custom-item`).addEventListener('click', async () => {
+    const state = getState()
+    const inventory = state.getInventory(inventoryId)
+
+    const res = await showModal({
+      fields: [
+        { name: 'itemName', title: 'Item name' },
+        { defaultValue: 0, name: 'itemWeight', title: 'Weight, lbs.', valueType: 'number' },
+      ],
+      title: `Add custom item to inventory: ${inventory.name}?`,
+      type: 'prompt',
+    })
+
+    if (!res) {
+      return
+    }
+
+    const { itemName, itemWeight } = res
+    if (!itemName) {
+      console.error('No item name provided')
+
+      return
+    }
+
+    if (!inventory.items[itemName]) {
+      inventory.items[itemName] = {
+        cost: 0,
+        name: itemName,
+        quantity: 1,
+        weight: Number(itemWeight),
+      }
+    } else {
+      inventory.items[itemName].quantity++
+      inventory.items[itemName].weight = Number(itemWeight)
+    }
+
+    state.serialize()
+    dispatchEvent('RenderInventories')
   })
 }
 
@@ -186,6 +265,7 @@ export const renderInitialInventory = (inventoryId: string, name?: string): void
           </header>
           <div class="overflow-auto">
             <h3 data-compact-hidden class="mt-4 mb-2 mx-4 text-alt text-xl">Inventory</h3>
+            ${getInventoryTableControls(inventoryId)}
             ${getInventoryTable(inventoryId)}
           </div>
           ${getInventoryDetails(inventoryId)}
@@ -194,6 +274,7 @@ export const renderInitialInventory = (inventoryId: string, name?: string): void
   )
 
   bindInventoryControls(inventoryId)
+  bindInventoryTableControls(inventoryId)
 }
 
 export const markSelectedInventory = (inventoryId: string): void => {
@@ -332,38 +413,6 @@ export const handleRenderInventories = (): void => {
  * Run once
  */
 const bindInventoryCommonControls = (): void => {
-  document.getElementById('add-new-item-button').addEventListener('click', () => {
-    const inputNameElement = document.getElementById('new-item-name') as HTMLInputElement
-    const inputWeightElement = document.getElementById('new-item-weight') as HTMLInputElement
-
-    const itemName = inputNameElement.value.trim()
-    const itemWeight = Math.max(parseInt(inputWeightElement.value) || 0, 0)
-
-    if (!itemName) {
-      console.error('No item name provided')
-
-      return
-    }
-
-    const state = getState()
-    const inventory = state.getInventory(state.getCurrentInventoryId())
-
-    if (!inventory.items[itemName]) {
-      inventory.items[itemName] = {
-        cost: 0,
-        name: itemName,
-        quantity: 1,
-        weight: itemWeight,
-      }
-    } else {
-      inventory.items[itemName].quantity++
-      inventory.items[itemName].weight = itemWeight
-    }
-
-    state.serialize()
-    dispatchEvent('RenderInventories')
-  })
-
   document.getElementById('add-inventory-button').addEventListener('click', () => {
     const newNameInputElement = document.getElementById('new-inventory-name') as HTMLInputElement
     const inventoryName = newNameInputElement?.value.trim() || DEFAULT_INVENTORY_ID
@@ -402,3 +451,4 @@ export const initInventoryUi = (): void => {
 }
 
 // TODO e2e with mobiles -- click on Inventory first
+// TODO + Button e.g. for arrows
