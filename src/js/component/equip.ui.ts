@@ -23,7 +23,7 @@ export const getEquipTableSection = (categoryName: string, details: string | nul
                           <th class="uppercase w-1/2">Name</th>
                           <th class="uppercase w-1/6">Weight</th>
                           <th class="uppercase w-1/6">Cost, gp</th>
-                          <th class="text-center uppercase w-1/6">Actions</th>
+                          <th class="text-center uppercase w-1/6"></th>
                       </tr>
                   </thead>
                   <tbody></tbody>

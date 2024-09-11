@@ -17,9 +17,9 @@ const getInventoryTable = (inventoryId: string): string => {
               <tr class="text-xs uppercase">
                 <th class="font-normal pl-4 pr-1 py-3 min-w-[150px]">Name</th>
                 <th class="font-normal px-2 py-3 w-1/12">QTY</th>
-                <th class="font-normal px-2 py-3 w-2/12">Total Weight</th>
-                <th class="font-normal px-2 py-3 w-2/12">Total Cost</th>
-                <th class="font-normal px-2 py-3 w-1/12">Actions</th>
+                <th class="font-normal px-2 py-3 w-2/12">Weight</th>
+                <th class="font-normal px-2 py-3 w-2/12">Cost</th>
+                <th class="font-normal px-2 py-3 w-1/12"></th>
               </tr>
             </thead>
             <tbody></tbody>
