@@ -12,14 +12,14 @@ import { getCompactModeAffectedElements, getInventoryContainer, getInventoryTabl
 import { showModal } from './modal'
 
 const getInventoryTable = (inventoryId: string): string => {
-  return `<table data-compact-hidden id="${inventoryId}-table-container" class="table table-zebra table-snw-gen border-neutral-content min-w-full bg-white rounded my-4 mb-6 mx-4">
+  return `<table data-compact-hidden id="${inventoryId}-table-container" class="table table-zebra table-snw-gen border-neutral-content min-w-full bg-white rounded my-4 mb-6">
             <thead class="bg-neutral-content text-left">
               <tr class="text-xs uppercase">
-                <th class="font-normal pl-4 pr-1 py-3 min-w-[150px] w-6/12">Name</th>
+                <th class="font-normal pl-4 pr-1 py-3 min-w-[150px]">Name</th>
                 <th class="font-normal px-2 py-3 w-1/12">QTY</th>
-                <th class="font-normal px-2 py-3 w-2/12">Total Weight</th>
-                <th class="font-normal px-2 py-3 w-2/12">Total Cost</th>
-                <th class="font-normal px-2 py-3 w-1/12">Actions</th>
+                <th class="font-normal px-2 py-3 w-2/12">Weight</th>
+                <th class="font-normal px-2 py-3 w-2/12">Cost</th>
+                <th class="font-normal px-2 py-3 w-1/12"></th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -28,7 +28,7 @@ const getInventoryTable = (inventoryId: string): string => {
 
 const getInventoryTableControls = (inventoryId: string): string => {
   return `
-    <div data-compact-hidden class="mx-4 flex justify-end join relative items-stretch">
+    <div data-compact-hidden class="flex justify-end join relative items-stretch">
       <button id="${inventoryId}-add-custom-item" class="btn btn-primary btn-xs">Add custom item</button>
     </div>
   `
@@ -42,7 +42,7 @@ const getInventoryControlsSection = (inventoryId: string): string => {
                 <label tabindex="0" class="join-item inventory-controls-btn flex items-center cursor-pointer first">
                   <span role="img" aria-label="Menu" title="Menu">☰</span>
                 </label>
-                <ul role="menu" tabindex="0" class="dropdown-content menu p-2 bg-neutral-content rounded-box w-52 mt-6">
+                <ul role="menu" tabindex="0" class="dropdown-content menu p-2 bg-neutral-content rounded-box w-52 mt-6 z-50">
                   <li><a id="${inventoryId}-rename-inventory" class="inventory-controls-btn">Rename</a></li>
                   <li><a id="${inventoryId}-remove-char" class="inventory-controls-btn" title="Reset character, keep inventory">Remove character</a></li>
                   <li><a id="${inventoryId}-reset-inventory" class="inventory-controls-btn" title="Reset inventory items">Reset inventory</a></li>
@@ -263,8 +263,8 @@ export const renderInitialInventory = (inventoryId: string, name?: string): void
               <div class="char-stats--container mb-2"></div>
             </div>
           </header>
-          <div class="overflow-auto">
-            <h3 data-compact-hidden class="mt-4 mb-2 mx-4 text-alt text-xl">Inventory</h3>
+          <div class="overflow-auto px-4">
+            <h3 data-compact-hidden class="mt-4 mb-2 text-alt text-xl">Inventory</h3>
             ${getInventoryTableControls(inventoryId)}
             ${getInventoryTable(inventoryId)}
           </div>
@@ -343,18 +343,30 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
     costCell.textContent = (item.cost * item.quantity).toFixed(2).replace(/\.0+$/g, '')
     costCell.className = cellClassnames
 
-    // Create and append the Remove button
     const removeButton = document.createElement('button')
-    removeButton.textContent = 'DEL'
-    removeButton.className = 'px-4 py-1 text-sm text-sub hover:text-alt'
+    removeButton.textContent = '-'
+    removeButton.className = 'btn-action-square'
     removeButton.onclick = (): void => {
       getState().removeFromInventory(inventoryId, item.name)
       dispatchEvent('RenderInventory', { inventoryId, inventoryName })
       dispatchEvent('RenderCharacterSection', { inventoryId })
     }
 
+    const addButton = document.createElement('button')
+    addButton.textContent = '+'
+    addButton.className = 'btn-action-square'
+    addButton.onclick = (): void => {
+      getState().addToInventory(inventoryId, item)
+      dispatchEvent('RenderInventory', { inventoryId, inventoryName })
+      dispatchEvent('RenderCharacterSection', { inventoryId })
+    }
+
     const actionsCell = row.insertCell(4)
-    actionsCell.appendChild(removeButton)
+    const btnContainer = document.createElement('div')
+    btnContainer.className = 'flex'
+    btnContainer.appendChild(removeButton)
+    btnContainer.appendChild(addButton)
+    actionsCell.appendChild(btnContainer)
     actionsCell.className = `${cellClassnames} text-center w-16`
 
     totalWeight += item.weight * item.quantity
@@ -451,4 +463,3 @@ export const initInventoryUi = (): void => {
 }
 
 // TODO e2e with mobiles -- click on Inventory first
-// TODO + Button e.g. for arrows

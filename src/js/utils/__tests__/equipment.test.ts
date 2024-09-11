@@ -21,7 +21,7 @@ describe('getEquipNameSuffix', () => {
       weight: 1,
     }
     expect(getEquipNameSuffix(item)).toBe(
-      `<div class="ml-2 text-xs inline-block"><span class="text-alt">AC 2</span><span class="mr-1"><span class="font-bold text-sub">†</span></span></div>`,
+      `<div class="ml-2 text-xs inline-block"><span class="text-alt">AC 2</span><span class="mr-1"><span class="font-bold text-sub hover:cursor-help" title="Can be used as either a one-handed or two-handed weapon">†</span></span></div>`,
     )
   })
 
@@ -42,7 +42,7 @@ describe('getEquipNameSuffix', () => {
       weight: 1,
     }
     expect(getEquipNameSuffix(item)).toBe(
-      `<div class="ml-2 text-xs inline-block"><span class="mr-1"><span class="font-bold text-sub">‡</span></span><span class="text-alt hover:cursor-help" title="Weapon damage">1d6</span></div>`,
+      `<div class="ml-2 text-xs inline-block"><span class="mr-1"><span class="font-bold text-sub hover:cursor-help" title="Can be used as either a melee or missile weapon">‡</span></span><span class="text-alt hover:cursor-help" title="Weapon damage">1d6</span></div>`,
     )
   })
 

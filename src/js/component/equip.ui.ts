@@ -6,9 +6,16 @@ import { dispatchEvent } from '../utils/event'
 import { getInventoryIdFromName } from '../utils/inventory'
 import { createElementFromHtml } from '../utils/layout'
 
-export const getEquipTableSection = (categoryName: string): string => `
+enum EquipmentCategory {
+  Armor = 'Armor',
+  Weapons = 'Weapons',
+  Equipment = 'Equipment',
+}
+
+export const getEquipTableSection = (categoryName: string, details: string | null): string => `
         <section id="${getInventoryIdFromName(categoryName)}-section" class="mb-8">
             <h2 class="text-2xl text-alt font-bold mb-4">${categoryName}</h2>
+            ${details ?? ''}
             <div class="overflow-auto">
               <table class="table table-zebra min-w-full bg-white table-snw-gen">
                   <thead class="bg-neutral-content text-left">
@@ -16,7 +23,7 @@ export const getEquipTableSection = (categoryName: string): string => `
                           <th class="uppercase w-1/2">Name</th>
                           <th class="uppercase w-1/6">Weight</th>
                           <th class="uppercase w-1/6">Cost, gp</th>
-                          <th class="text-center uppercase w-1/6">Actions</th>
+                          <th class="text-center uppercase w-1/6"></th>
                       </tr>
                   </thead>
                   <tbody></tbody>
@@ -47,8 +54,8 @@ const addEquipRow = (tableBody: HTMLTableSectionElement, item: EquipItem): void 
 
   // Create and set properties for the button cell
   const addButton = document.createElement('button')
-  addButton.textContent = 'Add'
-  addButton.className = 'text-sm font-medium text-sub hover:text-alt uppercase'
+  addButton.textContent = '+'
+  addButton.className = 'btn-action-square'
   addButton.onclick = (): void => {
     const state = getState()
     const inventoryId = state.getCurrentInventoryId()
@@ -62,8 +69,27 @@ const addEquipRow = (tableBody: HTMLTableSectionElement, item: EquipItem): void 
   actionsCell.className = `${cellClassnames} text-center w-16`
 }
 
-export const renderEquipCategorySection = (container: HTMLElement, categoryName: string, items: EquipItem[]): void => {
-  const sectionHtml = getEquipTableSection(categoryName)
+const getEquipTableDetails = (categoryName: EquipmentCategory): string | null => {
+  const template = document.querySelector<HTMLTemplateElement>(`#template-${categoryName}-details`)
+  if (template) {
+    const clone = document.importNode(template.content, true)
+
+    const tempContainer = document.createElement('div')
+    tempContainer.appendChild(clone)
+
+    return tempContainer.innerHTML
+  }
+
+  return null
+}
+
+export const renderEquipCategorySection = (
+  container: HTMLElement,
+  categoryName: EquipmentCategory,
+  items: EquipItem[],
+): void => {
+  const details = getEquipTableDetails(categoryName)
+  const sectionHtml = getEquipTableSection(categoryName, details)
   const section = createElementFromHtml(sectionHtml)
   container.appendChild(section)
 
@@ -77,11 +103,7 @@ export const renderEquipCategorySection = (container: HTMLElement, categoryName:
 export const initEquipUi = (): void => {
   const equipmentContainer = document.getElementById('equipment-container')
 
-  renderEquipCategorySection(equipmentContainer, 'Armor', Armor)
-  renderEquipCategorySection(equipmentContainer, 'Weapons', Weapons)
-  renderEquipCategorySection(equipmentContainer, 'Equipment', Equip)
+  renderEquipCategorySection(equipmentContainer, EquipmentCategory.Armor, Armor)
+  renderEquipCategorySection(equipmentContainer, EquipmentCategory.Weapons, Weapons)
+  renderEquipCategorySection(equipmentContainer, EquipmentCategory.Equipment, Equip)
 }
-
-// FIXME inventory table
-// TODO weapons help block
-// TODO add item to menu
