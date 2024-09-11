@@ -54,8 +54,8 @@ const addEquipRow = (tableBody: HTMLTableSectionElement, item: EquipItem): void 
 
   // Create and set properties for the button cell
   const addButton = document.createElement('button')
-  addButton.textContent = 'Add'
-  addButton.className = 'text-sm font-medium text-sub hover:text-alt uppercase'
+  addButton.textContent = '+'
+  addButton.className = 'btn-action-square'
   addButton.onclick = (): void => {
     const state = getState()
     const inventoryId = state.getCurrentInventoryId()

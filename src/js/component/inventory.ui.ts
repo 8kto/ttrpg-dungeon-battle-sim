@@ -42,7 +42,7 @@ const getInventoryControlsSection = (inventoryId: string): string => {
                 <label tabindex="0" class="join-item inventory-controls-btn flex items-center cursor-pointer first">
                   <span role="img" aria-label="Menu" title="Menu">☰</span>
                 </label>
-                <ul role="menu" tabindex="0" class="dropdown-content menu p-2 bg-neutral-content rounded-box w-52 mt-6">
+                <ul role="menu" tabindex="0" class="dropdown-content menu p-2 bg-neutral-content rounded-box w-52 mt-6 z-50">
                   <li><a id="${inventoryId}-rename-inventory" class="inventory-controls-btn">Rename</a></li>
                   <li><a id="${inventoryId}-remove-char" class="inventory-controls-btn" title="Reset character, keep inventory">Remove character</a></li>
                   <li><a id="${inventoryId}-reset-inventory" class="inventory-controls-btn" title="Reset inventory items">Reset inventory</a></li>
@@ -343,10 +343,9 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
     costCell.textContent = (item.cost * item.quantity).toFixed(2).replace(/\.0+$/g, '')
     costCell.className = cellClassnames
 
-    // Create and append the Remove button
     const removeButton = document.createElement('button')
     removeButton.textContent = '-'
-    removeButton.className = 'px-4 py-1 text-sm font-bold text-sub hover:text-alt'
+    removeButton.className = 'btn-action-square'
     removeButton.onclick = (): void => {
       getState().removeFromInventory(inventoryId, item.name)
       dispatchEvent('RenderInventory', { inventoryId, inventoryName })
@@ -355,7 +354,7 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
 
     const addButton = document.createElement('button')
     addButton.textContent = '+'
-    addButton.className = 'px-2 py-1 text-sm font-bold text-sub hover:text-alt'
+    addButton.className = 'btn-action-square'
     addButton.onclick = (): void => {
       getState().addToInventory(inventoryId, item)
       dispatchEvent('RenderInventory', { inventoryId, inventoryName })
