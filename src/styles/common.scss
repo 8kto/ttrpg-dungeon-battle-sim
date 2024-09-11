@@ -84,3 +84,13 @@ div:empty {
 .break-inside-avoid {
   break-inside: avoid;
 }
+
+.btn-action-square {
+  @apply px-2 py-1 mx-1;
+  @apply text-sm font-bold;
+  @apply text-white bg-base-100;
+
+  &:hover {
+    @apply bg-neutral-content text-alt;
+  }
+}
