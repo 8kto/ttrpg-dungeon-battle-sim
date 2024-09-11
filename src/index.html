@@ -176,6 +176,7 @@
                       </tr>
                     </tbody>
                   </table>
+                  <h3 class="mt-6 mb-2 text-alt text-base">Indoor, Underground, and City Movement</h3>
                   <table class="mb-4 text-sm table table-zebra table-snw-gen">
                     <thead class="bg-neutral-content text-left">
                       <tr>
@@ -187,12 +188,24 @@
                     <tbody>
                       <tr>
                         <td>Walking</td>
-                        <td>Base movement rate * 20 feet/turn</td>
+                        <td>
+                          Base movement rate * 20 feet/turn <br />
+                          <div class="my-2 text-details">[3] = 60&nbsp;ft</div>
+                          <div class="my-2 text-alt">[6] = 120&nbsp;ft</div>
+                          <div class="my-2 text-details">[9] = 180&nbsp;ft</div>
+                          <div class="my-2 text-alt">[12] = 240&nbsp;ft</div>
+                        </td>
                         <td>Mapping and careful observation of the surroundings are possible.</td>
                       </tr>
                       <tr>
                         <td>Running</td>
-                        <td>Base movement rate * 40 feet/turn</td>
+                        <td>
+                          Base movement rate * 40 feet/turn <br />
+                          <div class="my-2 text-details">[3] = 120&nbsp;ft</div>
+                          <div class="my-2 text-alt">[6] = 240&nbsp;ft</div>
+                          <div class="my-2 text-details">[9] = 360&nbsp;ft</div>
+                          <div class="my-2 text-alt">[12] = 480&nbsp;ft</div>
+                        </td>
                         <td>
                           No mapping permitted. <br />
                           Characters are automatically surprised and have no chance to surprise others. <br />
@@ -200,15 +213,73 @@
                         </td>
                       </tr>
                       <tr>
-                        <td>Combat</td>
+                        <td>Combat<br /><span class="text-neutral-content">(Complete)</span></td>
                         <td>
-                          (Base movement rate * 10 ) / 3 feet <br />
+                          (BMR * 10 ) / 3 <br />
                           <div class="my-2 text-details">[3] = 10&nbsp;ft</div>
                           <div class="my-2 text-alt">[6] = 20&nbsp;ft</div>
                           <div class="my-2 text-details">[9] = 30&nbsp;ft</div>
                           <div class="my-2 text-alt">[12] = 40&nbsp;ft</div>
                         </td>
                         <td>Dashing around, battling your foes. Alternatively, running for your life.</td>
+                      </tr>
+                      <tr>
+                        <td>Combat<br /><span class="text-neutral-content">(Revised)</span></td>
+                        <td>
+                          BMR * 10 <br />
+                          <div class="my-2 text-details">[3] = 30&nbsp;ft</div>
+                          <div class="my-2 text-alt">[6] = 60&nbsp;ft</div>
+                          <div class="my-2 text-details">[9] = 90&nbsp;ft</div>
+                          <div class="my-2 text-alt">[12] = 120&nbsp;ft</div>
+                        </td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <h3 class="mt-6 mb-2 text-alt text-base">Outdoor Movement</h3>
+                  <table class="mb-4 text-sm table table-zebra table-snw-gen">
+                    <thead class="bg-neutral-content text-left">
+                      <tr>
+                        <th class="uppercase">Description</th>
+                        <th class="uppercase w-64">Speed</th>
+                        <th class="uppercase">Results</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Hiking</td>
+                        <td>Base movement rate in miles/day</td>
+                        <td>No forced march checks required.</td>
+                      </tr>
+                      <tr>
+                        <td>Forced March</td>
+                        <td>Double base movement rate in miles/day</td>
+                        <td>Forced march checks required once per day (4d6 vs. strength) to continue at this pace.</td>
+                      </tr>
+                      <tr>
+                        <td>Combat<br /><span class="text-neutral-content">(Complete)</span></td>
+                        <td>
+                          (BMR / 3) * 10 yards per round or <br />
+                          (BMR / 3) * 30 feet per round <br />
+                          <div class="my-2 text-details">[3] = 10&nbsp;yards</div>
+                          <div class="my-2 text-alt">[6] = 20&nbsp;yards</div>
+                          <div class="my-2 text-details">[9] = 30&nbsp;yards</div>
+                          <div class="my-2 text-alt">[12] = 40&nbsp;yards</div>
+                        </td>
+                        <td>Battling your foes or running for your life.</td>
+                      </tr>
+                      <tr>
+                        <td>Combat<br /><span class="text-neutral-content">(Revised)</span></td>
+                        <td>
+                          BMR * 10 yards per round or <br />
+                          BMR * 30 feet per round <br />
+                          <div class="my-2 text-details">[3] = 30&nbsp;yards</div>
+                          <div class="my-2 text-alt">[6] = 60&nbsp;yards</div>
+                          <div class="my-2 text-details">[9] = 90&nbsp;yards</div>
+                          <div class="my-2 text-alt">[12] = 120&nbsp;yards</div>
+                        </td>
+                        <td></td>
                       </tr>
                     </tbody>
                   </table>
