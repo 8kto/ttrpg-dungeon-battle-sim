@@ -300,10 +300,17 @@ h1 {
 .table-snw-gen {
   @apply text-sm;
 
+  th {
+    @apply py-4;
+  }
+
+  td {
+    @apply py-2;
+  }
+
   th,
   td {
     @apply pl-2 pr-2;
-    @apply py-2;
 
     &:first-of-type {
       @apply pl-4;
@@ -406,4 +413,10 @@ h1 {
   word-break: break-word;
   min-width: 0;
   color: inherit;
+}
+
+.btn-action-square {
+  &:hover {
+    @apply text-white bg-accent;
+  }
 }
