@@ -1,4 +1,4 @@
-## Character and inventory generator for Swords & Wizardry (Complete)
+## Character and inventory generator compatible with Swords & Wizardry (Complete/Revised)
 
 ![linter and tests](https://github.com/8kto/ttrpg-snw-generator/actions/workflows/main.yml/badge.svg)
 
