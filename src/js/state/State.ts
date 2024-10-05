@@ -247,7 +247,7 @@ export class State {
     const inventory = this.#inventories[inventoryId]
     assert<Inventory>(inventory, `setGold: Cannot find inventory ${inventoryId}`)
     assert(
-      typeof value === 'number' && !isNaN(value) && value !== null && typeof value !== 'undefined',
+      typeof value === 'number' && !isNaN(value) && value !== null && typeof value !== 'undefined' && value >= 0,
       `setGold: Invalid value ${value}`,
     )
 
@@ -262,7 +262,12 @@ export class State {
     const inventory = this.#inventories[inventoryId]
     assert<Inventory>(inventory, `setGold: Cannot find inventory ${inventoryId}`)
     assert(
-      value && typeof value === 'number' && !isNaN(value) && value !== null && typeof value !== 'undefined',
+      value &&
+        typeof value === 'number' &&
+        !isNaN(value) &&
+        value !== null &&
+        typeof value !== 'undefined' &&
+        value > 0,
       `setHitPoints: Invalid value ${value}`,
     )
 

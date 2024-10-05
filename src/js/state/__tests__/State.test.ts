@@ -388,6 +388,7 @@ describe('State', () => {
       '',
       'string',
       false,
+      -50,
       NaN,
     ])('should throw for invalid values %j', (input) => {
       // @ts-ignore
@@ -413,6 +414,7 @@ describe('State', () => {
     it.each([
       null,
       0,
+      -3,
       // eslint-disable-next-line no-undefined
       undefined,
       '',
