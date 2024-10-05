@@ -49,6 +49,43 @@ describe('combat utils', () => {
       expect(result).toBe('+2')
     })
 
+    it('should return the correct to-hit value for Fighter subclass', () => {
+      const result = getToHitMelee(CharacterClasses.Paladin, {
+        Dexterity: { ArmorClass: 0, MissilesToHit: 1, Score: 14 },
+        Strength: { Carry: 0, Damage: 0, Doors: '1-2', Score: 15, ToHit: 2 },
+      } as CharacterStats)
+      expect(result).toBe('0')
+    })
+
+    it('should return the correct to-hit value for Paladin', () => {
+      const result = getToHitMelee(CharacterClasses.Paladin, {
+        Charisma: {
+          MaxNumberOfSpecialHirelings: 5,
+          Score: 13,
+        },
+        Constitution: { HitPoints: 0, RaiseDeadSurvivalChance: '75%', Score: 9 },
+        Dexterity: { ArmorClass: 0, MissilesToHit: 0, Score: 10 },
+        Gold: 151,
+        HitPoints: 8,
+        Intelligence: {
+          MaxAdditionalLanguages: 2,
+          MaxSpellLevel: 5,
+          NewSpellUnderstandingChance: 50,
+          Score: 10,
+          SpellsPerLevel: '4/6',
+        },
+        Strength: {
+          Carry: 30,
+          Damage: 2,
+          Doors: '1-4',
+          Score: 17,
+          ToHit: 2,
+        },
+        Wisdom: { Score: 8 },
+      })
+      expect(result).toBe('0')
+    })
+
     it('should throw an error if baseToHit is not a number', () => {
       expect(() => {
         getToHitMelee(
