@@ -12,6 +12,81 @@ import {
   State,
 } from '../State'
 
+const getCharacterOptions = (): CharacterOptions => {
+  return {
+    characterClass: CharacterClass.MagicUser,
+    spells: {
+      'Charm Person': {
+        level: 1,
+        name: 'Charm Person',
+      },
+      'Detect Magic': {
+        level: 1,
+        name: 'Detect Magic',
+      },
+      'Hold Portal': {
+        level: 1,
+        name: 'Hold Portal',
+      },
+      Light: {
+        level: 1,
+        name: 'Light',
+      },
+      'Protection from Evil': {
+        level: 1,
+        name: 'Protection from Evil',
+      },
+      'Read Languages': {
+        level: 1,
+        name: 'Read Languages',
+      },
+      Shield: {
+        level: 1,
+        name: 'Shield',
+      },
+      Sleep: {
+        level: 1,
+        name: 'Sleep',
+      },
+    },
+    stats: {
+      Charisma: {
+        MaxNumberOfSpecialHirelings: 4,
+        Score: 9,
+      },
+      Constitution: {
+        HitPoints: -1,
+        RaiseDeadSurvivalChance: '50%',
+        Score: 5,
+      },
+      Dexterity: {
+        ArmorClass: 1,
+        MissilesToHit: 1,
+        Score: 13,
+      },
+      Gold: 140,
+      HitPoints: 1,
+      Intelligence: {
+        MaxAdditionalLanguages: 4,
+        MaxSpellLevel: 8,
+        NewSpellUnderstandingChance: 75,
+        Score: 15,
+        SpellsPerLevel: '6/10',
+      },
+      Strength: {
+        Carry: 5,
+        Damage: 0,
+        Doors: '1-2',
+        Score: 9,
+        ToHit: 0,
+      },
+      Wisdom: {
+        Score: 9,
+      },
+    },
+  }
+}
+
 describe('State', () => {
   let state: State
   // @ts-ignore
@@ -209,81 +284,6 @@ describe('State', () => {
   })
 
   describe('character', () => {
-    const getCharacterOptions = (): CharacterOptions => {
-      return {
-        characterClass: CharacterClass.MagicUser,
-        spells: {
-          'Charm Person': {
-            level: 1,
-            name: 'Charm Person',
-          },
-          'Detect Magic': {
-            level: 1,
-            name: 'Detect Magic',
-          },
-          'Hold Portal': {
-            level: 1,
-            name: 'Hold Portal',
-          },
-          Light: {
-            level: 1,
-            name: 'Light',
-          },
-          'Protection from Evil': {
-            level: 1,
-            name: 'Protection from Evil',
-          },
-          'Read Languages': {
-            level: 1,
-            name: 'Read Languages',
-          },
-          Shield: {
-            level: 1,
-            name: 'Shield',
-          },
-          Sleep: {
-            level: 1,
-            name: 'Sleep',
-          },
-        },
-        stats: {
-          Charisma: {
-            MaxNumberOfSpecialHirelings: 4,
-            Score: 9,
-          },
-          Constitution: {
-            HitPoints: -1,
-            RaiseDeadSurvivalChance: '50%',
-            Score: 5,
-          },
-          Dexterity: {
-            ArmorClass: 1,
-            MissilesToHit: 1,
-            Score: 13,
-          },
-          Gold: 140,
-          HitPoints: 1,
-          Intelligence: {
-            MaxAdditionalLanguages: 4,
-            MaxSpellLevel: 8,
-            NewSpellUnderstandingChance: 75,
-            Score: 15,
-            SpellsPerLevel: '6/10',
-          },
-          Strength: {
-            Carry: 5,
-            Damage: 0,
-            Doors: '1-2',
-            Score: 9,
-            ToHit: 0,
-          },
-          Wisdom: {
-            Score: 9,
-          },
-        },
-      }
-    }
-
     it('should set and remove character in inventory', () => {
       state.setCharacter(DEFAULT_INVENTORY_ID, getCharacterOptions())
 
@@ -348,6 +348,50 @@ describe('State', () => {
       state.removeInventory(DEFAULT_INVENTORY_ID)
       expect(state.getInventory(DEFAULT_INVENTORY_ID)).toBeUndefined()
       expect(state.getInventories()).toEqual([])
+    })
+
+    it('should set inventories', () => {
+      const inventories = {
+        'id-1': State.getNewInventory('id-1', 'New Inventory 1'),
+        'id-2': State.getNewInventory('id-2', 'New Inventory 2'),
+      }
+
+      state.setInventories({ ...inventories })
+      expect(state.getInventories()).toEqual(Object.values(inventories))
+    })
+  })
+
+  describe('setGold', () => {
+    beforeEach(() => {
+      state.setCharacter(DEFAULT_INVENTORY_ID, getCharacterOptions())
+    })
+
+    it('should set value', () => {
+      state.setGold(DEFAULT_INVENTORY_ID, 500)
+      expect(state.getInventory(DEFAULT_INVENTORY_ID).character?.stats.Gold).toBe(500)
+    })
+
+    it('should support 0s', () => {
+      state.setGold(DEFAULT_INVENTORY_ID, 0)
+      expect(state.getInventory(DEFAULT_INVENTORY_ID).character?.stats.Gold).toBe(0)
+    })
+
+    it('should set float', () => {
+      state.setGold(DEFAULT_INVENTORY_ID, 25.5)
+      expect(state.getInventory(DEFAULT_INVENTORY_ID).character?.stats.Gold).toBe(25.5)
+    })
+
+    it.each([
+      null,
+      // eslint-disable-next-line no-undefined
+      undefined,
+      '',
+      'string',
+      false,
+      NaN,
+    ])('should throw for invalid values %j', (input) => {
+      // @ts-ignore
+      expect(() => state.setGold(DEFAULT_INVENTORY_ID, input)).toThrow()
     })
   })
 
