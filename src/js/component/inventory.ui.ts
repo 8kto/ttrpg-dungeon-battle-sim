@@ -45,6 +45,7 @@ const getInventoryDropdownMenuSection = (inventoryId: string): string => {
                 <ul role="menu" tabindex="0" class="dropdown-content menu p-2 bg-neutral-content rounded-box w-52 mt-6 z-50">
                   <li><a id="${inventoryId}-rename-inventory" class="inventory-controls-btn">Rename</a></li>
                   <li><a id="${inventoryId}-set-gold" class="inventory-controls-btn">Set gold</a></li>
+                  <li><a id="${inventoryId}-set-hp" class="inventory-controls-btn">Set Hit Points</a></li>
                   <li><a id="${inventoryId}-remove-char" class="inventory-controls-btn" title="Reset character, keep inventory">Remove character</a></li>
                   <li><a id="${inventoryId}-reset-inventory" class="inventory-controls-btn" title="Reset inventory items">Reset inventory</a></li>
                 </ul>
@@ -170,8 +171,16 @@ export const bindInventoryControls = (inventoryId: string): void => {
     const inventory = state.getInventory(inventoryId)
 
     const res = await showModal({
-      fields: [{ defaultValue: 0, float: true, name: 'gold', title: 'Gold, GP', valueType: 'number' }],
-      title: `Add custom item to inventory: ${inventory.name}?`,
+      fields: [
+        {
+          defaultValue: inventory.character?.stats.Gold || 0,
+          float: true,
+          name: 'gold',
+          title: 'Gold, GP',
+          valueType: 'number',
+        },
+      ],
+      title: `Set gold for ${inventory.name}`,
       type: 'prompt',
     })
 
@@ -181,12 +190,45 @@ export const bindInventoryControls = (inventoryId: string): void => {
 
     const { gold } = res
     if (typeof gold === 'undefined') {
-      console.error('No valid value provided')
+      console.error('No valid value provided for Gold')
 
       return
     }
 
     state.setGold(inventoryId, gold)
+    dispatchEvent('RenderInventories')
+    dispatchEvent('SelectInventory', { inventoryId })
+  })
+
+  document.getElementById(`${inventoryId}-set-hp`).addEventListener('click', async () => {
+    const state = getState()
+    const inventory = state.getInventory(inventoryId)
+
+    const res = await showModal({
+      fields: [
+        {
+          defaultValue: inventory.character?.stats.HitPoints || 0,
+          name: 'hp',
+          title: 'Hit Points',
+          valueType: 'number',
+        },
+      ],
+      title: `Set Hit Points to ${inventory.name}`,
+      type: 'prompt',
+    })
+
+    if (!res) {
+      return
+    }
+
+    const { hp } = res
+    if (typeof hp === 'undefined') {
+      console.error('No valid value provided for Hit Points')
+
+      return
+    }
+
+    state.setHitPoints(inventoryId, Number.parseInt(hp, 10))
     dispatchEvent('RenderInventories')
     dispatchEvent('SelectInventory', { inventoryId })
   })
@@ -347,7 +389,7 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
 
   const classDef = CharacterClasses[inventory.character?.characterClass] as CharacterClassDef
   const charStats = inventory.character?.stats
-  const damageMod = charStats ? getDamageModifier(classDef, charStats) : 0
+  const damageMod = charStats ? getDamageModifier(classDef, charStats) : '0'
   let totalWeight = 0
   let totalCost = 0
 
