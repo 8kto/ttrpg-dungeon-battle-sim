@@ -391,7 +391,37 @@ describe('State', () => {
       NaN,
     ])('should throw for invalid values %j', (input) => {
       // @ts-ignore
-      expect(() => state.setGold(DEFAULT_INVENTORY_ID, input)).toThrow()
+      expect(() => state.setGold(DEFAULT_INVENTORY_ID, input)).toThrow('setGold: Invalid value')
+    })
+  })
+
+  describe('setHitPoints', () => {
+    beforeEach(() => {
+      state.setCharacter(DEFAULT_INVENTORY_ID, getCharacterOptions())
+    })
+
+    it('should set value', () => {
+      state.setHitPoints(DEFAULT_INVENTORY_ID, 8)
+      expect(state.getInventory(DEFAULT_INVENTORY_ID).character?.stats.HitPoints).toBe(8)
+    })
+
+    it('should not set float', () => {
+      state.setHitPoints(DEFAULT_INVENTORY_ID, 6.5)
+      expect(state.getInventory(DEFAULT_INVENTORY_ID).character?.stats.HitPoints).toBe(6)
+    })
+
+    it.each([
+      null,
+      0,
+      // eslint-disable-next-line no-undefined
+      undefined,
+      '',
+      'string',
+      false,
+      NaN,
+    ])('should throw for invalid values %j', (input) => {
+      // @ts-ignore
+      expect(() => state.setHitPoints(DEFAULT_INVENTORY_ID, input)).toThrow('setHitPoints: Invalid value')
     })
   })
 

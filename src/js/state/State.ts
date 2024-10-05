@@ -243,7 +243,6 @@ export class State {
     return this.#uiState.isCompactMode
   }
 
-  // TODO test
   setGold(inventoryId: string, value: number): this {
     const inventory = this.#inventories[inventoryId]
     assert<Inventory>(inventory, `setGold: Cannot find inventory ${inventoryId}`)
@@ -254,6 +253,21 @@ export class State {
 
     if (inventory.character?.stats) {
       inventory.character.stats.Gold = Number(value)
+    }
+
+    return this
+  }
+
+  setHitPoints(inventoryId: string, value: number): this {
+    const inventory = this.#inventories[inventoryId]
+    assert<Inventory>(inventory, `setGold: Cannot find inventory ${inventoryId}`)
+    assert(
+      value && typeof value === 'number' && !isNaN(value) && value !== null && typeof value !== 'undefined',
+      `setHitPoints: Invalid value ${value}`,
+    )
+
+    if (inventory.character?.stats) {
+      inventory.character.stats.HitPoints = Math.floor(value)
     }
 
     return this
