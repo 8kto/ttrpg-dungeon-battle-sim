@@ -227,7 +227,7 @@ export class State {
 
   setInventoryCompactMode(inventoryId: string, isCompact: boolean): void {
     const inventory = this.#inventories[inventoryId]
-    assert<Inventory>(inventory, `toggleCompactMode: Cannot find inventory ${inventoryId}`)
+    assert<Inventory>(inventory, `setInventoryCompactMode: Cannot find inventory ${inventoryId}`)
 
     inventory.isCompact = isCompact
     this.serialize()
@@ -243,7 +243,41 @@ export class State {
     return this.#uiState.isCompactMode
   }
 
-  // TODO test
+  setGold(inventoryId: string, value: number): this {
+    const inventory = this.#inventories[inventoryId]
+    assert<Inventory>(inventory, `setGold: Cannot find inventory ${inventoryId}`)
+    assert(
+      typeof value === 'number' && !isNaN(value) && value !== null && typeof value !== 'undefined' && value >= 0,
+      `setGold: Invalid value ${value}`,
+    )
+
+    if (inventory.character?.stats) {
+      inventory.character.stats.Gold = Number(value)
+    }
+
+    return this
+  }
+
+  setHitPoints(inventoryId: string, value: number): this {
+    const inventory = this.#inventories[inventoryId]
+    assert<Inventory>(inventory, `setGold: Cannot find inventory ${inventoryId}`)
+    assert(
+      value &&
+        typeof value === 'number' &&
+        !isNaN(value) &&
+        value !== null &&
+        typeof value !== 'undefined' &&
+        value > 0,
+      `setHitPoints: Invalid value ${value}`,
+    )
+
+    if (inventory.character?.stats) {
+      inventory.character.stats.HitPoints = Math.floor(value)
+    }
+
+    return this
+  }
+
   setInventories(data: Record<string, Inventory>): void {
     this.#inventories = data
     this.serialize()

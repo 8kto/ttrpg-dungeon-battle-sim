@@ -67,3 +67,4 @@ Contributions are welcome. Code should follow conventions described in [Code Con
 - [ ] lighter font/dark themes (?)
 - [ ] Console log with events like "Intelligence: rolled 3d6 with 12 ..." (?)
 - [ ] Reorder inventories
+- [ ] Adjustment to Retainer (CHA)
