@@ -34,7 +34,7 @@ const getInventoryTableControls = (inventoryId: string): string => {
   `
 }
 
-const getInventoryControlsSection = (inventoryId: string): string => {
+const getInventoryDropdownMenuSection = (inventoryId: string): string => {
   return `<section class="inventory-controls">
             <div class="flex justify-end join relative items-stretch">
               <!-- Hamburger Button with Dropdown -->
@@ -44,6 +44,7 @@ const getInventoryControlsSection = (inventoryId: string): string => {
                 </label>
                 <ul role="menu" tabindex="0" class="dropdown-content menu p-2 bg-neutral-content rounded-box w-52 mt-6 z-50">
                   <li><a id="${inventoryId}-rename-inventory" class="inventory-controls-btn">Rename</a></li>
+                  <li><a id="${inventoryId}-set-gold" class="inventory-controls-btn">Set gold</a></li>
                   <li><a id="${inventoryId}-remove-char" class="inventory-controls-btn" title="Reset character, keep inventory">Remove character</a></li>
                   <li><a id="${inventoryId}-reset-inventory" class="inventory-controls-btn" title="Reset inventory items">Reset inventory</a></li>
                 </ul>
@@ -163,6 +164,32 @@ export const bindInventoryControls = (inventoryId: string): void => {
 
     dispatchEvent('SetCompactMode', { compactMode, inventoryId })
   })
+
+  document.getElementById(`${inventoryId}-set-gold`).addEventListener('click', async () => {
+    const state = getState()
+    const inventory = state.getInventory(inventoryId)
+
+    const res = await showModal({
+      fields: [{ defaultValue: 0, float: true, name: 'gold', title: 'Gold, GP', valueType: 'number' }],
+      title: `Add custom item to inventory: ${inventory.name}?`,
+      type: 'prompt',
+    })
+
+    if (!res) {
+      return
+    }
+
+    const { gold } = res
+    if (typeof gold === 'undefined') {
+      console.error('No valid value provided')
+
+      return
+    }
+
+    state.setGold(inventoryId, gold)
+    dispatchEvent('RenderInventories')
+    dispatchEvent('SelectInventory', { inventoryId })
+  })
 }
 
 export const bindInventoryTableControls = (inventoryId: string): void => {
@@ -252,7 +279,7 @@ export const renderInitialInventory = (inventoryId: string, name?: string): void
     createElementFromHtml(`
         <section id="${inventoryId}-container" class="inventory-container">
           <header>
-            ${getInventoryControlsSection(inventoryId)}
+            ${getInventoryDropdownMenuSection(inventoryId)}
             <h2
               id="${inventoryId}-header"
               class="inventory-header"

@@ -6,6 +6,7 @@ type InputField = {
   placeholder?: string
   defaultValue?: string | number
   valueType?: 'string' | 'number' // Defaults to 'string'
+  float?: boolean
 }
 
 type ConfirmModalProps = {
@@ -39,7 +40,8 @@ const modalActionButtons: Record<string, string> = {
 }
 
 const createInputFields = (fields: InputField[], container: HTMLElement): void => {
-  fields.forEach(({ defaultValue, name, placeholder, title, valueType }) => {
+  fields.forEach(({ defaultValue, float, name, placeholder, title, valueType }) => {
+    const isNumberInput = valueType === 'number'
     const label = createElementFromHtml<HTMLLabelElement>(`
       <label class="form-control w-full">
         <div class="label">
@@ -50,6 +52,7 @@ const createInputFields = (fields: InputField[], container: HTMLElement): void =
           class="input input-bordered w-full"
           name="${name}"
           placeholder="${placeholder ?? ''}"
+          ${isNumberInput && float ? `step="0.1"` : ''}
           required
         />
       </label>

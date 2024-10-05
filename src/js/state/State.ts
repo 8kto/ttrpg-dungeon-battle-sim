@@ -244,6 +244,18 @@ export class State {
   }
 
   // TODO test
+  setGold(inventoryId: string, value: number): this {
+    const inventory = this.#inventories[inventoryId]
+    assert<Inventory>(inventory, `toggleCompactMode: Cannot find inventory ${inventoryId}`)
+
+    if (inventory.character?.stats) {
+      inventory.character.stats.Gold = value
+    }
+
+    return this
+  }
+
+  // TODO test
   setInventories(data: Record<string, Inventory>): void {
     this.#inventories = data
     this.serialize()
