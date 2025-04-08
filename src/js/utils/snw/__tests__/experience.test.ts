@@ -1,5 +1,5 @@
 import { CharacterClasses } from '../../../config/snw/CharacterClasses'
-import { CharacterStats } from '../../../domain/snw/CharacterStats'
+import { Attributes } from '../../../domain/snw/Attributes'
 import { getExperienceBonus } from '../experience'
 
 describe('experience utils', () => {
@@ -9,7 +9,7 @@ describe('experience utils', () => {
         getExperienceBonus(CharacterClasses.Fighter, {
           Charisma: { Score: 11 },
           Wisdom: { Score: 13 },
-        } as CharacterStats),
+        } as Attributes),
       ).toEqual(5)
     })
 
@@ -18,7 +18,7 @@ describe('experience utils', () => {
         getExperienceBonus(CharacterClasses.Fighter, {
           Charisma: { Score: 16 },
           Wisdom: { Score: 3 },
-        } as CharacterStats),
+        } as Attributes),
       ).toEqual(5)
     })
 
@@ -27,7 +27,7 @@ describe('experience utils', () => {
         getExperienceBonus(CharacterClasses.Fighter, {
           Charisma: { Score: 13 },
           Wisdom: { Score: 13 },
-        } as CharacterStats),
+        } as Attributes),
       ).toEqual(10)
     })
 
@@ -37,7 +37,7 @@ describe('experience utils', () => {
           Charisma: { Score: 11 },
           Strength: { Score: 14 },
           Wisdom: { Score: 12 },
-        } as CharacterStats),
+        } as Attributes),
       ).toEqual(5)
     })
 
@@ -49,7 +49,7 @@ describe('experience utils', () => {
           Intelligence: { Score: 13 },
           Strength: { Score: 14 },
           Wisdom: { Score: 12 },
-        } as CharacterStats),
+        } as Attributes),
       ).toEqual(5)
     })
 
@@ -61,7 +61,7 @@ describe('experience utils', () => {
           Intelligence: { Score: 13 },
           Strength: { Score: 14 },
           Wisdom: { Score: 15 },
-        } as CharacterStats),
+        } as Attributes),
       ).toEqual(10)
     })
 
@@ -73,7 +73,7 @@ describe('experience utils', () => {
           Intelligence: { Score: 13 },
           Strength: { Score: 14 },
           Wisdom: { Score: 15 },
-        } as CharacterStats),
+        } as Attributes),
       ).toEqual(15)
     })
 
@@ -85,7 +85,7 @@ describe('experience utils', () => {
           Intelligence: { Score: 13 },
           Strength: { Score: 14 },
           Wisdom: { Score: 15 },
-        } as CharacterStats),
+        } as Attributes),
       ).toEqual(15)
     })
 
@@ -97,7 +97,7 @@ describe('experience utils', () => {
           Intelligence: { Score: 16 },
           Strength: { Score: 14 },
           Wisdom: { Score: 12 },
-        } as CharacterStats),
+        } as Attributes),
       ).toEqual(5)
     })
 
@@ -109,7 +109,7 @@ describe('experience utils', () => {
           Intelligence: { Score: 16 },
           Strength: { Score: 14 },
           Wisdom: { Score: 14 },
-        } as CharacterStats),
+        } as Attributes),
       ).toEqual(10)
     })
 
@@ -121,7 +121,7 @@ describe('experience utils', () => {
           Intelligence: { Score: 16 },
           Strength: { Score: 14 },
           Wisdom: { Score: 12 },
-        } as CharacterStats),
+        } as Attributes),
       ).toEqual(5)
     })
 
@@ -133,7 +133,7 @@ describe('experience utils', () => {
           Intelligence: { Score: 16 },
           Strength: { Score: 14 },
           Wisdom: { Score: 12 },
-        } as CharacterStats),
+        } as Attributes),
       ).toEqual(5)
     })
 
@@ -145,7 +145,7 @@ describe('experience utils', () => {
           Intelligence: { Score: 16 },
           Strength: { Score: 14 },
           Wisdom: { Score: 12 },
-        } as CharacterStats),
+        } as Attributes),
       ).toEqual(5)
     })
 
@@ -158,7 +158,7 @@ describe('experience utils', () => {
           Intelligence: { Score: 16 },
           Strength: { Score: 14 },
           Wisdom: { Score: 16 },
-        } as CharacterStats),
+        } as Attributes),
       ).toEqual(15)
     })
   })

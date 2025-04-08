@@ -1,6 +1,6 @@
 import { MagicUserSpells } from '../../../config/snw/Magic'
 import { Dice } from '../../../domain/Dice'
-import { CharacterStats } from '../../../domain/snw/CharacterStats'
+import { Attributes } from '../../../domain/snw/Attributes'
 import * as diceUtils from '../../dice'
 import { getMagicUserSpellsList } from '../magic'
 
@@ -40,7 +40,7 @@ describe('magic utils', () => {
           NewSpellUnderstandingChance: 55,
           SpellsPerLevel: '4/6',
         },
-      } as CharacterStats)
+      } as Attributes)
 
       // Spies were engaged
       expect(rollSpy).toHaveBeenCalledTimes(1)
@@ -79,7 +79,7 @@ describe('magic utils', () => {
           NewSpellUnderstandingChance: 85,
           SpellsPerLevel: '7/All',
         },
-      } as CharacterStats)
+      } as Attributes)
 
       // Spies were engaged
       expect(rollSpy).toHaveBeenCalledTimes(2)

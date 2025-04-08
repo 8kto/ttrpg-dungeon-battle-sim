@@ -3,6 +3,8 @@
 exports[`State character should set and remove character in inventory 1`] = `
 {
   "characterClass": "MagicUser",
+  "gold": 140,
+  "hitPoints": 1,
   "spells": {
     "Charm Person": {
       "level": 1,
@@ -52,8 +54,6 @@ exports[`State character should set and remove character in inventory 1`] = `
       "MissilesToHit": 1,
       "Score": 13,
     },
-    "Gold": 140,
-    "HitPoints": 1,
     "Intelligence": {
       "MaxAdditionalLanguages": 4,
       "MaxSpellLevel": 8,

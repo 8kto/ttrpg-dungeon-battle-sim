@@ -1,8 +1,8 @@
 import { EquipItem } from '../../domain/Equipment'
+import { Character } from '../../domain/snw/Character'
 import { CharacterClass } from '../../domain/snw/CharacterClass'
 import { clericInventoryMock } from '../../mocks/snw/characterMocks'
 import {
-  CharacterOptions,
   DEFAULT_INVENTORY,
   DEFAULT_INVENTORY_ID,
   DEFAULT_INVENTORY_ITEMS,
@@ -12,9 +12,11 @@ import {
   State,
 } from '../State'
 
-const getCharacterOptions = (): CharacterOptions => {
+const getCharacterOptions = (): Character => {
   return {
     characterClass: CharacterClass.MagicUser,
+    gold: 140,
+    hitPoints: 1,
     spells: {
       'Charm Person': {
         level: 1,
@@ -64,8 +66,6 @@ const getCharacterOptions = (): CharacterOptions => {
         MissilesToHit: 1,
         Score: 13,
       },
-      Gold: 140,
-      HitPoints: 1,
       Intelligence: {
         MaxAdditionalLanguages: 4,
         MaxSpellLevel: 8,
@@ -368,17 +368,17 @@ describe('State', () => {
 
     it('should set value', () => {
       state.setGold(DEFAULT_INVENTORY_ID, 500)
-      expect(state.getInventory(DEFAULT_INVENTORY_ID).character?.stats.Gold).toBe(500)
+      expect(state.getInventory(DEFAULT_INVENTORY_ID).character?.gold).toBe(500)
     })
 
     it('should support 0s', () => {
       state.setGold(DEFAULT_INVENTORY_ID, 0)
-      expect(state.getInventory(DEFAULT_INVENTORY_ID).character?.stats.Gold).toBe(0)
+      expect(state.getInventory(DEFAULT_INVENTORY_ID).character?.gold).toBe(0)
     })
 
     it('should set float', () => {
       state.setGold(DEFAULT_INVENTORY_ID, 25.5)
-      expect(state.getInventory(DEFAULT_INVENTORY_ID).character?.stats.Gold).toBe(25.5)
+      expect(state.getInventory(DEFAULT_INVENTORY_ID).character?.gold).toBe(25.5)
     })
 
     it.each([
@@ -403,12 +403,12 @@ describe('State', () => {
 
     it('should set value', () => {
       state.setHitPoints(DEFAULT_INVENTORY_ID, 8)
-      expect(state.getInventory(DEFAULT_INVENTORY_ID).character?.stats.HitPoints).toBe(8)
+      expect(state.getInventory(DEFAULT_INVENTORY_ID).character?.hitPoints).toBe(8)
     })
 
     it('should not set float', () => {
       state.setHitPoints(DEFAULT_INVENTORY_ID, 6.5)
-      expect(state.getInventory(DEFAULT_INVENTORY_ID).character?.stats.HitPoints).toBe(6)
+      expect(state.getInventory(DEFAULT_INVENTORY_ID).character?.hitPoints).toBe(6)
     })
 
     it.each([

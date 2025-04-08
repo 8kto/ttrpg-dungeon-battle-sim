@@ -1,4 +1,4 @@
-import { CharacterStats } from '../../../domain/snw/CharacterStats'
+import { Attributes } from '../../../domain/snw/Attributes'
 import { getCharArmorClass, getDescArmorClass } from '../armorClass'
 
 describe('armorClass utils', () => {
@@ -22,7 +22,7 @@ describe('armorClass utils', () => {
     describe('No DEX bonus', () => {
       it('should calc AC / Leather', () => {
         expect(
-          getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as CharacterStats, {
+          getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as Attributes, {
             Leather: {
               ascArmorClass: 2,
               cost: 5,
@@ -36,7 +36,7 @@ describe('armorClass utils', () => {
 
       it('should calc AC / Ring mail', () => {
         expect(
-          getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as CharacterStats, {
+          getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as Attributes, {
             Ring: {
               ascArmorClass: 3,
               cost: 30,
@@ -50,7 +50,7 @@ describe('armorClass utils', () => {
 
       it('should calc AC / Plate', () => {
         expect(
-          getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as CharacterStats, {
+          getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as Attributes, {
             Plate: {
               ascArmorClass: 6,
               cost: 100,
@@ -64,7 +64,7 @@ describe('armorClass utils', () => {
 
       it('should calc AC / Chain', () => {
         expect(
-          getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as CharacterStats, {
+          getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as Attributes, {
             Chain: {
               ascArmorClass: 4,
               cost: 75,
@@ -78,7 +78,7 @@ describe('armorClass utils', () => {
 
       it('should calc AC / shield', () => {
         expect(
-          getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as CharacterStats, {
+          getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as Attributes, {
             Shield: { ascArmorClass: 1, cost: 15, name: 'Shield', quantity: 1, weight: 10 },
           }),
         ).toEqual({ aac: 11, armor: 'Shield', dac: 8 })
@@ -86,7 +86,7 @@ describe('armorClass utils', () => {
 
       it('should calc AC / Chain + shield', () => {
         expect(
-          getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as CharacterStats, {
+          getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as Attributes, {
             Chain: {
               ascArmorClass: 4,
               cost: 75,
@@ -101,7 +101,7 @@ describe('armorClass utils', () => {
 
       it('should calc AC / Plate, shield', () => {
         expect(
-          getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as CharacterStats, {
+          getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as Attributes, {
             Plate: {
               ascArmorClass: 6,
               cost: 100,
@@ -118,7 +118,7 @@ describe('armorClass utils', () => {
     describe('DEX bonus', () => {
       it('should calc AC / Leather', () => {
         expect(
-          getCharArmorClass({ Dexterity: { ArmorClass: 1 } } as CharacterStats, {
+          getCharArmorClass({ Dexterity: { ArmorClass: 1 } } as Attributes, {
             Leather: {
               ascArmorClass: 2,
               cost: 5,
@@ -132,7 +132,7 @@ describe('armorClass utils', () => {
 
       it('should calc AC / Plate', () => {
         expect(
-          getCharArmorClass({ Dexterity: { ArmorClass: -1 } } as CharacterStats, {
+          getCharArmorClass({ Dexterity: { ArmorClass: -1 } } as Attributes, {
             Plate: {
               ascArmorClass: 6,
               cost: 100,
@@ -146,7 +146,7 @@ describe('armorClass utils', () => {
 
       it('should calc AC / shield', () => {
         expect(
-          getCharArmorClass({ Dexterity: { ArmorClass: -1 } } as CharacterStats, {
+          getCharArmorClass({ Dexterity: { ArmorClass: -1 } } as Attributes, {
             Shield: {
               ascArmorClass: 1,
               cost: 15,
@@ -160,7 +160,7 @@ describe('armorClass utils', () => {
 
       it('should calc AC / Chain + shield', () => {
         expect(
-          getCharArmorClass({ Dexterity: { ArmorClass: 1 } } as CharacterStats, {
+          getCharArmorClass({ Dexterity: { ArmorClass: 1 } } as Attributes, {
             Chain: {
               ascArmorClass: 4,
               cost: 75,
@@ -181,7 +181,7 @@ describe('armorClass utils', () => {
 
       it('should calc AC / Plate, shield', () => {
         expect(
-          getCharArmorClass({ Dexterity: { ArmorClass: -1 } } as CharacterStats, {
+          getCharArmorClass({ Dexterity: { ArmorClass: -1 } } as Attributes, {
             Plate: {
               ascArmorClass: 6,
               cost: 100,
@@ -202,7 +202,7 @@ describe('armorClass utils', () => {
 
       it('calcs the highest AC / Plate, Leather', () => {
         expect(
-          getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as CharacterStats, {
+          getCharArmorClass({ Dexterity: { ArmorClass: 0 } } as Attributes, {
             Leather: {
               ascArmorClass: 2,
               cost: 15,
@@ -223,7 +223,7 @@ describe('armorClass utils', () => {
 
       it('calcs the highest AC / Plate, Leather, shield', () => {
         expect(
-          getCharArmorClass({ Dexterity: { ArmorClass: 1 } } as CharacterStats, {
+          getCharArmorClass({ Dexterity: { ArmorClass: 1 } } as Attributes, {
             Leather: {
               ascArmorClass: 2,
               cost: 15,

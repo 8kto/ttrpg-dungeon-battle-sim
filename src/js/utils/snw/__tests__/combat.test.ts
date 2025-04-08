@@ -1,6 +1,6 @@
 import { CharacterClasses } from '../../../config/snw/CharacterClasses'
+import { Attributes } from '../../../domain/snw/Attributes'
 import { CharacterClass, CharacterClassDef } from '../../../domain/snw/CharacterClass'
-import { CharacterStats } from '../../../domain/snw/CharacterStats'
 import { getDamageModifier, getToHitMelee, getToHitMissiles } from '../combat'
 
 describe('combat utils', () => {
@@ -19,7 +19,7 @@ describe('combat utils', () => {
       const result = getToHitMelee(CharacterClasses[characterClass], {
         Dexterity: { ArmorClass: 0, MissilesToHit: 1, Score: 14 },
         Strength: { Carry: 0, Damage: 0, Doors: '1-2', Score: 15, ToHit: 1 },
-      } as CharacterStats)
+      } as Attributes)
       expect(result).toBe(expectedValue)
     })
 
@@ -37,7 +37,7 @@ describe('combat utils', () => {
       const result = getToHitMelee(CharacterClasses[characterClass], {
         Dexterity: { ArmorClass: 0, MissilesToHit: 1, Score: 14 },
         Strength: { Carry: -10, Damage: -1, Doors: '1', Score: 4, ToHit: -2 },
-      } as CharacterStats)
+      } as Attributes)
       expect(result).toBe(expectedValue)
     })
 
@@ -45,7 +45,7 @@ describe('combat utils', () => {
       const result = getToHitMelee(CharacterClasses.Fighter, {
         Dexterity: { ArmorClass: 0, MissilesToHit: 1, Score: 14 },
         Strength: { Carry: 0, Damage: 0, Doors: '1-2', Score: 15, ToHit: 2 },
-      } as CharacterStats)
+      } as Attributes)
       expect(result).toBe('+2')
     })
 
@@ -53,7 +53,7 @@ describe('combat utils', () => {
       const result = getToHitMelee(CharacterClasses.Paladin, {
         Dexterity: { ArmorClass: 0, MissilesToHit: 1, Score: 14 },
         Strength: { Carry: 0, Damage: 0, Doors: '1-2', Score: 15, ToHit: 2 },
-      } as CharacterStats)
+      } as Attributes)
       expect(result).toBe('0')
     })
 
@@ -65,8 +65,6 @@ describe('combat utils', () => {
         },
         Constitution: { HitPoints: 0, RaiseDeadSurvivalChance: '75%', Score: 9 },
         Dexterity: { ArmorClass: 0, MissilesToHit: 0, Score: 10 },
-        Gold: 151,
-        HitPoints: 8,
         Intelligence: {
           MaxAdditionalLanguages: 2,
           MaxSpellLevel: 5,
@@ -93,7 +91,7 @@ describe('combat utils', () => {
           {
             Dexterity: { ArmorClass: 0, MissilesToHit: 1, Score: 14 },
             Strength: { Carry: 0, Damage: 0, Doors: '1-2', Score: 15, ToHit: 1 },
-          } as CharacterStats,
+          } as Attributes,
         )
       }).toThrow('Cannot get Base To-Hit for class: InvalidClass')
     })
@@ -114,7 +112,7 @@ describe('combat utils', () => {
       const result = getToHitMissiles(CharacterClasses[characterClass], {
         Dexterity: { ArmorClass: 0, MissilesToHit: 1, Score: 14 },
         Strength: { Carry: 0, Damage: 0, Doors: '1-2', Score: 15, ToHit: 1 },
-      } as CharacterStats)
+      } as Attributes)
       expect(result).toBe(expectedValue)
     })
 
@@ -125,7 +123,7 @@ describe('combat utils', () => {
           {
             Dexterity: { ArmorClass: 0, MissilesToHit: 1, Score: 14 },
             Strength: { Carry: 0, Damage: 0, Doors: '1-2', Score: 15, ToHit: 1 },
-          } as CharacterStats,
+          } as Attributes,
         )
       }).toThrow('Cannot get Base To-Hit for class: InvalidClass')
     })
@@ -134,7 +132,7 @@ describe('combat utils', () => {
       const result = getToHitMissiles(CharacterClasses.Fighter, {
         Dexterity: { ArmorClass: 0, MissilesToHit: 1, Score: 14 },
         Strength: { Carry: 0, Damage: 0, Doors: '1-2', Score: 15, ToHit: 2 },
-      } as CharacterStats)
+      } as Attributes)
       expect(result).toBe('+3')
     })
   })
@@ -143,7 +141,7 @@ describe('combat utils', () => {
     it('should return + for Fighters', () => {
       const result = getDamageModifier(CharacterClasses.Fighter, {
         Strength: { Carry: 50, Damage: 3, Doors: '1-5', Score: 18, ToHit: 2 },
-      } as CharacterStats)
+      } as Attributes)
       expect(result).toBe('+3')
     })
 
@@ -159,7 +157,7 @@ describe('combat utils', () => {
     ])('should return 0 for non-Fighters %s', (className) => {
       const result = getDamageModifier(CharacterClasses[className], {
         Strength: { Carry: 50, Damage: 3, Doors: '1-5', Score: 18, ToHit: 2 },
-      } as CharacterStats)
+      } as Attributes)
       expect(result).toBe('0')
     })
 
@@ -175,7 +173,7 @@ describe('combat utils', () => {
     ])('should return -1 for non-Fighters %s', (className) => {
       const result = getDamageModifier(CharacterClasses[className], {
         Strength: { Carry: -10, Damage: -1, Doors: '1', Score: 4, ToHit: -2 },
-      } as CharacterStats)
+      } as Attributes)
       expect(result).toBe('-1')
     })
   })
