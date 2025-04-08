@@ -1,5 +1,5 @@
-import { Character } from './snw/Character'
-import { EquipItem } from './Equipment'
+import type { EquipItem } from './Equipment'
+import type { Character } from './snw/Character'
 
 export type InventoryItem = EquipItem & {
   quantity: number

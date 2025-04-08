@@ -1,4 +1,4 @@
-import { BaseMovementRate, UndergroundMovement } from '../../../domain/snw/Movement'
+import type { BaseMovementRate, UndergroundMovement } from '../../../domain/snw/Movement'
 import { getBaseMovementRate, getUndergroundSpeed } from '../movement'
 
 describe('getBaseMovementRate', () => {

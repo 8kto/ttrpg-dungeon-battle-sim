@@ -1,5 +1,5 @@
-import { Dice } from '../Dice'
-import { SavingThrow } from './SavingThrow'
+import type { Dice } from '../Dice'
+import type { SavingThrow } from './SavingThrow'
 
 export enum CharacterClass {
   Assassin = 'Assassin',

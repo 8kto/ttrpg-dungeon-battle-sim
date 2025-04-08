@@ -1,5 +1,5 @@
-import { EquipItem } from '../../domain/Equipment'
-import { Character } from '../../domain/snw/Character'
+import type { EquipItem } from '../../domain/Equipment'
+import type { Character } from '../../domain/snw/Character'
 import { CharacterClass } from '../../domain/snw/CharacterClass'
 import { clericInventoryMock } from '../../mocks/snw/characterMocks'
 import {

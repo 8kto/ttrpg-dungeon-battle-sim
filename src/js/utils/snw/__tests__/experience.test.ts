@@ -1,5 +1,5 @@
 import { CharacterClasses } from '../../../config/snw/CharacterClasses'
-import { Attributes } from '../../../domain/snw/Attributes'
+import type { Attributes } from '../../../domain/snw/Attributes'
 import { getExperienceBonus } from '../experience'
 
 describe('experience utils', () => {

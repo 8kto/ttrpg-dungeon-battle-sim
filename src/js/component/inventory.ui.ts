@@ -1,6 +1,6 @@
 import { CharacterClasses } from '../config/snw/CharacterClasses'
-import { CharacterClassDef } from '../domain/snw/CharacterClass'
-import { BaseMovementRate } from '../domain/snw/Movement'
+import type { CharacterClassDef } from '../domain/snw/CharacterClass'
+import type { BaseMovementRate } from '../domain/snw/Movement'
 import { DEFAULT_INVENTORY_ID, getState, State } from '../state/State'
 import { getEquipNameSuffix } from '../utils/equipment'
 import { dispatchEvent } from '../utils/event'

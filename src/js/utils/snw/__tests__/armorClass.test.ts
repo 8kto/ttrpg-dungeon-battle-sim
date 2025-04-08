@@ -1,4 +1,4 @@
-import { Attributes } from '../../../domain/snw/Attributes'
+import type { Attributes } from '../../../domain/snw/Attributes'
 import { getCharArmorClass, getDescArmorClass } from '../armorClass'
 
 describe('armorClass utils', () => {

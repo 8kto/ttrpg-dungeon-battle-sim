@@ -1,5 +1,6 @@
-import { EquipItem, EquipSet, InventoryItemFlag } from '../../domain/Equipment'
-import { Inventory } from '../../domain/Inventory'
+import type { EquipItem, EquipSet} from '../../domain/Equipment'
+import { InventoryItemFlag } from '../../domain/Equipment'
+import type { Inventory } from '../../domain/Inventory'
 import { getEquipNameSuffix, importEquipSet } from '../equipment'
 
 jest.mock('../../config/snw/Equip', () => ({

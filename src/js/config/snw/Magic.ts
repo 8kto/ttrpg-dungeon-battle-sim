@@ -1,5 +1,5 @@
 import { CharacterClass } from '../../domain/snw/CharacterClass'
-import { Spell } from '../../domain/snw/Magic'
+import type { Spell } from '../../domain/snw/Magic'
 
 export const MagicUserSpells: Record<string, Spell> = Object.freeze({
   'Charm Person': {

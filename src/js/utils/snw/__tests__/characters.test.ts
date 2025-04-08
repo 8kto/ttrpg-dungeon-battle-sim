@@ -6,14 +6,15 @@ import {
   IntelligenceModifiers,
   StrengthModifiers,
 } from '../../../config/snw/Modifiers'
-import { Attributes } from '../../../domain/snw/Attributes'
-import { AttrScore } from '../../../domain/snw/CharacterClass'
+import type { Attributes } from '../../../domain/snw/Attributes'
+import type { AttrScore } from '../../../domain/snw/CharacterClass'
+import type {
+  MatchingClasses} from '../character'
 import {
   getBestClass,
   getClassSuggestions,
   getMatchedPrimaryAttributes,
   getMatchingScore,
-  MatchingClasses,
 } from '../character'
 
 describe('character utils', () => {

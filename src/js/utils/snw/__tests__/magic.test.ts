@@ -1,6 +1,6 @@
 import { MagicUserSpells } from '../../../config/snw/Magic'
 import { Dice } from '../../../domain/Dice'
-import { Attributes } from '../../../domain/snw/Attributes'
+import type { Attributes } from '../../../domain/snw/Attributes'
 import * as diceUtils from '../../dice'
 import { getMagicUserSpellsList } from '../magic'
 

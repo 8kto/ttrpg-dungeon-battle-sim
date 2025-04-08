@@ -1,5 +1,5 @@
 import { Armor, Equip, Weapons } from '../config/snw/Equip'
-import { EquipItem } from '../domain/Equipment'
+import type { EquipItem } from '../domain/Equipment'
 import { getState } from '../state/State'
 import { getEquipNameSuffix } from '../utils/equipment'
 import { dispatchEvent } from '../utils/event'

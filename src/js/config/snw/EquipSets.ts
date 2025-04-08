@@ -1,4 +1,4 @@
-import { EquipSet } from '../../domain/Equipment'
+import type { EquipSet } from '../../domain/Equipment'
 
 const BaseAdventurerEquipSet: EquipSet = {
   name: 'Base Adventurer',

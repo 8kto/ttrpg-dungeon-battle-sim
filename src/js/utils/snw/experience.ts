@@ -2,8 +2,9 @@
 // Charisma 13+: all chars
 
 import { PRIME_ATTR_MIN } from '../../config/snw/CharacterClasses'
-import { AttrScore, CharacterClassDef } from '../../domain/snw/CharacterClass'
-import { Attributes } from '../../domain/snw/Attributes'
+import type { Attributes } from '../../domain/snw/Attributes'
+import type { CharacterClassDef } from '../../domain/snw/CharacterClass'
+import { AttrScore } from '../../domain/snw/CharacterClass'
 
 const BASE_BONUS_VALUE = 5
 

@@ -1,6 +1,7 @@
 import { AllEquipment } from '../config/snw/Equip'
-import { EquipItem, EquipSet, InventoryItemFlag } from '../domain/Equipment'
-import { Inventory } from '../domain/Inventory'
+import type { EquipItem, EquipSet} from '../domain/Equipment'
+import { InventoryItemFlag } from '../domain/Equipment'
+import type { Inventory } from '../domain/Inventory'
 
 export const getEquipNameSuffix = (item: EquipItem, damageMod?: string): string => {
   const sfx: string[] = []

@@ -1,6 +1,7 @@
 import { QuickAscendingArmorClassBaseToHit } from '../../config/snw/Combat'
-import { CharacterClass, CharacterClassDef } from '../../domain/snw/CharacterClass'
-import { Attributes } from '../../domain/snw/Attributes'
+import type { Attributes } from '../../domain/snw/Attributes'
+import type { CharacterClassDef } from '../../domain/snw/CharacterClass'
+import { CharacterClass } from '../../domain/snw/CharacterClass'
 import { assert } from '../assert'
 
 const MAGIC_DEFAULT_LEVEL = 1

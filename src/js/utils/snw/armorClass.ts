@@ -1,5 +1,5 @@
-import { InventoryItem } from '../../domain/Inventory'
-import { Attributes } from '../../domain/snw/Attributes'
+import type { InventoryItem } from '../../domain/Inventory'
+import type { Attributes } from '../../domain/snw/Attributes'
 import { assert } from '../assert'
 
 type CharArmorClass = {

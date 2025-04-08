@@ -1,10 +1,10 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 
 import { CharacterClasses } from '../config/snw/CharacterClasses'
-import { EquipItem } from '../domain/Equipment'
-import { Inventory, InventoryItem } from '../domain/Inventory'
-import { Character } from '../domain/snw/Character'
-import { CharacterClassDef } from '../domain/snw/CharacterClass'
+import type { EquipItem } from '../domain/Equipment'
+import type { Inventory, InventoryItem } from '../domain/Inventory'
+import type { Character } from '../domain/snw/Character'
+import type { CharacterClassDef } from '../domain/snw/CharacterClass'
 import { assert } from '../utils/assert'
 
 export type UiState = {

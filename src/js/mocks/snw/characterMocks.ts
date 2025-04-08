@@ -1,4 +1,4 @@
-import { Inventory } from '../../domain/Inventory'
+import type { Inventory } from '../../domain/Inventory'
 import { CharacterClass } from '../../domain/snw/CharacterClass'
 
 export const clericInventoryMock: Inventory = {

@@ -1,5 +1,6 @@
 import { Dice } from '../../domain/Dice'
-import { Alignment, AttrScore, CharacterClass, CharacterClassDef, CharacterRace } from '../../domain/snw/CharacterClass'
+import type { CharacterClassDef} from '../../domain/snw/CharacterClass'
+import { Alignment, AttrScore, CharacterClass, CharacterRace } from '../../domain/snw/CharacterClass'
 import { ClericSavingThrows, FightersSavingThrows, MagicUsersSavingThrows } from './SavingThrows'
 
 export const ANY_RACE = Object.values(CharacterRace) as CharacterRace[]

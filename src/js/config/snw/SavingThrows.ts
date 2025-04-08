@@ -1,4 +1,4 @@
-import { AlternativeSavingThrow } from '../../domain/snw/SavingThrow'
+import type { AlternativeSavingThrow } from '../../domain/snw/SavingThrow'
 
 /**
  * @fileoverview Alternative Saving Throws instead of one unified.

@@ -6,8 +6,9 @@ import {
   IntelligenceModifiers,
   StrengthModifiers,
 } from '../../config/snw/Modifiers'
-import { Attributes, ScoredModifierDef } from '../../domain/snw/Attributes'
-import { AttrScore, CharacterClass, CharacterClassDef, PrimeAttribute } from '../../domain/snw/CharacterClass'
+import type { Attributes, ScoredModifierDef } from '../../domain/snw/Attributes'
+import type { CharacterClass, CharacterClassDef, PrimeAttribute } from '../../domain/snw/CharacterClass'
+import { AttrScore } from '../../domain/snw/CharacterClass'
 import { getRandomArrayItem, roll, rollDiceFormula } from '../dice'
 
 type TargetAttrs = Record<AttrScore, number>

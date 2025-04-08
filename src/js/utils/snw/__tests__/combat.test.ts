@@ -1,6 +1,7 @@
 import { CharacterClasses } from '../../../config/snw/CharacterClasses'
-import { Attributes } from '../../../domain/snw/Attributes'
-import { CharacterClass, CharacterClassDef } from '../../../domain/snw/CharacterClass'
+import type { Attributes } from '../../../domain/snw/Attributes'
+import type { CharacterClassDef } from '../../../domain/snw/CharacterClass'
+import { CharacterClass } from '../../../domain/snw/CharacterClass'
 import { getDamageModifier, getToHitMelee, getToHitMissiles } from '../combat'
 
 describe('combat utils', () => {

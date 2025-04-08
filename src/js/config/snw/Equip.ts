@@ -1,4 +1,5 @@
-import { EquipItem, InventoryItemFlag } from '../../domain/Equipment'
+import type { EquipItem} from '../../domain/Equipment'
+import { InventoryItemFlag } from '../../domain/Equipment'
 
 export const Armor: Array<EquipItem> = [
   { cost: 15, name: 'Shield', weight: 10, ascArmorClass: 1 },
