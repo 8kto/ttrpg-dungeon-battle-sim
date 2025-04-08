@@ -4,24 +4,21 @@ import type { Inventory, InventoryItem } from '../domain/Inventory'
 import type { Attributes } from '../domain/snw/Attributes'
 import type { Character } from '../domain/snw/Character'
 import type { CharacterClassDef } from '../domain/snw/CharacterClass'
-import { CharacterClass } from '../domain/snw/CharacterClass'
 import type { Spell } from '../domain/snw/Magic'
 import { getState } from '../state/State'
 import { assert } from '../utils/assert'
-import { rollDiceFormula } from '../utils/dice'
 import { dispatchEvent } from '../utils/event'
 import { createElementFromHtml, getElementById, getTitleFromId } from '../utils/layout'
 import { getCharArmorClass } from '../utils/snw/armorClass'
 import {
   getBestClass,
-  getCharacterHitPoints,
   getClassSuggestions,
+  getNewCharacter,
   getRandomAttributes,
   getRandomClass,
 } from '../utils/snw/character'
 import { getToHitMelee, getToHitMissiles } from '../utils/snw/combat'
 import { getExperienceBonus } from '../utils/snw/experience'
-import { getMagicUserSpellsList } from '../utils/snw/magic'
 import { getCompactModeAffectedElements } from './domSelectors'
 import { showModal } from './modal'
 
@@ -54,7 +51,7 @@ const renderSpellsList = (container: HTMLElement, inventory: Inventory): void =>
   const prepared = inventory.character?.prepared
 
   if (inventory.character?.spells === 'All') {
-    spells = CasterSpells[inventory.character.characterClass]
+    spells = CasterSpells[inventory.character.classDef.name]
   } else if (!!inventory.character?.spells && typeof inventory.character?.spells === 'object') {
     spells = inventory.character.spells
   } else {
@@ -242,7 +239,8 @@ export const handleRenderCharacterSection = (inventoryId: string): void => {
     return
   }
 
-  const { characterClass, gold, hitPoints, stats } = inventory.character
+  const { classDef, gold, hitPoints, stats } = inventory.character
+  const characterClass = classDef.name
   assert(characterClass && stats, `No character data found for inventory ${inventoryId}`)
 
   const container = getRootContainer(inventoryId).querySelector('.char-stats--container')!
@@ -274,7 +272,6 @@ export const handleRenderCharacterSection = (inventoryId: string): void => {
     })
   })
 
-  const classDef = CharacterClasses[characterClass]
   assert(classDef, `Unknown character class: ${characterClass}`)
 
   if (classDef.$isCaster) {
@@ -349,23 +346,7 @@ export const handleRenderNewRandomCharacter = (inventoryId: string): void => {
     classDef = getRandomClass()
   }
 
-  const char: Character = {
-    characterClass: classDef.name,
-    gold: rollDiceFormula('3d6') * 10,
-    hitPoints: getCharacterHitPoints(classDef, stats.Constitution.HitPoints),
-    stats,
-  }
-
-  if (classDef.$isCaster) {
-    if (classDef.name === CharacterClass.Druid || classDef.name === CharacterClass.Cleric) {
-      char.spells = 'All'
-    } else if (classDef.name === CharacterClass.MagicUser) {
-      char.spells = getMagicUserSpellsList(stats)
-    } else {
-      throw new Error('Unknown type of caster')
-    }
-  }
-
+  const char: Character = getNewCharacter(classDef, stats)
   state.setCharacter(inventoryId, char)
 
   dispatchEvent('RenderCharacterSection', { inventoryId })

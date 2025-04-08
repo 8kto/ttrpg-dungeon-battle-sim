@@ -7,9 +7,13 @@ import {
   StrengthModifiers,
 } from '../../config/snw/Modifiers'
 import type { Attributes, ScoredModifierDef } from '../../domain/snw/Attributes'
-import type { CharacterClass, CharacterClassDef, PrimeAttribute } from '../../domain/snw/CharacterClass'
-import { AttrScore } from '../../domain/snw/CharacterClass'
+import type { Character } from '../../domain/snw/Character'
+import type { CharacterClassDef, PrimeAttribute } from '../../domain/snw/CharacterClass'
+import { AttrScore, CharacterClass, CharacterRace } from '../../domain/snw/CharacterClass'
 import { getRandomArrayItem, roll, rollDiceFormula } from '../dice'
+import { getCharArmorClass } from './armorClass'
+import { getToHitMelee, getToHitMissiles } from './combat'
+import { getMagicUserSpellsList } from './magic'
 
 type TargetAttrs = Record<AttrScore, number>
 type MatchingClassesRecord = [CharacterClass, PrimeAttribute[], TargetAttrs]
@@ -158,4 +162,33 @@ export const getBestClass = (matchedClasses: MatchingClasses): CharacterClass =>
   }
 
   return res
+}
+
+// TODO make UI renderers consume these inlined props
+export const getNewCharacter = (classDef: CharacterClassDef, stats: Attributes): Character => {
+  const char: Character = {
+    gold: rollDiceFormula('3d6') * 10,
+    hitPoints: getCharacterHitPoints(classDef, stats.Constitution.HitPoints),
+    stats,
+    level: 1,
+    classDef,
+    ancestry: CharacterRace.Human,
+    toHit: {
+      melee: getToHitMelee(classDef, stats),
+      missiles: getToHitMissiles(classDef, stats),
+    },
+    armorClass: getCharArmorClass(stats, {}),
+  }
+
+  if (classDef.$isCaster) {
+    if (classDef.name === CharacterClass.Druid || classDef.name === CharacterClass.Cleric) {
+      char.spells = 'All'
+    } else if (classDef.name === CharacterClass.MagicUser) {
+      char.spells = getMagicUserSpellsList(stats)
+    } else {
+      throw new Error('Unknown type of caster')
+    }
+  }
+
+  return char
 }

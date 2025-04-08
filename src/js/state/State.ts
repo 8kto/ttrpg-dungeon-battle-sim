@@ -59,6 +59,7 @@ export class State {
    * NB This worth debouncing for cases when called in loops
    */
   serialize(): this {
+    // TODO ref class instead of inlining
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.#inventories))
     localStorage.setItem(LOCAL_UI_STORAGE_KEY, JSON.stringify(this.#uiState))
 
@@ -202,7 +203,7 @@ export class State {
     assert<Inventory>(inventory, `setPreparedSpells: Cannot find inventory ${inventoryId}`)
     assert<Character>(inventory.character, `setPreparedSpells: Cannot find inventory ${inventoryId}`)
 
-    const classDef = CharacterClasses[inventory.character.characterClass]
+    const classDef = CharacterClasses[inventory.character.classDef.name]
     assert<CharacterClassDef>(classDef, `setPreparedSpells: Cannot parse character class for ${inventoryId}`)
     assert<boolean>(classDef.$isCaster, `setPreparedSpells: Character class is not caster: ${inventoryId}`)
 

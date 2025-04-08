@@ -9,14 +9,11 @@ const { exportedStats } = require('./__tests__/mocks.js')
 /** @type {import('js/domain/Inventory').Inventory} */
 const char = exportedStats.MainCharacter
 
-// /** @type {import('js/domain/snw/CharacterClass').CharacterClassDef} */
-// const classDef = CharacterClasses[char.character.characterClass]
-
 /**
  * @type {Record<string, string>}
  */
 const MAP_FIELDS_TO_CHAR_ATTRS = {
-  'Class 2': 'character.characterClass',
+  'Class 2': 'character.classDef.name',
   'Hit Points 2': 'character.hitPoints',
   'Strength 2': 'character.stats.Strength.Score',
   'Dexterity 2': 'character.stats.Dexterity.Score',

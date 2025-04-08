@@ -388,8 +388,8 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
   const inventoryTableBody = inventoryTableContainer.querySelector<HTMLTableSectionElement>('table tbody')!
   inventoryTableBody.innerHTML = ''
 
-  const classDef = inventory.character?.characterClass
-    ? (CharacterClasses[inventory.character.characterClass] as CharacterClassDef)
+  const classDef = inventory.character?.classDef.name
+    ? (CharacterClasses[inventory.character.classDef.name] as CharacterClassDef)
     : getRandomClass()
   const charStats = inventory.character?.stats
   const damageMod = charStats ? getDamageModifier(classDef, charStats) : '0'
