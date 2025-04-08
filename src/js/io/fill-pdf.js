@@ -17,7 +17,7 @@ const char = exportedStats.MainCharacter
  */
 const MAP_FIELDS_TO_CHAR_ATTRS = {
   'Class 2': 'character.characterClass',
-  'Hit Points 2': 'character.stats.HitPoints',
+  'Hit Points 2': 'character.hitPoints',
   'Strength 2': 'character.stats.Strength.Score',
   'Dexterity 2': 'character.stats.Dexterity.Score',
   'Constitution 2': 'character.stats.Constitution.Score',
@@ -72,7 +72,7 @@ const main = async (params) => {
 
     form.getFields().forEach((f) => {
       const fieldName = f.getName()
-      const value = getAttrValue(char, MAP_FIELDS_TO_CHAR_ATTRS[ fieldName])
+      const value = getAttrValue(char, MAP_FIELDS_TO_CHAR_ATTRS[fieldName])
 
       if (value) {
         const nameField = form.getTextField(fieldName)
