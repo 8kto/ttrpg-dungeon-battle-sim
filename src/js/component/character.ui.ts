@@ -1,13 +1,15 @@
 import { CharacterClasses } from '../config/snw/CharacterClasses'
 import { CasterSpells } from '../config/snw/Magic'
 import { Inventory, InventoryItem } from '../domain/Inventory'
+import { Attributes } from '../domain/snw/Attributes'
+import { Character } from '../domain/snw/Character'
 import { CharacterClass, CharacterClassDef } from '../domain/snw/CharacterClass'
-import { CharacterStats } from '../domain/snw/CharacterStats'
 import { Spell } from '../domain/snw/Magic'
-import { CharacterOptions, getState } from '../state/State'
+import { getState } from '../state/State'
 import { assert } from '../utils/assert'
+import { rollDiceFormula } from '../utils/dice'
 import { dispatchEvent } from '../utils/event'
-import { createElementFromHtml, getTitleFromId } from '../utils/layout'
+import { createElementFromHtml, getElementById, getTitleFromId } from '../utils/layout'
 import { getCharArmorClass } from '../utils/snw/armorClass'
 import {
   getBestClass,
@@ -159,7 +161,7 @@ const renderRacesDetails = (container: HTMLElement, classDef: CharacterClassDef)
 
 const renderArmorClassDetails = (
   container: HTMLElement,
-  stats: CharacterStats,
+  stats: Attributes,
   items: Record<string, InventoryItem>,
 ): void => {
   const armorClass = getCharArmorClass(stats, items)
@@ -239,26 +241,30 @@ export const handleRenderCharacterSection = (inventoryId: string): void => {
     return
   }
 
-  const { characterClass, stats } = inventory.character
+  const { characterClass, gold, hitPoints, stats } = inventory.character
   assert(characterClass && stats, `No character data found for inventory ${inventoryId}`)
 
-  const container = getRootContainer(inventoryId).querySelector('.char-stats--container')
+  const container = getRootContainer(inventoryId).querySelector('.char-stats--container')!
   container.innerHTML = ''
 
-  const template = document.getElementById('template-char-stats') as HTMLTemplateElement
+  const template = getElementById<HTMLTemplateElement>('template-char-stats')
   const clone = document.importNode(template.content, true)
   container.appendChild(clone)
 
-  const tableStats = container.querySelector('table.table-stats')
-  const tableBonuses = container.querySelector('table.table-bonuses')
+  const tableStats = container.querySelector('table.table-stats')!
+  const tableBonuses = container.querySelector('table.table-bonuses')!
 
   Object.entries(stats).forEach(([statName, stat]) => {
+    if (typeof stat !== 'object') {
+      return
+    }
+
     const { Score, ...bonuses } = stat
 
     // Attribute scores
     const statCell = tableStats.querySelector(`.col-stat-${statName} td:nth-child(2)`)
     if (statCell) {
-      statCell.textContent = Score
+      statCell.textContent = Score.toString()
     }
 
     // Attribute bonuses
@@ -275,24 +281,24 @@ export const handleRenderCharacterSection = (inventoryId: string): void => {
   assert(classDef, `Unknown character class: ${characterClass}`)
 
   if (classDef.$isCaster) {
-    const casterDetailsContainer = container.querySelector<HTMLElement>('.char-stats--caster-details')
+    const casterDetailsContainer = container.querySelector<HTMLElement>('.char-stats--caster-details')!
     renderCasterDetails(casterDetailsContainer, classDef, inventory)
   }
 
-  renderArmorDetails(container.querySelector<HTMLElement>('.char-stats--armor'), classDef)
-  renderAlignmentDetails(container.querySelector<HTMLElement>('.char-stats--alignment'), classDef)
-  renderRacesDetails(container.querySelector<HTMLElement>('.char-stats--races'), classDef)
-  renderArmorClassDetails(container.querySelector('.char-ac'), stats, inventory.items)
-  renderSavingThrowDetails(container.querySelector('.char-saving-throw'), classDef)
+  renderArmorDetails(container.querySelector<HTMLElement>('.char-stats--armor')!, classDef)
+  renderAlignmentDetails(container.querySelector<HTMLElement>('.char-stats--alignment')!, classDef)
+  renderRacesDetails(container.querySelector<HTMLElement>('.char-stats--races')!, classDef)
+  renderArmorClassDetails(container.querySelector('.char-ac')!, stats, inventory.items)
+  renderSavingThrowDetails(container.querySelector('.char-saving-throw')!, classDef)
 
   // Other details
-  container.querySelector('.char-gold').textContent = stats.Gold.toString()
-  container.querySelector('.char-hp').textContent = stats.HitPoints.toString()
-  container.querySelector('.char-hd').textContent = classDef.HitDice.toString()
-  container.querySelector('.char-class').textContent = classDef.name
-  container.querySelector('.char-exp-bonus').textContent = getExperienceBonus(classDef, stats).toString()
-  container.querySelector('.char-to-hit--melee').textContent = getToHitMelee(classDef, stats).toString()
-  container.querySelector('.char-to-hit--missiles').textContent = getToHitMissiles(classDef, stats).toString()
+  container.querySelector('.char-gold')!.textContent = gold.toString()
+  container.querySelector('.char-hp')!.textContent = hitPoints.toString()
+  container.querySelector('.char-hd')!.textContent = classDef.HitDice.toString()
+  container.querySelector('.char-class')!.textContent = classDef.name
+  container.querySelector('.char-exp-bonus')!.textContent = getExperienceBonus(classDef, stats).toString()
+  container.querySelector('.char-to-hit--melee')!.textContent = getToHitMelee(classDef, stats).toString()
+  container.querySelector('.char-to-hit--missiles')!.textContent = getToHitMissiles(classDef, stats).toString()
 
   if (inventory.isCompact) {
     getCompactModeAffectedElements(inventoryId).forEach((elem) => elem.classList.add('hidden'))
@@ -342,23 +348,28 @@ export const handleRenderNewRandomCharacter = (inventoryId: string): void => {
       throw new Error('Character class not found')
     }
   } catch (err) {
-    console.info('No matching classes. Choosing random', err.message)
+    console.info('No matching classes. Choosing random', (err as Error).message)
     classDef = getRandomClass()
   }
 
-  stats.HitPoints = getCharacterHitPoints(classDef, stats.Constitution.HitPoints)
-  const charOptions: CharacterOptions = { characterClass: classDef.name, stats }
+  const char: Character = {
+    characterClass: classDef.name,
+    gold: rollDiceFormula('3d6') * 10,
+    hitPoints: getCharacterHitPoints(classDef, stats.Constitution.HitPoints),
+    stats,
+  }
+
   if (classDef.$isCaster) {
     if (classDef.name === CharacterClass.Druid || classDef.name === CharacterClass.Cleric) {
-      charOptions.spells = 'All'
+      char.spells = 'All'
     } else if (classDef.name === CharacterClass.MagicUser) {
-      charOptions.spells = getMagicUserSpellsList(stats)
+      char.spells = getMagicUserSpellsList(stats)
     } else {
       throw new Error('Unknown type of caster')
     }
   }
 
-  state.setCharacter(inventoryId, charOptions)
+  state.setCharacter(inventoryId, char)
 
   dispatchEvent('RenderCharacterSection', { inventoryId })
 }

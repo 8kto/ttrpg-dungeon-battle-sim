@@ -7,6 +7,9 @@ import { subscribeToEvents } from './subscriptions'
 import { initTabs } from './tabs'
 import { renderErrorMessage } from './utils'
 
+/**
+ * Main entry point that renders UI and binds event listeners
+ */
 const main = (): void => {
   initTabs()
   subscribeToEvents()

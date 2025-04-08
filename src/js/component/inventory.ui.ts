@@ -5,7 +5,7 @@ import { DEFAULT_INVENTORY_ID, getState, State } from '../state/State'
 import { getEquipNameSuffix } from '../utils/equipment'
 import { dispatchEvent } from '../utils/event'
 import { getInventoryIdFromName } from '../utils/inventory'
-import { createElementFromHtml, scrollToElement } from '../utils/layout'
+import { createElementFromHtml, getElementById, scrollToElement } from '../utils/layout'
 import { getDamageModifier } from '../utils/snw/combat'
 import { getBaseMovementRate, getUndergroundSpeed } from '../utils/snw/movement'
 import { getCompactModeAffectedElements, getInventoryContainer, getInventoryTablesContainer } from './domSelectors'
@@ -79,11 +79,11 @@ const addInventory = (inventoryName: string): string => {
  * Run once per inventory
  */
 export const bindInventoryControls = (inventoryId: string): void => {
-  document.getElementById(`${inventoryId}-header`).addEventListener('click', () => {
+  getElementById(`${inventoryId}-header`).addEventListener('click', () => {
     dispatchEvent('SelectInventory', { inventoryId })
   })
 
-  document.getElementById(`${inventoryId}-remove-inventory`).addEventListener('click', async () => {
+  getElementById(`${inventoryId}-remove-inventory`).addEventListener('click', async () => {
     const state = getState()
     const inventory = state.getInventory(inventoryId)
 
@@ -108,7 +108,7 @@ export const bindInventoryControls = (inventoryId: string): void => {
     }
   })
 
-  document.getElementById(`${inventoryId}-reset-inventory`).addEventListener('click', async () => {
+  getElementById(`${inventoryId}-reset-inventory`).addEventListener('click', async () => {
     const state = getState()
     const inventory = state.getInventory(inventoryId)
 
@@ -125,11 +125,11 @@ export const bindInventoryControls = (inventoryId: string): void => {
     }
   })
 
-  document.getElementById(`${inventoryId}-rename-inventory`).addEventListener('click', async () => {
+  getElementById(`${inventoryId}-rename-inventory`).addEventListener('click', async () => {
     const state = getState()
     const inventory = state.getInventory(inventoryId)
 
-    const res = await showModal({
+    const res = await showModal<Record<string, string>>({
       fields: [
         {
           defaultValue: inventory.name,
@@ -154,11 +154,11 @@ export const bindInventoryControls = (inventoryId: string): void => {
     }
   })
 
-  document.getElementById(`${inventoryId}-remove-char`).addEventListener('click', () => {
+  getElementById(`${inventoryId}-remove-char`).addEventListener('click', () => {
     dispatchEvent('RemoveCharacter', { inventoryId })
   })
 
-  document.getElementById(`${inventoryId}-minimise-inventory`).addEventListener('click', () => {
+  getElementById(`${inventoryId}-minimise-inventory`).addEventListener('click', () => {
     const state = getState()
     const inventory = state.getInventory(inventoryId)
     const compactMode = !inventory.isCompact
@@ -166,14 +166,14 @@ export const bindInventoryControls = (inventoryId: string): void => {
     dispatchEvent('SetCompactMode', { compactMode, inventoryId })
   })
 
-  document.getElementById(`${inventoryId}-set-gold`).addEventListener('click', async () => {
+  getElementById(`${inventoryId}-set-gold`).addEventListener('click', async () => {
     const state = getState()
     const inventory = state.getInventory(inventoryId)
 
-    const res = await showModal({
+    const res = await showModal<Record<string, string>>({
       fields: [
         {
-          defaultValue: inventory.character?.stats.Gold || 0,
+          defaultValue: inventory.character?.gold || 0,
           float: true,
           name: 'gold',
           title: 'Gold, GP',
@@ -195,19 +195,19 @@ export const bindInventoryControls = (inventoryId: string): void => {
       return
     }
 
-    state.setGold(inventoryId, gold)
+    state.setGold(inventoryId, Number.parseInt(gold, 10))
     dispatchEvent('RenderInventories')
     dispatchEvent('SelectInventory', { inventoryId })
   })
 
-  document.getElementById(`${inventoryId}-set-hp`).addEventListener('click', async () => {
+  getElementById(`${inventoryId}-set-hp`).addEventListener('click', async () => {
     const state = getState()
     const inventory = state.getInventory(inventoryId)
 
-    const res = await showModal({
+    const res = await showModal<Record<string, string>>({
       fields: [
         {
-          defaultValue: inventory.character?.stats.HitPoints || 0,
+          defaultValue: inventory.character?.hitPoints || 0,
           name: 'hp',
           title: 'Hit Points',
           valueType: 'number',
@@ -235,11 +235,11 @@ export const bindInventoryControls = (inventoryId: string): void => {
 }
 
 export const bindInventoryTableControls = (inventoryId: string): void => {
-  document.getElementById(`${inventoryId}-add-custom-item`).addEventListener('click', async () => {
+  getElementById(`${inventoryId}-add-custom-item`).addEventListener('click', async () => {
     const state = getState()
     const inventory = state.getInventory(inventoryId)
 
-    const res = await showModal({
+    const res = await showModal<Record<string, string>>({
       fields: [
         { name: 'itemName', title: 'Item name' },
         { defaultValue: 0, name: 'itemWeight', title: 'Weight, lbs.', valueType: 'number' },
@@ -341,7 +341,7 @@ export const renderInitialInventory = (inventoryId: string, name?: string): void
         </section>
     `),
   )
-
+debugger
   bindInventoryControls(inventoryId)
   bindInventoryTableControls(inventoryId)
 }
@@ -351,7 +351,7 @@ export const markSelectedInventory = (inventoryId: string): void => {
   document.querySelectorAll('.inventory-container.selected').forEach((element) => element.classList.remove('selected'))
 
   // Get the header element of the currently selected inventory
-  const headerElement = document.getElementById(`${inventoryId}-header`)
+  const headerElement = getElementById(`${inventoryId}-header`)
   if (headerElement) {
     headerElement.appendChild(
       createElementFromHtml(
@@ -371,8 +371,8 @@ export const markSelectedInventory = (inventoryId: string): void => {
  */
 export const handleRenderInventory = (inventoryId: string, inventoryName?: string): void => {
   const inventory = getState().getInventory(inventoryId)
-  if (!inventory) {
-    console.error('Inventory not found:', inventoryId)
+  if (!inventory || !inventory.character) {
+    console.error('Inventory is not valid or not found:', inventoryId)
 
     return
   }
@@ -381,13 +381,13 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
   let inventoryTableContainer = document.querySelector(`#${inventoryId}-table-container`)
   if (!inventoryTableContainer) {
     renderInitialInventory(inventoryId, inventoryName)
-    inventoryTableContainer = document.querySelector(`#${inventoryId}-table-container`)
+    inventoryTableContainer = document.querySelector(`#${inventoryId}-table-container`)!
   }
 
-  const inventoryTableBody = inventoryTableContainer.querySelector<HTMLTableSectionElement>('table tbody')
+  const inventoryTableBody = inventoryTableContainer.querySelector<HTMLTableSectionElement>('table tbody')!
   inventoryTableBody.innerHTML = ''
 
-  const classDef = CharacterClasses[inventory.character?.characterClass] as CharacterClassDef
+  const classDef = CharacterClasses[inventory.character.characterClass] as CharacterClassDef
   const charStats = inventory.character?.stats
   const damageMod = charStats ? getDamageModifier(classDef, charStats) : '0'
   let totalWeight = 0
@@ -449,9 +449,9 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
     dispatchEvent('RenderNewCharacterControlsSection', { inventoryId })
   }
 
-  document.getElementById(`${inventoryId}-total-weight`).textContent = totalWeight.toFixed(1)
-  document.getElementById(`${inventoryId}-total-cost`).textContent = totalCost.toFixed(2)
-  document.getElementById(`${inventoryId}-base-movement-rate`).textContent = baseMovementRate.toString()
+  getElementById(`${inventoryId}-total-weight`).textContent = totalWeight.toFixed(1)
+  getElementById(`${inventoryId}-total-cost`).textContent = totalCost.toFixed(2)
+  getElementById(`${inventoryId}-base-movement-rate`).textContent = baseMovementRate.toString()
 
   // FIXME to char stats section
   updateSpeedDisplay(inventoryId, baseMovementRate)
@@ -463,7 +463,7 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
 
 export const updateSpeedDisplay = (inventoryId: string, baseMovementRate: BaseMovementRate): void => {
   const speeds = getUndergroundSpeed(baseMovementRate)
-  document.getElementById(`${inventoryId}-speed-feet-per-turn`).innerHTML = [
+  getElementById(`${inventoryId}-speed-feet-per-turn`).innerHTML = [
     `<span class="movement-details-item text-details--alt">Walking: <span class="movement-details-item__number">${speeds.walking}</span></span>`,
     `<span class="movement-details-item text-details--alt">Running: <span class="movement-details-item__number">${speeds.running}</span></span>`,
     `<span class="movement-details-item text-details--alt">Combat: <span class="movement-details-item__number">${speeds.combat}</span></span>`,
@@ -494,8 +494,8 @@ export const handleRenderInventories = (): void => {
  * Run once
  */
 const bindInventoryCommonControls = (): void => {
-  document.getElementById('add-inventory-button').addEventListener('click', () => {
-    const newNameInputElement = document.getElementById('new-inventory-name') as HTMLInputElement
+  getElementById('add-inventory-button').addEventListener('click', () => {
+    const newNameInputElement = getElementById('new-inventory-name') as HTMLInputElement
     const inventoryName = newNameInputElement?.value.trim() || DEFAULT_INVENTORY_ID
     const inventoryId = addInventory(inventoryName)
 
