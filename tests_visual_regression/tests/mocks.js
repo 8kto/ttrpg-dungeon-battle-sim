@@ -3,14 +3,14 @@ const getAllClassesInventory = () =>
     MainCharacter: {
       character: {
         characterClass: 'Cleric',
+        gold: 110,
+        hitPoints: 6,
         prepared: ['Cure Light Wounds', 'Detect Magic', 'Light'],
         spells: 'All',
         stats: {
           Charisma: { MaxNumberOfSpecialHirelings: 3, Score: 8 },
-          Constitution: { HitPoints: 0, RaiseDeadSurvivalChance: '75%', Score: 11 },
+          Constitution: { RaiseDeadSurvivalChance: '75%', Score: 11, hitPoints: 0 },
           Dexterity: { ArmorClass: 0, MissilesToHit: 0, Score: 9 },
-          Gold: 110,
-          HitPoints: 6,
           Intelligence: {
             MaxAdditionalLanguages: 0,
             MaxSpellLevel: 4,
@@ -104,12 +104,12 @@ const getAllClassesInventory = () =>
     'character-name1720287035476': {
       character: {
         characterClass: 'Thief',
+        gold: 100,
+        hitPoints: 1,
         stats: {
           Charisma: { MaxNumberOfSpecialHirelings: 5, Score: 13 },
-          Constitution: { HitPoints: -1, RaiseDeadSurvivalChance: '50%', Score: 7 },
+          Constitution: { RaiseDeadSurvivalChance: '50%', Score: 7, hitPoints: -1 },
           Dexterity: { ArmorClass: 1, MissilesToHit: 1, Score: 16 },
-          Gold: 100,
-          HitPoints: 1,
           Intelligence: {
             MaxAdditionalLanguages: 2,
             MaxSpellLevel: 5,
@@ -191,14 +191,14 @@ const getAllClassesInventory = () =>
     'character-name1720287039511': {
       character: {
         characterClass: 'Druid',
+        gold: 120,
+        hitPoints: 1,
         prepared: ['Detect Magic'],
         spells: 'All',
         stats: {
           Charisma: { MaxNumberOfSpecialHirelings: 3, Score: 8 },
-          Constitution: { HitPoints: 0, RaiseDeadSurvivalChance: '75%', Score: 9 },
+          Constitution: { RaiseDeadSurvivalChance: '75%', Score: 9, hitPoints: 0 },
           Dexterity: { ArmorClass: -1, MissilesToHit: -1, Score: 7 },
-          Gold: 120,
-          HitPoints: 1,
           Intelligence: {
             MaxAdditionalLanguages: 0,
             MaxSpellLevel: 4,
@@ -280,12 +280,12 @@ const getAllClassesInventory = () =>
     'character-name1720287043434': {
       character: {
         characterClass: 'Monk',
+        gold: 80,
+        hitPoints: 3,
         stats: {
           Charisma: { MaxNumberOfSpecialHirelings: 2, Score: 6 },
-          Constitution: { HitPoints: 1, RaiseDeadSurvivalChance: '100%', Score: 15 },
+          Constitution: { RaiseDeadSurvivalChance: '100%', Score: 15, hitPoints: 1 },
           Dexterity: { ArmorClass: 0, MissilesToHit: 0, Score: 12 },
-          Gold: 80,
-          HitPoints: 3,
           Intelligence: {
             MaxAdditionalLanguages: 2,
             MaxSpellLevel: 5,
@@ -367,6 +367,8 @@ const getAllClassesInventory = () =>
     'character-name1720287049959': {
       character: {
         characterClass: 'MagicUser',
+        gold: 120,
+        hitPoints: 2,
         spells: {
           'Charm Person': { level: 1, name: 'Charm Person' },
           'Detect Magic': { level: 1, name: 'Detect Magic' },
@@ -377,10 +379,8 @@ const getAllClassesInventory = () =>
         },
         stats: {
           Charisma: { MaxNumberOfSpecialHirelings: 2, Score: 6 },
-          Constitution: { HitPoints: 0, RaiseDeadSurvivalChance: '75%', Score: 12 },
+          Constitution: { RaiseDeadSurvivalChance: '75%', Score: 12, hitPoints: 0 },
           Dexterity: { ArmorClass: 0, MissilesToHit: 0, Score: 9 },
-          Gold: 120,
-          HitPoints: 2,
           Intelligence: {
             MaxAdditionalLanguages: 3,
             MaxSpellLevel: 6,
@@ -462,12 +462,12 @@ const getAllClassesInventory = () =>
     'character-name1720287054445': {
       character: {
         characterClass: 'Ranger',
+        gold: 60,
+        hitPoints: 3,
         stats: {
           Charisma: { MaxNumberOfSpecialHirelings: 3, Score: 8 },
-          Constitution: { HitPoints: 1, RaiseDeadSurvivalChance: '100%', Score: 13 },
+          Constitution: { RaiseDeadSurvivalChance: '100%', Score: 13, hitPoints: 1 },
           Dexterity: { ArmorClass: 0, MissilesToHit: 0, Score: 11 },
-          Gold: 60,
-          HitPoints: 3,
           Intelligence: {
             MaxAdditionalLanguages: 1,
             MaxSpellLevel: 5,
@@ -549,12 +549,12 @@ const getAllClassesInventory = () =>
     'character-name1720287067510': {
       character: {
         characterClass: 'Assassin',
+        gold: 110,
+        hitPoints: 5,
         stats: {
           Charisma: { MaxNumberOfSpecialHirelings: 3, Score: 8 },
-          Constitution: { HitPoints: 0, RaiseDeadSurvivalChance: '75%', Score: 12 },
+          Constitution: { RaiseDeadSurvivalChance: '75%', Score: 12, hitPoints: 0 },
           Dexterity: { ArmorClass: 1, MissilesToHit: 1, Score: 14 },
-          Gold: 110,
-          HitPoints: 5,
           Intelligence: {
             MaxAdditionalLanguages: 4,
             MaxSpellLevel: 8,
@@ -636,12 +636,12 @@ const getAllClassesInventory = () =>
     'character-name1720287080808': {
       character: {
         characterClass: 'Fighter',
+        gold: 100,
+        hitPoints: 1,
         stats: {
           Charisma: { MaxNumberOfSpecialHirelings: 3, Score: 7 },
-          Constitution: { HitPoints: -1, RaiseDeadSurvivalChance: '50%', Score: 7 },
+          Constitution: { RaiseDeadSurvivalChance: '50%', Score: 7, hitPoints: -1 },
           Dexterity: { ArmorClass: -1, MissilesToHit: -1, Score: 8 },
-          Gold: 100,
-          HitPoints: 1,
           Intelligence: {
             MaxAdditionalLanguages: 3,
             MaxSpellLevel: 6,
@@ -733,12 +733,12 @@ const getAllClassesInventory = () =>
     'character-name1720287096634': {
       character: {
         characterClass: 'Paladin',
+        gold: 100,
+        hitPoints: 6,
         stats: {
           Charisma: { MaxNumberOfSpecialHirelings: 5, Score: 14 },
-          Constitution: { HitPoints: 0, RaiseDeadSurvivalChance: '75%', Score: 11 },
+          Constitution: { RaiseDeadSurvivalChance: '75%', Score: 11, hitPoints: 0 },
           Dexterity: { ArmorClass: 0, MissilesToHit: 0, Score: 11 },
-          Gold: 100,
-          HitPoints: 6,
           Intelligence: {
             MaxAdditionalLanguages: 0,
             MaxSpellLevel: 4,
