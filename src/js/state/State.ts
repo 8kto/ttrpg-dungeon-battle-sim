@@ -2,17 +2,10 @@
 
 import { CharacterClasses } from '../config/snw/CharacterClasses'
 import { EquipItem } from '../domain/Equipment'
-import { Character, Inventory, InventoryItem } from '../domain/Inventory'
-import { CharacterClass, CharacterClassDef } from '../domain/snw/CharacterClass'
-import { CharacterStats } from '../domain/snw/CharacterStats'
-import { Spell } from '../domain/snw/Magic'
+import { Inventory, InventoryItem } from '../domain/Inventory'
+import { Character } from '../domain/snw/Character'
+import { CharacterClassDef } from '../domain/snw/CharacterClass'
 import { assert } from '../utils/assert'
-
-export type CharacterOptions = {
-  characterClass: CharacterClass
-  stats: CharacterStats
-  spells?: Record<string, Spell> | 'All'
-}
 
 export type UiState = {
   currentInventoryId: string
@@ -200,12 +193,8 @@ export class State {
     }
   }
 
-  setCharacter(inventoryId: string, { characterClass, spells, stats }: CharacterOptions): void {
-    this.#inventories[inventoryId].character = {
-      stats: { ...stats },
-      characterClass,
-      spells,
-    }
+  setCharacter(inventoryId: string, character: Character): void {
+    this.#inventories[inventoryId].character = character
   }
 
   setPreparedSpells(inventoryId: string, spells: string[]): void {
@@ -252,7 +241,7 @@ export class State {
     )
 
     if (inventory.character?.stats) {
-      inventory.character.stats.Gold = Number(value)
+      inventory.character.gold = Number(value)
     }
 
     return this
@@ -272,7 +261,7 @@ export class State {
     )
 
     if (inventory.character?.stats) {
-      inventory.character.stats.HitPoints = Math.floor(value)
+      inventory.character.hitPoints = Math.floor(value)
     }
 
     return this
