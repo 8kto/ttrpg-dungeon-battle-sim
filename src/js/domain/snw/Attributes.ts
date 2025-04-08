@@ -39,13 +39,11 @@ export type ScoredModifierDef = {
  * not to match it every time it is needed
  * @see getMatchingScore
  */
-export type CharacterStats = {
+export type Attributes = {
   Strength: StrengthModifierDef & ScoredModifierDef
   Dexterity: DexterityModifierDef & ScoredModifierDef
   Constitution: ConstitutionModifierDef & ScoredModifierDef
   Intelligence: IntelligenceModifierDef & ScoredModifierDef
   Wisdom: WisdomModifierDef & ScoredModifierDef
   Charisma: CharismaModifierDef & ScoredModifierDef
-  Gold: number
-  HitPoints: number
 }
