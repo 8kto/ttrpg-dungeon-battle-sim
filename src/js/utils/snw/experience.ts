@@ -3,11 +3,11 @@
 
 import { PRIME_ATTR_MIN } from '../../config/snw/CharacterClasses'
 import { AttrScore, CharacterClassDef } from '../../domain/snw/CharacterClass'
-import { CharacterStats } from '../../domain/snw/CharacterStats'
+import { Attributes } from '../../domain/snw/Attributes'
 
 const BASE_BONUS_VALUE = 5
 
-export const getExperienceBonus = (charDef: CharacterClassDef, stats: CharacterStats): number => {
+export const getExperienceBonus = (charDef: CharacterClassDef, stats: Attributes): number => {
   const primeAttributes = [AttrScore.Wisdom, AttrScore.Charisma]
   const baseBonus = primeAttributes.reduce((bonus, attr) => {
     return bonus + (stats[attr].Score >= PRIME_ATTR_MIN ? BASE_BONUS_VALUE : 0)

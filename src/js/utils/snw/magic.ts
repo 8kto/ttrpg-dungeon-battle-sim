@@ -1,11 +1,11 @@
 import { MagicUserSpells } from '../../config/snw/Magic'
 import { Dice } from '../../domain/Dice'
-import { CharacterStats } from '../../domain/snw/CharacterStats'
+import { Attributes } from '../../domain/snw/Attributes'
 import { Spell } from '../../domain/snw/Magic'
 import { assert } from '../assert'
 import { getRandomArrayItems, roll } from '../dice'
 
-export const getMagicUserSpellsList = (stats: CharacterStats): Record<string, Spell> => {
+export const getMagicUserSpellsList = (stats: Attributes): Record<string, Spell> => {
   const res: Record<string, Spell> = {}
   const chunks = stats.Intelligence.SpellsPerLevel.split('/')
   const chances = stats.Intelligence.NewSpellUnderstandingChance

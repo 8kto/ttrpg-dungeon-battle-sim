@@ -1,11 +1,11 @@
 import { QuickAscendingArmorClassBaseToHit } from '../../config/snw/Combat'
 import { CharacterClass, CharacterClassDef } from '../../domain/snw/CharacterClass'
-import { CharacterStats } from '../../domain/snw/CharacterStats'
+import { Attributes } from '../../domain/snw/Attributes'
 import { assert } from '../assert'
 
 const MAGIC_DEFAULT_LEVEL = 1
 
-export const getToHitMelee = (classDef: CharacterClassDef, stats: CharacterStats): string => {
+export const getToHitMelee = (classDef: CharacterClassDef, stats: Attributes): string => {
   const baseToHit = QuickAscendingArmorClassBaseToHit[MAGIC_DEFAULT_LEVEL][classDef.name]
   assert(typeof baseToHit === 'number' && !isNaN(baseToHit), `Cannot get Base To-Hit for class: ${classDef.name}`)
 
@@ -19,7 +19,7 @@ export const getToHitMelee = (classDef: CharacterClassDef, stats: CharacterStats
   return res <= 0 ? res.toString() : `+${res}`
 }
 
-export const getToHitMissiles = (classDef: CharacterClassDef, stats: CharacterStats): string => {
+export const getToHitMissiles = (classDef: CharacterClassDef, stats: Attributes): string => {
   const baseToHit = QuickAscendingArmorClassBaseToHit[MAGIC_DEFAULT_LEVEL][classDef.name]
   assert(typeof baseToHit === 'number' && !isNaN(baseToHit), `Cannot get Base To-Hit for class: ${classDef.name}`)
 
@@ -34,7 +34,7 @@ export const getToHitMissiles = (classDef: CharacterClassDef, stats: CharacterSt
   return res <= 0 ? res.toString() : `+${res}`
 }
 
-export const getDamageModifier = (classDef: CharacterClassDef, stats: CharacterStats): string => {
+export const getDamageModifier = (classDef: CharacterClassDef, stats: Attributes): string => {
   let damageMod = stats.Strength.Damage
 
   if (classDef.name !== CharacterClass.Fighter && damageMod > 0) {

@@ -1,5 +1,5 @@
 import { InventoryItem } from '../../domain/Inventory'
-import { CharacterStats } from '../../domain/snw/CharacterStats'
+import { Attributes } from '../../domain/snw/Attributes'
 import { assert } from '../assert'
 
 type CharArmorClass = {
@@ -17,7 +17,7 @@ export const getDescArmorClass = (ascArmorClass: number): number => {
   return ARMOR_CLASS_INVERTER - ascArmorClass
 }
 
-export const getCharArmorClass = (stats: CharacterStats, items: Record<string, InventoryItem>): CharArmorClass => {
+export const getCharArmorClass = (stats: Attributes, items: Record<string, InventoryItem>): CharArmorClass => {
   const bonus = stats.Dexterity.ArmorClass
   let highestArmorClass: CharArmorClass | null = null
   let shield: CharArmorClass | null = null

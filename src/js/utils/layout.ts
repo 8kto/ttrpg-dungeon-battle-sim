@@ -26,3 +26,12 @@ export const getTitleFromId = (id: string): string => {
 
   return res.slice(0, 1).toLocaleUpperCase() + res.slice(1).toLocaleLowerCase()
 }
+
+export const getElementById = <T extends HTMLElement>(id: string): T | never => {
+  const res = document.getElementById(id)
+  if (!res) {
+    throw new Error(`DOM Element with id ${id} not found`)
+  }
+
+  return res as T
+}

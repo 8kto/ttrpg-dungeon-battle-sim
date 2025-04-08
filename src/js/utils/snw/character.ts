@@ -6,8 +6,8 @@ import {
   IntelligenceModifiers,
   StrengthModifiers,
 } from '../../config/snw/Modifiers'
+import { Attributes, ScoredModifierDef } from '../../domain/snw/Attributes'
 import { AttrScore, CharacterClass, CharacterClassDef, PrimeAttribute } from '../../domain/snw/CharacterClass'
-import { CharacterStats, ScoredModifierDef } from '../../domain/snw/CharacterStats'
 import { getRandomArrayItem, roll, rollDiceFormula } from '../dice'
 
 type TargetAttrs = Record<AttrScore, number>
@@ -40,7 +40,7 @@ const getModifier = <T>(modifiers: Record<number, T>, score: number): T & Scored
   } as T & ScoredModifierDef
 }
 
-export const getRandomAttributes = (): CharacterStats => {
+export const getRandomAttributes = (): Attributes => {
   const roll3d6 = rollDiceFormula.bind(null, '3d6')
 
   /* eslint-disable sort-keys-fix/sort-keys-fix */
@@ -51,15 +51,13 @@ export const getRandomAttributes = (): CharacterStats => {
     [AttrScore.Intelligence]: getModifier(IntelligenceModifiers, roll3d6()),
     [AttrScore.Wisdom]: getModifier({}, roll3d6()),
     [AttrScore.Charisma]: getModifier(CharismaModifiers, roll3d6()),
-    Gold: roll3d6() * 10,
-    HitPoints: 0,
   }
 }
 
 /**
  * TODO if all below 13, suggest a class for the highest attr
  */
-export const getClassSuggestions = (stats: CharacterStats, kind: 'PrimeAttr' | 'StrictAttr'): MatchingClasses => {
+export const getClassSuggestions = (stats: Attributes, kind: 'PrimeAttr' | 'StrictAttr'): MatchingClasses => {
   if (kind !== 'PrimeAttr') {
     throw new Error('Not implemented')
   }
@@ -78,7 +76,7 @@ export const getClassSuggestions = (stats: CharacterStats, kind: 'PrimeAttr' | '
 /**
  * Return a list of attributes matching the min score value
  */
-export const getMatchedPrimaryAttributes = (stats: CharacterStats, minScore: number): Array<[AttrScore, number]> => {
+export const getMatchedPrimaryAttributes = (stats: Attributes, minScore: number): Array<[AttrScore, number]> => {
   return (Object.entries(stats) as [AttrScore, ScoredModifierDef][])
     .filter(([, val]) => typeof val === 'object' && !!val.Score && val.Score >= minScore)
     .sort((a, b) => b[1].Score - a[1].Score)
@@ -88,7 +86,7 @@ export const getMatchedPrimaryAttributes = (stats: CharacterStats, minScore: num
 /**
  * Get Attribute names sorted by theis scores
  */
-export const getSortedAttributes = (stats: CharacterStats): AttrScore[] => {
+export const getSortedAttributes = (stats: Attributes): AttrScore[] => {
   return (Object.entries(stats) as [AttrScore, ScoredModifierDef][])
     .filter(([key, val]) => !!val.Score && !!AttrScore[key])
     .sort((a, b) => b[1].Score - a[1].Score)
