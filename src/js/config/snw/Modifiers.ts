@@ -4,7 +4,7 @@ import {
   DexterityModifierDef,
   IntelligenceModifierDef,
   StrengthModifierDef,
-} from '../../domain/snw/CharacterStats'
+} from '../../domain/snw/Attributes'
 
 export const StrengthModifiers: Record<number, StrengthModifierDef> = {
   4: {
