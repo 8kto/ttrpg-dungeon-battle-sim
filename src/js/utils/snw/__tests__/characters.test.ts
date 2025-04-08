@@ -8,14 +8,8 @@ import {
 } from '../../../config/snw/Modifiers'
 import type { Attributes } from '../../../domain/snw/Attributes'
 import type { AttrScore } from '../../../domain/snw/CharacterClass'
-import type {
-  MatchingClasses} from '../character'
-import {
-  getBestClass,
-  getClassSuggestions,
-  getMatchedPrimaryAttributes,
-  getMatchingScore,
-} from '../character'
+import type { MatchingClasses } from '../character'
+import { getBestClass, getClassSuggestions, getMatchedPrimaryAttributes, getMatchingScore } from '../character'
 
 describe('character utils', () => {
   describe('getMatchingScore', () => {

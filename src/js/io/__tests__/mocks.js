@@ -1,8 +1,29 @@
-/* eslint-disable sort-keys-fix/sort-keys-fix */
+/* eslint-disable sort-keys-fix/sort-keys-fix,@typescript-eslint/no-var-requires */
+const { Alignment, CharacterClass } = require('../../domain/snw/CharacterClass')
+const { MagicUsersSavingThrows } = require('../../config/snw/SavingThrows')
+const { Dice } = require('../../domain/Dice')
+const { ANY_RACE, PRIME_ATTR_MIN } = require('../../config/snw/CharacterClasses')
+
 const exportedStats = {
   MainCharacter: {
     id: 'MainCharacter',
     name: 'Main Character',
+    classDef: {
+      name: CharacterClass.Thief,
+      PrimeAttr: [['Dexterity', PRIME_ATTR_MIN]],
+      SavingThrow: {
+        snw: {
+          value: 15,
+          details: '+2 against devices, including traps, magical wands or staffs, and other magical devices',
+        },
+        alternative: MagicUsersSavingThrows,
+      },
+      HitDice: Dice.d4,
+      ArmorPermitted: 'Leather armor only; no shield',
+      WeaponsPermitted: 'All, but magical weapons are limited to daggers and swords',
+      Race: ANY_RACE,
+      Alignment: [Alignment.Neutral, Alignment.Chaotic],
+    },
     items: {
       'Basic accessories': {
         cost: 0,
@@ -45,7 +66,6 @@ const exportedStats = {
           MaxNumberOfSpecialHirelings: 4,
         },
       },
-      characterClass: 'Thief',
       gold: 100,
       hitPoints: 2,
     },

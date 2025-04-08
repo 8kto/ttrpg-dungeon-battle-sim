@@ -1,6 +1,7 @@
+import { CharacterClasses } from '../../config/snw/CharacterClasses'
 import type { EquipItem } from '../../domain/Equipment'
 import type { Character } from '../../domain/snw/Character'
-import { CharacterClass } from '../../domain/snw/CharacterClass'
+import { CharacterRace } from '../../domain/snw/CharacterClass'
 import { clericInventoryMock } from '../../mocks/snw/characterMocks'
 import {
   DEFAULT_INVENTORY,
@@ -14,9 +15,12 @@ import {
 
 const getCharacterOptions = (): Character => {
   return {
-    characterClass: CharacterClass.MagicUser,
+    ancestry: CharacterRace.Human,
+    armorClass: { aac: 10, armor: 'None', dac: 9 },
+    classDef: CharacterClasses.MagicUser,
     gold: 140,
     hitPoints: 1,
+    level: 1,
     spells: {
       'Charm Person': {
         level: 1,
@@ -84,6 +88,7 @@ const getCharacterOptions = (): Character => {
         Score: 9,
       },
     },
+    toHit: { melee: '0', missiles: '0' },
   }
 }
 
@@ -297,7 +302,6 @@ describe('State', () => {
 
     it('should prepare spells', () => {
       const opts = getCharacterOptions()
-      opts.characterClass = CharacterClass.Cleric
       delete opts.spells
 
       state.setCharacter(DEFAULT_INVENTORY_ID, opts)

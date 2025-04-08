@@ -1,11 +1,15 @@
+import { CharacterClasses } from '../../config/snw/CharacterClasses'
 import type { Inventory } from '../../domain/Inventory'
-import { CharacterClass } from '../../domain/snw/CharacterClass'
+import { CharacterRace } from '../../domain/snw/CharacterClass'
 
 export const clericInventoryMock: Inventory = {
   character: {
-    characterClass: CharacterClass.Cleric,
+    ancestry: CharacterRace.Human,
+    armorClass: { aac: 10, armor: 'None', dac: 9 },
+    classDef: CharacterClasses.Cleric,
     gold: 110,
     hitPoints: 6,
+    level: 1,
     spells: 'All',
     stats: {
       Charisma: { MaxNumberOfSpecialHirelings: 3, Score: 8 },
@@ -21,6 +25,7 @@ export const clericInventoryMock: Inventory = {
       Strength: { Carry: 5, Damage: 0, Doors: '1-2', Score: 11, ToHit: 0 },
       Wisdom: { Score: 17 },
     },
+    toHit: { melee: '0', missiles: '0' },
   },
   id: 'ClericInventory',
   isCompact: false,
