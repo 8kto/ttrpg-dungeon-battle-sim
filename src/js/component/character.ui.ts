@@ -255,10 +255,6 @@ export const handleRenderCharacterSection = (inventoryId: string): void => {
   const tableBonuses = container.querySelector('table.table-bonuses')!
 
   Object.entries(stats).forEach(([statName, stat]) => {
-    if (typeof stat !== 'object') {
-      return
-    }
-
     const { Score, ...bonuses } = stat
 
     // Attribute scores

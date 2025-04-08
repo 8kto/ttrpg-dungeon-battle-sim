@@ -6,6 +6,7 @@ import { getEquipNameSuffix } from '../utils/equipment'
 import { dispatchEvent } from '../utils/event'
 import { getInventoryIdFromName } from '../utils/inventory'
 import { createElementFromHtml, getElementById, scrollToElement } from '../utils/layout'
+import { getRandomClass } from '../utils/snw/character'
 import { getDamageModifier } from '../utils/snw/combat'
 import { getBaseMovementRate, getUndergroundSpeed } from '../utils/snw/movement'
 import { getCompactModeAffectedElements, getInventoryContainer, getInventoryTablesContainer } from './domSelectors'
@@ -341,7 +342,7 @@ export const renderInitialInventory = (inventoryId: string, name?: string): void
         </section>
     `),
   )
-debugger
+
   bindInventoryControls(inventoryId)
   bindInventoryTableControls(inventoryId)
 }
@@ -371,7 +372,7 @@ export const markSelectedInventory = (inventoryId: string): void => {
  */
 export const handleRenderInventory = (inventoryId: string, inventoryName?: string): void => {
   const inventory = getState().getInventory(inventoryId)
-  if (!inventory || !inventory.character) {
+  if (!inventory) {
     console.error('Inventory is not valid or not found:', inventoryId)
 
     return
@@ -387,7 +388,9 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
   const inventoryTableBody = inventoryTableContainer.querySelector<HTMLTableSectionElement>('table tbody')!
   inventoryTableBody.innerHTML = ''
 
-  const classDef = CharacterClasses[inventory.character.characterClass] as CharacterClassDef
+  const classDef = inventory.character?.characterClass
+    ? (CharacterClasses[inventory.character.characterClass] as CharacterClassDef)
+    : getRandomClass()
   const charStats = inventory.character?.stats
   const damageMod = charStats ? getDamageModifier(classDef, charStats) : '0'
   let totalWeight = 0
