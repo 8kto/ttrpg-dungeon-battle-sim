@@ -14,6 +14,7 @@
     "dev:old": "npx live-server src --port=3000 --no-browser",
     "format": "prettier . --check",
     "format:fix": "yarn eslint --fix && prettier --write .",
+    "lint": "yarn eslint src/",
     "test": "jest",
     "test:coverage": "jest --collectCoverage",
     "dev:styles": "npx tailwindcss -i src/styles/styles.scss -o ./src/styles/styles.processed.css --watch",
