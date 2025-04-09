@@ -55,11 +55,34 @@ export class State {
     }
   }
 
+  private serializeCharacterClass(inventory: Inventory): void{
+    if (
+      typeof inventory.character?.classDef === 'object'
+      && inventory.character.classDef.name
+      && !inventory.character.$classDefName
+    ) {
+      inventory.character.$classDefName = inventory.character.classDef.name
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      inventory.character.classDef = null
+    }
+  }
+
+  private deserializeCharacterClass(inventory: Inventory): void{
+    if (
+      !inventory.character?.classDef
+      && inventory.character?.$classDefName
+    ) {
+      inventory.character.classDef = CharacterClasses[inventory.character.$classDefName]
+    }
+  }
+
   /**
    * NB This worth debouncing for cases when called in loops
    */
   serialize(): this {
-    // TODO ref class instead of inlining
+    Object.values(this.#inventories).forEach(this.serializeCharacterClass)
+
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.#inventories))
     localStorage.setItem(LOCAL_UI_STORAGE_KEY, JSON.stringify(this.#uiState))
 
@@ -77,7 +100,10 @@ export class State {
         return null
       }
 
-      return JSON.parse(json)
+      const inventories: Record<string, Inventory> = JSON.parse(json)
+      Object.values(inventories).forEach(this.deserializeCharacterClass)
+
+      return inventories
     } catch (err) {
       console.error('Cannot restore serialized inventories', err)
     }

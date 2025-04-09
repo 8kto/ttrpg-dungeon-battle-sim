@@ -1,5 +1,5 @@
 import type { Attributes } from './Attributes'
-import type { CharacterClassDef, CharacterRace } from './CharacterClass'
+import type { CharacterClass, CharacterClassDef, CharacterRace } from './CharacterClass'
 import type { Spell } from './Magic'
 
 export type ToHit = {
@@ -33,4 +33,5 @@ export type Character = {
 
   // Internal props
   $isDirty?: boolean
+  $classDefName?: CharacterClass
 }

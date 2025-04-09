@@ -18,6 +18,7 @@ const getCharacterOptions = (): Character => {
     ancestry: CharacterRace.Human,
     armorClass: { aac: 10, armor: 'None', dac: 9 },
     classDef: CharacterClasses.MagicUser,
+    damageMod: '0',
     gold: 140,
     hitPoints: 1,
     level: 1,
