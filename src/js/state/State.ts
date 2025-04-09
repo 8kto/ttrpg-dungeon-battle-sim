@@ -57,7 +57,7 @@ export class State {
 
   private serializeCharacterClass(inventory: Inventory): void{
     if (
-      typeof inventory.character?.classDef === 'object'
+      inventory.character?.classDef
       && inventory.character.classDef.name
       && !inventory.character.$classDefName
     ) {

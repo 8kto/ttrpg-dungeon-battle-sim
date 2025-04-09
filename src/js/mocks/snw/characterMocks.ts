@@ -7,6 +7,7 @@ export const clericInventoryMock: Inventory = {
     ancestry: CharacterRace.Human,
     armorClass: { aac: 10, armor: 'None', dac: 9 },
     classDef: CharacterClasses.Cleric,
+    damageMod: '0',
     gold: 110,
     hitPoints: 6,
     level: 1,
