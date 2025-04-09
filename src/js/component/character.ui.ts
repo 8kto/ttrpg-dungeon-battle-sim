@@ -51,7 +51,8 @@ const renderSpellsList = (container: HTMLElement, inventory: Inventory): void =>
   const prepared = inventory.character?.prepared
 
   if (inventory.character?.spells === 'All') {
-    spells = CasterSpells[inventory.character.classDef.name]
+    const className = inventory.character.classDef.name as keyof typeof CasterSpells
+    spells = CasterSpells[className] ?? null
   } else if (!!inventory.character?.spells && typeof inventory.character?.spells === 'object') {
     spells = inventory.character.spells
   } else {
@@ -95,8 +96,8 @@ export const renderCasterDetails = (
   classDef: CharacterClassDef,
   inventory: Inventory,
 ): void => {
-  const col1 = container.querySelector<HTMLElement>('.char-stats--caster-details-col-1')
-  const col2 = container.querySelector<HTMLElement>('.char-stats--caster-details-col-2')
+  const col1 = container.querySelector<HTMLElement>('.char-stats--caster-details-col-1')!
+  const col2 = container.querySelector<HTMLElement>('.char-stats--caster-details-col-2')!
   const magicUserProps = ['NewSpellUnderstandingChance', 'SpellsPerLevel']
   const ignoredProps = ['MaxAdditionalLanguages', 'Score']
   const stats = inventory.character?.stats
@@ -105,7 +106,7 @@ export const renderCasterDetails = (
     throw new Error('renderCasterDetails: Invalid CharacterStats')
   }
 
-  const getDetailsItem = (key, value): HTMLElement => {
+  const getDetailsItem = (key: string, value: string | number): HTMLElement => {
     const elem = document.createElement('p')
     const formatted = getTitleFromId(key)
 
@@ -126,7 +127,7 @@ export const renderCasterDetails = (
   })
 
   const spellsNum = classDef.name === 'Cleric' && stats.Wisdom.Score >= 15 ? 1 : classDef.$spellsAtTheFirstLevel
-  col1.appendChild(getDetailsItem('Spells at the 1st level', spellsNum))
+  col1.appendChild(getDetailsItem('Spells at the 1st level', spellsNum ?? 'NA'))
 
   renderSpellsList(col2, inventory)
 
@@ -153,7 +154,7 @@ const renderAlignmentDetails = (container: HTMLElement, classDef: CharacterClass
 
 const renderRacesDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
   const races = classDef.Race.length === 3 ? 'Any' : classDef.Race.join(', ')
-  container.appendChild(createElementFromHtml(`<p>Suggested races: <span class="text-details">${races}</span></p>`))
+  container.appendChild(createElementFromHtml(`<p>Suggested ancestry: <span class="text-details">${races}</span></p>`))
   container.removeAttribute('hidden')
 }
 
@@ -178,10 +179,10 @@ const renderArmorClassDetails = (
 }
 
 const renderSavingThrowDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
-  const valueContainer = container.querySelector('.char-saving-throw--value')
-  const detailsContainer = container.querySelector('.char-saving-throw--details')
-  const altDetailsContainer = container.querySelector('.char-saving-throw--alt-details')
-  const toggleButton = container.querySelector('.char-saving-throw--toggle')
+  const valueContainer = container.querySelector('.char-saving-throw--value')!
+  const detailsContainer = container.querySelector('.char-saving-throw--details')!
+  const altDetailsContainer = container.querySelector('.char-saving-throw--alt-details')!
+  const toggleButton = container.querySelector('.char-saving-throw--toggle')!
 
   valueContainer.textContent = classDef.SavingThrow.snw.value.toString()
   detailsContainer.textContent = classDef.SavingThrow.snw.details ?? ''
@@ -212,19 +213,19 @@ const renderSavingThrowDetails = (container: HTMLElement, classDef: CharacterCla
  * @notice No direct calls
  */
 export const handleRenderNewCharControlsSection = (inventoryId: string): void => {
-  const container = getRootContainer(inventoryId).querySelector('.char-stats--controls')
+  const container = getRootContainer(inventoryId).querySelector('.char-stats--controls')!
   container.innerHTML = ''
 
-  const template = document.querySelector<HTMLTemplateElement>('#template-new-char-controls')
+  const template = getElementById<HTMLTemplateElement>('#template-new-char-controls')!
   const clone = document.importNode(template.content, true)
 
   container.appendChild(clone)
-  container.querySelector(`.add-new-random-char-btn`).addEventListener('click', () => {
+  container.querySelector(`.add-new-random-char-btn`)!.addEventListener('click', () => {
     dispatchEvent('RenderNewRandomCharacter', { inventoryId })
     dispatchEvent('SelectInventory', { inventoryId })
   })
 
-  container.querySelector(`.save-char-btn`).addEventListener('click', () => {
+  container.querySelector(`.save-char-btn`)!.addEventListener('click', () => {
     if (getState().getInventory(inventoryId).character?.stats) {
       container.setAttribute('hidden', 'hidden')
       dispatchEvent('SerializeState')
