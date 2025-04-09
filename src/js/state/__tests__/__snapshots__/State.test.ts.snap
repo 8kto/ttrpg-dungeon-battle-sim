@@ -2,9 +2,53 @@
 
 exports[`State character should set and remove character in inventory 1`] = `
 {
-  "characterClass": "MagicUser",
+  "ancestry": "Human",
+  "armorClass": {
+    "aac": 10,
+    "armor": "None",
+    "dac": 9,
+  },
+  "classDef": {
+    "$isCaster": true,
+    "$spellsAtTheFirstLevel": 1,
+    "Alignment": [
+      "Chaotic",
+      "Neutral",
+      "Lawful",
+    ],
+    "ArmorPermitted": "None",
+    "HitDice": 4,
+    "PrimeAttr": [
+      [
+        "Intelligence",
+        13,
+      ],
+    ],
+    "Race": [
+      "Elf",
+      "HalfElf",
+      "Human",
+    ],
+    "SavingThrow": {
+      "alternative": {
+        "DeathRaysAndPoison": 13,
+        "DragonsBreath": 16,
+        "SpellsAndStaffs": 15,
+        "TurnedToStone": 13,
+        "Wands": 14,
+      },
+      "snw": {
+        "details": "+2 against spells, including spells from magic wands and staffs",
+        "value": 15,
+      },
+    },
+    "WeaponsPermitted": "Dagger, staff, and darts",
+    "name": "MagicUser",
+  },
+  "damageMod": "0",
   "gold": 140,
   "hitPoints": 1,
+  "level": 1,
   "spells": {
     "Charm Person": {
       "level": 1,
@@ -71,6 +115,10 @@ exports[`State character should set and remove character in inventory 1`] = `
     "Wisdom": {
       "Score": 9,
     },
+  },
+  "toHit": {
+    "melee": "0",
+    "missiles": "0",
   },
 }
 `;
