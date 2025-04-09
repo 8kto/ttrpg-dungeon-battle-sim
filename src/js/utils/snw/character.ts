@@ -12,7 +12,7 @@ import type { CharacterClassDef, PrimeAttribute } from '../../domain/snw/Charact
 import { AttrScore, CharacterClass, CharacterRace } from '../../domain/snw/CharacterClass'
 import { getRandomArrayItem, roll, rollDiceFormula } from '../dice'
 import { getCharArmorClass } from './armorClass'
-import { getToHitMelee, getToHitMissiles } from './combat'
+import { getDamageModifier, getToHitMelee, getToHitMissiles } from './combat'
 import { getMagicUserSpellsList } from './magic'
 
 type TargetAttrs = Record<AttrScore, number>
@@ -168,7 +168,7 @@ export const getBestClass = (matchedClasses: MatchingClasses): CharacterClass =>
 export const getNewCharacter = (classDef: CharacterClassDef, stats: Attributes): Character => {
   const char: Character = {
     gold: rollDiceFormula('3d6') * 10,
-    hitPoints: getCharacterHitPoints(classDef, stats.Constitution.HitPoints),
+    hitPoints: getCharacterHitPoints(classDef, stats.Constitution.HitPoints), // TODO keep rolled values + use level
     stats,
     level: 1,
     classDef,
@@ -178,6 +178,7 @@ export const getNewCharacter = (classDef: CharacterClassDef, stats: Attributes):
       missiles: getToHitMissiles(classDef, stats),
     },
     armorClass: getCharArmorClass(stats, {}),
+    damageMod: getDamageModifier(classDef, stats),
   }
 
   if (classDef.$isCaster) {

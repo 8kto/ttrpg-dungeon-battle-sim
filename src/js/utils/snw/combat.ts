@@ -4,8 +4,12 @@ import type { CharacterClassDef } from '../../domain/snw/CharacterClass'
 import { CharacterClass } from '../../domain/snw/CharacterClass'
 import { assert } from '../assert'
 
+/** @deprecated */
 const MAGIC_DEFAULT_LEVEL = 1
 
+/**
+ * TODO simlpified base to-hit mod depends of level
+ */
 export const getToHitMelee = (classDef: CharacterClassDef, stats: Attributes): string => {
   const baseToHit = QuickAscendingArmorClassBaseToHit[MAGIC_DEFAULT_LEVEL][classDef.name]
   assert(typeof baseToHit === 'number' && !isNaN(baseToHit), `Cannot get Base To-Hit for class: ${classDef.name}`)
