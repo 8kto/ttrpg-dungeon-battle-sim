@@ -13,6 +13,8 @@ export enum CharacterClass {
   Thief = 'Thief',
 }
 
+// TODO ancestries
+// TODO ancestry to class map
 export enum CharacterRace {
   Human = 'Human',
   Dwarf = 'Dwarf',

@@ -14,17 +14,23 @@ export type ArmorClass = {
 }
 
 export type Character = {
-  gold: number
+  stats: Attributes // TODO rename to attributes
+  classDef: CharacterClassDef
+
   hitPoints: number
   level: number
   ancestry: CharacterRace
-  stats: Attributes
-  classDef: CharacterClassDef
+  gold: number
+
+  // Combat
   armorClass: ArmorClass
   toHit: ToHit
-  // damage: {}
+  damageMod: string
 
+  // Caster props
   spells?: Record<string, Spell> | 'All'
   prepared?: string[]
+
+  // Internal props
   $isDirty?: boolean
 }
