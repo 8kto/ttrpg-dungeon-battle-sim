@@ -30,6 +30,10 @@ export const getTitleFromId = (id: string): string => {
 export const getElementById = <T extends HTMLElement>(id: string): T | never => {
   const res = document.getElementById(id)
   if (!res) {
+    if (id.startsWith('#')) {
+      throw new Error(`Invalid ID ${id}: remove "#"`)
+    }
+
     throw new Error(`DOM Element with id ${id} not found`)
   }
 
