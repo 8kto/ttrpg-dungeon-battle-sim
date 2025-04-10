@@ -130,25 +130,78 @@ const processFields = (form, inventory) => {
   })
 }
 
+const sortEquipmentItems = (a, b) => {
+  // 0 — ascArmorClass
+  // 1 — damage
+  // 2 — other
+  const priority = (item) => {
+    if (item.ascArmorClass != null) {
+      return 0
+    }
+    if (item.damage != null) {
+      return 1
+    }
+
+    return 2
+  }
+
+  const pA = priority(a)
+  const pB = priority(b)
+
+  if (pA !== pB) {
+    return pA - pB
+  }
+
+  if (pA === 0) {
+    return b.ascArmorClass - a.ascArmorClass || a.name.localeCompare(b.name)
+  }
+
+  return a.name.localeCompare(b.name)
+}
+
 /**
  * @param {PDFForm} form
  * @param {Record<string, import('js/domain/Inventory').InventoryItem>} itemsMap
  */
 const processEquipment = (form, itemsMap) => {
+  // These are set in the PDF file
   const base = 'Items and Equipment '
   const minId = 2
   const maxId = 9
 
-  const items = Object.values(itemsMap)
-
-  // TODO support multiple items per field, calculate N items per field
-  if (items.length <= maxId - minId) {
-    for (let i = 0, idx = minId; i < items.length; i++, idx++) {
-      const item = items[i]
-      const label = item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name
-
-      form.getField(base + idx).setText(label)
+  const items = Object.values(itemsMap).sort(sortEquipmentItems)
+  const labels = items.map((item) => {
+    let sfx = ''
+    if (item.ascArmorClass) {
+      sfx = '**'
     }
+    if (item.damage) {
+      sfx = '*'
+    }
+
+    return item.quantity > 1 ? `${item.name}${sfx} (${item.quantity})` : `${item.name}${sfx}`
+  })
+
+  const numFields = maxId - minId + 1
+  const totalItems = labels.length
+
+  let itemIndex = 0
+
+  for (let fieldIndex = 0; fieldIndex < numFields; fieldIndex++) {
+    const remainingFields = numFields - fieldIndex
+    const remainingItems = totalItems - itemIndex
+
+    if (remainingItems <= 0) {
+      break
+    }
+
+    const itemsInField = Math.ceil(remainingItems / remainingFields)
+    const group = labels.slice(itemIndex, itemIndex + itemsInField).join('; ')
+
+    const fieldName = base + (minId + fieldIndex)
+    form.getField(fieldName).setText(group)
+
+    itemIndex += itemsInField
   }
 }
 
