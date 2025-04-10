@@ -348,11 +348,25 @@ export const renderInitialInventory = (inventoryId: string, name?: string): void
 }
 
 export const markSelectedInventory = (inventoryId: string): void => {
+  const state = getState()
+  const inventory = state.getInventory(inventoryId)
+
+  // Handle the corrupted UI state
+  if (!inventory) {
+    console.info('Inventory is not found', inventoryId)
+    const firstInventory = state.getInventories()[0]
+
+    state.setCurrentInventoryId(firstInventory.id)
+    markSelectedInventory(firstInventory.id)
+
+    return
+  }
+
   document.querySelectorAll('.inventory-header .selected').forEach((element) => element.remove())
   document.querySelectorAll('.inventory-container.selected').forEach((element) => element.classList.remove('selected'))
 
   // Get the header element of the currently selected inventory
-  const headerElement = getElementById(`${inventoryId}-header`)
+  const headerElement = document.getElementById(`${inventoryId}-header`)
   if (headerElement) {
     headerElement.appendChild(
       createElementFromHtml(
@@ -382,7 +396,7 @@ export const handleRenderInventory = (inventoryId: string, inventoryName?: strin
   let inventoryTableContainer = document.querySelector(`#${inventoryId}-table-container`)
   if (!inventoryTableContainer) {
     renderInitialInventory(inventoryId, inventoryName)
-    inventoryTableContainer = document.querySelector(`#${inventoryId}-table-container`)!
+    inventoryTableContainer = getElementById(`${inventoryId}-table-container`)!
   }
 
   const inventoryTableBody = inventoryTableContainer.querySelector<HTMLTableSectionElement>('table tbody')!

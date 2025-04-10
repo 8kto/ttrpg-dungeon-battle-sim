@@ -216,7 +216,7 @@ export const handleRenderNewCharControlsSection = (inventoryId: string): void =>
   const container = getRootContainer(inventoryId).querySelector('.char-stats--controls')!
   container.innerHTML = ''
 
-  const template = getElementById<HTMLTemplateElement>('#template-new-char-controls')!
+  const template = getElementById<HTMLTemplateElement>('template-new-char-controls')!
   const clone = document.importNode(template.content, true)
 
   container.appendChild(clone)
