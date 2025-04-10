@@ -1,13 +1,16 @@
 import { CharacterClasses } from '../../config/snw/CharacterClasses'
 import type { Inventory } from '../../domain/Inventory'
-import { CharacterRace } from '../../domain/snw/CharacterClass'
+import { Alignment, CharacterRace } from '../../domain/snw/CharacterClass'
 
 export const clericInventoryMock: Inventory = {
   character: {
+    alignment: Alignment.Chaotic,
     ancestry: CharacterRace.Human,
     armorClass: { aac: 10, armor: 'None', dac: 9 },
     classDef: CharacterClasses.Cleric,
     damageMod: '0',
+    experiencePoints: 0,
+    experiencePointsBonus: 5,
     gold: 110,
     hitPoints: 6,
     level: 1,

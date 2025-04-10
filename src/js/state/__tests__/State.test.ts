@@ -1,7 +1,7 @@
 import { CharacterClasses } from '../../config/snw/CharacterClasses'
 import type { EquipItem } from '../../domain/Equipment'
 import type { Character } from '../../domain/snw/Character'
-import { CharacterRace } from '../../domain/snw/CharacterClass'
+import { Alignment, CharacterRace } from '../../domain/snw/CharacterClass'
 import { clericInventoryMock } from '../../mocks/snw/characterMocks'
 import {
   DEFAULT_INVENTORY,
@@ -15,10 +15,13 @@ import {
 
 const getCharacterOptions = (): Character => {
   return {
+    alignment: Alignment.Lawful,
     ancestry: CharacterRace.Human,
     armorClass: { aac: 10, armor: 'None', dac: 9 },
     classDef: CharacterClasses.MagicUser,
     damageMod: '0',
+    experiencePoints: 0,
+    experiencePointsBonus: 5,
     gold: 140,
     hitPoints: 1,
     level: 1,

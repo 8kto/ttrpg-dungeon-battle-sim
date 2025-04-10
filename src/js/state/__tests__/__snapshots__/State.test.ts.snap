@@ -2,6 +2,7 @@
 
 exports[`State character should set and remove character in inventory 1`] = `
 {
+  "alignment": "Lawful",
   "ancestry": "Human",
   "armorClass": {
     "aac": 10,
@@ -46,6 +47,8 @@ exports[`State character should set and remove character in inventory 1`] = `
     "name": "MagicUser",
   },
   "damageMod": "0",
+  "experiencePoints": 0,
+  "experiencePointsBonus": 5,
   "gold": 140,
   "hitPoints": 1,
   "level": 1,
