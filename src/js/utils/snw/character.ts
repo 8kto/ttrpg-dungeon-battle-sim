@@ -8,11 +8,18 @@ import {
 } from '../../config/snw/Modifiers'
 import type { Attributes, ScoredModifierDef } from '../../domain/snw/Attributes'
 import type { Character } from '../../domain/snw/Character'
-import type { CharacterClassDef, PrimeAttribute } from '../../domain/snw/CharacterClass'
-import { AttrScore, CharacterClass, CharacterRace } from '../../domain/snw/CharacterClass'
+import {
+  Alignment,
+  AttrScore,
+  CharacterClass,
+  CharacterClassDef,
+  CharacterRace,
+  PrimeAttribute,
+} from '../../domain/snw/CharacterClass'
 import { getRandomArrayItem, roll, rollDiceFormula } from '../dice'
 import { getCharArmorClass } from './armorClass'
 import { getDamageModifier, getToHitMelee, getToHitMissiles } from './combat'
+import { getExperienceBonus } from './experience'
 import { getMagicUserSpellsList } from './magic'
 
 type TargetAttrs = Record<AttrScore, number>
@@ -177,8 +184,11 @@ export const getNewCharacter = (classDef: CharacterClassDef, stats: Attributes):
       melee: getToHitMelee(classDef, stats),
       missiles: getToHitMissiles(classDef, stats),
     },
+    alignment: Alignment.Neutral,
     armorClass: getCharArmorClass(stats, {}),
     damageMod: getDamageModifier(classDef, stats),
+    experiencePoints: 0,
+    experiencePointsBonus: getExperienceBonus(classDef, stats),
   }
 
   if (classDef.$isCaster) {
