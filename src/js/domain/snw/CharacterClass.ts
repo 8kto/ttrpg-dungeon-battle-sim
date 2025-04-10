@@ -49,7 +49,7 @@ export interface CharacterClassDef {
   WeaponsPermitted: string
   Race: CharacterRace[]
   Alignment: Alignment[]
-  SavingThrow: SavingThrow
+  SavingThrow: SavingThrow // TODO should depend on level
   $isCaster?: boolean
   $spellsAtTheFirstLevel?: number
   $meta?: string

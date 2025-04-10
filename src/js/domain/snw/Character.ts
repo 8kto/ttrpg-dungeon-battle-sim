@@ -1,5 +1,5 @@
 import type { Attributes } from './Attributes'
-import type { CharacterClass, CharacterClassDef, CharacterRace } from './CharacterClass'
+import type { Alignment, CharacterClass, CharacterClassDef, CharacterRace } from './CharacterClass'
 import type { Spell } from './Magic'
 
 export type ToHit = {
@@ -20,9 +20,12 @@ export type Character = {
   hitPoints: number
   level: number
   ancestry: CharacterRace
+  alignment: Alignment
   gold: number
+  experiencePoints: number
+  experiencePointsBonus: number
 
-  // Combat
+  // Combat`
   armorClass: ArmorClass
   toHit: ToHit
   damageMod: string
