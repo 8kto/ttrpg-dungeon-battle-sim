@@ -152,7 +152,7 @@ const renderAlignmentDetails = (container: HTMLElement, classDef: CharacterClass
   container.removeAttribute('hidden')
 }
 
-const renderRacesDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
+const renderAncestryDetails = (container: HTMLElement, classDef: CharacterClassDef): void => {
   const races = classDef.Race.length === 3 ? 'Any' : classDef.Race.join(', ')
   container.appendChild(createElementFromHtml(`<p>Suggested ancestry: <span class="text-details">${races}</span></p>`))
   container.removeAttribute('hidden')
@@ -234,27 +234,11 @@ export const handleRenderNewCharControlsSection = (inventoryId: string): void =>
   })
 }
 
-export const handleRenderCharacterSection = (inventoryId: string): void => {
-  const inventory = getState().getInventory(inventoryId)
-  if (!inventory.character) {
-    return
-  }
-
-  const { classDef, gold, hitPoints, stats } = inventory.character
-  const characterClass = classDef.name
-  assert(characterClass && stats, `No character data found for inventory ${inventoryId}`)
-
-  const container = getRootContainer(inventoryId).querySelector('.char-stats--container')!
-  container.innerHTML = ''
-
-  const template = getElementById<HTMLTemplateElement>('template-char-stats')
-  const clone = document.importNode(template.content, true)
-  container.appendChild(clone)
-
+const renderAttributesBlock = (container: HTMLElement, attributes: Attributes): void => {
   const tableStats = container.querySelector('table.table-stats')!
   const tableBonuses = container.querySelector('table.table-bonuses')!
 
-  Object.entries(stats).forEach(([statName, stat]) => {
+  Object.entries(attributes).forEach(([statName, stat]) => {
     const { Score, ...bonuses } = stat
 
     // Attribute scores
@@ -272,29 +256,55 @@ export const handleRenderCharacterSection = (inventoryId: string): void => {
       }
     })
   })
+}
 
-  assert(classDef, `Unknown character class: ${characterClass}`)
+const renderDetailsBlock = (container: HTMLElement, inventory: Inventory): void => {
+  assert(inventory && inventory.character, `No character data found for inventory ${inventory.id}`)
+
+  const { classDef, experiencePoints, experiencePointsBonus, gold, hitPoints, stats, toHit } = inventory.character!
+
+  // Details
+  container.querySelector('.char-class')!.textContent = classDef.name
+  container.querySelector('.char-hp')!.textContent = hitPoints.toString()
+  container.querySelector('.char-to-hit--melee')!.textContent = toHit.melee
+  container.querySelector('.char-to-hit--missiles')!.textContent = toHit.missiles
+  container.querySelector('.char-xp-bonus')!.textContent = experiencePointsBonus.toString()
+  container.querySelector('.char-xp')!.textContent = experiencePoints.toString()
+  container.querySelector('.char-hd')!.textContent = classDef.HitDice.toString()
+  container.querySelector('.char-gold')!.textContent = gold.toString()
+
+  // FIXME data source: react to the equip and attrs updates
+  renderArmorClassDetails(container.querySelector('.char-ac')!, stats, inventory.items)
+  renderSavingThrowDetails(container.querySelector('.char-saving-throw')!, classDef)
+
+  // Class restrictions and options
+  renderArmorDetails(container.querySelector<HTMLElement>('.char-stats--armor')!, classDef)
+  renderAlignmentDetails(container.querySelector<HTMLElement>('.char-stats--alignment')!, classDef)
+  renderAncestryDetails(container.querySelector<HTMLElement>('.char-stats--races')!, classDef)
 
   if (classDef.$isCaster) {
     const casterDetailsContainer = container.querySelector<HTMLElement>('.char-stats--caster-details')!
     renderCasterDetails(casterDetailsContainer, classDef, inventory)
   }
+}
 
-  // FIXME data source
-  renderArmorDetails(container.querySelector<HTMLElement>('.char-stats--armor')!, classDef)
-  renderAlignmentDetails(container.querySelector<HTMLElement>('.char-stats--alignment')!, classDef)
-  renderRacesDetails(container.querySelector<HTMLElement>('.char-stats--races')!, classDef)
-  renderArmorClassDetails(container.querySelector('.char-ac')!, stats, inventory.items)
-  renderSavingThrowDetails(container.querySelector('.char-saving-throw')!, classDef)
+export const handleRenderCharacterSection = (inventoryId: string): void => {
+  const inventory = getState().getInventory(inventoryId)
+  if (!inventory.character) {
+    return
+  }
 
-  // Other details
-  container.querySelector('.char-gold')!.textContent = gold.toString()
-  container.querySelector('.char-hp')!.textContent = hitPoints.toString()
-  container.querySelector('.char-hd')!.textContent = classDef.HitDice.toString()
-  container.querySelector('.char-class')!.textContent = classDef.name
-  container.querySelector('.char-exp-bonus')!.textContent = getExperienceBonus(classDef, stats).toString()
-  container.querySelector('.char-to-hit--melee')!.textContent = getToHitMelee(classDef, stats).toString()
-  container.querySelector('.char-to-hit--missiles')!.textContent = getToHitMissiles(classDef, stats).toString()
+  const { stats } = inventory.character
+
+  const container = getRootContainer(inventoryId).querySelector<HTMLElement>('.char-stats--container')!
+  container.innerHTML = ''
+
+  const template = getElementById<HTMLTemplateElement>('template-char-stats')
+  const clone = document.importNode(template.content, true)
+  container.appendChild(clone)
+
+  renderAttributesBlock(container, stats)
+  renderDetailsBlock(container, inventory)
 
   if (inventory.isCompact) {
     getCompactModeAffectedElements(inventoryId).forEach((elem) => elem.classList.add('hidden'))
@@ -328,10 +338,10 @@ export const handleRemoveCharacter = async (inventoryId: string): Promise<void> 
  */
 export const handleRenderNewRandomCharacter = (inventoryId: string): void => {
   const state = getState()
-  const stats = getRandomAttributes()
-  const suggestions = getClassSuggestions(stats, 'PrimeAttr')
+  const attributes = getRandomAttributes()
+  const suggestions = getClassSuggestions(attributes, 'PrimeAttr')
 
-  let classDef
+  let classDef: CharacterClassDef
   try {
     const matched = getBestClass(suggestions)
 
@@ -348,7 +358,7 @@ export const handleRenderNewRandomCharacter = (inventoryId: string): void => {
     classDef = getRandomClass()
   }
 
-  const char: Character = getNewCharacter(classDef, stats)
+  const char: Character = getNewCharacter(classDef, attributes)
   state.setCharacter(inventoryId, char)
 
   dispatchEvent('RenderCharacterSection', { inventoryId })
