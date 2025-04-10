@@ -6,7 +6,7 @@ const { PDFDocument } = require('pdf-lib')
 const { exportedStats } = require('./__tests__/mocks.js')
 
 /** @type {import('js/domain/Inventory').Inventory} */
-const char = exportedStats.MainCharacter
+const testInventory = Object.values(exportedStats)[0]
 
 /**
  * @type {Record<string, string>}
@@ -89,10 +89,10 @@ const Formatter = {
 }
 
 /**
- * @param {import('js/domain/Inventory').Character} char
+ * @param {import('js/domain/Inventory').Inventory} inventory
  * @param {string} fieldName
  */
-const getAttrValue = (char, fieldName) => {
+const getAttrValue = (inventory, fieldName) => {
   const path = MAP_FIELDS_TO_CHAR_ATTRS[fieldName]
 
   if (!path) {
@@ -104,7 +104,7 @@ const getAttrValue = (char, fieldName) => {
   const formatter = Formatter[path] ?? Formatter.default
   const chunks = path.split('.')
   let max = chunks.length
-  let res = char
+  let res = inventory
 
   while (max--) {
     res = res[chunks.shift()]
@@ -114,31 +114,61 @@ const getAttrValue = (char, fieldName) => {
 }
 
 /**
+ * @param {PDFForm} form
+ * @param {import('js/domain/Inventory').Inventory} inventory
+ */
+const processFields = (form, inventory) => {
+  form.getFields().forEach((field) => {
+    const fieldName = field.getName()
+    const value = getAttrValue(inventory, fieldName)
+
+    if (value) {
+      field.setText(value.toString())
+    } else {
+      field.setText(fieldName)
+    }
+  })
+}
+
+/**
+ * @param {PDFForm} form
+ * @param {Record<string, import('js/domain/Inventory').InventoryItem>} itemsMap
+ */
+const processEquipment = (form, itemsMap) => {
+  const base = 'Items and Equipment '
+  const minId = 2
+  const maxId = 9
+
+  const items = Object.values(itemsMap)
+
+  // TODO support multiple items per field, calculate N items per field
+  if (items.length <= maxId - minId) {
+    for (let i = 0, idx = minId; i < items.length; i++, idx++) {
+      const item = items[i]
+      const label = item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name
+
+      form.getField(base + idx).setText(label)
+    }
+  }
+}
+
+/**
  * @param params {object}
  * @param {string} params.inputPath
  * @param {string} params.outputPath
- * @param {import('js/domain/Inventory').Character} params.char
+ * @param {import('js/domain/Inventory').Inventory} params.inventory
  * @returns {Promise<void>}
  */
 const main = async (params) => {
-  const { char, inputPath, outputPath } = params
+  const { inputPath, inventory, outputPath } = params
+
   try {
-    // Read input PDF without modifying it
     const existingPdfBytes = fs.readFileSync(inputPath)
     const pdfDoc = await PDFDocument.load(existingPdfBytes)
-
     const form = pdfDoc.getForm()
 
-    form.getFields().forEach((field) => {
-      const fieldName = field.getName()
-      const value = getAttrValue(char, fieldName)
-
-      if (value) {
-        field.setText(value.toString())
-      } else {
-        field.setText(fieldName)
-      }
-    })
+    processFields(form, inventory)
+    processEquipment(form, inventory.items)
 
     // Optional: make the form non-editable
     // form.flatten()
@@ -164,5 +194,5 @@ if (!inputPath || !outputPath) {
 void main({
   inputPath,
   outputPath,
-  char,
+  inventory: testInventory,
 })
