@@ -4,7 +4,6 @@
 const fs = require('fs')
 const { PDFDocument } = require('pdf-lib')
 const { exportedStats } = require('./__tests__/mocks.js')
-// const { CharacterClasses } = require('../config/snw/CharacterClasses')
 
 /** @type {import('js/domain/Inventory').Inventory} */
 const char = exportedStats.MainCharacter
@@ -15,6 +14,7 @@ const char = exportedStats.MainCharacter
 const MAP_FIELDS_TO_CHAR_ATTRS = {
   'Class 2': 'character.classDef.name',
   'Hit Points 2': 'character.hitPoints',
+
   'Strength 2': 'character.stats.Strength.Score',
   'Dexterity 2': 'character.stats.Dexterity.Score',
   'Constitution 2': 'character.stats.Constitution.Score',
@@ -22,13 +22,39 @@ const MAP_FIELDS_TO_CHAR_ATTRS = {
   'Wisdom 2': 'character.stats.Wisdom.Score',
   'Charisma 2': 'character.stats.Charisma.Score',
 
-  // 'ancestry': 'Ancestry 2'
-  // 'level': 'LEVEL 2'
-  //   'Experience Points (XP) 2',
-  //   'Prime Attribute'
-  //   'XP Bonus 2'
-  //   'classDef.SavingThrow': 'Saving Throw 2',
-  // 'Armor Class 2',
+  'Ancestry 2': 'character.ancestry',
+  'Alignment': 'character.alignment',
+  'LEVEL 2': 'character.level',
+  'Saving Throw 2': 'character.classDef.SavingThrow',
+  'Prime Attribute': 'character.classDef.PrimeAttr', // array
+  'Armor Class 2': 'character.armorClass', // struct
+  'Experience Points (XP) 2': 'character.experiencePoints',
+  'XP Bonus 2': 'character.classDef.experiencePointsBonus',
+}
+
+const Formatter = {
+  'character.classDef.SavingThrow':
+    /**
+     * @param {import('js/domain/snw/SavingThrow').SavingThrow} val
+     * @returns {string}
+     */
+    (val) => val.snw.value,
+  'character.armorClass':
+    /**
+     * @param {import('js/domain/snw/Character').ArmorClass} val
+     * @returns {string}
+     */
+      (val) => `${val.dac}[${val.aac}]`,
+  default: (val) => {
+    if (Array.isArray(val)) {
+      return val.join(',')
+    }
+    else if (typeof val === 'object') {
+      val = JSON.stringify(val)
+    }
+
+    return val?.toString()
+  },
 }
 
 /**
@@ -36,6 +62,8 @@ const MAP_FIELDS_TO_CHAR_ATTRS = {
  * @param {string} path
  */
 const getAttrValue = (char, path) => {
+  const formatter = Formatter[path] ?? Formatter.default
+
   if (path?.startsWith('character.')) {
     const chunks = path.split('.')
     let max = chunks.length
@@ -45,7 +73,7 @@ const getAttrValue = (char, path) => {
       res = res[chunks.shift()]
     }
 
-    return res
+    return formatter(res)
   }
 
   return null
@@ -67,18 +95,19 @@ const main = async (params) => {
 
     const form = pdfDoc.getForm()
 
-    form.getFields().forEach((f) => {
-      const fieldName = f.getName()
+    form.getFields().forEach((field) => {
+      const fieldName = field.getName()
       const value = getAttrValue(char, MAP_FIELDS_TO_CHAR_ATTRS[fieldName])
 
       if (value) {
-        const nameField = form.getTextField(fieldName)
-        nameField.setText(value.toString())
+        field.setText(value.toString())
+      } else {
+        // f.setText(fieldName)
       }
     })
 
     // Optional: make the form non-editable
-    form.flatten()
+    // form.flatten()
 
     // Save to output file (original input untouched)
     const pdfBytes = await pdfDoc.save()
