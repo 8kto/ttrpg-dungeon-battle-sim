@@ -55,12 +55,8 @@ export class State {
     }
   }
 
-  private serializeCharacterClass(inventory: Inventory): void{
-    if (
-      inventory.character?.classDef
-      && inventory.character.classDef.name
-      && !inventory.character.$classDefName
-    ) {
+  private serializeCharacterClass(inventory: Inventory): void {
+    if (inventory.character?.classDef && inventory.character.classDef.name && !inventory.character.$classDefName) {
       inventory.character.$classDefName = inventory.character.classDef.name
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -68,11 +64,8 @@ export class State {
     }
   }
 
-  private deserializeCharacterClass(inventory: Inventory): void{
-    if (
-      !inventory.character?.classDef
-      && inventory.character?.$classDefName
-    ) {
+  private deserializeCharacterClass(inventory: Inventory): void {
+    if (!inventory.character?.classDef && inventory.character?.$classDefName) {
       inventory.character.classDef = CharacterClasses[inventory.character.$classDefName]
     }
   }

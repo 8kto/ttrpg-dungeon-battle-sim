@@ -280,6 +280,7 @@ export const handleRenderCharacterSection = (inventoryId: string): void => {
     renderCasterDetails(casterDetailsContainer, classDef, inventory)
   }
 
+  // FIXME data source
   renderArmorDetails(container.querySelector<HTMLElement>('.char-stats--armor')!, classDef)
   renderAlignmentDetails(container.querySelector<HTMLElement>('.char-stats--alignment')!, classDef)
   renderRacesDetails(container.querySelector<HTMLElement>('.char-stats--races')!, classDef)
