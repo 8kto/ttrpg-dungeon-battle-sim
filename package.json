@@ -1,7 +1,7 @@
 {
   "name": "ttrpg-snw-generator",
   "description": "A tabletop RPG inventory generator for Swords & Wizardry.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "8kto <ifhtagn@gmail.com>",
   "license": "MIT",
   "scripts": {
