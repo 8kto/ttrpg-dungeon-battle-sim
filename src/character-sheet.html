@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="js/utils/characterSheet/characterSheet.ts" type="module"></script>
+    <title>SW Character Sheet 2023</title>
+    <style>
+      @media print {
+        body {
+          -webkit-print-color-adjust: exact;
+        }
+      }
+      @page {
+        size: A4;
+        margin: 0;
+      }
+      body {
+        font-family: serif;
+        margin: 0 auto;
+        padding: 0;
+        background: #fff;
+        color: #333;
+        font-size: 16px;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      td {
+        padding: 2px;
+        vertical-align: top;
+      }
+
+      input,
+      textarea {
+        outline: none;
+        background: transparent;
+        width: 100%;
+        resize: none;
+        border: 1px solid #ddd;
+      }
+      input:focus,
+      textarea:focus {
+        border: 1px solid #888;
+      }
+
+      h1 input {
+        font-size: 30px;
+      }
+
+      .page {
+        width: 800px;
+        box-sizing: border-box;
+        page-break-after: always;
+        margin: 0 auto;
+      }
+      .block {
+        border: 1px solid #888;
+        padding: 20px;
+        margin-bottom: 8px;
+      }
+      .two-col,
+      .three-col {
+        display: flex;
+        gap: 20px;
+      }
+      .two-col .col,
+      .three-col .col {
+        flex: 1;
+      }
+
+      .block--header table:nth-child(1) {
+        /*flex: 0 0 40%;*/
+      }
+      .block--header input {
+        max-width: 120px;
+      }
+
+      .block--second input {
+        max-width: 120px;
+      }
+      .block--second table:nth-child(1) {
+        flex: 0 0 20%;
+      }
+      .block--second table:nth-child(2) {
+        flex: 0 0 45%;
+      }
+      .block--second > div {
+        flex: 0 0 35%;
+      }
+
+      .attribute-bonuses {
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <h1><input type="text" name="character-name" placeholder="Character Name" /></h1>
+      <div class="three-col block block--header">
+        <table>
+          <tr>
+            <td><label for="class">Class</label></td>
+            <td><input type="text" id="class" name="class" /></td>
+          </tr>
+          <tr>
+            <td><label for="alignment">Alignment</label></td>
+            <td><input type="text" id="alignment" name="alignment" /></td>
+          </tr>
+          <tr>
+            <td><label for="age">Age</label></td>
+            <td><input type="number" id="age" name="age" /></td>
+          </tr>
+          <tr>
+            <td><label for="ancestry">Ancestry</label></td>
+            <td><input type="text" id="ancestry" name="ancestry" /></td>
+          </tr>
+          <tr>
+            <td><label for="deity">Deity</label></td>
+            <td><input type="text" id="deity" name="deity" /></td>
+          </tr>
+        </table>
+
+        <table>
+          <tr>
+            <td><label for="level">Level</label></td>
+            <td><input type="number" id="level" name="level" /></td>
+          </tr>
+          <tr>
+            <td><label for="xp">XP</label></td>
+            <td><input type="number" id="xp" name="xp" /></td>
+          </tr>
+          <tr>
+            <td><label for="prime-attribute">Prime Attr.</label></td>
+            <td><input type="text" id="prime-attribute" name="prime-attribute" /></td>
+          </tr>
+          <tr>
+            <td><label for="xp-bonus">XP Bonus</label></td>
+            <td><input type="text" id="xp-bonus" name="xp-bonus" /></td>
+          </tr>
+        </table>
+
+        <table>
+          <tr>
+            <td><label for="hit-points">Hit Points</label></td>
+            <td><input type="text" id="hit-points" name="hit-points" /></td>
+          </tr>
+          <tr>
+            <td><label for="saving-throw">Saving Throw</label></td>
+            <td><input type="text" id="saving-throw" name="saving-throw" /></td>
+          </tr>
+          <tr>
+            <td><label for="armor-class">Armor Class</label></td>
+            <td><input type="text" id="armor-class" name="armor-class" /></td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="three-col block block--second">
+        <table>
+          <tr>
+            <td><label for="strength">STR</label></td>
+            <td><input type="number" id="strength" name="strength" /></td>
+          </tr>
+          <tr>
+            <td><label for="dexterity">DEX</label></td>
+            <td><input type="number" id="dexterity" name="dexterity" /></td>
+          </tr>
+          <tr>
+            <td><label for="constitution">CON</label></td>
+            <td><input type="number" id="constitution" name="constitution" /></td>
+          </tr>
+          <tr>
+            <td><label for="intelligence">INT</label></td>
+            <td><input type="number" id="intelligence" name="intelligence" /></td>
+          </tr>
+          <tr>
+            <td><label for="wisdom">WIS</label></td>
+            <td><input type="number" id="wisdom" name="wisdom" /></td>
+          </tr>
+          <tr>
+            <td><label for="charisma">CHA</label></td>
+            <td><input type="number" id="charisma" name="charisma" /></td>
+          </tr>
+        </table>
+
+        <table class="attribute-bonuses">
+          <tr>
+            <td><label for="bonus-to-hit">Bonus to Hit (STR)</label></td>
+            <td><input id="bonus-to-hit" name="bonus-to-hit" type="number" /></td>
+          </tr>
+          <tr>
+            <td><label for="open-doors">Open Doors (STR)</label></td>
+            <td><input id="open-doors" name="open-doors" type="number" /></td>
+          </tr>
+          <tr>
+            <td><label for="damage-bonus">Damage Bonus (STR)</label></td>
+            <td><input id="damage-bonus" name="damage-bonus" type="number" /></td>
+          </tr>
+          <tr>
+            <td><label for="carry-modifier">Carry Modifier (STR)</label></td>
+            <td><input id="carry-modifier" name="carry-modifier" type="number" /></td>
+          </tr>
+          <tr>
+            <td><label for="bonus-to-missiles">Bonus to Missiles (DEX)</label></td>
+            <td><input id="bonus-to-missiles" name="bonus-to-missiles" type="number" /></td>
+          </tr>
+          <tr>
+            <td><label for="armor-bonus">Armor Bonus (DEX)</label></td>
+            <td><input id="armor-bonus" name="armor-bonus" type="number" /></td>
+          </tr>
+          <tr>
+            <td><label for="hp-bonus">HP Bonus (CON)</label></td>
+            <td><input id="hp-bonus" name="hp-bonus" type="number" /></td>
+          </tr>
+          <tr>
+            <td><label for="raise-dead-survival">Raise Dead Survival (CON)</label></td>
+            <td><input id="raise-dead-survival" name="raise-dead-survival" type="number" /></td>
+          </tr>
+          <tr>
+            <td><label for="additional-languages">Additional Languages</label></td>
+            <td><input id="additional-languages" name="additional-languages" type="number" /></td>
+          </tr>
+          <tr>
+            <td><label for="max-hirelings">Max # of Special Hirelings</label></td>
+            <td><input id="max-hirelings" name="max-hirelings" type="number" /></td>
+          </tr>
+        </table>
+
+        <div>
+          <h3><label for="class-abilities">Class Abilities</label></h3>
+          <textarea id="class-abilities" name="class-abilities" rows="12" style="width: 200px"></textarea>
+        </div>
+      </div>
+
+      <div class="two-col block">
+        <div class="col"><b>Gold & Treasure</b><textarea name="gold-treasure" rows="5"></textarea></div>
+        <div class="col"><b>Items & Equipment</b><textarea name="items-equipment" rows="5"></textarea></div>
+      </div>
+
+      <div class="block">
+        <b>Weapons</b>
+        <textarea name="weapons" rows="4"></textarea>
+      </div>
+    </div>
+
+    <div class="page">
+      <div class="two-col block block--spells-thieving">
+        <div><b>Spells</b><textarea name="spells" rows="20" cols="50"></textarea></div>
+        <div>
+          <b>Thieving Skills</b>
+          <textarea name="thieving-skills" rows="20"></textarea>
+        </div>
+      </div>
+      <div class="block"><b>Notes</b><textarea name="notes" rows="10"></textarea></div>
+    </div>
+  </body>
+</html>
