@@ -34,17 +34,18 @@ const getAttrValue = (inventory: Inventory, fieldName: string): string | null =>
   return formatter(res)
 }
 
-const processFields = (form, inventory: Inventory): void => {
-  form.getFields().forEach((field) => {
-    const fieldName = field.getName()
-    const value = getAttrValue(inventory, fieldName)
+const processFields = (form: HTMLFormElement, inventory: Inventory): void => {
+  const formData = new FormData(form)
 
-    if (value) {
-      field.setText(value.toString())
-    } else {
-      field.setText(fieldName)
+  for (const [fieldName] of formData.entries()) {
+    const input = form.elements.namedItem(fieldName)!
+
+    if (input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement) {
+      const value = getAttrValue(inventory, fieldName)
+
+      input.value = value ? value.toString() : `--${fieldName}`
     }
-  })
+  }
 }
 
 const sortEquipmentItems = (a: EquipItem, b: EquipItem): number => {
@@ -122,14 +123,16 @@ const sendSheet = (): void => {}
 
 type CharacterSheetParams = {
   inventory: Inventory
+  document: Document
 }
 
-const getSheet = async (params: CharacterSheetParams) => {
+const renderCharacterSheet = async (params: CharacterSheetParams) => {
   const { inventory } = params
+  const form = document.getElementById('character-sheet-form')! as HTMLFormElement
 
   try {
     processFields(form, inventory)
-    processEquipment(form, inventory.items)
+    // processEquipment(form, inventory.items)
     sendSheet()
   } catch (err) {
     console.error('❌ Failed to fill character sheet', err)
@@ -140,7 +143,7 @@ const testInventory: Inventory = Object.values(exportedStats)[0]
 
 console.log(testInventory)
 
-0 &&
-  void getSheet({
-    inventory: testInventory,
-  })
+void renderCharacterSheet({
+  inventory: testInventory,
+  document: document,
+})
