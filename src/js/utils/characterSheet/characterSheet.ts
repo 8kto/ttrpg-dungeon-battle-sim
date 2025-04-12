@@ -3,7 +3,7 @@
 import type { Inventory } from '../../domain/Inventory'
 import { exportedStats } from './__tests__/mocks'
 import { MAP_FIELDS_TO_CHAR_ATTRS } from './fieldsConfig'
-import { Formatter } from './Formatter'
+import { EquipmentFormatter, Formatter, sortEquipmentItems } from './Formatter'
 
 /**
  * @param {import('js/domain/Inventory').Inventory} inventory
@@ -45,6 +45,29 @@ const processFields = (form: HTMLFormElement, inventory: Inventory): void => {
   }
 }
 
+const processWeapons = (form: HTMLFormElement, inventory: Inventory): void => {
+  const itemsArray = Object.values(inventory.items).sort(sortEquipmentItems)
+  const items = itemsArray.filter((item): boolean => !!item.damage)
+
+  const tplRowElement = form.querySelector<HTMLTableRowElement>('[data-weapon-row-template]')!
+  const tbodyElement = tplRowElement.parentNode!
+  const rows = [tplRowElement].concat(
+    Array.from({ length: items.length - 1 }, () => {
+      return tplRowElement.cloneNode(true) as HTMLTableRowElement
+    }),
+  )
+
+  rows.forEach((newRowElement, index) => {
+    const item = items[index]
+
+    // TODO range + tohit
+    newRowElement.querySelector<HTMLInputElement>('.weapon-input--name')!.value = item.name
+    newRowElement.querySelector<HTMLInputElement>('.weapon-input--damage')!.value = item.damage!
+
+    tbodyElement.appendChild(newRowElement)
+  })
+}
+
 const sendSheet = (): void => {}
 
 type CharacterSheetParams = {
@@ -58,6 +81,7 @@ const renderCharacterSheet = (params: CharacterSheetParams): void => {
 
   try {
     processFields(form, inventory)
+    processWeapons(form, inventory)
     sendSheet()
   } catch (err) {
     console.error('❌ Failed to fill character sheet', err)

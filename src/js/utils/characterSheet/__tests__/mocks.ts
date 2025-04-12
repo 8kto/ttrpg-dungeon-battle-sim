@@ -14,6 +14,20 @@ export const exportedStats: Record<string, Inventory> = {
         ascArmorClass: 4,
         quantity: 1,
       },
+      Shield: {
+        cost: 75,
+        name: 'Shield',
+        weight: 50,
+        ascArmorClass: 1,
+        quantity: 1,
+      },
+      Helmet: {
+        cost: 75,
+        name: 'Helmet',
+        weight: 5,
+        ascArmorClass: 1,
+        quantity: 1,
+      },
       Sling: {
         cost: 1,
         name: 'Sling',
@@ -483,6 +497,20 @@ export const exportedStats: Record<string, Inventory> = {
         name: 'Chain',
         weight: 50,
         ascArmorClass: 4,
+        quantity: 1,
+      },
+      Shield: {
+        cost: 75,
+        name: 'Shield',
+        weight: 50,
+        ascArmorClass: 1,
+        quantity: 1,
+      },
+      Helmet: {
+        cost: 75,
+        name: 'Helmet',
+        weight: 5,
+        ascArmorClass: 1,
         quantity: 1,
       },
       Sling: {

@@ -47,7 +47,7 @@
           <input type="text" id="character-name" name="character-name" placeholder="Character Name" />
         </h1>
 
-        <div class="block block--header flex gap-5">
+        <div class="brick brick--header flex gap-5">
           <div class="flex-1 flex flex-col">
             <table class="h-full w-full table-fixed">
               <tr>
@@ -111,7 +111,7 @@
           </div>
         </div>
 
-        <div class="block block--second">
+        <div class="brick brick--second">
           <div class="flex flex-col">
             <!-- Header Block -->
             <div class="grid grid-cols-3">
@@ -209,7 +209,7 @@
           </div>
         </div>
 
-        <div class="block flex grid grid-cols-3 gap-5">
+        <div class="brick flex grid grid-cols-3 gap-5">
           <div class="flex-1 col-span-1">
             <h2><label for="gold-treasure">Gold & Treasure</label></h2>
             <textarea id="gold-treasure" name="gold-treasure" rows="2"></textarea>
@@ -220,20 +220,45 @@
           </div>
         </div>
 
-        <div class="block flex grid grid-cols-3 gap-5">
-          <div class="flex-1 col-span-1">
+        <div class="brick flex">
+          <div class="flex-1">
             <h2><label for="items--weapons">Weapons</label></h2>
-            <textarea id="items--weapons" name="items--weapons" rows="5"></textarea>
-          </div>
-          <div class="flex-1 col-span-2">
-            <h2><label for="items-equipment">Items</label></h2>
-            <textarea id="items-equipment" name="items-equipment" rows="5"></textarea>
+
+            <div class="relative">
+              <table class="w-full table-bordered table--weapons mb-1">
+                <thead class="text-left">
+                  <tr class="border-b border-amber-500">
+                    <th scope="col">Weapon</th>
+                    <th scope="col">Damage</th>
+                    <th scope="col">To Hit Bonus</th>
+                    <th scope="col">Range</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr data-weapon-row-template>
+                    <th><input class="weapon-input--name w-full" type="text" /></th>
+                    <td><input class="weapon-input--damage" type="text" /></td>
+                    <td><input class="weapon-input--tohit" type="text" /></td>
+                    <td><input class="weapon-input--range" type="text" /></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <textarea id="items--weapons" name="items--weapons" rows="2"></textarea>
           </div>
         </div>
       </div>
 
       <div class="page">
-        <div class="grid grid-cols-3 block block--spells-thieving gap-5">
+        <div class="brick flex">
+          <div class="flex-1">
+            <h2><label for="items-equipment">Items</label></h2>
+            <textarea id="items-equipment" name="items-equipment" rows="5"></textarea>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 brick brick--spells-thieving gap-5">
           <div class="col-span-2 flex flex-col items-center justify-center">
             <h2><label for="spells">Spells</label></h2>
             <textarea id="spells" name="spells" rows="20"></textarea>
@@ -244,7 +269,7 @@
           </div>
         </div>
 
-        <div class="block flex gap-5">
+        <div class="brick flex gap-5">
           <div class="flex-1">
             <h2><label for="notes">Notes</label></h2>
             <textarea id="notes" name="notes" rows="10"></textarea>

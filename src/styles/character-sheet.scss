@@ -33,7 +33,7 @@
     display: none !important;
   }
 
-  .block,
+  .brick,
   .flex,
   .grid {
     overflow: hidden;
@@ -44,7 +44,7 @@
     height: 297mm;
   }
 
-  .block {
+  .brick {
     margin-bottom: 2mm;
     padding: 5mm;
   }
@@ -151,22 +151,22 @@ table td:first-child {
   //height: 100vh;
 }
 
-.block {
+.brick {
   border: 1px solid var(--neutral-color);
   padding: 15px 20px;
   margin-bottom: 10px;
   background: var(--block-bg);
 }
 
-.block--header input {
+.brick--header input {
   max-width: 120px;
 }
 
-.block--second input {
+.brick--second input {
   max-width: 70px;
 }
 
-.block--second {
+.brick--second {
   .attribute-bonuses td:nth-child(1) {
     width: 100%;
   }
@@ -181,4 +181,8 @@ table td:first-child {
 
 .page-delimiter {
   page-break-after: always;
+}
+
+.table--weapons th {
+  text-align: left !important;
 }

@@ -6,7 +6,7 @@ import type { ArmorClass } from '../../domain/snw/Character'
 import type { PrimeAttribute } from '../../domain/snw/CharacterClass'
 import type { SavingThrow } from '../../domain/snw/SavingThrow'
 
-const sortEquipmentItems = (a: EquipItem, b: EquipItem): number => {
+export const sortEquipmentItems = (a: EquipItem, b: EquipItem): number => {
   // 0 — ascArmorClass
   // 1 — damage
   // 2 — other
@@ -35,6 +35,30 @@ const sortEquipmentItems = (a: EquipItem, b: EquipItem): number => {
   return a.name.localeCompare(b.name)
 }
 
+export const EquipmentFormatter: Record<string, (itemsMap: Array<InventoryItem>) => string> = {
+  armor: (itemsArray: Array<InventoryItem>): string => {
+    const filtered = itemsArray.filter((item): boolean => !!item.ascArmorClass)
+    const labels = filtered.map((item) => {
+      const sfx = `AC [${item.ascArmorClass}]`
+
+      return item.quantity > 1 ? `${item.name} ${sfx} (x${item.quantity})` : `${item.name} ${sfx}`
+    })
+
+    return labels.join(', ')
+  },
+
+  weapons: (itemsArray: Array<InventoryItem>): string => {
+    const filtered = itemsArray.filter((item): boolean => !!item.damage)
+    const labels = filtered.map((item) => {
+      const sfx = `(${item.damage})`
+
+      return item.quantity > 1 ? `${item.name} ${sfx} (x${item.quantity})` : `${item.name} ${sfx}`
+    })
+
+    return labels.join(', ')
+  },
+}
+
 export const Formatter: Record<string | 'default', CallableFunction> = {
   'character.classDef.SavingThrow': (fieldName: string, val: SavingThrow): string => val.snw.value.toString(),
 
@@ -57,12 +81,10 @@ export const Formatter: Record<string | 'default', CallableFunction> = {
     let filter: (item: EquipItem) => boolean
     switch (fieldName) {
       case 'items--armor':
-        filter = (item): boolean => !!item.ascArmorClass
-        break
+        return EquipmentFormatter['armor'](itemsArray)
 
       case 'items--weapons':
-        filter = (item): boolean => !!item.damage
-        break
+        return EquipmentFormatter['weapons'](itemsArray)
 
       default:
         filter = (item): boolean => !item.damage && !item.ascArmorClass

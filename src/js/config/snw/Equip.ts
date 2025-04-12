@@ -9,6 +9,7 @@ export const Armor: Array<EquipItem> = [
   { cost: 100, name: 'Plate', weight: 70, ascArmorClass: 6 },
 ]
 
+// TODO range
 export const Weapons: Array<EquipItem> = [
   { cost: 2, name: 'Arrows (20)', weight: 1, damage: 'd6', flags: InventoryItemFlag.TYPE_MISSILE },
   { cost: 2, name: 'Bolts, heavy (20)', weight: 1, damage: 'd6+1', flags: InventoryItemFlag.TYPE_MISSILE },
