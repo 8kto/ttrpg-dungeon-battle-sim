@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "wmr --reload",
-    "dev-all": "concurrently \"yarn dev\" \"yarn dev:styles\"",
+    "dev-all": "concurrently \"yarn dev\" \"yarn watch\"",
     "build:styles": "./scripts/build-styles.sh",
     "build": "yarn build:styles && wmr build --sourcemap --minify",
     "serve": "wmr serve",
@@ -17,10 +17,28 @@
     "lint": "yarn eslint src/",
     "test": "jest",
     "test:coverage": "jest --collectCoverage",
-    "dev:styles": "./scripts/build-styles.sh --watch",
     "todos": "egrep --color=always -i '(TODO|FIXME)' -r src/",
     "test:vr": "backstop test",
-    "weok": "yarn tsc && yarn lint && yarn format && yarn test && echo WE OK"
+    "weok": "yarn tsc && yarn lint && yarn format && yarn test && echo WE OK",
+    "watch": "npm-watch",
+    "styles:main": "npx tailwindcss -i src/styles/styles.scss -o src/styles/styles.processed.css -c tailwind.config.js",
+    "styles:character": "npx tailwindcss -i src/styles/character-sheet.scss -o src/styles/character-sheet.processed.css -c tailwind.config.js"
+  },
+  "watch": {
+    "styles:main": {
+      "patterns": [
+        "styles/styles.scss"
+      ],
+      "extensions": "scss",
+      "runOnStart": true
+    },
+    "styles:character": {
+      "patterns": [
+        "styles/character-sheet.scss"
+      ],
+      "extensions": "scss",
+      "runOnStart": true
+    }
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",
@@ -42,6 +60,7 @@
     "eslint-plugin-sort-keys-fix": "^1.1.2",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
+    "npm-watch": "^0.13.0",
     "pdf-lib": "^1.17.1",
     "prettier": "^3.3.2",
     "ts-jest": "^29.1.5"
