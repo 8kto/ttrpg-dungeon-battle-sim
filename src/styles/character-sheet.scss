@@ -1,0 +1,109 @@
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+  }
+}
+@page {
+  size: A4;
+  margin: 0;
+}
+body {
+  font-family: 'EB Garamond', serif;
+  margin: 0 auto;
+  padding: 0;
+  background: #f9f8f5;
+  color: #333;
+  font-size: 16px;
+}
+h1 {
+  font-family: 'Uncial Antiqua', cursive;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 36px;
+  color: #2c1b10;
+}
+h2 {
+  font-family: 'Uncial Antiqua', cursive;
+  font-size: 24px;
+  color: #3a2416;
+  margin: 10px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+td {
+  padding: 2px;
+  vertical-align: top;
+}
+
+input,
+textarea {
+  outline: none;
+  background: transparent;
+  width: 100%;
+  resize: none;
+  border: 1px solid #ddd;
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+}
+input:focus,
+textarea:focus {
+  border: 1px solid #6b4f3b;
+}
+
+h1 input {
+  font-size: 30px;
+  border-color: transparent;
+  text-align: center;
+}
+
+.page {
+  width: 800px;
+  box-sizing: border-box;
+  page-break-after: always;
+  margin: 0 auto;
+}
+.block {
+  border: 1px solid #888;
+  padding: 20px;
+  margin-bottom: 8px;
+  background: #fdfcf8;
+}
+.two-col,
+.three-col {
+  display: flex;
+  gap: 20px;
+}
+.two-col .col,
+.three-col .col {
+  flex: 1;
+}
+
+.block--header table:nth-child(1) {
+  /*flex: 0 0 40%;*/
+}
+.block--header input {
+  max-width: 120px;
+}
+
+.block--second input {
+  max-width: 120px;
+}
+.block--second table:nth-child(1) {
+  flex: 0 0 20%;
+}
+.block--second table:nth-child(2) {
+  flex: 0 0 45%;
+}
+.block--second > div {
+  flex: 0 0 35%;
+}
+
+.attribute-bonuses {
+  text-align: right;
+}
+label {
+  font-weight: bold;
+}

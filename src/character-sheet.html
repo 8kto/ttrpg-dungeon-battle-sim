@@ -2,107 +2,33 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
     <script src="js/utils/characterSheet/characterSheet.ts" type="module"></script>
+    <link rel="stylesheet" href="./styles/character-sheet.processed.css" />
+    <link rel="manifest" href="./site.webmanifest" />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=EB+Garamond&display=swap"
+      rel="stylesheet"
+    />
     <title>SW Character Sheet 2023</title>
     <style>
-      @media print {
-        body {
-          -webkit-print-color-adjust: exact;
-        }
-      }
-      @page {
-        size: A4;
-        margin: 0;
-      }
-      body {
-        font-family: serif;
-        margin: 0 auto;
-        padding: 0;
-        background: #fff;
-        color: #333;
-        font-size: 16px;
-      }
-      h1 {
-        text-align: center;
-        margin-bottom: 10px;
-      }
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      td {
-        padding: 2px;
-        vertical-align: top;
-      }
-
-      input,
-      textarea {
-        outline: none;
-        background: transparent;
-        width: 100%;
-        resize: none;
-        border: 1px solid #ddd;
-      }
-      input:focus,
-      textarea:focus {
-        border: 1px solid #888;
-      }
-
-      h1 input {
-        font-size: 30px;
-      }
-
-      .page {
-        width: 800px;
-        box-sizing: border-box;
-        page-break-after: always;
-        margin: 0 auto;
-      }
-      .block {
-        border: 1px solid #888;
-        padding: 20px;
-        margin-bottom: 8px;
-      }
-      .two-col,
-      .three-col {
-        display: flex;
-        gap: 20px;
-      }
-      .two-col .col,
-      .three-col .col {
-        flex: 1;
-      }
-
-      .block--header table:nth-child(1) {
-        /*flex: 0 0 40%;*/
-      }
-      .block--header input {
-        max-width: 120px;
-      }
-
-      .block--second input {
-        max-width: 120px;
-      }
-      .block--second table:nth-child(1) {
-        flex: 0 0 20%;
-      }
-      .block--second table:nth-child(2) {
-        flex: 0 0 45%;
-      }
-      .block--second > div {
-        flex: 0 0 35%;
-      }
-
-      .attribute-bonuses {
-        text-align: right;
-      }
     </style>
   </head>
   <body>
     <form name="character-sheet-form" id="character-sheet-form">
       <div class="page">
-        <h1><input type="text" id="character-name" name="character-name" placeholder="Character Name" /></h1>
+        <h1>
+          <input type="text" id="character-name" name="character-name" placeholder="Character Name" />
+        </h1>
+
         <div class="three-col block block--header">
           <table>
             <tr>
@@ -162,103 +88,119 @@
           </table>
         </div>
 
-        <div class="three-col block block--second">
-          <table>
-            <tr>
-              <td><label for="strength">STR</label></td>
-              <td><input type="number" id="strength" name="strength" /></td>
-            </tr>
-            <tr>
-              <td><label for="dexterity">DEX</label></td>
-              <td><input type="number" id="dexterity" name="dexterity" /></td>
-            </tr>
-            <tr>
-              <td><label for="constitution">CON</label></td>
-              <td><input type="number" id="constitution" name="constitution" /></td>
-            </tr>
-            <tr>
-              <td><label for="intelligence">INT</label></td>
-              <td><input type="number" id="intelligence" name="intelligence" /></td>
-            </tr>
-            <tr>
-              <td><label for="wisdom">WIS</label></td>
-              <td><input type="number" id="wisdom" name="wisdom" /></td>
-            </tr>
-            <tr>
-              <td><label for="charisma">CHA</label></td>
-              <td><input type="number" id="charisma" name="charisma" /></td>
-            </tr>
-          </table>
+        <div class="block block--second">
+          <h2>Attributes & Bonuses</h2>
+          <div class="three-col">
+            <table>
+              <tr>
+                <td><label for="strength">STR</label></td>
+                <td><input type="number" id="strength" name="strength" /></td>
+              </tr>
+              <tr>
+                <td><label for="dexterity">DEX</label></td>
+                <td><input type="number" id="dexterity" name="dexterity" /></td>
+              </tr>
+              <tr>
+                <td><label for="constitution">CON</label></td>
+                <td><input type="number" id="constitution" name="constitution" /></td>
+              </tr>
+              <tr>
+                <td><label for="intelligence">INT</label></td>
+                <td><input type="number" id="intelligence" name="intelligence" /></td>
+              </tr>
+              <tr>
+                <td><label for="wisdom">WIS</label></td>
+                <td><input type="number" id="wisdom" name="wisdom" /></td>
+              </tr>
+              <tr>
+                <td><label for="charisma">CHA</label></td>
+                <td><input type="number" id="charisma" name="charisma" /></td>
+              </tr>
+            </table>
 
-          <table class="attribute-bonuses">
-            <tr>
-              <td><label for="bonus-to-hit">Bonus to Hit (STR)</label></td>
-              <td><input id="bonus-to-hit" name="bonus-to-hit" type="number" /></td>
-            </tr>
-            <tr>
-              <td><label for="open-doors">Open Doors (STR)</label></td>
-              <td><input id="open-doors" name="open-doors" type="text" /></td>
-            </tr>
-            <tr>
-              <td><label for="damage-bonus">Damage Bonus (STR)</label></td>
-              <td><input id="damage-bonus" name="damage-bonus" type="number" /></td>
-            </tr>
-            <tr>
-              <td><label for="carry-modifier">Carry Modifier (STR)</label></td>
-              <td><input id="carry-modifier" name="carry-modifier" type="number" /></td>
-            </tr>
-            <tr>
-              <td><label for="bonus-to-missiles">Bonus to Missiles (DEX)</label></td>
-              <td><input id="bonus-to-missiles" name="bonus-to-missiles" type="number" /></td>
-            </tr>
-            <tr>
-              <td><label for="armor-bonus">Armor Bonus (DEX)</label></td>
-              <td><input id="armor-bonus" name="armor-bonus" type="number" /></td>
-            </tr>
-            <tr>
-              <td><label for="hp-bonus">HP Bonus (CON)</label></td>
-              <td><input id="hp-bonus" name="hp-bonus" type="number" /></td>
-            </tr>
-            <tr>
-              <td><label for="raise-dead-survival">Raise Dead Survival (CON)</label></td>
-              <td><input id="raise-dead-survival" name="raise-dead-survival" type="text" /></td>
-            </tr>
-            <tr>
-              <td><label for="additional-languages">Additional Languages</label></td>
-              <td><input id="additional-languages" name="additional-languages" type="number" /></td>
-            </tr>
-            <tr>
-              <td><label for="max-hirelings">Max # of Special Hirelings</label></td>
-              <td><input id="max-hirelings" name="max-hirelings" type="number" /></td>
-            </tr>
-          </table>
+            <table class="attribute-bonuses">
+              <tr>
+                <td><label for="bonus-to-hit">Bonus to Hit (STR)</label></td>
+                <td><input id="bonus-to-hit" name="bonus-to-hit" type="number" /></td>
+              </tr>
+              <tr>
+                <td><label for="open-doors">Open Doors (STR)</label></td>
+                <td><input id="open-doors" name="open-doors" type="text" /></td>
+              </tr>
+              <tr>
+                <td><label for="damage-bonus">Damage Bonus (STR)</label></td>
+                <td><input id="damage-bonus" name="damage-bonus" type="number" /></td>
+              </tr>
+              <tr>
+                <td><label for="carry-modifier">Carry Modifier (STR)</label></td>
+                <td><input id="carry-modifier" name="carry-modifier" type="number" /></td>
+              </tr>
+              <tr>
+                <td><label for="bonus-to-missiles">Bonus to Missiles (DEX)</label></td>
+                <td><input id="bonus-to-missiles" name="bonus-to-missiles" type="number" /></td>
+              </tr>
+              <tr>
+                <td><label for="armor-bonus">Armor Bonus (DEX)</label></td>
+                <td><input id="armor-bonus" name="armor-bonus" type="number" /></td>
+              </tr>
+              <tr>
+                <td><label for="hp-bonus">HP Bonus (CON)</label></td>
+                <td><input id="hp-bonus" name="hp-bonus" type="number" /></td>
+              </tr>
+              <tr>
+                <td><label for="raise-dead-survival">Raise Dead Survival (CON)</label></td>
+                <td><input id="raise-dead-survival" name="raise-dead-survival" type="text" /></td>
+              </tr>
+              <tr>
+                <td><label for="additional-languages">Additional Languages</label></td>
+                <td><input id="additional-languages" name="additional-languages" type="number" /></td>
+              </tr>
+              <tr>
+                <td><label for="max-hirelings">Max # of Special Hirelings</label></td>
+                <td><input id="max-hirelings" name="max-hirelings" type="number" /></td>
+              </tr>
+            </table>
 
-          <div>
-            <h3><label for="class-abilities">Class Abilities</label></h3>
-            <textarea id="class-abilities" name="class-abilities" rows="12" style="width: 200px"></textarea>
+            <div>
+              <h2><label for="class-abilities">Class Abilities</label></h2>
+              <textarea id="class-abilities" name="class-abilities" rows="12"></textarea>
+            </div>
           </div>
         </div>
 
         <div class="two-col block">
-          <div class="col"><b>Gold & Treasure</b><textarea name="gold-treasure" rows="5"></textarea></div>
-          <div class="col"><b>Items & Equipment</b><textarea name="items-equipment" rows="5"></textarea></div>
+          <div class="col">
+            <h2><label for="gold-treasure">Gold & Treasure</label></h2>
+            <textarea id="gold-treasure" name="gold-treasure" rows="5"></textarea>
+          </div>
+          <div class="col">
+            <h2><label for="items-equipment">Items & Equipment</label></h2>
+            <textarea id="items-equipment" name="items-equipment" rows="5"></textarea>
+          </div>
         </div>
 
         <div class="block">
-          <b>Weapons</b>
-          <textarea name="weapons" rows="4"></textarea>
+          <h2><label for="weapons">Weapons</label></h2>
+          <textarea id="weapons" name="weapons" rows="4"></textarea>
         </div>
       </div>
 
       <div class="page">
         <div class="two-col block block--spells-thieving">
-          <div><b>Spells</b><textarea name="spells" rows="20" cols="50"></textarea></div>
           <div>
-            <b>Thieving Skills</b>
-            <textarea name="thieving-skills" rows="20"></textarea>
+            <h2><label for="spells">Spells</label></h2>
+            <textarea id="spells" name="spells" rows="20"></textarea>
+          </div>
+          <div>
+            <h2><label for="thieving-skills">Thieving Skills</label></h2>
+            <textarea id="thieving-skills" name="thieving-skills" rows="20"></textarea>
           </div>
         </div>
-        <div class="block"><b>Notes</b><textarea name="notes" rows="10"></textarea></div>
+
+        <div class="block">
+          <h2><label for="notes">Notes</label></h2>
+          <textarea id="notes" name="notes" rows="10"></textarea>
+        </div>
       </div>
     </form>
   </body>
