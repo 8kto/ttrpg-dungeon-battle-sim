@@ -51,27 +51,27 @@ export const Formatter: Record<string | 'default', CallableFunction> = {
 
   'character.gold': (fieldName: string, val: number) => `${val} GP`,
 
-  items: (fieldName: string, itemsMap: Record<string, InventoryItem>) => {
-    let filter: CallableFunction | null = null
+  items: (fieldName: string, itemsMap: Record<string, InventoryItem>): string => {
+    const itemsArray = Object.values(itemsMap).sort(sortEquipmentItems)
 
-    if (fieldName === 'items--armor') {
-      filter = (item: EquipItem): boolean => !!item.ascArmorClass
-    } else if (fieldName === 'items--weapons') {
-      filter = (item: EquipItem): boolean => !!item.damage
-    } else {
-      filter = (item: EquipItem): boolean => !item.damage && !item.ascArmorClass
+    let filter: (item: EquipItem) => boolean
+    switch (fieldName) {
+      case 'items--armor':
+        filter = (item): boolean => !!item.ascArmorClass
+        break
+
+      case 'items--weapons':
+        filter = (item): boolean => !!item.damage
+        break
+
+      default:
+        filter = (item): boolean => !item.damage && !item.ascArmorClass
+        break
     }
 
-    let items = Object.values(itemsMap).sort(sortEquipmentItems)
-    if (filter) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      items = items.filter(filter)
-    }
+    const filtered = itemsArray.filter(filter)
 
-    const labels = items.map((item) => {
-      return item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name
-    })
+    const labels = filtered.map((item) => (item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name))
 
     return labels.join('; ')
   },
