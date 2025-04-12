@@ -5,6 +5,7 @@ node_modules
 build/
 src/styles/*.processed.css
 coverage/
+src/**/*.gitignored
 
 # Ignore test screenshots
 tests_visual_regression/bitmaps_test/
