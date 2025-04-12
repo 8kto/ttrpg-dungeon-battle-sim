@@ -44,4 +44,6 @@ export const MAP_FIELDS_TO_CHAR_ATTRS: Record<string, string> = {
 
   // Equipment
   'items-equipment': 'items',
+  'items--armor': 'items',
+  'items--weapons': 'items',
 }

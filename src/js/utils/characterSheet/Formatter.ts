@@ -36,39 +36,47 @@ const sortEquipmentItems = (a: EquipItem, b: EquipItem): number => {
 }
 
 export const Formatter: Record<string | 'default', CallableFunction> = {
-  'character.classDef.SavingThrow': (val: SavingThrow): string => val.snw.value.toString(),
+  'character.classDef.SavingThrow': (fieldName: string, val: SavingThrow): string => val.snw.value.toString(),
 
-  'character.armorClass': (val: ArmorClass): string => `${val.dac}[${val.aac}]`,
+  'character.armorClass': (fieldName: string, val: ArmorClass): string => `${val.dac}[${val.aac}]`,
 
-  'character.classDef.PrimeAttr': (val: PrimeAttribute[]): string =>
+  'character.classDef.PrimeAttr': (fieldName: string, val: PrimeAttribute[]): string =>
     val.map(([k]) => k.toUpperCase().slice(0, 3)).join(', '),
 
-  'character.experiencePointsBonus': (val: number): string => `${val}%`,
+  'character.experiencePointsBonus': (fieldName: string, val: number): string => `${val}%`,
 
-  'character.classDef.name': (name: string): string => {
+  'character.classDef.name': (fieldName: string, name: string): string => {
     return name.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (c) => c.toUpperCase())
   },
 
-  'character.gold': (val: number) => `${val} GP`,
+  'character.gold': (fieldName: string, val: number) => `${val} GP`,
 
-  items: (itemsMap: Record<string, InventoryItem>) => {
-    const items = Object.values(itemsMap).sort(sortEquipmentItems)
+  items: (fieldName: string, itemsMap: Record<string, InventoryItem>) => {
+    let filter: CallableFunction | null = null
+
+    if (fieldName === 'items--armor') {
+      filter = (item: EquipItem): boolean => !!item.ascArmorClass
+    } else if (fieldName === 'items--weapons') {
+      filter = (item: EquipItem): boolean => !!item.damage
+    } else {
+      filter = (item: EquipItem): boolean => !item.damage && !item.ascArmorClass
+    }
+
+    let items = Object.values(itemsMap).sort(sortEquipmentItems)
+    if (filter) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      items = items.filter(filter)
+    }
+
     const labels = items.map((item) => {
-      let sfx = ''
-      if (item.ascArmorClass) {
-        sfx = '🛡'
-      }
-      if (item.damage) {
-        sfx = '⚔'
-      }
-
-      return item.quantity > 1 ? `${item.name}${sfx} (${item.quantity})` : `${item.name}${sfx}`
+      return item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name
     })
 
     return labels.join('; ')
   },
 
-  default: (val: unknown): string => {
+  default: (fieldName: string, val: unknown): string => {
     if (Array.isArray(val)) {
       return val.join(',')
     } else if (typeof val === 'object') {

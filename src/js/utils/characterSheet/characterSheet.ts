@@ -5,8 +5,6 @@ import { exportedStats } from './__tests__/mocks'
 import { MAP_FIELDS_TO_CHAR_ATTRS } from './fieldsConfig'
 import { Formatter } from './Formatter'
 
-console.log('TEST')
-
 /**
  * @param {import('js/domain/Inventory').Inventory} inventory
  * @param {string} fieldName
@@ -30,7 +28,7 @@ const getAttrValue = (inventory: Inventory, fieldName: string): string | null =>
     res = res[key]
   }
 
-  return formatter(res)
+  return formatter(fieldName, res)
 }
 
 const processFields = (form: HTMLFormElement, inventory: Inventory): void => {
