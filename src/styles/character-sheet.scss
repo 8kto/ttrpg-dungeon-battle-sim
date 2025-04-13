@@ -16,10 +16,10 @@
 
 @media print {
   :root {
-    --primary-color: #111;
-    --neutral-color: #888;
+    --primary-color: #444;
+    --neutral-color: #ccc;
     --alt-color: #111;
-    --sub-color: #111;
+    --sub-color: #ccc;
     --page-bg: #fff;
     --block-bg: #fff;
     --input-bg: #fff;
@@ -27,6 +27,7 @@
 
   body {
     print-color-adjust: exact;
+    background: #00c7b5;
   }
 
   .no-print {
@@ -52,8 +53,8 @@
 
 @page {
   size: A4;
-  margin: 0;
-  padding: 0;
+  margin: 10px;
+  padding: 10px;
   background: var(--page-bg);
 }
 
@@ -143,12 +144,16 @@ table td:first-child {
 }
 
 .page {
-  width: 210mm;
+  width: 900px;
   box-sizing: border-box;
-  margin: 0 auto;
-  //overflow: hidden;
-  position: relative;
+  margin: 0 auto 1.25rem;
+  //padding: 10px;
   //height: 100vh;
+
+  // weird issue with 1st page
+  &:nth-child(1) {
+    page-break-after: always;
+  }
 }
 
 .brick {

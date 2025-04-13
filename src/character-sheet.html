@@ -60,7 +60,7 @@
               </tr>
               <tr>
                 <td><label for="age">Age</label></td>
-                <td><input type="number" id="age" name="age" /></td>
+                <td><input type="text" id="age" name="age" /></td>
               </tr>
               <tr>
                 <td><label for="ancestry">Ancestry</label></td>
@@ -76,11 +76,11 @@
             <table class="h-full w-full table-fixed">
               <tr>
                 <td><label for="level">Level</label></td>
-                <td><input type="number" id="level" name="level" /></td>
+                <td><input type="text" id="level" name="level" /></td>
               </tr>
               <tr>
                 <td><label for="xp">XP</label></td>
-                <td><input type="number" id="xp" name="xp" /></td>
+                <td><input type="text" id="xp" name="xp" /></td>
               </tr>
               <tr>
                 <td><label for="prime-attribute">Prime Attr.</label></td>
@@ -131,27 +131,27 @@
                   <table class="">
                     <tr>
                       <td><label for="strength">STR</label></td>
-                      <td><input type="number" id="strength" name="strength" /></td>
+                      <td><input type="text" id="strength" name="strength" /></td>
                     </tr>
                     <tr>
                       <td><label for="dexterity">DEX</label></td>
-                      <td><input type="number" id="dexterity" name="dexterity" /></td>
+                      <td><input type="text" id="dexterity" name="dexterity" /></td>
                     </tr>
                     <tr>
                       <td><label for="constitution">CON</label></td>
-                      <td><input type="number" id="constitution" name="constitution" /></td>
+                      <td><input type="text" id="constitution" name="constitution" /></td>
                     </tr>
                     <tr>
                       <td><label for="intelligence">INT</label></td>
-                      <td><input type="number" id="intelligence" name="intelligence" /></td>
+                      <td><input type="text" id="intelligence" name="intelligence" /></td>
                     </tr>
                     <tr>
                       <td><label for="wisdom">WIS</label></td>
-                      <td><input type="number" id="wisdom" name="wisdom" /></td>
+                      <td><input type="text" id="wisdom" name="wisdom" /></td>
                     </tr>
                     <tr>
                       <td><label for="charisma">CHA</label></td>
-                      <td><input type="number" id="charisma" name="charisma" /></td>
+                      <td><input type="text" id="charisma" name="charisma" /></td>
                     </tr>
                   </table>
                 </div>
@@ -161,7 +161,7 @@
                 <table class="attribute-bonuses h-full w-full table-fixed">
                   <tr>
                     <td><label for="bonus-to-hit">Bonus to Hit (STR)</label></td>
-                    <td><input id="bonus-to-hit" name="bonus-to-hit" type="number" /></td>
+                    <td><input id="bonus-to-hit" name="bonus-to-hit" type="text" /></td>
                   </tr>
                   <tr>
                     <td><label for="open-doors">Open Doors (STR)</label></td>
@@ -169,23 +169,23 @@
                   </tr>
                   <tr>
                     <td><label for="damage-bonus">Damage Bonus (STR)</label></td>
-                    <td><input id="damage-bonus" name="damage-bonus" type="number" /></td>
+                    <td><input id="damage-bonus" name="damage-bonus" type="text" /></td>
                   </tr>
                   <tr>
                     <td><label for="carry-modifier">Carry Modifier (STR)</label></td>
-                    <td><input id="carry-modifier" name="carry-modifier" type="number" /></td>
+                    <td><input id="carry-modifier" name="carry-modifier" type="text" /></td>
                   </tr>
                   <tr>
                     <td><label for="bonus-to-missiles">Bonus to Missiles (DEX)</label></td>
-                    <td><input id="bonus-to-missiles" name="bonus-to-missiles" type="number" /></td>
+                    <td><input id="bonus-to-missiles" name="bonus-to-missiles" type="text" /></td>
                   </tr>
                   <tr>
                     <td><label for="armor-bonus">Armor Bonus (DEX)</label></td>
-                    <td><input id="armor-bonus" name="armor-bonus" type="number" /></td>
+                    <td><input id="armor-bonus" name="armor-bonus" type="text" /></td>
                   </tr>
                   <tr>
                     <td><label for="hp-bonus">HP Bonus (CON)</label></td>
-                    <td><input id="hp-bonus" name="hp-bonus" type="number" /></td>
+                    <td><input id="hp-bonus" name="hp-bonus" type="text" /></td>
                   </tr>
                   <tr>
                     <td><label for="raise-dead-survival">Raise Dead Survival (CON)</label></td>
@@ -193,11 +193,11 @@
                   </tr>
                   <tr>
                     <td><label for="additional-languages">Additional Languages</label></td>
-                    <td><input id="additional-languages" name="additional-languages" type="number" /></td>
+                    <td><input id="additional-languages" name="additional-languages" type="text" /></td>
                   </tr>
                   <tr>
                     <td><label for="max-hirelings">Max # of Special Hirelings</label></td>
-                    <td><input id="max-hirelings" name="max-hirelings" type="number" /></td>
+                    <td><input id="max-hirelings" name="max-hirelings" type="text" /></td>
                   </tr>
                 </table>
               </div>
@@ -222,30 +222,26 @@
 
         <div class="brick flex">
           <div class="flex-1">
-            <h2><label for="items--weapons">Weapons</label></h2>
+            <h2>Weapons</h2>
 
-            <div class="relative">
-              <table class="w-full table-bordered table--weapons mb-1">
-                <thead class="text-left">
-                  <tr class="border-b border-amber-500">
-                    <th scope="col">Weapon</th>
-                    <th scope="col">Damage</th>
-                    <th scope="col">To Hit Bonus</th>
-                    <th scope="col">Range</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr data-weapon-row-template>
-                    <th><input class="weapon-input--name w-full" type="text" /></th>
-                    <td><input class="weapon-input--damage" type="text" /></td>
-                    <td><input class="weapon-input--tohit" type="text" /></td>
-                    <td><input class="weapon-input--range" type="text" /></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <textarea id="items--weapons" name="items--weapons" rows="2"></textarea>
+            <table class="table--weapons">
+              <thead class="text-left">
+                <tr class="">
+                  <th scope="col">Weapon</th>
+                  <th scope="col">Damage</th>
+                  <th scope="col">To Hit Bonus</th>
+                  <th scope="col">Range</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-weapon-row-template>
+                  <th><input class="weapon-input--name w-full" type="text" /></th>
+                  <td><input class="weapon-input--damage" type="text" /></td>
+                  <td><input class="weapon-input--tohit" type="text" /></td>
+                  <td><input class="weapon-input--range" type="text" /></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
