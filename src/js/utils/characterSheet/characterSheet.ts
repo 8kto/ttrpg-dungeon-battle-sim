@@ -1,9 +1,11 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix,no-console */
 
+import { InventoryItemFlag } from '../../domain/Equipment'
 import type { Inventory } from '../../domain/Inventory'
+import { assert } from '../assert'
 import { exportedStats } from './__tests__/mocks'
 import { MAP_FIELDS_TO_CHAR_ATTRS } from './fieldsConfig'
-import { EquipmentFormatter, Formatter, sortEquipmentItems } from './Formatter'
+import { Formatter, sortEquipmentItems } from './Formatter'
 
 /**
  * @param {import('js/domain/Inventory').Inventory} inventory
@@ -49,6 +51,9 @@ const processFields = (form: HTMLFormElement, inventory: Inventory): void => {
 const processWeapons = (form: HTMLFormElement, inventory: Inventory): void => {
   const itemsArray = Object.values(inventory.items).sort(sortEquipmentItems)
   const items = itemsArray.filter((item): boolean => !!item.damage)
+  const char = inventory.character
+
+  assert(char, 'Character not found')
 
   const tplRowElement = form.querySelector<HTMLTableRowElement>('[data-weapon-row-template]')!
   const tbodyElement = tplRowElement.parentNode!
@@ -58,12 +63,31 @@ const processWeapons = (form: HTMLFormElement, inventory: Inventory): void => {
     }),
   )
 
+  const { damageMod, toHit } = char
   rows.forEach((newRowElement, index) => {
     const item = items[index]
 
-    // TODO range + tohit
+    const isBoth = item.flags! & InventoryItemFlag.MELEE_AND_MISSILE
+    const isMelee = item.flags! & InventoryItemFlag.TYPE_MELEE
+    const isMissile = item.flags! & InventoryItemFlag.TYPE_MISSILE
+
+    let toHitString = 'NA'
+    if (isBoth) {
+      toHitString = `${toHit.melee} / ${toHit.missiles}`
+    } else if (isMelee) {
+      toHitString = toHit.melee
+    } else if (isMissile) {
+      toHitString = toHit.missiles
+    }
+    let damageString = item.damage!
+    if (damageMod && damageMod !== '0') {
+      damageString = `${item.damage} ${damageMod}`
+    }
+
+    // TODO range
     newRowElement.querySelector<HTMLInputElement>('.weapon-input--name')!.value = item.name
-    newRowElement.querySelector<HTMLInputElement>('.weapon-input--damage')!.value = item.damage!
+    newRowElement.querySelector<HTMLInputElement>('.weapon-input--damage')!.value = damageString
+    newRowElement.querySelector<HTMLInputElement>('.weapon-input--tohit')!.value = toHitString
 
     tbodyElement.appendChild(newRowElement)
   })
@@ -90,7 +114,7 @@ const renderCharacterSheet = (params: CharacterSheetParams): void => {
 }
 
 // FIXME remove
-const testInventory: Inventory = Object.values(exportedStats)[0]
+const testInventory: Inventory = Object.values(exportedStats)[2]
 
 void renderCharacterSheet({
   inventory: testInventory,

@@ -224,21 +224,29 @@
           <div class="flex-1">
             <h2>Weapons</h2>
 
-            <table class="table--weapons">
+            <table class="w-full table--weapons">
               <thead class="text-left">
-                <tr class="">
+                <tr>
                   <th scope="col">Weapon</th>
                   <th scope="col">Damage</th>
-                  <th scope="col">To Hit Bonus</th>
+                  <th scope="col">To Hit (Mêlée&nbsp;/&nbsp;Missiles)</th>
                   <th scope="col">Range</th>
                 </tr>
               </thead>
               <tbody>
                 <tr data-weapon-row-template>
-                  <th><input class="weapon-input--name w-full" type="text" /></th>
-                  <td><input class="weapon-input--damage" type="text" /></td>
-                  <td><input class="weapon-input--tohit" type="text" /></td>
-                  <td><input class="weapon-input--range" type="text" /></td>
+                  <td>
+                    <input class="weapon-input--name w-full" type="text" />
+                  </td>
+                  <td>
+                    <input class="weapon-input--damage w-full" type="text" />
+                  </td>
+                  <td>
+                    <input class="weapon-input--tohit w-full" type="text" />
+                  </td>
+                  <td>
+                    <input class="weapon-input--range w-full" type="text" />
+                  </td>
                 </tr>
               </tbody>
             </table>

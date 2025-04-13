@@ -46,17 +46,6 @@ export const EquipmentFormatter: Record<string, (itemsMap: Array<InventoryItem>)
 
     return labels.join(', ')
   },
-
-  weapons: (itemsArray: Array<InventoryItem>): string => {
-    const filtered = itemsArray.filter((item): boolean => !!item.damage)
-    const labels = filtered.map((item) => {
-      const sfx = `(${item.damage})`
-
-      return item.quantity > 1 ? `${item.name} ${sfx} (x${item.quantity})` : `${item.name} ${sfx}`
-    })
-
-    return labels.join(', ')
-  },
 }
 
 export const Formatter: Record<string | 'default', CallableFunction> = {
@@ -82,9 +71,6 @@ export const Formatter: Record<string | 'default', CallableFunction> = {
     switch (fieldName) {
       case 'items--armor':
         return EquipmentFormatter['armor'](itemsArray)
-
-      case 'items--weapons':
-        return EquipmentFormatter['weapons'](itemsArray)
 
       default:
         filter = (item): boolean => !item.damage && !item.ascArmorClass

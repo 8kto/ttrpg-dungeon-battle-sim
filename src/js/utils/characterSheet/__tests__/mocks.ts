@@ -188,7 +188,7 @@ export const exportedStats: Record<string, Inventory> = {
         Strength: {
           Score: 10,
           ToHit: 0,
-          Damage: 0,
+          Damage: 1,
           Doors: '1-2',
           Carry: 5,
         },
@@ -660,7 +660,7 @@ export const exportedStats: Record<string, Inventory> = {
         armor: 'None',
         dac: 9,
       },
-      damageMod: '0',
+      damageMod: '+1',
       experiencePoints: 0,
       experiencePointsBonus: 5,
       $classDefName: 'Fighter',
