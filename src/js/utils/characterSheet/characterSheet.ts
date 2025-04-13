@@ -40,7 +40,8 @@ const processFields = (form: HTMLFormElement, inventory: Inventory): void => {
     if (input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement) {
       const value = getAttrValue(inventory, fieldName)
 
-      input.value = value ? value.toString() : `--${fieldName}`
+      // input.value = value ? value.toString() : `--${fieldName}`
+      input.value = value?.toString() ?? ''
     }
   }
 }
