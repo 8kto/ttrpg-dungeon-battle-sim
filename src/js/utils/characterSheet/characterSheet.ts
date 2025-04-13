@@ -3,6 +3,7 @@
 import { InventoryItemFlag } from '../../domain/Equipment'
 import type { Inventory } from '../../domain/Inventory'
 import { assert } from '../assert'
+import { getElementById } from '../layout'
 import { exportedStats } from './__tests__/mocks'
 import { MAP_FIELDS_TO_CHAR_ATTRS } from './fieldsConfig'
 import { Formatter, sortEquipmentItems } from './Formatter'
@@ -93,6 +94,18 @@ const processWeapons = (form: HTMLFormElement, inventory: Inventory): void => {
   })
 }
 
+// TODO render as table with inputs
+const processEquipment = (containerElement: HTMLElement, inventory: Inventory): void => {
+  const itemsArray = Object.values(inventory.items).sort(sortEquipmentItems)
+  const items = itemsArray.filter((item): boolean => !item.damage && !item.ascArmorClass)
+
+  items.forEach((item) => {
+    const listItemElement = document.createElement('p')
+    listItemElement.textContent = item.name
+    containerElement.appendChild(listItemElement)
+  })
+}
+
 const sendSheet = (): void => {}
 
 type CharacterSheetParams = {
@@ -102,11 +115,13 @@ type CharacterSheetParams = {
 
 const renderCharacterSheet = (params: CharacterSheetParams): void => {
   const { inventory } = params
-  const form = document.getElementById('character-sheet-form')! as HTMLFormElement
+  const formElement = getElementById<HTMLFormElement>('character-sheet-form')
+  const equipContainerElement = getElementById<HTMLDivElement>('items-equipment')
 
   try {
-    processFields(form, inventory)
-    processWeapons(form, inventory)
+    processFields(formElement, inventory)
+    processWeapons(formElement, inventory)
+    processEquipment(equipContainerElement, inventory)
     sendSheet()
   } catch (err) {
     console.error('❌ Failed to fill character sheet', err)
@@ -114,7 +129,7 @@ const renderCharacterSheet = (params: CharacterSheetParams): void => {
 }
 
 // FIXME remove
-const testInventory: Inventory = Object.values(exportedStats)[2]
+const testInventory: Inventory = Object.values(exportedStats)[0]
 
 void renderCharacterSheet({
   inventory: testInventory,
