@@ -93,17 +93,40 @@ const processWeapons = (form: HTMLFormElement, inventory: Inventory): void => {
     tbodyElement.appendChild(newRowElement)
   })
 }
-
-// TODO render as table with inputs
-const processEquipment = (containerElement: HTMLElement, inventory: Inventory): void => {
+const processEquipment = (formElement: HTMLFormElement, inventory: Inventory): void => {
   const itemsArray = Object.values(inventory.items).sort(sortEquipmentItems)
   const items = itemsArray.filter((item): boolean => !item.damage && !item.ascArmorClass)
 
-  items.forEach((item) => {
-    const listItemElement = document.createElement('p')
-    listItemElement.textContent = item.name
-    containerElement.appendChild(listItemElement)
+  const tplRowElement = formElement.querySelector<HTMLTableRowElement>('[data-equipment-row-template]')!
+  const tbodyElement = tplRowElement.parentNode! as HTMLBodyElement
+  const colsNum = 4
+  const rowsNum = Math.ceil(items.length / colsNum)
+
+  const rows: HTMLTableRowElement[] = [tplRowElement]
+  for (let i = 1; i < rowsNum; i++) {
+    const newRow = tplRowElement.cloneNode(true) as HTMLTableRowElement
+    rows.push(newRow)
+  }
+
+  tbodyElement.innerHTML = ''
+  rows.forEach((row) => {
+    tbodyElement.appendChild(row)
   })
+
+  // Fill the table column by column
+  for (let col = 0; col < colsNum; col++) {
+    for (let row = 0; row < rowsNum; row++) {
+      const itemIndex = col * rowsNum + row
+      if (itemIndex >= items.length) {
+        break
+      }
+
+      const input = rows[row].querySelectorAll<HTMLInputElement>('.equipment-item-input')[col]
+      if (input) {
+        input.value = items[itemIndex].name
+      }
+    }
+  }
 }
 
 const sendSheet = (): void => {}
@@ -116,12 +139,11 @@ type CharacterSheetParams = {
 const renderCharacterSheet = (params: CharacterSheetParams): void => {
   const { inventory } = params
   const formElement = getElementById<HTMLFormElement>('character-sheet-form')
-  const equipContainerElement = getElementById<HTMLDivElement>('items-equipment')
 
   try {
     processFields(formElement, inventory)
     processWeapons(formElement, inventory)
-    processEquipment(equipContainerElement, inventory)
+    processEquipment(formElement, inventory)
     sendSheet()
   } catch (err) {
     console.error('❌ Failed to fill character sheet', err)

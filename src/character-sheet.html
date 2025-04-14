@@ -254,11 +254,31 @@
         </div>
       </div>
 
+      <div class="page-divider no-print"></div>
+
       <div class="page">
         <div class="brick flex brick--equipment">
           <div class="flex-1">
-            <h2><label for="items-equipment">Items</label></h2>
-            <div id="items-equipment" class="xcolumns-5"></div>
+            <h2>Items</h2>
+
+            <table class="w-full table--equipment">
+              <tbody>
+                <tr data-equipment-row-template>
+                  <td>
+                    <input class="equipment-item-input" type="text" />
+                  </td>
+                  <td>
+                    <input class="equipment-item-input" type="text" />
+                  </td>
+                  <td>
+                    <input class="equipment-item-input" type="text" />
+                  </td>
+                  <td>
+                    <input class="equipment-item-input" type="text" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -281,7 +301,7 @@
         </div>
       </div>
     </form>
-    <footer class="footer text-center p-4 no-print">
+    <footer class="footer text-center p-4 xno-print">
       <div class="flex align-center mx-auto">
         <span class="">&copy; 2025</span>
         <a href="https://swords-and-wizardry.ivlev.blog/" target="_blank">Swords & Wizardry Character Generator</a>
