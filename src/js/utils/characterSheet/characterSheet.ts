@@ -58,8 +58,10 @@ const processWeapons = (form: HTMLFormElement, inventory: Inventory): void => {
 
   const tplRowElement = form.querySelector<HTMLTableRowElement>('[data-weapon-row-template]')!
   const tbodyElement = tplRowElement.parentNode!
+  const rowsMinimumNum = 5
+  const rowsNum = Math.max(rowsMinimumNum, items.length)
   const rows = [tplRowElement].concat(
-    Array.from({ length: items.length - 1 }, () => {
+    Array.from({ length: rowsNum - 1 }, () => {
       return tplRowElement.cloneNode(true) as HTMLTableRowElement
     }),
   )
@@ -67,6 +69,11 @@ const processWeapons = (form: HTMLFormElement, inventory: Inventory): void => {
   const { damageMod, toHit } = char
   rows.forEach((newRowElement, index) => {
     const item = items[index]
+    if (!item) {
+      tbodyElement.appendChild(newRowElement)
+
+      return
+    }
 
     const isBoth = item.flags! & InventoryItemFlag.MELEE_AND_MISSILE
     const isMelee = item.flags! & InventoryItemFlag.TYPE_MELEE
@@ -152,9 +159,7 @@ const renderCharacterSheet = (params: CharacterSheetParams): void => {
 }
 
 // FIXME remove
-const testInventory: Inventory = Object.values(exportedStats)[1]
-
-console.log(testInventory)
+const testInventory: Inventory = Object.values(exportedStats)[2]
 
 void renderCharacterSheet({
   inventory: testInventory,
@@ -162,3 +167,4 @@ void renderCharacterSheet({
 })
 
 // TODO display spell cells table per level
+// TODO check AC for fighter

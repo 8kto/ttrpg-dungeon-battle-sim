@@ -71,7 +71,7 @@ export const Formatter: Record<string | 'default', CallableFunction> = {
   },
 
   'character.spells': (spells: Record<string, Spell>): string => {
-    const itemsArray = Object.values(spells)
+    const itemsArray = Object.values(spells || {})
     const labels = itemsArray.map((spell) => {
       return `${spell.name} (${spell.level})`
     })
