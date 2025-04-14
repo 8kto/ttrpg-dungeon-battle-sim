@@ -4,6 +4,7 @@ import type { EquipItem } from '../../domain/Equipment'
 import type { InventoryItem } from '../../domain/Inventory'
 import type { ArmorClass } from '../../domain/snw/Character'
 import type { PrimeAttribute } from '../../domain/snw/CharacterClass'
+import type { Spell } from '../../domain/snw/Magic'
 import type { SavingThrow } from '../../domain/snw/SavingThrow'
 
 export const sortEquipmentItems = (a: EquipItem, b: EquipItem): number => {
@@ -35,8 +36,30 @@ export const sortEquipmentItems = (a: EquipItem, b: EquipItem): number => {
   return a.name.localeCompare(b.name)
 }
 
-export const EquipmentFormatter: Record<string, (itemsMap: Array<InventoryItem>) => string> = {
-  armor: (itemsArray: Array<InventoryItem>): string => {
+/**
+ * Returns formatted data structures as strings.
+ *
+ * Each key is a path within the Inventory, while value is a formatter function
+ * that receives a resolved data structure.
+ */
+export const Formatter: Record<string | 'default', CallableFunction> = {
+  'character.classDef.SavingThrow': (val: SavingThrow): string => val.snw.value.toString(),
+
+  'character.armorClass': (val: ArmorClass): string => `${val.dac}[${val.aac}]`,
+
+  'character.classDef.PrimeAttr': (val: PrimeAttribute[]): string =>
+    val.map(([k]) => k.toUpperCase().slice(0, 3)).join(', '),
+
+  'character.experiencePointsBonus': (val: number): string => `${val}%`,
+
+  'character.classDef.name': (name: string): string => {
+    return name.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (c) => c.toUpperCase())
+  },
+
+  'character.gold': (val: number) => `${val} GP`,
+
+  items: (itemsMap: Record<string, InventoryItem>): string => {
+    const itemsArray = Object.values(itemsMap).sort(sortEquipmentItems)
     const filtered = itemsArray.filter((item): boolean => !!item.ascArmorClass)
     const labels = filtered.map((item) => {
       const sfx = `AC [${item.ascArmorClass}]`
@@ -46,45 +69,17 @@ export const EquipmentFormatter: Record<string, (itemsMap: Array<InventoryItem>)
 
     return labels.join(', ')
   },
-}
 
-export const Formatter: Record<string | 'default', CallableFunction> = {
-  'character.classDef.SavingThrow': (fieldName: string, val: SavingThrow): string => val.snw.value.toString(),
+  'character.spells': (spells: Record<string, Spell>): string => {
+    const itemsArray = Object.values(spells)
+    const labels = itemsArray.map((spell) => {
+      return `${spell.name} (${spell.level})`
+    })
 
-  'character.armorClass': (fieldName: string, val: ArmorClass): string => `${val.dac}[${val.aac}]`,
-
-  'character.classDef.PrimeAttr': (fieldName: string, val: PrimeAttribute[]): string =>
-    val.map(([k]) => k.toUpperCase().slice(0, 3)).join(', '),
-
-  'character.experiencePointsBonus': (fieldName: string, val: number): string => `${val}%`,
-
-  'character.classDef.name': (fieldName: string, name: string): string => {
-    return name.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (c) => c.toUpperCase())
+    return labels.join('\n')
   },
 
-  'character.gold': (fieldName: string, val: number) => `${val} GP`,
-
-  items: (fieldName: string, itemsMap: Record<string, InventoryItem>): string => {
-    const itemsArray = Object.values(itemsMap).sort(sortEquipmentItems)
-
-    let filter: (item: EquipItem) => boolean
-    switch (fieldName) {
-      case 'items--armor':
-        return EquipmentFormatter['armor'](itemsArray)
-
-      default:
-        filter = (item): boolean => !item.damage && !item.ascArmorClass
-        break
-    }
-
-    const filtered = itemsArray.filter(filter)
-
-    const labels = filtered.map((item) => (item.quantity > 1 ? `${item.name} (${item.quantity})` : item.name))
-
-    return labels.join('; ')
-  },
-
-  default: (fieldName: string, val: unknown): string => {
+  default: (val: unknown): string => {
     if (Array.isArray(val)) {
       return val.join(',')
     } else if (typeof val === 'object') {

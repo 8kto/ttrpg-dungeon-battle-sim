@@ -43,7 +43,8 @@ export const MAP_FIELDS_TO_CHAR_ATTRS: Record<string, string> = {
   'gold-treasure': 'character.gold',
 
   // Equipment
-  // 'items-equipment': 'items',
   'items--armor': 'items',
-  // 'items--weapons': 'items',
+
+  // Spells
+  spells: 'character.spells',
 }

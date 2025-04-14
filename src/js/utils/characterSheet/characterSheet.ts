@@ -31,7 +31,7 @@ const getAttrValue = (inventory: Inventory, fieldName: string): string | null =>
     res = res[key]
   }
 
-  return formatter(fieldName, res)
+  return formatter(res)
 }
 
 const processFields = (form: HTMLFormElement, inventory: Inventory): void => {
@@ -42,8 +42,8 @@ const processFields = (form: HTMLFormElement, inventory: Inventory): void => {
 
     if (input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement) {
       const value = getAttrValue(inventory, fieldName)
-
       // input.value = value ? value.toString() : `--${fieldName}`
+
       input.value = value?.toString() ?? ''
     }
   }
@@ -100,7 +100,8 @@ const processEquipment = (formElement: HTMLFormElement, inventory: Inventory): v
   const tplRowElement = formElement.querySelector<HTMLTableRowElement>('[data-equipment-row-template]')!
   const tbodyElement = tplRowElement.parentNode! as HTMLBodyElement
   const colsNum = 4
-  const rowsNum = Math.ceil(items.length / colsNum)
+  const rowsMinimumNum = 5
+  const rowsNum = Math.max(Math.ceil(items.length / colsNum), rowsMinimumNum)
 
   const rows: HTMLTableRowElement[] = [tplRowElement]
   for (let i = 1; i < rowsNum; i++) {
@@ -151,9 +152,13 @@ const renderCharacterSheet = (params: CharacterSheetParams): void => {
 }
 
 // FIXME remove
-const testInventory: Inventory = Object.values(exportedStats)[0]
+const testInventory: Inventory = Object.values(exportedStats)[1]
+
+console.log(testInventory)
 
 void renderCharacterSheet({
   inventory: testInventory,
   document: document,
 })
+
+// TODO display spell cells table per level
