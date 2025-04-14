@@ -10,6 +10,7 @@ export const Armor: Array<EquipItem> = [
 ]
 
 // TODO range
+// FIXME bows don't render in Weapon section (char sheet)
 export const Weapons: Array<EquipItem> = [
   { cost: 2, name: 'Arrows (20)', weight: 1, damage: 'd6', flags: InventoryItemFlag.TYPE_MISSILE },
   { cost: 2, name: 'Bolts, heavy (20)', weight: 1, damage: 'd6+1', flags: InventoryItemFlag.TYPE_MISSILE },
