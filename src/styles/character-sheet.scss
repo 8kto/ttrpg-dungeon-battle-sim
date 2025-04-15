@@ -149,11 +149,9 @@ table td:first-child {
   width: 900px;
   box-sizing: border-box;
   margin: 1.25rem auto;
-  //padding: 10px;
-  //height: 100vh;
 
   // weird issue with 1st page
-  &:nth-child(1) {
+  &:not(:last-child) {
     page-break-after: always;
   }
 }
@@ -213,11 +211,6 @@ table td:first-child {
   width: 16.66%;
 }
 
-.brick--equipment {
-  //min-height: 150px;
-  //max-height: 300px;
-}
-
 #items-equipment {
   display: grid;
   grid-template-columns: 25% 25% 1fr 1fr;
@@ -231,4 +224,24 @@ table td:first-child {
   height: 0;
   border-top: 1px dashed var(--neutral-color);
   margin: 2rem 0;
+}
+
+.table--spells-level {
+  tr:nth-child(even) {
+    background-color: var(--block-color);
+  }
+
+  tr:nth-child(odd) {
+    background-color: #fff;
+  }
+
+  tr:hover {
+    background-color: var(--neutral-color);
+  }
+
+  th,
+  td {
+    padding: 0.5rem;
+    text-align: center;
+  }
 }

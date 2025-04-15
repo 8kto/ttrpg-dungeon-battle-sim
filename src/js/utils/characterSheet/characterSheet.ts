@@ -2,6 +2,7 @@
 
 import { InventoryItemFlag } from '../../domain/Equipment'
 import type { Inventory } from '../../domain/Inventory'
+import { CharacterClass } from '../../domain/snw/CharacterClass'
 import { assert } from '../assert'
 import { getElementById } from '../layout'
 import { exportedStats } from './__tests__/mocks'
@@ -100,6 +101,7 @@ const processWeapons = (form: HTMLFormElement, inventory: Inventory): void => {
     tbodyElement.appendChild(newRowElement)
   })
 }
+
 const processEquipment = (formElement: HTMLFormElement, inventory: Inventory): void => {
   const itemsArray = Object.values(inventory.items).sort(sortEquipmentItems)
   const items = itemsArray.filter((item): boolean => !item.damage && !item.ascArmorClass)
@@ -137,6 +139,41 @@ const processEquipment = (formElement: HTMLFormElement, inventory: Inventory): v
   }
 }
 
+const getThievingSkillsSection = (container: HTMLFormElement): HTMLElement =>
+  container.querySelector('.thieving-skills-container')!
+
+const getSpellsSection = (container: HTMLFormElement): HTMLElement => container.querySelector('.spells-container')!
+const getSpellsAndThievingBrick = (container: HTMLElement): HTMLElement =>
+  container.querySelector('.brick--spells-thieving')!
+const getSpellsByLevelMagicUserPage = (container: HTMLElement): HTMLElement =>
+  container.querySelector('.page--spells-by-level--magic-user')!
+
+const hideSections = (containerElement: HTMLFormElement, inventory: Inventory): void => {
+  const { character } = inventory
+  assert(character, 'Character not found')
+  const className = character.classDef.name
+
+  let containersInSpellsAndThievingBrick = 2
+  if (![CharacterClass.Assassin, CharacterClass.Thief].includes(className)) {
+    containersInSpellsAndThievingBrick--
+    getThievingSkillsSection(containerElement).setAttribute('hidden', 'true')
+  }
+
+  if (![CharacterClass.MagicUser, CharacterClass.Cleric, CharacterClass.Druid].includes(className)) {
+    containersInSpellsAndThievingBrick--
+    getSpellsSection(containerElement).setAttribute('hidden', 'true')
+    getSpellsByLevelMagicUserPage(containerElement).setAttribute('hidden', 'true')
+  }
+
+  if (!containersInSpellsAndThievingBrick) {
+    getSpellsAndThievingBrick(containerElement).setAttribute('hidden', 'true')
+  }
+
+  if (className === CharacterClass.MagicUser) {
+    getSpellsByLevelMagicUserPage(containerElement).removeAttribute('hidden')
+  }
+}
+
 const sendSheet = (): void => {}
 
 type CharacterSheetParams = {
@@ -152,6 +189,7 @@ const renderCharacterSheet = (params: CharacterSheetParams): void => {
     processFields(formElement, inventory)
     processWeapons(formElement, inventory)
     processEquipment(formElement, inventory)
+    hideSections(formElement, inventory)
     sendSheet()
   } catch (err) {
     console.error('❌ Failed to fill character sheet', err)
@@ -166,5 +204,5 @@ void renderCharacterSheet({
   document: document,
 })
 
-// TODO display spell cells table per level
 // TODO check AC for fighter
+// TODO remove btn for each brick
