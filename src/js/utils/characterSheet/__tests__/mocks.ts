@@ -6,6 +6,7 @@ export const exportedStats: Record<string, Inventory> = {
   maincharacter1744304617534: {
     id: 'maincharacter1744304617534',
     name: 'Knee Knife',
+    movementRate: 12,
     items: {
       'Basic accessories': {
         cost: 0,
@@ -58,6 +59,7 @@ export const exportedStats: Record<string, Inventory> = {
       },
     },
     character: {
+      movementRate: 12,
       gold: 900,
       hitPoints: 11,
       stats: {
@@ -248,6 +250,7 @@ export const exportedStats: Record<string, Inventory> = {
     character: {
       gold: 120,
       hitPoints: 3,
+      movementRate: 12,
       stats: {
         Strength: {
           Score: 8,
@@ -360,6 +363,7 @@ export const exportedStats: Record<string, Inventory> = {
   },
   'character-name1744321460655': {
     id: 'character-name1744321460655',
+
     name: 'Mighty Fighter',
     items: {
       'Basic accessories': {
@@ -413,6 +417,7 @@ export const exportedStats: Record<string, Inventory> = {
     character: {
       gold: 100,
       hitPoints: 1,
+      movementRate: 9,
       stats: {
         Strength: {
           Score: 13,

@@ -44,6 +44,7 @@ export const MAP_FIELDS_TO_CHAR_ATTRS: Record<string, string> = {
 
   // Equipment
   'items--armor': 'items',
+  'movement-rate-input': 'character.movementRate',
 
   // Spells
   spells: 'character.spells',

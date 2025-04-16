@@ -24,6 +24,7 @@ export type Character = {
   gold: number
   experiencePoints: number
   experiencePointsBonus: number
+  movementRate: number
 
   // Combat`
   armorClass: ArmorClass

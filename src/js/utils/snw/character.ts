@@ -8,19 +8,15 @@ import {
 } from '../../config/snw/Modifiers'
 import type { Attributes, ScoredModifierDef } from '../../domain/snw/Attributes'
 import type { Character } from '../../domain/snw/Character'
-import {
-  Alignment,
-  AttrScore,
-  CharacterClass,
-  CharacterClassDef,
-  CharacterRace,
-  PrimeAttribute,
-} from '../../domain/snw/CharacterClass'
+import type { CharacterClassDef, PrimeAttribute } from '../../domain/snw/CharacterClass'
+import { Alignment, AttrScore, CharacterClass, CharacterRace } from '../../domain/snw/CharacterClass'
+import { DEFAULT_INVENTORY_ITEMS } from '../../state/State'
 import { getRandomArrayItem, roll, rollDiceFormula } from '../dice'
 import { getCharArmorClass } from './armorClass'
 import { getDamageModifier, getToHitMelee, getToHitMissiles } from './combat'
 import { getExperienceBonus } from './experience'
 import { getMagicUserSpellsList } from './magic'
+import { getBaseMovementRate } from './movement'
 
 type TargetAttrs = Record<AttrScore, number>
 type MatchingClassesRecord = [CharacterClass, PrimeAttribute[], TargetAttrs]
@@ -172,30 +168,38 @@ export const getBestClass = (matchedClasses: MatchingClasses): CharacterClass =>
 }
 
 // TODO make UI renderers consume these inlined props
-export const getNewCharacter = (classDef: CharacterClassDef, stats: Attributes): Character => {
+export const getNewCharacter = (classDef: CharacterClassDef, attrs: Attributes): Character => {
+  const carryModifier = attrs?.Strength.Carry || 0
+
+  // new inventory gets DEFAULT_INVENTORY_ITEMS by default (@see State.ts)
+  const totalWeight = Object.values(DEFAULT_INVENTORY_ITEMS).reduce((acc, item) => {
+    return acc + item.weight * item.quantity
+  }, 0)
+
   const char: Character = {
     gold: rollDiceFormula('3d6') * 10,
-    hitPoints: getCharacterHitPoints(classDef, stats.Constitution.HitPoints), // TODO keep rolled values + use level
-    stats,
+    hitPoints: getCharacterHitPoints(classDef, attrs.Constitution.HitPoints), // TODO keep rolled values + use level
+    stats: attrs,
     level: 1,
     classDef,
     ancestry: CharacterRace.Human,
     toHit: {
-      melee: getToHitMelee(classDef, stats),
-      missiles: getToHitMissiles(classDef, stats),
+      melee: getToHitMelee(classDef, attrs),
+      missiles: getToHitMissiles(classDef, attrs),
     },
     alignment: Alignment.Neutral,
-    armorClass: getCharArmorClass(stats, {}),
-    damageMod: getDamageModifier(classDef, stats),
+    armorClass: getCharArmorClass(attrs, {}),
+    damageMod: getDamageModifier(classDef, attrs),
     experiencePoints: 0,
-    experiencePointsBonus: getExperienceBonus(classDef, stats),
+    experiencePointsBonus: getExperienceBonus(classDef, attrs),
+    movementRate: getBaseMovementRate(totalWeight, carryModifier), // FIXME update on item add
   }
 
   if (classDef.$isCaster) {
     if (classDef.name === CharacterClass.Druid || classDef.name === CharacterClass.Cleric) {
       char.spells = 'All'
     } else if (classDef.name === CharacterClass.MagicUser) {
-      char.spells = getMagicUserSpellsList(stats)
+      char.spells = getMagicUserSpellsList(attrs)
     } else {
       throw new Error('Unknown type of caster')
     }

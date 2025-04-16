@@ -44,7 +44,6 @@ const processFields = (form: HTMLFormElement, inventory: Inventory): void => {
     if (input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement) {
       const value = getAttrValue(inventory, fieldName)
       // input.value = value ? value.toString() : `--${fieldName}`
-
       input.value = value?.toString() ?? ''
     }
   }
@@ -186,9 +185,9 @@ const renderCharacterSheet = (params: CharacterSheetParams): void => {
 }
 
 // FIXME remove
-const testInventory: Inventory = Object.values(exportedStats)[0] // thief
+// const testInventory: Inventory = Object.values(exportedStats)[0] // thief
 // const testInventory: Inventory = Object.values(exportedStats)[1] // MU
-// const testInventory: Inventory = Object.values(exportedStats)[2] // fighter
+const testInventory: Inventory = Object.values(exportedStats)[2] // fighter
 
 void renderCharacterSheet({
   inventory: testInventory,
