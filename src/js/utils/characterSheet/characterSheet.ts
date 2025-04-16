@@ -184,15 +184,38 @@ const renderCharacterSheet = (params: CharacterSheetParams): void => {
   }
 }
 
-// FIXME remove
-// const testInventory: Inventory = Object.values(exportedStats)[0] // thief
-// const testInventory: Inventory = Object.values(exportedStats)[1] // MU
-const testInventory: Inventory = Object.values(exportedStats)[2] // fighter
+if (window.opener && window.opener !== window) {
+  // Let the opener know we're ready
+  window.opener.postMessage('ready', location.origin)
 
-void renderCharacterSheet({
-  inventory: testInventory,
-  document: document,
-})
+  window.addEventListener('message', (event) => {
+    if (event.origin !== location.origin) {
+      return
+    }
+
+    const { action, value } = event.data
+
+    if (action === 'fillSheet') {
+      void renderCharacterSheet({
+        inventory: value,
+        document: document,
+      })
+    }
+  })
+} else {
+  // FIXME remove
+  // const testInventory: Inventory = Object.values(exportedStats)[0] // thief
+  // const testInventory: Inventory = Object.values(exportedStats)[1] // MU
+  const testInventory: Inventory = Object.values(exportedStats)[2] // fighter
+
+  void renderCharacterSheet({
+    inventory: testInventory,
+    document: document,
+  })
+}
 
 // TODO check AC for fighter
 // TODO remove btn for each brick
+// TODO class abilities
+// TODO weapons range
+// TODO open from main editor

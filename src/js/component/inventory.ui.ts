@@ -49,6 +49,7 @@ const getInventoryDropdownMenuSection = (inventoryId: string): string => {
                   <li><a id="${inventoryId}-set-hp" class="inventory-controls-btn">Set Hit Points</a></li>
                   <li><a id="${inventoryId}-remove-char" class="inventory-controls-btn" title="Reset character, keep inventory">Remove character</a></li>
                   <li><a id="${inventoryId}-reset-inventory" class="inventory-controls-btn" title="Reset inventory items">Reset inventory</a></li>
+                  <li><a id="${inventoryId}-download-character-sheet" class="inventory-controls-btn" title="Open a character sheet in a new tab">Download character sheet</a></li>
                 </ul>
               </div>
 
@@ -232,6 +233,19 @@ export const bindInventoryControls = (inventoryId: string): void => {
     state.setHitPoints(inventoryId, Number.parseInt(hp, 10))
     dispatchEvent('RenderInventories')
     dispatchEvent('SelectInventory', { inventoryId })
+  })
+
+  getElementById(`${inventoryId}-download-character-sheet`).addEventListener('click', async () => {
+    const newTab = window.open('/character-sheet.html', '_blank')
+
+    // OPTIONAL: send code once the page is ready
+    window.addEventListener('message', (event) => {
+      if (event.source === newTab && event.data === 'ready') {
+        const state = getState()
+        const inventory = state.getInventory(inventoryId)
+        newTab?.postMessage({ action: 'fillSheet', value: inventory }, location.origin)
+      }
+    })
   })
 }
 
