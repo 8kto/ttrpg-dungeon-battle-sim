@@ -5,8 +5,8 @@
   "author": "8kto <ifhtagn@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "wmr --reload",
-    "dev-all": "concurrently \"yarn dev\" \"yarn watch\"",
+    "dev:wmr": "wmr --reload",
+    "dev": "concurrently \"yarn dev:wmr\" \"yarn watch\"",
     "build:styles": "./scripts/build-styles.sh",
     "build": "yarn build:styles && wmr build --sourcemap --minify",
     "serve": "wmr serve",
