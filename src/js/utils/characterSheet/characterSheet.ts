@@ -139,12 +139,11 @@ const processEquipment = (formElement: HTMLFormElement, inventory: Inventory): v
   }
 }
 
-const getThievingSkillsSection = (container: HTMLFormElement): HTMLElement =>
-  container.querySelector('.thieving-skills-container')!
+const getThievingSkillsContainer = (container: HTMLFormElement): HTMLElement =>
+  container.querySelector('.brick--thieving')!
 
-const getSpellsSection = (container: HTMLFormElement): HTMLElement => container.querySelector('.spells-container')!
-const getSpellsAndThievingBrick = (container: HTMLElement): HTMLElement =>
-  container.querySelector('.brick--spells-thieving')!
+const getSpellsContainer = (container: HTMLElement): HTMLElement => container.querySelector('.brick--spells')!
+
 const getSpellsByLevelMagicUserPage = (container: HTMLElement): HTMLElement =>
   container.querySelector('.page--spells-by-level--magic-user')!
 
@@ -153,28 +152,19 @@ const hideSections = (containerElement: HTMLFormElement, inventory: Inventory): 
   assert(character, 'Character not found')
   const className = character.classDef.name
 
-  let containersInSpellsAndThievingBrick = 2
   if (![CharacterClass.Assassin, CharacterClass.Thief].includes(className)) {
-    containersInSpellsAndThievingBrick--
-    getThievingSkillsSection(containerElement).setAttribute('hidden', 'true')
+    getThievingSkillsContainer(containerElement).setAttribute('hidden', 'true')
   }
 
   if (![CharacterClass.MagicUser, CharacterClass.Cleric, CharacterClass.Druid].includes(className)) {
-    containersInSpellsAndThievingBrick--
-    getSpellsSection(containerElement).setAttribute('hidden', 'true')
+    getSpellsContainer(containerElement).setAttribute('hidden', 'true')
     getSpellsByLevelMagicUserPage(containerElement).setAttribute('hidden', 'true')
-  }
-
-  if (!containersInSpellsAndThievingBrick) {
-    getSpellsAndThievingBrick(containerElement).setAttribute('hidden', 'true')
   }
 
   if (className === CharacterClass.MagicUser) {
     getSpellsByLevelMagicUserPage(containerElement).removeAttribute('hidden')
   }
 }
-
-const sendSheet = (): void => {}
 
 type CharacterSheetParams = {
   inventory: Inventory
@@ -190,14 +180,15 @@ const renderCharacterSheet = (params: CharacterSheetParams): void => {
     processWeapons(formElement, inventory)
     processEquipment(formElement, inventory)
     hideSections(formElement, inventory)
-    sendSheet()
   } catch (err) {
     console.error('❌ Failed to fill character sheet', err)
   }
 }
 
 // FIXME remove
-const testInventory: Inventory = Object.values(exportedStats)[2]
+const testInventory: Inventory = Object.values(exportedStats)[0] // thief
+// const testInventory: Inventory = Object.values(exportedStats)[1] // MU
+// const testInventory: Inventory = Object.values(exportedStats)[2] // fighter
 
 void renderCharacterSheet({
   inventory: testInventory,
