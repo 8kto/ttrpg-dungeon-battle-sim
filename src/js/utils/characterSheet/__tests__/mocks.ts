@@ -1,12 +1,22 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix,@typescript-eslint/no-var-requires */
 
+import { CharacterClasses } from '../../../config/snw/CharacterClasses'
 import type { Inventory } from '../../../domain/Inventory'
 
-export const exportedStats: Record<string, Inventory> = {
+const restoreClassDefs = (obj: Record<string, Inventory>): Record<string, Inventory> => {
+  for (const inventory of Object.values(obj)) {
+    if (!inventory.character?.classDef && inventory.character?.$classDefName) {
+      inventory.character.classDef = CharacterClasses[inventory.character.$classDefName]
+    }
+  }
+
+  return obj
+}
+
+const json: Record<string, Inventory> = {
   maincharacter1744304617534: {
     id: 'maincharacter1744304617534',
     name: 'Knee Knife',
-    movementRate: 12,
     items: {
       'Basic accessories': {
         cost: 0,
@@ -59,7 +69,6 @@ export const exportedStats: Record<string, Inventory> = {
       },
     },
     character: {
-      movementRate: 12,
       gold: 900,
       hitPoints: 11,
       stats: {
@@ -134,7 +143,7 @@ export const exportedStats: Record<string, Inventory> = {
       experiencePointsBonus: 10,
       $classDefName: 'Thief',
     },
-    isCompact: false,
+    isCompact: true,
   },
   'character-name1744321152145': {
     id: 'character-name1744321152145',
@@ -250,7 +259,6 @@ export const exportedStats: Record<string, Inventory> = {
     character: {
       gold: 120,
       hitPoints: 3,
-      movementRate: 12,
       stats: {
         Strength: {
           Score: 8,
@@ -359,11 +367,10 @@ export const exportedStats: Record<string, Inventory> = {
       },
       $classDefName: 'MagicUser',
     },
-    isCompact: false,
+    isCompact: true,
   },
   'character-name1744321460655': {
     id: 'character-name1744321460655',
-
     name: 'Mighty Fighter',
     items: {
       'Basic accessories': {
@@ -417,7 +424,6 @@ export const exportedStats: Record<string, Inventory> = {
     character: {
       gold: 100,
       hitPoints: 1,
-      movementRate: 9,
       stats: {
         Strength: {
           Score: 13,
@@ -490,6 +496,474 @@ export const exportedStats: Record<string, Inventory> = {
       experiencePointsBonus: 5,
       $classDefName: 'Fighter',
     },
-    isCompact: false,
+    isCompact: true,
+  },
+  cleric1745670241507: {
+    id: 'cleric1745670241507',
+    name: 'Cleric',
+    items: {
+      'Basic accessories': {
+        cost: 0,
+        name: 'Basic accessories',
+        weight: 8,
+        quantity: 2,
+      },
+      Ring: {
+        cost: 30,
+        name: 'Ring',
+        weight: 40,
+        ascArmorClass: 3,
+        quantity: 1,
+      },
+      Mace: {
+        cost: 10,
+        name: 'Mace',
+        weight: 10,
+        damage: 'd6',
+        flags: 8,
+        quantity: 1,
+      },
+      Sling: {
+        cost: 1,
+        name: 'Sling',
+        weight: 0,
+        damage: 'd4',
+        flags: 16,
+        quantity: 1,
+      },
+      'Sling Stones (20)': {
+        cost: 0,
+        name: 'Sling Stones (20)',
+        weight: 5,
+        damage: 'd4',
+        flags: 16,
+        quantity: 1,
+      },
+      Backpack: {
+        cost: 5,
+        name: 'Backpack',
+        weight: 2,
+        quantity: 1,
+      },
+      Bedroll: {
+        cost: 1,
+        name: 'Bedroll',
+        weight: 5,
+        quantity: 1,
+      },
+      Bell: {
+        cost: 1,
+        name: 'Bell',
+        weight: 0,
+        quantity: 1,
+      },
+      'Flask, leather': {
+        cost: 0.03,
+        name: 'Flask, leather',
+        weight: 0.5,
+        quantity: 1,
+      },
+      'Flint & steel': {
+        cost: 1,
+        name: 'Flint & steel',
+        weight: 1,
+        quantity: 1,
+      },
+      'Holy symbol, wooden': {
+        cost: 1,
+        name: 'Holy symbol, wooden',
+        weight: 0,
+        quantity: 1,
+      },
+      'Lantern, hooded': {
+        cost: 7,
+        name: 'Lantern, hooded',
+        weight: 2,
+        quantity: 1,
+      },
+      Waterskin: {
+        cost: 1,
+        name: 'Waterskin',
+        weight: 2,
+        quantity: 1,
+      },
+      Candle: {
+        cost: 0.01,
+        name: 'Candle',
+        weight: 0.5,
+        quantity: 10,
+      },
+      'Holy water (flask)': {
+        cost: 25,
+        name: 'Holy water (flask)',
+        weight: 1,
+        quantity: 1,
+      },
+      'Oil, lamp (1 pint)': {
+        cost: 0.1,
+        name: 'Oil, lamp (1 pint)',
+        weight: 1,
+        quantity: 3,
+      },
+      'Rations, trail': {
+        cost: 1,
+        name: 'Rations, trail',
+        weight: 2,
+        quantity: 7,
+      },
+      'Rope, hemp (50 feet)': {
+        cost: 1,
+        name: 'Rope, hemp (50 feet)',
+        weight: 5,
+        quantity: 1,
+      },
+      'Spike, iron': {
+        cost: 0.05,
+        name: 'Spike, iron',
+        weight: 2,
+        quantity: 6,
+      },
+    },
+    character: {
+      gold: 70,
+      hitPoints: 4,
+      stats: {
+        Strength: {
+          Score: 9,
+          ToHit: 0,
+          Damage: 0,
+          Doors: '1-2',
+          Carry: 5,
+        },
+        Dexterity: {
+          Score: 11,
+          MissilesToHit: 0,
+          ArmorClass: 0,
+        },
+        Constitution: {
+          Score: 9,
+          HitPoints: 0,
+          RaiseDeadSurvivalChance: '75%',
+        },
+        Intelligence: {
+          Score: 6,
+          MaxAdditionalLanguages: 0,
+          MaxSpellLevel: 4,
+          NewSpellUnderstandingChance: 30,
+          SpellsPerLevel: '2/4',
+        },
+        Wisdom: {
+          Score: 10,
+        },
+        Charisma: {
+          Score: 5,
+          MaxNumberOfSpecialHirelings: 2,
+        },
+      },
+      level: 1,
+      classDef: {
+        name: 'Cleric',
+        PrimeAttr: [['Wisdom', 13]],
+        SavingThrow: {
+          snw: {
+            value: 15,
+            details: '+2 against being paralyzed or poisoned',
+          },
+          alternative: {
+            DeathRaysAndPoison: 11,
+            Wands: 12,
+            TurnedToStone: 14,
+            DragonsBreath: 16,
+            SpellsAndStaffs: 15,
+          },
+        },
+        HitDice: 6,
+        ArmorPermitted: 'Any',
+        WeaponsPermitted:
+          'Blunt weapons only (club, flail, hammer, mace, staff, etc.). No missile weapons other than oil or slings if the Referee permits.',
+        Race: ['Human', 'HalfElf'],
+        Alignment: ['Lawful', 'Chaotic'],
+        $isCaster: true,
+        $spellsAtTheFirstLevel: 0,
+      },
+      ancestry: 'Human',
+      toHit: {
+        melee: '0',
+        missiles: '0',
+      },
+      alignment: 'Neutral',
+      armorClass: {
+        aac: 10,
+        armor: 'None',
+        dac: 9,
+      },
+      damageMod: '0',
+      experiencePoints: 0,
+      experiencePointsBonus: 0,
+      movementRate: 12,
+      spells: 'All',
+      $classDefName: 'Cleric',
+    },
+    isCompact: true,
+  },
+  'green-druid1745670263055': {
+    id: 'green-druid1745670263055',
+    name: 'Green Druid',
+    items: {
+      'Basic accessories': {
+        cost: 0,
+        name: 'Basic accessories',
+        weight: 8,
+        quantity: 2,
+      },
+      'Arrows (20)': {
+        cost: 2,
+        name: 'Arrows (20)',
+        weight: 1,
+        damage: 'd6',
+        flags: 16,
+        quantity: 1,
+      },
+      'Bow, Short': {
+        cost: 15,
+        name: 'Bow, Short',
+        weight: 5,
+        damage: '',
+        flags: 16,
+        quantity: 1,
+      },
+      Dagger: {
+        cost: 2,
+        name: 'Dagger',
+        weight: 2,
+        flags: 4,
+        damage: 'd4',
+        quantity: 1,
+      },
+      'Sword, Long': {
+        cost: 15,
+        name: 'Sword, Long',
+        weight: 10,
+        damage: 'd8',
+        flags: 8,
+        quantity: 1,
+      },
+      Backpack: {
+        cost: 5,
+        name: 'Backpack',
+        weight: 2,
+        quantity: 1,
+      },
+      Bedroll: {
+        cost: 1,
+        name: 'Bedroll',
+        weight: 5,
+        quantity: 1,
+      },
+      'Block and tackle': {
+        cost: 5,
+        name: 'Block and tackle',
+        weight: 2,
+        quantity: 1,
+      },
+      'Case (map or scroll)': {
+        cost: 1,
+        name: 'Case (map or scroll)',
+        weight: 1,
+        quantity: 1,
+      },
+      'Chalk, 1 piece': {
+        cost: 0.05,
+        name: 'Chalk, 1 piece',
+        weight: 0,
+        quantity: 1,
+      },
+      Crowbar: {
+        cost: 0.2,
+        name: 'Crowbar',
+        weight: 10,
+        quantity: 1,
+      },
+      'Fishing net (25 square feet)': {
+        cost: 4,
+        name: 'Fishing net (25 square feet)',
+        weight: 5,
+        quantity: 1,
+      },
+      'Flint & steel': {
+        cost: 1,
+        name: 'Flint & steel',
+        weight: 1,
+        quantity: 1,
+      },
+      'Grappling Hook': {
+        cost: 1,
+        name: 'Grappling Hook',
+        weight: 4,
+        quantity: 1,
+      },
+      'Ink (1-ounce bottle)': {
+        cost: 1,
+        name: 'Ink (1-ounce bottle)',
+        weight: 0.1,
+        quantity: 1,
+      },
+      'Ladder (10 foot)': {
+        cost: 0.05,
+        name: 'Ladder (10 foot)',
+        weight: 20,
+        quantity: 1,
+      },
+      'Lantern, bullseye': {
+        cost: 12,
+        name: 'Lantern, bullseye',
+        weight: 3,
+        quantity: 1,
+      },
+      Leather: {
+        cost: 5,
+        name: 'Leather',
+        weight: 25,
+        ascArmorClass: 2,
+        quantity: 1,
+      },
+      Mirror: {
+        cost: 20,
+        name: 'Mirror',
+        weight: 0.5,
+        quantity: 1,
+      },
+      'Oil, lamp (1 pint)': {
+        cost: 0.1,
+        name: 'Oil, lamp (1 pint)',
+        weight: 1,
+        quantity: 3,
+      },
+      'Parchment (sheet)': {
+        cost: 0.2,
+        name: 'Parchment (sheet)',
+        weight: 0.5,
+        quantity: 1,
+      },
+      'Pole (10 foot)': {
+        cost: 0.2,
+        name: 'Pole (10 foot)',
+        weight: 10,
+        quantity: 1,
+      },
+      'Rations, trail': {
+        cost: 1,
+        name: 'Rations, trail',
+        weight: 2,
+        quantity: 5,
+      },
+      'Rope, hemp (50 feet)': {
+        cost: 1,
+        name: 'Rope, hemp (50 feet)',
+        weight: 5,
+        quantity: 1,
+      },
+      'Sack (15 pounds capacity)': {
+        cost: 1,
+        name: 'Sack (15 pounds capacity)',
+        weight: 1,
+        quantity: 1,
+      },
+      Waterskin: {
+        cost: 1,
+        name: 'Waterskin',
+        weight: 2,
+        quantity: 1,
+      },
+    },
+    character: {
+      gold: 140,
+      hitPoints: 4,
+      stats: {
+        Strength: {
+          Score: 12,
+          ToHit: 0,
+          Damage: 0,
+          Doors: '1-2',
+          Carry: 5,
+        },
+        Dexterity: {
+          Score: 7,
+          MissilesToHit: -1,
+          ArmorClass: -1,
+        },
+        Constitution: {
+          Score: 17,
+          HitPoints: 1,
+          RaiseDeadSurvivalChance: '100%',
+        },
+        Intelligence: {
+          Score: 10,
+          MaxAdditionalLanguages: 2,
+          MaxSpellLevel: 5,
+          NewSpellUnderstandingChance: 50,
+          SpellsPerLevel: '4/6',
+        },
+        Wisdom: {
+          Score: 13,
+        },
+        Charisma: {
+          Score: 13,
+          MaxNumberOfSpecialHirelings: 5,
+        },
+      },
+      level: 1,
+      classDef: {
+        name: 'Druid',
+        PrimeAttr: [
+          ['Wisdom', 13],
+          ['Charisma', 13],
+        ],
+        StrictAttr: [
+          ['Wisdom', 12],
+          ['Charisma', 14],
+        ],
+        HitDice: 6,
+        SavingThrow: {
+          snw: {
+            value: 15,
+            details: '+2 bonus against fire',
+          },
+          alternative: {
+            DeathRaysAndPoison: 11,
+            Wands: 12,
+            TurnedToStone: 14,
+            DragonsBreath: 16,
+            SpellsAndStaffs: 15,
+          },
+        },
+        ArmorPermitted: 'Leather armor, wooden shield',
+        WeaponsPermitted: 'Dagger, sickle-shaped sword (treat as short sword), spear, sling, oil',
+        Race: ['Human'],
+        Alignment: ['Neutral'],
+        $isCaster: true,
+        $spellsAtTheFirstLevel: 1,
+      },
+      ancestry: 'Human',
+      toHit: {
+        melee: '0',
+        missiles: '-1',
+      },
+      alignment: 'Neutral',
+      armorClass: {
+        aac: 10,
+        armor: 'None',
+        dac: 9,
+      },
+      damageMod: '0',
+      experiencePoints: 0,
+      experiencePointsBonus: 15,
+      movementRate: 12,
+      spells: 'All',
+      $classDefName: 'Druid',
+    },
+    isCompact: true,
   },
 }
+
+export const exportedStats = restoreClassDefs(json)
