@@ -33,6 +33,12 @@ const getAttrValue = (inventory: Inventory, fieldName: string): string | null =>
 
   while (max--) {
     const key = chunks.shift() as keyof typeof res
+
+    if (typeof res[key] === 'undefined') {
+      console.debug({ key, res, chunks, inventory })
+      throw new Error(`Unhandled field: "${fieldName}"`)
+    }
+
     res = res[key]
   }
 
@@ -213,7 +219,9 @@ if (window.opener && window.opener !== window) {
   // FIXME remove
   // const testInventory: Inventory = Object.values(exportedStats)[0] // thief
   // const testInventory: Inventory = Object.values(exportedStats)[1] // MU
-  const testInventory: Inventory = Object.values(exportedStats)[2] // fighter
+  // const testInventory: Inventory = Object.values(exportedStats)[2] // fighter
+  // const testInventory: Inventory = Object.values(exportedStats)[3] // cleric
+  const testInventory: Inventory = Object.values(exportedStats)[4] // druid
 
   void renderCharacterSheet({
     inventory: testInventory,
@@ -226,3 +234,4 @@ if (window.opener && window.opener !== window) {
 // TODO class abilities
 // TODO weapons range
 // TODO open from main editor
+// FIXME move rate on items add

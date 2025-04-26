@@ -70,7 +70,11 @@ export const Formatter: Record<string | 'default', CallableFunction> = {
     return labels.join(', ')
   },
 
-  'character.spells': (spells: Record<string, Spell>): string => {
+  'character.spells': (spells: Record<string, Spell> | 'All'): string => {
+    if (spells === 'All') {
+      return ''
+    }
+
     const itemsArray = Object.values(spells || {})
     const labels = itemsArray.map((spell) => {
       return `${spell.name} (${spell.level})`
