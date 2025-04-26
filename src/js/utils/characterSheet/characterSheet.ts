@@ -1,5 +1,6 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix,no-console */
 
+import { MagicUserSpells } from '../../config/snw/Spells'
 import { InventoryItemFlag } from '../../domain/Equipment'
 import type { Inventory } from '../../domain/Inventory'
 import { CharacterClass } from '../../domain/snw/CharacterClass'
@@ -8,6 +9,7 @@ import { getElementById } from '../layout'
 import { exportedStats } from './__tests__/mocks'
 import { MAP_FIELDS_TO_CHAR_ATTRS } from './fieldsConfig'
 import { Formatter, sortEquipmentItems } from './Formatter'
+import { getMagicUserSpellsTable } from './spellsRenderer'
 
 /**
  * @param {import('js/domain/Inventory').Inventory} inventory
@@ -146,7 +148,7 @@ const getSpellsContainer = (container: HTMLElement): HTMLElement => container.qu
 const getSpellsByLevelMagicUserPage = (container: HTMLElement): HTMLElement =>
   container.querySelector('.page--spells-by-level--magic-user')!
 
-const hideSections = (containerElement: HTMLFormElement, inventory: Inventory): void => {
+const handleClassOptions = (containerElement: HTMLFormElement, inventory: Inventory): void => {
   const { character } = inventory
   assert(character, 'Character not found')
   const className = character.classDef.name
@@ -155,13 +157,14 @@ const hideSections = (containerElement: HTMLFormElement, inventory: Inventory): 
     getThievingSkillsContainer(containerElement).setAttribute('hidden', 'true')
   }
 
-  if (![CharacterClass.MagicUser, CharacterClass.Cleric, CharacterClass.Druid].includes(className)) {
-    getSpellsContainer(containerElement).setAttribute('hidden', 'true')
-    getSpellsByLevelMagicUserPage(containerElement).setAttribute('hidden', 'true')
-  }
-
   if (className === CharacterClass.MagicUser) {
+    getSpellsContainer(containerElement).removeAttribute('hidden')
     getSpellsByLevelMagicUserPage(containerElement).removeAttribute('hidden')
+
+    getElementById('spells-table-contaner').innerHTML = ''
+    getElementById('spells-table-contaner').appendChild(
+      getMagicUserSpellsTable(MagicUserSpells, 'table--spells--magic-user'),
+    )
   }
 }
 
@@ -178,7 +181,7 @@ const renderCharacterSheet = (params: CharacterSheetParams): void => {
     processFields(formElement, inventory)
     processWeapons(formElement, inventory)
     processEquipment(formElement, inventory)
-    hideSections(formElement, inventory)
+    handleClassOptions(formElement, inventory)
   } catch (err) {
     console.error('❌ Failed to fill character sheet', err)
   }
@@ -205,8 +208,8 @@ if (window.opener && window.opener !== window) {
 } else {
   // FIXME remove
   // const testInventory: Inventory = Object.values(exportedStats)[0] // thief
-  // const testInventory: Inventory = Object.values(exportedStats)[1] // MU
-  const testInventory: Inventory = Object.values(exportedStats)[2] // fighter
+  const testInventory: Inventory = Object.values(exportedStats)[1] // MU
+  // const testInventory: Inventory = Object.values(exportedStats)[2] // fighter
 
   void renderCharacterSheet({
     inventory: testInventory,
