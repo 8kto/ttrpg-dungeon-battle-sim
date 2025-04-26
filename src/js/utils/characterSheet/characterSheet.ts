@@ -1,6 +1,6 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix,no-console */
 
-import { MagicUserSpells } from '../../config/snw/Spells'
+import { CasterSpellsMap } from '../../config/snw/Spells'
 import { InventoryItemFlag } from '../../domain/Equipment'
 import type { Inventory } from '../../domain/Inventory'
 import { CharacterClass } from '../../domain/snw/CharacterClass'
@@ -10,6 +10,8 @@ import { exportedStats } from './__tests__/mocks'
 import { MAP_FIELDS_TO_CHAR_ATTRS } from './fieldsConfig'
 import { Formatter, sortEquipmentItems } from './Formatter'
 import { getMagicUserSpellsTable } from './spellsRenderer'
+import type { CasterClass } from './types'
+import { CasterClasses } from './types'
 
 /**
  * @param {import('js/domain/Inventory').Inventory} inventory
@@ -148,22 +150,24 @@ const getSpellsContainer = (container: HTMLElement): HTMLElement => container.qu
 const getSpellsByLevelMagicUserPage = (container: HTMLElement): HTMLElement =>
   container.querySelector('.page--spells-by-level--magic-user')!
 
+const isCaster = (cls: CharacterClass): cls is CasterClass => (CasterClasses as readonly CharacterClass[]).includes(cls)
+
 const handleClassOptions = (containerElement: HTMLFormElement, inventory: Inventory): void => {
   const { character } = inventory
   assert(character, 'Character not found')
   const className = character.classDef.name
 
-  if (![CharacterClass.Assassin, CharacterClass.Thief].includes(className)) {
-    getThievingSkillsContainer(containerElement).setAttribute('hidden', 'true')
+  if ([CharacterClass.Assassin, CharacterClass.Thief].includes(className)) {
+    getThievingSkillsContainer(containerElement).removeAttribute('hidden')
   }
 
-  if (className === CharacterClass.MagicUser) {
+  if (isCaster(className)) {
     getSpellsContainer(containerElement).removeAttribute('hidden')
     getSpellsByLevelMagicUserPage(containerElement).removeAttribute('hidden')
 
-    getElementById('spells-table-contaner').innerHTML = ''
-    getElementById('spells-table-contaner').appendChild(
-      getMagicUserSpellsTable(MagicUserSpells, 'table--spells--magic-user'),
+    getElementById('spells-table-container').innerHTML = ''
+    getElementById('spells-table-container').appendChild(
+      getMagicUserSpellsTable(CasterSpellsMap[className], `table--spells--$className}`),
     )
   }
 }
@@ -208,8 +212,8 @@ if (window.opener && window.opener !== window) {
 } else {
   // FIXME remove
   // const testInventory: Inventory = Object.values(exportedStats)[0] // thief
-  const testInventory: Inventory = Object.values(exportedStats)[1] // MU
-  // const testInventory: Inventory = Object.values(exportedStats)[2] // fighter
+  // const testInventory: Inventory = Object.values(exportedStats)[1] // MU
+  const testInventory: Inventory = Object.values(exportedStats)[2] // fighter
 
   void renderCharacterSheet({
     inventory: testInventory,
