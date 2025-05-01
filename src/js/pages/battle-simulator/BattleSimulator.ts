@@ -120,6 +120,7 @@ export class BattleSimulator {
 
     while (isAlive('Players') && isAlive('Monsters')) {
       this.roundsCount++
+      this.logger.log(`>>> round ${  this.roundsCount}`)
       let battleOver = false
 
       for (const p of this.participants) {
