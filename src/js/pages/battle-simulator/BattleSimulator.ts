@@ -7,7 +7,7 @@ import { Strategy } from './types'
 type BattleResult = {
   winner: 'Players' | 'Monsters'
   rounds: number
-  survivors: Array<ICharacter & { currentHp: number }>
+  survivors: Array<Participant>
 }
 
 class AverageStrategy implements ICombatStrategy {
@@ -140,9 +140,8 @@ export class BattleSimulator {
     }
 
     const winner: 'Players' | 'Monsters' = isAlive('Players') ? 'Players' : 'Monsters'
-    const survivors = this.participants
-      .filter((p) => p.currentHp > 0)
-      .map((p) => ({ ...p.char, currentHp: p.currentHp }))
+    const survivors = this.participants.filter((p) => p.currentHp > 0)
+    // .map((p) => ({ ...p.char, currentHp: p.currentHp, side: p.side }))
 
     return {
       rounds: this.roundsCount,

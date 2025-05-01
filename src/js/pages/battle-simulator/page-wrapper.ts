@@ -8,8 +8,6 @@ import { Strategy } from './types'
 document.addEventListener('DOMContentLoaded', (): void => {
   const playersBody = document.getElementById('players-table') as HTMLTableSectionElement
   const monstersBody = document.getElementById('monsters-table') as HTMLTableSectionElement
-
-  // capture templates
   const playerTemplate = playersBody.querySelector('tr') as HTMLTableRowElement
   const monsterTemplate = monstersBody.querySelector('tr') as HTMLTableRowElement
 
@@ -22,9 +20,18 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
   const runBtn = document.getElementById('run-sim') as HTMLButtonElement
   const clearLogBtn = document.getElementById('clear-log') as HTMLButtonElement
+  const exportCfgBtn = document.getElementById('export-config') as HTMLButtonElement
+  const importCfgBtn = document.getElementById('import-config') as HTMLButtonElement
+
   const battleCount = document.getElementById('battle-count') as HTMLInputElement
   const strategySelect = document.getElementById('strategy-select') as HTMLSelectElement
   const progressBar = document.getElementById('progress-bar') as HTMLProgressElement
+
+  const tabLogBtn = document.getElementById('tab-log-btn') as HTMLButtonElement
+  const tabConfigBtn = document.getElementById('tab-config-btn') as HTMLButtonElement
+  const tabLog = document.getElementById('tab-log') as HTMLDivElement
+  const tabConfig = document.getElementById('tab-config') as HTMLDivElement
+  const configArea = document.getElementById('config-area') as HTMLTextAreaElement
 
   const logger = new Logger('result-log')
 
@@ -37,15 +44,19 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
     dupBtn.addEventListener('click', (e): void => {
       e.preventDefault()
-      const cloned = playerTemplate.cloneNode(true) as HTMLTableRowElement
-      // copy values
-      inputs.forEach((inp, i) => ((cloned.querySelectorAll('input')[i] as HTMLInputElement).value = inp.value))
-      selects.forEach(
-        (sel, i) => ((cloned.querySelectorAll('select')[i] as HTMLSelectElement).selectedIndex = sel.selectedIndex),
-      )
-      cloned.dataset.prefix = defs.prefix
-      body.insertBefore(cloned, row.nextSibling)
-      bindRow(cloned, defs, body)
+      const clone = row.cloneNode(true) as HTMLTableRowElement
+      // copy all fields
+      inputs.forEach((inp, i) => {
+        const target = clone.querySelectorAll('input')[i] as HTMLInputElement
+        target.value = inp.value
+      })
+      selects.forEach((sel, i) => {
+        const target = clone.querySelectorAll('select')[i] as HTMLSelectElement
+        target.selectedIndex = sel.selectedIndex
+      })
+      clone.dataset.prefix = defs.prefix
+      body.insertBefore(clone, row.nextSibling)
+      bindRow(clone, defs, body)
       reindex(body)
     })
 
@@ -59,14 +70,23 @@ document.addEventListener('DOMContentLoaded', (): void => {
   }
 
   const reindex = (body: HTMLTableSectionElement): void => {
-    let pCount = 1
-    let hCount = 1
+    let pCount = 1,
+      hCount = 1,
+      mCount = 1
+
     Array.from(body.rows).forEach((row) => {
-      const prefix = row.dataset.prefix as string
+      // const prefix = row.dataset.prefix as string
       const ni = row.querySelector('.name-input') as HTMLInputElement
-      if (prefix === 'Player') {
+
+      if (ni.value.startsWith('Player')) {
         ni.value = `Player ${pCount++}`
-      } else if (prefix === 'Henchman') {
+      }
+
+      if (ni.value.startsWith('Monster')) {
+        ni.value = `Monster ${mCount++}`
+      }
+
+      if (ni.value.startsWith('Henchman')) {
         ni.value = `Henchman ${hCount++}`
       }
     })
@@ -75,9 +95,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const addRow = (body: HTMLTableSectionElement, defs: CharStats, template: HTMLTableRowElement): void => {
     const newRow = template.cloneNode(true) as HTMLTableRowElement
     newRow.dataset.prefix = defs.prefix
-    // clear and init
-    Array.from(newRow.querySelectorAll('input')).forEach((inp) => (inp.value = ''))
-    Array.from(newRow.querySelectorAll('select')).forEach((sel) => (sel.selectedIndex = 0))
+    newRow.querySelectorAll('input').forEach((inp) => (inp.value = ''))
+    newRow.querySelectorAll('select').forEach((sel) => ((sel as HTMLSelectElement).selectedIndex = 0))
     body.appendChild(newRow)
     bindRow(newRow, defs, body)
     initDefaults(newRow, defs, body)
@@ -107,37 +126,111 @@ document.addEventListener('DOMContentLoaded', (): void => {
     }
   }
 
-  // initial
+  // initial setup
   clearGroup(playersBody, playerDefaults, 5, playerTemplate)
   clearGroup(monstersBody, monsterDefaults, 1, monsterTemplate)
 
-  addPlayerBtn.addEventListener('click', (e): void => {
+  addPlayerBtn.addEventListener('click', (e) => {
     e.preventDefault()
     addRow(playersBody, playerDefaults, playerTemplate)
   })
-  addHenchBtn.addEventListener('click', (e): void => {
+  addHenchBtn.addEventListener('click', (e) => {
     e.preventDefault()
     addRow(playersBody, henchmanDefaults, playerTemplate)
   })
-  clearPlayersBtn.addEventListener('click', (e): void => {
+  clearPlayersBtn.addEventListener('click', (e) => {
     e.preventDefault()
     clearGroup(playersBody, playerDefaults, 1, playerTemplate)
   })
 
-  addMonsterBtn.addEventListener('click', (e): void => {
+  addMonsterBtn.addEventListener('click', (e) => {
     e.preventDefault()
     addRow(monstersBody, monsterDefaults, monsterTemplate)
   })
-  clearMonstersBtn.addEventListener('click', (e): void => {
+  clearMonstersBtn.addEventListener('click', (e) => {
     e.preventDefault()
     clearGroup(monstersBody, monsterDefaults, 1, monsterTemplate)
   })
 
-  clearLogBtn.addEventListener('click', (e): void => {
+  clearLogBtn.addEventListener('click', (e) => {
     e.preventDefault()
     logger.clear()
   })
 
+  // tab switching
+  tabLogBtn.addEventListener('click', (): void => {
+    tabLog.classList.remove('hidden')
+    tabConfig.classList.add('hidden')
+    tabLogBtn.classList.add('border-blue-600', 'text-blue-600')
+    tabConfigBtn.classList.remove('border-blue-600', 'text-blue-600')
+  })
+  tabConfigBtn.addEventListener('click', (): void => {
+    tabConfig.classList.remove('hidden')
+    tabLog.classList.add('hidden')
+    tabConfigBtn.classList.add('border-blue-600', 'text-blue-600')
+    tabLogBtn.classList.remove('border-blue-600', 'text-blue-600')
+  })
+
+  // export/import config
+  const readConfig = (body: HTMLTableSectionElement): ICharacter[] =>
+    Array.from(body.rows).map((row) => {
+      const ni = row.querySelector('.name-input') as HTMLInputElement
+      const ac = parseInt((row.querySelector('.ac-input') as HTMLInputElement).value, 10)
+      const th = parseInt((row.querySelector('.tohit-input') as HTMLInputElement).value, 10)
+      const hc = parseInt((row.querySelector('.hd-count-input') as HTMLInputElement).value, 10)
+      const ht = parseInt((row.querySelector('.hd-type-select') as HTMLSelectElement).value, 10)
+      const dmg = (row.querySelector('.damage-input') as HTMLInputElement).value
+        .trim()
+        .split(',')
+        .map((s) => s.trim())
+
+      return { armorClass: ac, damage: dmg, hitDice: [hc, ht], name: ni.value, toHit: th }
+    })
+
+  exportCfgBtn.addEventListener('click', (): void => {
+    const cfg = {
+      monsters: readConfig(monstersBody),
+      players: readConfig(playersBody),
+    }
+    configArea.value = JSON.stringify(cfg, null, 2)
+  })
+
+  importCfgBtn.addEventListener('click', (): void => {
+    try {
+      const cfg = JSON.parse(configArea.value) as { players: ICharacter[]; monsters: ICharacter[] }
+      clearGroup(playersBody, playerDefaults, 0, playerTemplate)
+      clearGroup(monstersBody, monsterDefaults, 0, monsterTemplate)
+      cfg.players.forEach((ch) => {
+        addRow(playersBody, playerDefaults, playerTemplate)
+        initDefaults(playersBody.lastElementChild as HTMLTableRowElement, playerDefaults, playersBody)
+        // then overwrite with imported values:
+        const last = playersBody.lastElementChild as HTMLTableRowElement
+        ;(last.querySelector('.name-input') as HTMLInputElement).value = ch.name
+        ;(last.querySelector('.ac-input') as HTMLInputElement).value = ch.armorClass.toString()
+        ;(last.querySelector('.tohit-input') as HTMLInputElement).value = ch.toHit.toString()
+        ;(last.querySelector('.hd-count-input') as HTMLInputElement).value = ch.hitDice[0].toString()
+        ;(last.querySelector('.hd-type-select') as HTMLSelectElement).value = ch.hitDice[1].toString()
+        ;(last.querySelector('.damage-input') as HTMLInputElement).value = ch.damage.join(',')
+      })
+      cfg.monsters.forEach((ch) => {
+        addRow(monstersBody, monsterDefaults, monsterTemplate)
+        initDefaults(monstersBody.lastElementChild as HTMLTableRowElement, monsterDefaults, monstersBody)
+        const last = monstersBody.lastElementChild as HTMLTableRowElement
+        ;(last.querySelector('.name-input') as HTMLInputElement).value = ch.name
+        ;(last.querySelector('.ac-input') as HTMLInputElement).value = ch.armorClass.toString()
+        ;(last.querySelector('.tohit-input') as HTMLInputElement).value = ch.toHit.toString()
+        ;(last.querySelector('.hd-count-input') as HTMLInputElement).value = ch.hitDice[0].toString()
+        ;(last.querySelector('.hd-type-select') as HTMLSelectElement).value = ch.hitDice[1].toString()
+        ;(last.querySelector('.damage-input') as HTMLInputElement).value = ch.damage.join(',')
+      })
+      reindex(playersBody)
+      reindex(monstersBody)
+    } catch {
+      alert('Invalid JSON config')
+    }
+  })
+
+  // run simulation
   runBtn.addEventListener('click', async (e): Promise<void> => {
     e.preventDefault()
     logger.clear()
@@ -145,8 +238,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
     progressBar.value = 0
 
     const runs = Math.max(1, parseInt(battleCount.value, 10) || 1)
-    const stratKey = strategySelect.value as keyof typeof Strategy
-    const strat = Strategy[stratKey]
+    const strat = Strategy[strategySelect.value as keyof typeof Strategy]
 
     let winsP = 0,
       winsM = 0,
@@ -174,40 +266,32 @@ document.addEventListener('DOMContentLoaded', (): void => {
     const monsters = read(monstersBody)
 
     for (let i = 0; i < runs; i++) {
-      // allow UI update
       await new Promise(requestAnimationFrame)
       progressBar.value = ((i + 1) / runs) * 100
 
+      logger.log(`\n${'-'.repeat(80)}`)
+      logger.log('[New battle]')
+      logger.log('-'.repeat(80))
+
       const sim = new BattleSimulator(players, monsters, strat, logger)
-
-      logger.log(`\n`)
-      logger.log(`-`.repeat(100))
-      logger.log(`[New battle]`)
-      logger.log(`-`.repeat(100))
-
       sim.renderDetails()
-      logger.log(`\n`)
+      logger.log('\n')
 
       const res = sim.simulate()
       if (res.winner === 'Players') {
         winsP++
-        survP += res.survivors.filter((s) => s.name.startsWith('Player') || s.name.startsWith('Henchman')).length
+        survP += res.survivors.filter((s) => s.side === 'Players').length
       } else {
         winsM++
-        survM += res.survivors.filter((s) => s.name.startsWith('Monster')).length
       }
     }
 
-    logger.log(`\n`)
+    logger.log('\n')
     logger.log(
-      `Strategy ${stratKey} — Players win: ${((winsP / runs) * 100).toFixed(1)}%, Monsters win: ${((winsM / runs) * 100).toFixed(1)}%`,
+      `Strategy ${strategySelect.value} — Players win: ${((winsP / runs) * 100).toFixed(1)}%, Monsters win: ${((winsM / runs) * 100).toFixed(1)}%`,
     )
     if (winsP) {
       logger.log(`>> Avg Players survivors: ${((survP / (winsP * initialP)) * 100).toFixed(1)}%`)
-    }
-    // eslint-disable-next-line no-constant-condition
-    if (false && winsM) {
-      logger.log(`>> Avg Monsters survivors: ${((survM / (winsM * initialM)) * 100).toFixed(1)}%`)
     }
 
     document.body.style.cursor = 'default'

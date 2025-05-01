@@ -36,7 +36,9 @@
           <tbody id="players-table" class="divide-y">
             <tr class="bg-white" data-prefix="Player">
               <td class="p-2"><input type="text" class="name-input w-full border rounded px-2" required /></td>
-              <td class="p-2"><input type="number" class="ac-input w-full border rounded px-2" required min="0" /></td>
+              <td class="p-289">
+                <input type="number" class="ac-input w-full border rounded px-2" required min="0" />
+              </td>
               <td class="p-2"><input type="number" class="tohit-input w-full border rounded px-2" required /></td>
               <td class="p-2">
                 <input type="number" class="hd-count-input w-full border rounded px-2" required min="1" />
@@ -132,7 +134,7 @@
       <div class="mb-4 flex items-center space-x-4">
         <div>
           <label for="battle-count" class="block mb-1">Number of Battles</label>
-          <input id="battle-count" type="number" min="1" value="3" class="border rounded px-2 py-1 w-24" />
+          <input id="battle-count" type="number" min="1" value="50" class="border rounded px-2 py-1 w-24" />
         </div>
         <div>
           <label for="strategy-select" class="block mb-1">Strategy</label>
@@ -148,13 +150,32 @@
       <!-- Progress -->
       <progress id="progress-bar" value="0" max="100" class="w-full h-2 mb-4"></progress>
 
-      <!-- Results -->
-      <textarea
-        id="result-log"
-        class="w-full h-48 border rounded p-3 font-mono text-sm"
-        readonly
-        placeholder="Simulation output…"
-      ></textarea>
+      <!-- Tabs -->
+      <div class="mb-2 border-b flex">
+        <button id="tab-log-btn" class="px-4 py-2 -mb-px border-b-2 font-medium text-blue-600 border-blue-600">
+          Log
+        </button>
+        <button id="tab-config-btn" class="px-4 py-2 text-gray-600">Config</button>
+      </div>
+      <div id="tab-log" class="">
+        <textarea
+          id="result-log"
+          class="w-full h-48 border rounded p-3 font-mono text-sm"
+          readonly
+          placeholder="Simulation output…"
+        ></textarea>
+      </div>
+      <div id="tab-config" class="hidden">
+        <div class="flex space-x-2 mb-2">
+          <button id="export-config" class="px-3 py-1 bg-green-600 text-white rounded">Export Config</button>
+          <button id="import-config" class="px-3 py-1 bg-blue-600 text-white rounded">Import Config</button>
+        </div>
+        <textarea
+          id="config-area"
+          class="w-full h-48 border rounded p-3 font-mono text-sm"
+          placeholder="Config JSON…"
+        ></textarea>
+      </div>
     </div>
   </body>
 </html>
