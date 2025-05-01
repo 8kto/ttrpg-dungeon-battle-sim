@@ -1,142 +1,215 @@
-// simulation.ts
 import { BattleSimulator } from './BattleSimulator'
+import type { CharStats } from './consts'
+import { henchmanDefaults, monsterDefaults, playerDefaults } from './consts'
 import { Logger } from './Logger'
 import type { ICharacter } from './types'
 import { Strategy } from './types'
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', (): void => {
   const playersBody = document.getElementById('players-table') as HTMLTableSectionElement
   const monstersBody = document.getElementById('monsters-table') as HTMLTableSectionElement
+
+  // capture templates
+  const playerTemplate = playersBody.querySelector('tr') as HTMLTableRowElement
+  const monsterTemplate = monstersBody.querySelector('tr') as HTMLTableRowElement
+
   const addPlayerBtn = document.getElementById('add-player') as HTMLButtonElement
+  const addHenchBtn = document.getElementById('add-henchman') as HTMLButtonElement
+  const clearPlayersBtn = document.getElementById('clear-players') as HTMLButtonElement
+
   const addMonsterBtn = document.getElementById('add-monster') as HTMLButtonElement
+  const clearMonstersBtn = document.getElementById('clear-monsters') as HTMLButtonElement
+
   const runBtn = document.getElementById('run-sim') as HTMLButtonElement
-  const battleCountInput = document.getElementById('battle-count') as HTMLInputElement
+  const clearLogBtn = document.getElementById('clear-log') as HTMLButtonElement
+  const battleCount = document.getElementById('battle-count') as HTMLInputElement
   const strategySelect = document.getElementById('strategy-select') as HTMLSelectElement
+  const progressBar = document.getElementById('progress-bar') as HTMLProgressElement
+
   const logger = new Logger('result-log')
 
-  function bindRemove(row: HTMLTableRowElement, body: HTMLTableSectionElement): void {
-    const btn = row.querySelector('.remove-row') as HTMLButtonElement
-    btn.addEventListener('click', (e) => {
+  const bindRow = (row: HTMLTableRowElement, defs: CharStats, body: HTMLTableSectionElement): void => {
+    const removeBtn = row.querySelector('.remove-row') as HTMLButtonElement
+    const dupBtn = row.querySelector('.duplicate-row') as HTMLButtonElement
+
+    const inputs = Array.from(row.querySelectorAll('input')) as HTMLInputElement[]
+    const selects = Array.from(row.querySelectorAll('select')) as HTMLSelectElement[]
+
+    dupBtn.addEventListener('click', (e): void => {
       e.preventDefault()
-      if (body.childElementCount > 1) {
+      const cloned = playerTemplate.cloneNode(true) as HTMLTableRowElement
+      // copy values
+      inputs.forEach((inp, i) => ((cloned.querySelectorAll('input')[i] as HTMLInputElement).value = inp.value))
+      selects.forEach(
+        (sel, i) => ((cloned.querySelectorAll('select')[i] as HTMLSelectElement).selectedIndex = sel.selectedIndex),
+      )
+      cloned.dataset.prefix = defs.prefix
+      body.insertBefore(cloned, row.nextSibling)
+      bindRow(cloned, defs, body)
+      reindex(body)
+    })
+
+    removeBtn.addEventListener('click', (e): void => {
+      e.preventDefault()
+      if (body.rows.length > 1) {
         row.remove()
-        // re-index the remaining rows
-        Array.from(body.rows).forEach((r, idx) => {
-          const nameInput = r.querySelector('.name-input') as HTMLInputElement
-          const prefix = body === playersBody ? 'Player' : 'Monster'
-          nameInput.value = `${prefix} ${idx + 1}`
-        })
+        reindex(body)
       }
     })
   }
 
-  function addRow(body: HTMLTableSectionElement, isPlayer: boolean): void {
-    const template = body.querySelector('tr')!
-    const clone = template.cloneNode(true) as HTMLTableRowElement
-
-    // clear values
-    clone.querySelectorAll('input').forEach((inp) => (inp.value = ''))
-    clone.querySelectorAll('select').forEach((sel) => ((sel as HTMLSelectElement).selectedIndex = 0))
-
-    body.appendChild(clone)
-    bindRemove(clone, body)
-    initRow(clone, isPlayer)
+  const reindex = (body: HTMLTableSectionElement): void => {
+    let pCount = 1
+    let hCount = 1
+    Array.from(body.rows).forEach((row) => {
+      const prefix = row.dataset.prefix as string
+      const ni = row.querySelector('.name-input') as HTMLInputElement
+      if (prefix === 'Player') {
+        ni.value = `Player ${pCount++}`
+      } else if (prefix === 'Henchman') {
+        ni.value = `Henchman ${hCount++}`
+      }
+    })
   }
 
-  function initRow(row: HTMLTableRowElement, isPlayer: boolean): void {
-    const nameInput = row.querySelector('.name-input') as HTMLInputElement
-    const acInput = row.querySelector('.ac-input') as HTMLInputElement
-    const toHitInput = row.querySelector('.tohit-input') as HTMLInputElement
-    const hdCountInput = row.querySelector('.hd-count-input') as HTMLInputElement
-    const hdTypeSelect = row.querySelector('.hd-type-select') as HTMLSelectElement
-    const damageInput = row.querySelector('.damage-input') as HTMLInputElement
-
-    const body = isPlayer ? playersBody : monstersBody
-    const index = body.rows.length
-    const prefix = isPlayer ? 'Player' : 'Monster'
-    nameInput.value = `${prefix} ${index}`
-    acInput.value = '12'
-    toHitInput.value = '1'
-    hdCountInput.value = '1'
-    hdTypeSelect.value = '8'
-    damageInput.value = 'd6'
+  const addRow = (body: HTMLTableSectionElement, defs: CharStats, template: HTMLTableRowElement): void => {
+    const newRow = template.cloneNode(true) as HTMLTableRowElement
+    newRow.dataset.prefix = defs.prefix
+    // clear and init
+    Array.from(newRow.querySelectorAll('input')).forEach((inp) => (inp.value = ''))
+    Array.from(newRow.querySelectorAll('select')).forEach((sel) => (sel.selectedIndex = 0))
+    body.appendChild(newRow)
+    bindRow(newRow, defs, body)
+    initDefaults(newRow, defs, body)
+    reindex(body)
   }
 
-  // Initialize 5 players
-  const firstPlayerRow = playersBody.querySelector('tr') as HTMLTableRowElement
-  bindRemove(firstPlayerRow, playersBody)
-  initRow(firstPlayerRow, true)
-  for (let i = 1; i < 5; i++) {
-    addRow(playersBody, true)
+  const initDefaults = (row: HTMLTableRowElement, defs: CharStats, body: HTMLTableSectionElement): void => {
+    const idx = Array.from(body.rows).indexOf(row) + 1
+    row.dataset.prefix = defs.prefix
+    ;(row.querySelector('.name-input') as HTMLInputElement).value = `${defs.prefix} ${idx}`
+    ;(row.querySelector('.ac-input') as HTMLInputElement).value = defs.armor
+    ;(row.querySelector('.tohit-input') as HTMLInputElement).value = defs.toHit
+    ;(row.querySelector('.hd-count-input') as HTMLInputElement).value = defs.hdCount
+    ;(row.querySelector('.hd-type-select') as HTMLSelectElement).value = defs.hdType
+    ;(row.querySelector('.damage-input') as HTMLInputElement).value = defs.damage
   }
 
-  // Initialize 1 monster
-  const firstMonsterRow = monstersBody.querySelector('tr') as HTMLTableRowElement
-  bindRemove(firstMonsterRow, monstersBody)
-  initRow(firstMonsterRow, false)
+  const clearGroup = (
+    body: HTMLTableSectionElement,
+    defs: CharStats,
+    count: number,
+    template: HTMLTableRowElement,
+  ): void => {
+    Array.from(body.rows).forEach((r) => r.remove())
+    for (let i = 0; i < count; i++) {
+      addRow(body, defs, template)
+    }
+  }
 
-  addPlayerBtn.addEventListener('click', (e) => {
+  // initial
+  clearGroup(playersBody, playerDefaults, 5, playerTemplate)
+  clearGroup(monstersBody, monsterDefaults, 1, monsterTemplate)
+
+  addPlayerBtn.addEventListener('click', (e): void => {
     e.preventDefault()
-    addRow(playersBody, true)
+    addRow(playersBody, playerDefaults, playerTemplate)
   })
-  addMonsterBtn.addEventListener('click', (e) => {
+  addHenchBtn.addEventListener('click', (e): void => {
     e.preventDefault()
-    addRow(monstersBody, false)
+    addRow(playersBody, henchmanDefaults, playerTemplate)
+  })
+  clearPlayersBtn.addEventListener('click', (e): void => {
+    e.preventDefault()
+    clearGroup(playersBody, playerDefaults, 1, playerTemplate)
   })
 
-  runBtn.addEventListener('click', (e) => {
+  addMonsterBtn.addEventListener('click', (e): void => {
+    e.preventDefault()
+    addRow(monstersBody, monsterDefaults, monsterTemplate)
+  })
+  clearMonstersBtn.addEventListener('click', (e): void => {
+    e.preventDefault()
+    clearGroup(monstersBody, monsterDefaults, 1, monsterTemplate)
+  })
+
+  clearLogBtn.addEventListener('click', (e): void => {
     e.preventDefault()
     logger.clear()
+  })
 
-    const runs = Math.max(1, parseInt(battleCountInput.value, 10) || 1)
+  runBtn.addEventListener('click', async (e): Promise<void> => {
+    e.preventDefault()
+    logger.clear()
+    document.body.style.cursor = 'wait'
+    progressBar.value = 0
+
+    const runs = Math.max(1, parseInt(battleCount.value, 10) || 1)
     const stratKey = strategySelect.value as keyof typeof Strategy
     const strat = Strategy[stratKey]
 
-    let winsPlayers = 0
-    let winsMonsters = 0
+    let winsP = 0,
+      winsM = 0,
+      survP = 0,
+      survM = 0
+    const initialP = playersBody.rows.length
+    const initialM = monstersBody.rows.length
 
-    function readChars(body: HTMLTableSectionElement): ICharacter[] {
-      return Array.from(body.rows).map((row) => {
-        const name = (row.querySelector('.name-input') as HTMLInputElement).value
-        const armorClass = parseInt((row.querySelector('.ac-input') as HTMLInputElement).value, 10)
-        const toHit = parseInt((row.querySelector('.tohit-input') as HTMLInputElement).value, 10)
-        const hdCount = parseInt((row.querySelector('.hd-count-input') as HTMLInputElement).value, 10)
-        const hdType = parseInt((row.querySelector('.hd-type-select') as HTMLSelectElement).value, 10)
-        const dmgValue = (row.querySelector('.damage-input') as HTMLInputElement).value.trim()
-        const damage = dmgValue.split(',').map((s) => s.trim())
+    const read = (body: HTMLTableSectionElement): ICharacter[] =>
+      Array.from(body.rows).map((row) => {
+        const ni = row.querySelector('.name-input') as HTMLInputElement
+        const ac = parseInt((row.querySelector('.ac-input') as HTMLInputElement).value, 10)
+        const th = parseInt((row.querySelector('.tohit-input') as HTMLInputElement).value, 10)
+        const hc = parseInt((row.querySelector('.hd-count-input') as HTMLInputElement).value, 10)
+        const ht = parseInt((row.querySelector('.hd-type-select') as HTMLSelectElement).value, 10)
+        const dmg = (row.querySelector('.damage-input') as HTMLInputElement).value
+          .trim()
+          .split(',')
+          .map((s) => s.trim())
 
-        return {
-          armorClass,
-          damage,
-          hitDice: [hdCount, hdType] as [number, number],
-          name,
-          toHit,
-        }
+        return { armorClass: ac, damage: dmg, hitDice: [hc, ht], name: ni.value, toHit: th }
       })
-    }
 
-    const players = readChars(playersBody)
-    const monsters = readChars(monstersBody)
+    const players = read(playersBody)
+    const monsters = read(monstersBody)
 
     for (let i = 0; i < runs; i++) {
+      // allow UI update
+      await new Promise(requestAnimationFrame)
+      progressBar.value = ((i + 1) / runs) * 100
+
       const sim = new BattleSimulator(players, monsters, strat, logger)
-      logger.log(`[New battle]\n`)
+
+      logger.log(`\n`)
+      logger.log(`-`.repeat(100))
+      logger.log(`[New battle]`)
+      logger.log(`-`.repeat(100))
+
       sim.renderDetails()
       logger.log(`\n`)
 
-      const result = sim.simulate()
-      if (result.winner === 'Players') {
-        winsPlayers++
+      const res = sim.simulate()
+      if (res.winner === 'Players') {
+        winsP++
+        survP += res.survivors.filter((s) => s.name.startsWith('Player') || s.name.startsWith('Henchman')).length
       } else {
-        winsMonsters++
+        winsM++
+        survM += res.survivors.filter((s) => s.name.startsWith('Monster')).length
       }
-      logger.log(`${`-`.repeat(100)}\n`)
     }
 
+    logger.log(`\n`)
     logger.log(
-      `Players win: ${((winsPlayers / runs) * 100).toFixed(1)}%, ` +
-        `Monsters win: ${((winsMonsters / runs) * 100).toFixed(1)}% ` +
-        `(Strategy ${stratKey})`,
+      `Strategy ${stratKey} — Players win: ${((winsP / runs) * 100).toFixed(1)}%, Monsters win: ${((winsM / runs) * 100).toFixed(1)}%`,
     )
+    if (winsP) {
+      logger.log(`>> Avg Players survivors: ${((survP / (winsP * initialP)) * 100).toFixed(1)}%`)
+    }
+    // eslint-disable-next-line no-constant-condition
+    if (false && winsM) {
+      logger.log(`>> Avg Monsters survivors: ${((survM / (winsM * initialM)) * 100).toFixed(1)}%`)
+    }
+
+    document.body.style.cursor = 'default'
   })
 })
