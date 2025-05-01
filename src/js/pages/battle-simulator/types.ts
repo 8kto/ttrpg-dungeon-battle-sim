@@ -3,7 +3,7 @@ import type { Dice } from '../../domain/Dice'
 export interface ICharacter {
   name: string
   armorClass: number
-  damage: Dice[]
+  damage: string[]
   hitDice: [number, Dice] // e.g. [2, Dice.d6] which means 2d6 for hit-points
   toHit: number
 }
@@ -19,5 +19,5 @@ export enum Strategy {
 
 export interface ICombatStrategy {
   calculateHp(hitDice: [number, Dice]): number
-  calculateDamage(d: Dice): number
+  calculateDamage(damage: string): number
 }

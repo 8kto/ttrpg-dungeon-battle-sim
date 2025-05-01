@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Battle Simulator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script type="module" src="js/pages/battle-simulator/page-wrapper.ts"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-100 text-gray-900">
+    <div class="container mx-auto p-6">
+      <h1 class="text-3xl font-bold mb-6">Battle Simulator</h1>
+
+      <!-- Players section -->
+      <section id="players-section" class="mb-8">
+        <div class="flex justify-between items-center mb-2">
+          <h2 class="text-2xl">Players</h2>
+          <button id="add-player" class="px-3 py-1 bg-blue-600 text-white rounded">Add Player</button>
+        </div>
+        <table class="w-full table-auto bg-white shadow rounded">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="p-2 text-left">Name</th>
+              <th class="p-2 text-left">AC</th>
+              <th class="p-2 text-left">To Hit</th>
+              <th class="p-2 text-left">HD Count</th>
+              <th class="p-2 text-left">HD Type</th>
+              <th class="p-2 text-left">Damage</th>
+              <th class="p-2"></th>
+            </tr>
+          </thead>
+          <tbody id="players-table" class="divide-y">
+            <tr class="bg-white">
+              <td class="p-2"><input type="text" class="name-input w-full border rounded px-2" required /></td>
+              <td class="p-2"><input type="number" class="ac-input w-full border rounded px-2" required min="0" /></td>
+              <td class="p-2"><input type="number" class="tohit-input w-full border rounded px-2" required /></td>
+              <td class="p-2">
+                <input type="number" class="hd-count-input w-full border rounded px-2" required min="1" value="1" />
+              </td>
+              <td class="p-2">
+                <select class="hd-type-select w-full border rounded px-2">
+                  <option value="4">d4</option>
+                  <option value="6" selected>d6</option>
+                  <option value="8">d8</option>
+                  <option value="10">d10</option>
+                  <option value="12">d12</option>
+                  <option value="20">d20</option>
+                  <option value="100">d100</option>
+                </select>
+              </td>
+              <td class="p-2">
+                <input
+                  type="text"
+                  class="damage-input w-full border rounded px-2"
+                  required
+                  pattern="^\d*d\d+(\+\d+)?$"
+                  placeholder="e.g. d8 or 2d6+1"
+                />
+              </td>
+              <td class="p-2 text-center">
+                <button class="remove-row text-red-500">&times;</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Monsters section -->
+      <section id="monsters-section" class="mb-8">
+        <div class="flex justify-between items-center mb-2">
+          <h2 class="text-2xl">Monsters</h2>
+          <button id="add-monster" class="px-3 py-1 bg-blue-600 text-white rounded">Add Monster</button>
+        </div>
+        <table class="w-full table-auto bg-white shadow rounded">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="p-2 text-left">Name</th>
+              <th class="p-2 text-left">AC</th>
+              <th class="p-2 text-left">To Hit</th>
+              <th class="p-2 text-left">HD Count</th>
+              <th class="p-2 text-left">HD Type</th>
+              <th class="p-2 text-left">Damage</th>
+              <th class="p-2"></th>
+            </tr>
+          </thead>
+          <tbody id="monsters-table" class="divide-y">
+            <tr class="bg-white">
+              <td class="p-2"><input type="text" class="name-input w-full border rounded px-2" required /></td>
+              <td class="p-2"><input type="number" class="ac-input w-full border rounded px-2" required min="0" /></td>
+              <td class="p-2"><input type="number" class="tohit-input w-full border rounded px-2" required /></td>
+              <td class="p-2">
+                <input type="number" class="hd-count-input w-full border rounded px-2" required min="1" value="1" />
+              </td>
+              <td class="p-2">
+                <select class="hd-type-select w-full border rounded px-2">
+                  <option value="4">d4</option>
+                  <option value="6">d6</option>
+                  <option value="8" selected>d8</option>
+                  <option value="10">d10</option>
+                  <option value="12">d12</option>
+                  <option value="20">d20</option>
+                  <option value="100">d100</option>
+                </select>
+              </td>
+              <td class="p-2">
+                <input
+                  type="text"
+                  class="damage-input w-full border rounded px-2"
+                  required
+                  pattern="^\d*d\d+(\+\d+)?$"
+                  placeholder="e.g. d6"
+                />
+              </td>
+              <td class="p-2 text-center">
+                <button class="remove-row text-red-500">&times;</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Simulation controls -->
+      <div class="mb-6 flex items-center space-x-4">
+        <div>
+          <label for="battle-count" class="block mb-1">Number of Battles</label>
+          <input id="battle-count" type="number" min="1" value="3" class="border rounded px-2 py-1 w-24" />
+        </div>
+        <div>
+          <label for="strategy-select" class="block mb-1">Strategy</label>
+          <select id="strategy-select" class="border rounded px-2 py-1">
+            <option value="Average">Average</option>
+            <option value="Random" selected>Random</option>
+          </select>
+        </div>
+        <button id="run-sim" class="mt-6 px-4 py-2 bg-green-600 text-white rounded">Run Simulation</button>
+      </div>
+
+      <!-- Results log -->
+      <textarea
+        id="result-log"
+        class="w-full border rounded p-3 font-mono text-sm"
+        rows="21"
+        readonly
+        placeholder="Simulation output…"
+      ></textarea>
+    </div>
+  </body>
+</html>

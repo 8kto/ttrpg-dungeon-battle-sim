@@ -12,7 +12,7 @@ const createPlayerChars = (num: number): IPlayerCharacter[] => {
   for (let i = 0; i < num; i++) {
     res.push({
       armorClass: 14,
-      damage: [Dice.d6],
+      damage: 'd6',
       hitDice: [4, Dice.d6],
       name: `Player ${i}`,
       toHit: 1,
@@ -24,7 +24,7 @@ const createPlayerChars = (num: number): IPlayerCharacter[] => {
 
 const $1HD_Monster: IMonster = {
   armorClass: 12,
-  damage: [Dice.d6],
+  damage: 'd6',
   hitDice: [1, Dice.d6],
   name: 'Monster with 1HD',
   toHit: 1,
@@ -32,7 +32,7 @@ const $1HD_Monster: IMonster = {
 
 const $4HD_Monster: IMonster = {
   armorClass: 12,
-  damage: [Dice.d6, Dice.d6],
+  damage: 'd6, d6',
   hitDice: [4, Dice.d6],
   name: 'Monster with 4HD',
   toHit: 4,

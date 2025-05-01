@@ -103,7 +103,7 @@ export const isValidDiceFormula = (formula: string): boolean => {
 
 export const rollDiceFormula = (formula: string): number => {
   if (!isValidDiceFormula(formula)) {
-    throw new Error('Invalid dice formula, allowed characters are +-, numbers and dices (d6 etc.)')
+    throw new Error(`Invalid dice formula, allowed characters are +-, numbers and dices (d6 etc.): ${formula}`)
   }
 
   const tokens = getTokens(formula).map(resolveToken)

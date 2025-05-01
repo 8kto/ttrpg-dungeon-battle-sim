@@ -1,6 +1,6 @@
-/* eslint-disable no-console */
 import { Dice } from '../../domain/Dice'
-import { roll } from '../../utils/dice'
+import { roll, rollDiceFormula } from '../../utils/dice'
+import type { Logger } from './Logger'
 import type { ICharacter, ICombatStrategy, IMonster, IPlayerCharacter } from './types'
 import { Strategy } from './types'
 
@@ -16,8 +16,9 @@ class AverageStrategy implements ICombatStrategy {
 
     return count * avgPerDie
   }
-  calculateDamage(dice: Dice): number {
-    return Math.ceil(dice / 2)
+  calculateDamage(damage: string): number {
+    // return Math.ceil(dice / 2)
+    return 0 // FIXME
   }
 }
 
@@ -30,8 +31,8 @@ class RandomStrategy implements ICombatStrategy {
 
     return sum
   }
-  calculateDamage(dice: Dice): number {
-    return roll(dice)
+  calculateDamage(damage: string): number {
+    return rollDiceFormula(damage)
   }
 }
 
@@ -54,6 +55,7 @@ class Participant {
     public readonly char: ICharacter,
     public readonly side: 'Players' | 'Monsters',
     strategy: ICombatStrategy,
+    private readonly logger: Logger,
   ) {
     this.currentHp = strategy.calculateHp(char.hitDice)
   }
@@ -71,9 +73,13 @@ class Participant {
         const dmg = strategy.calculateDamage(dmgDice)
         target.currentHp -= dmg
 
-        // console.log(`🗡️ ${this.char.name  } attacks ${  target.char.name  }, damage: ${  dmg}`)
+        this.logger.log(`🗡️ ${this.char.name} attacks ${target.char.name}, damage: ${dmg}`)
+
+        if (target.currentHp <= 0) {
+          this.logger.log(`💀️ ${target.char.name} is dead`)
+        }
       } else {
-        // console.log(`🛡️ ${this.char.name  } misses on ${  target.char.name  }`)
+        this.logger.log(`🛡️ ${this.char.name} misses ${target.char.name}`)
       }
     }
   }
@@ -85,19 +91,24 @@ export class BattleSimulator {
   private readonly strategy: ICombatStrategy
   private roundsCount: number = 0
 
-  constructor(sideA: IPlayerCharacter[], sideB: IMonster[], strategyMode: Strategy) {
+  constructor(
+    sideA: IPlayerCharacter[],
+    sideB: IMonster[],
+    strategyMode: Strategy,
+    private readonly logger: Logger,
+  ) {
     this.targetSelector = new RandomTargetSelector()
     this.strategy = strategyMode === Strategy.Average ? new AverageStrategy() : new RandomStrategy()
 
     this.participants = [
-      ...sideA.map((c) => new Participant(c, 'Players', this.strategy)),
-      ...sideB.map((c) => new Participant(c, 'Monsters', this.strategy)),
+      ...sideA.map((c) => new Participant(c, 'Players', this.strategy, this.logger)),
+      ...sideB.map((c) => new Participant(c, 'Monsters', this.strategy, this.logger)),
     ]
   }
 
   renderDetails(): this {
     this.participants.forEach((p) => {
-      console.log(`${p.side === 'Monsters' ? '🧌' : '🥷'}${p.char.name} HP: ${p.currentHp}`)
+      this.logger.log(`${p.side === 'Monsters' ? '🧌' : '🥷'}${p.char.name} HP: ${p.currentHp}`)
     })
 
     return this
