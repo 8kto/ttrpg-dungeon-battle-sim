@@ -1,4 +1,5 @@
 import type { Dice } from 'ttrpg-lib-dice'
+
 import type { SavingThrow } from './SavingThrow'
 
 export enum CharacterClass {

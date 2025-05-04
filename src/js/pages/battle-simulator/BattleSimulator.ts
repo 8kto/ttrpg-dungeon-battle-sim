@@ -1,5 +1,4 @@
-import type { Dice } from 'ttrpg-lib-dice'
-import { roll, rollDiceFormula } from 'ttrpg-lib-dice'
+import { Dice, roll, rollDiceFormula } from 'ttrpg-lib-dice'
 
 import type { Logger } from './Logger'
 import type { ICharacter, ICombatStrategy, IMonster, IPlayerCharacter } from './types'
