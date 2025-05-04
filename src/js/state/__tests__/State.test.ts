@@ -25,6 +25,7 @@ const getCharacterOptions = (): Character => {
     gold: 140,
     hitPoints: 1,
     level: 1,
+    movementRate: 12,
     spells: {
       'Charm Person': {
         level: 1,

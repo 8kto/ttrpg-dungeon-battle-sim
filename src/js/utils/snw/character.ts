@@ -1,3 +1,5 @@
+import { getRandomArrayItem, roll, rollDiceFormula } from 'ttrpg-lib-dice'
+
 import { CharacterClasses, PRIME_ATTR_MIN } from '../../config/snw/CharacterClasses'
 import {
   CharismaModifiers,
@@ -11,7 +13,6 @@ import type { Character } from '../../domain/snw/Character'
 import type { CharacterClassDef, PrimeAttribute } from '../../domain/snw/CharacterClass'
 import { Alignment, AttrScore, CharacterClass, CharacterRace } from '../../domain/snw/CharacterClass'
 import { DEFAULT_INVENTORY_ITEMS } from '../../state/State'
-import { getRandomArrayItem, roll, rollDiceFormula } from '../dice'
 import { getCharArmorClass } from './armorClass'
 import { getDamageModifier, getToHitMelee, getToHitMissiles } from './combat'
 import { getExperienceBonus } from './experience'

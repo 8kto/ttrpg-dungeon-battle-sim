@@ -1,4 +1,4 @@
-import type { Dice } from '../../domain/Dice'
+import type { Dice } from 'ttrpg-lib-dice'
 
 export interface ICharacter {
   name: string

@@ -4,6 +4,7 @@ import { Alignment, CharacterRace } from '../../domain/snw/CharacterClass'
 
 export const clericInventoryMock: Inventory = {
   character: {
+    movementRate: 12,
     alignment: Alignment.Chaotic,
     ancestry: CharacterRace.Human,
     armorClass: { aac: 10, armor: 'None', dac: 9 },

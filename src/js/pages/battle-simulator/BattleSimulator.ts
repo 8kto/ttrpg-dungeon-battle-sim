@@ -1,5 +1,6 @@
-import { Dice } from '../../domain/Dice'
-import { roll, rollDiceFormula } from '../../utils/dice'
+import type { Dice } from 'ttrpg-lib-dice'
+import { roll, rollDiceFormula } from 'ttrpg-lib-dice'
+
 import type { Logger } from './Logger'
 import type { ICharacter, ICombatStrategy, IMonster, IPlayerCharacter } from './types'
 import { Strategy } from './types'
