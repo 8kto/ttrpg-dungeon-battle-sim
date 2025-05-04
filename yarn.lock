@@ -6006,10 +6006,10 @@ tslib@^2.1.0:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.7.0.tgz#d9b40c5c40ab59e8738f297df3087bf1a2690c01"
   integrity sha512-gLXCKdN1/j47AiHiOkJN69hJmcbGTHI0ImLmbYLHykhgeN0jVGola9yVjFgzCUklsZQMW55o+dW7IXv3RCXDzA==
 
-ttrpg-lib-dice@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/ttrpg-lib-dice/-/ttrpg-lib-dice-1.0.6.tgz#9902ba7d40be8aee7bc81f9504365e4823367899"
-  integrity sha512-YY1Fa+58eABPK5tavMsO6e0WjsEevF1SR/0G+E/RrnBwQMT4EWQJ8/kShifA6TMrMn+8lUCihQqyNJ4z63p4mw==
+ttrpg-lib-dice@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/ttrpg-lib-dice/-/ttrpg-lib-dice-1.0.8.tgz#619dcade9299ee4d3bf38c18776671b0bc311fad"
+  integrity sha512-wQBr34+ck/K2RaeJhng+YCOkoUo5xE7vA9met7rVdMhNGCkK9jxFTF9IhYO2ALAspsV++CledrOlvC4InlBQ4w==
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
