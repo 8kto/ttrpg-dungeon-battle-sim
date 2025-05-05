@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
     progressBar.value = 0
 
     const runs = Math.max(1, parseInt(battleCount.value, 10) || 1)
-    const strat = Strategy[strategySelect.value as keyof typeof Strategy]
+    const strategy = Strategy[strategySelect.value as keyof typeof Strategy]
 
     let winsP = 0,
       winsM = 0,
@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
       logger.log('[New battle]')
       logger.log('-'.repeat(80))
 
-      const sim = new BattleSimulator(players, monsters, strat, logger)
+      const sim = new BattleSimulator(players, monsters, strategy, logger)
       sim.renderDetails()
       logger.log('\n')
 

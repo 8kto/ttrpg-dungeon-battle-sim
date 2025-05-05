@@ -15,4 +15,5 @@ export type IMonster = ICharacter
 export enum Strategy {
   Average,
   Random,
+  Max,
 }

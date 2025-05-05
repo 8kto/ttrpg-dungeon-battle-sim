@@ -1,13 +1,11 @@
 import { Side } from '../types'
 import type { Logger } from './Logger'
 import { Participant } from './Participant'
-import { AverageStrategy } from './strategies/AverageStrategy'
+import { getStrategy } from './strategies/getStrategy'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
-import { RandomStrategy } from './strategies/RandomStrategy'
 import type { ITargetSelector } from './TargetSelector'
 import { RandomTargetSelector } from './TargetSelector'
-import type { IMonster, IPlayerCharacter } from './types'
-import { Strategy } from './types'
+import type { IMonster, IPlayerCharacter, Strategy } from './types'
 
 type BattleResult = {
   winner: Side
@@ -28,7 +26,7 @@ export class BattleSimulator {
     private readonly logger: Logger,
   ) {
     this.targetSelector = new RandomTargetSelector()
-    this.strategy = strategyMode === Strategy.Average ? new AverageStrategy() : new RandomStrategy()
+    this.strategy = getStrategy(strategyMode)
 
     this.participants = [
       ...sideA.map((c) => new Participant(c, Side.Players, this.strategy, this.logger)),
