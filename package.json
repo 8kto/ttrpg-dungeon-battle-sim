@@ -1,8 +1,8 @@
 {
-  "name": "ttrpg-snw-generator",
-  "description": "A tabletop RPG inventory generator for Swords & Wizardry.",
-  "version": "0.1.1",
-  "author": "8kto <ifhtagn@gmail.com>",
+  "name": "ttrpg-dungeon-battle-sim",
+  "description": "A tabletop RPG battle simulator",
+  "version": "1.0.0",
+  "author": "8kto (https://ivlev.blog)",
   "license": "MIT",
   "scripts": {
     "dev:wmr": "wmr --reload",
@@ -18,11 +18,9 @@
     "test": "jest",
     "test:coverage": "jest --collectCoverage",
     "todos": "egrep --color=always -i '(TODO|FIXME)' -r src/",
-    "test:vr": "backstop test",
     "weok": "yarn tsc && yarn lint && yarn format && yarn test && echo WE OK",
     "watch": "npm-watch",
-    "styles:main": "npx tailwindcss -i src/styles/styles.scss -o src/styles/styles.processed.css -c tailwind.config.js",
-    "styles:character": "npx tailwindcss -i src/styles/character-sheet.scss -o src/styles/character-sheet.processed.css -c tailwind.config.js"
+    "styles:main": "npx tailwindcss -i src/styles/styles.scss -o src/styles/styles.processed.css -c tailwind.config.js"
   },
   "watch": {
     "styles:main": {
@@ -48,9 +46,7 @@
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "@typescript-eslint/parser": "^7.14.1",
     "babel-jest": "^29.7.0",
-    "backstopjs": "^6.3.23",
     "concurrently": "^8.2.2",
-    "daisyui": "^4.12.10",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-import-resolver-typescript": "^3.6.1",
@@ -61,7 +57,6 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "npm-watch": "^0.13.0",
-    "pdf-lib": "^1.17.1",
     "prettier": "^3.3.2",
     "ts-jest": "^29.1.5"
   },

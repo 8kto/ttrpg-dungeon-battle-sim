@@ -88,12 +88,6 @@
       "rules": {
         "@typescript-eslint/ban-ts-comment": "off"
       }
-    },
-    {
-      "files": ["tests_visual_regression/**/*.js"],
-      "rules": {
-        "@typescript-eslint/no-var-requires": "off"
-      }
     }
   ],
   "settings": {
