@@ -1,12 +1,18 @@
 <!doctype html>
-<html lang="en" xmlns="http://www.w3.org/1999/html" data-theme="retrogame" class="bg-ntrl-800">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Swords & Wizardry: Character generator, Equipment & Inventory</title>
+    <title>Dungeon Battle Simulator by undefined</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script type="module" src="./js/pages/battle-simulator/page-wrapper.ts"></script>
+
+    <!--FIXME drop & use bundled-->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Character and Inventory generator for Swords & Wizardry (Complete). Random character generation, equipment lists, inventory management, quick equipment sets, local storage saving, JSON export and more."
+      content="A browser-based tool for configuring and simulating turn-based combat between two sides—players (including mercenaries) and monsters. Supports custom stats, multiple simulation modes, batch runs, and export/import of configurations."
     />
     <meta
       name="keywords"
@@ -34,520 +40,176 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
-    <script>
-      /*
-                           _                         _                  _
-                          | |       ___             (_)                | |
- _____      _____  _ __ __| |___   ( _ )   __      ___ ______ _ _ __ __| |_ __ _   _
-/ __\ \ /\ / / _ \| '__/ _` / __|  / _ \/\ \ \ /\ / / |_  / _` | '__/ _` | '__| | | |
-\__ \\ V  V / (_) | | | (_| \__ \ | (_>  <  \ V  V /| |/ / (_| | | | (_| | |  | |_| |
-|___/ \_/\_/ \___/|_|  \__,_|___/  \___/\/   \_/\_/ |_/___\__,_|_|  \__,_|_|   \__, |
-                                                                                __/ |
-                                                                               |___/
-       */
-    </script>
   </head>
-  <body class="text-base-content">
-    <noscript> Sorry, JS should be enabled</noscript>
+  <body class="bg-gray-100 text-gray-900">
+    <div class="container mx-auto p-6">
+      <h1 class="text-3xl font-bold mb-6">Battle Simulator</h1>
 
-    <header class="my-4 text-center">
-      <h1 class="text-alt text-3xl mb-2">
-        <a href="/" class="transition-gradient block"> Swords & Wizardry CR </a>
-      </h1>
-      <h2 class="text-xl text-secondary">Character Generator / Unofficial tool</h2>
-    </header>
-    <main class="mx-auto w-full max-w-screen-2xl flex-grow px-2 sm:px-6 lg:px-8 mb-4">
-      <div class="page-content flex flex-col md:flex-row justify-between">
-        <!-- Tab Navigation (visible on small screens) -->
-        <div class="tabs tabs-content-columns tabs-boxed mb-4" role="tablist">
-          <a href="#equipment-container" class="tab tab-bordered tab-active">Equipment</a>
-          <a href="#inventory-container-column" class="tab tab-bordered">Inventory</a>
+      <!-- Players & Henchmen -->
+      <section id="players-section" class="mb-8">
+        <div class="flex justify-between items-center mb-2">
+          <div class="space-x-2">
+            <button id="add-player" class="px-3 py-1 bg-blue-600 text-white rounded">Add Player</button>
+            <button id="add-henchman" class="px-3 py-1 bg-blue-600 text-white rounded">Add Henchman</button>
+            <button id="clear-players" class="px-3 py-1 bg-gray-600 text-white rounded">Clear Players</button>
+          </div>
+          <h2 class="text-2xl">Players & Henchmen</h2>
         </div>
+        <table class="w-full table-auto bg-white shadow rounded">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="p-2 text-left">Name</th>
+              <th class="p-2 text-left">AC</th>
+              <th class="p-2 text-left">To Hit</th>
+              <th class="p-2 text-left">HD Count</th>
+              <th class="p-2 text-left">HD Type</th>
+              <th class="p-2 text-left">Damage</th>
+              <th class="p-2"></th>
+            </tr>
+          </thead>
+          <tbody id="players-table" class="divide-y">
+            <tr class="bg-white" data-prefix="Player">
+              <td class="p-2"><input type="text" class="name-input w-full border rounded px-2" required /></td>
+              <td class="p-289">
+                <input type="number" class="ac-input w-full border rounded px-2" required min="0" />
+              </td>
+              <td class="p-2"><input type="number" class="tohit-input w-full border rounded px-2" required /></td>
+              <td class="p-2">
+                <input type="number" class="hd-count-input w-full border rounded px-2" required min="1" />
+              </td>
+              <td class="p-2">
+                <select class="hd-type-select w-full border rounded px-2">
+                  <option value="4">d4</option>
+                  <option value="6">d6</option>
+                  <option value="8">d8</option>
+                  <option value="10">d10</option>
+                  <option value="12">d12</option>
+                  <option value="20">d20</option>
+                  <option value="100">d100</option>
+                </select>
+              </td>
+              <td class="p-2">
+                <input
+                  type="text"
+                  class="damage-input w-full border rounded px-2"
+                  required
+                  pattern="^\d*d\d+(\+\d+)?(,\s*\d*d\d+(\+\d+)?)*$"
+                  placeholder="e.g. d6 or d6,d6"
+                />
+              </td>
+              <td class="p-2 text-center space-x-2">
+                <button class="duplicate-row text-blue-500" title="Duplicate">⎘</button>
+                <button class="remove-row text-red-500" title="Remove">×</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-        <!-- Equipment Container -->
-        <section id="equipment-container" class="page-content-column equip-column"></section>
+      <!-- Monsters -->
+      <section id="monsters-section" class="mb-8">
+        <div class="flex justify-between items-center mb-2">
+          <div class="space-x-2">
+            <button id="add-monster" class="px-3 py-1 bg-blue-600 text-white rounded">Add Monster</button>
+            <button id="clear-monsters" class="px-3 py-1 bg-gray-600 text-white rounded">Clear Monsters</button>
+          </div>
+          <h2 class="text-2xl">Monsters</h2>
+        </div>
+        <table class="w-full table-auto bg-white shadow rounded">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="p-2 text-left">Name</th>
+              <th class="p-2 text-left">AC</th>
+              <th class="p-2 text-left">To Hit</th>
+              <th class="p-2 text-left">HD Count</th>
+              <th class="p-2 text-left">HD Type</th>
+              <th class="p-2 text-left">Damage</th>
+              <th class="p-2"></th>
+            </tr>
+          </thead>
+          <tbody id="monsters-table" class="divide-y">
+            <tr class="bg-white" data-prefix="Monster">
+              <td class="p-2"><input type="text" class="name-input w-full border rounded px-2" required /></td>
+              <td class="p-2"><input type="number" class="ac-input w-full border rounded px-2" required min="0" /></td>
+              <td class="p-2"><input type="number" class="tohit-input w-full border rounded px-2" required /></td>
+              <td class="p-2">
+                <input type="number" class="hd-count-input w-full border rounded px-2" required min="1" />
+              </td>
+              <td class="p-2">
+                <select class="hd-type-select w-full border rounded px-2">
+                  <option value="4">d4</option>
+                  <option value="6">d6</option>
+                  <option value="8">d8</option>
+                  <option value="10">d10</option>
+                  <option value="12">d12</option>
+                  <option value="20">d20</option>
+                  <option value="100">d100</option>
+                </select>
+              </td>
+              <td class="p-2">
+                <input
+                  type="text"
+                  class="damage-input w-full border rounded px-2"
+                  required
+                  pattern="^\d*d\d+(\+\d+)?(,\s*\d*d\d+(\+\d+)?)*$"
+                  placeholder="e.g. d6 or d6,d6"
+                />
+              </td>
+              <td class="p-2 text-center space-x-2">
+                <button class="duplicate-row text-blue-500" title="Duplicate">⎘</button>
+                <button class="remove-row text-red-500" title="Remove">×</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-        <!-- Inventory Container -->
-        <section id="inventory-container-column" class="page-content-column inventory-column hidden md:block">
-          <!-- Section to Add or Remove Inventories -->
-          <section class="flex flex-col md:flex-row w-full xxl:w-4/5 mt-2 mb-6 md:mb-0">
-            <div class="flex flex-col md:flex-row w-full">
-              <input
-                id="new-inventory-name"
-                type="text"
-                placeholder="Character Name"
-                pattern="^[A-Za-z_][A-Za-z0-9\-_ ]*$"
-                required
-                class="input input-bordered text-neutral-500 focus:text-primary-content flex-grow w-full mb-2 md:mb-0"
-                value="Character Name"
-              />
-              <button id="add-inventory-button" class="btn btn-primary uppercase w-full md:w-auto md:px-6">Add</button>
-            </div>
-          </section>
-
-          <section class="inventory-controls mt-6 mb-2 text-white text-sm">
-            <div class="flex justify-end">
-              <button class="minimise-inventories-btn btn">Compact mode</button>
-            </div>
-          </section>
-
-          <!-- Inventory Containers dynamically managed -->
-          <div id="inventories-container" class="flex flex-col justify-between gap-4 mb-4"></div>
-
-          <!-- Equipment sets -->
-          <section id="equip-sets-section">
-            <div class="max-w-auto">
-              <details>
-                <summary>Import Equipment set</summary>
-
-                <div class="flex items-center my-4 w-full py-2">
-                  <select id="equip-set-dropdown" class="select select-bordered w-full">
-                    <option value="" class="text-base">Select a set</option>
-                  </select>
-                  <button id="import-equip-set-button" class="btn btn-primary w-32 rounded-none" type="button">
-                    Import
-                  </button>
-                </div>
-                <div id="equip-sets-container" class="p-2 text-sm"></div>
-              </details>
-            </div>
-          </section>
-
-          <!-- Export/import -->
-          <section id="dump-data-container">
-            <div class="max-w-auto my-4">
-              <details>
-                <summary>Characters import & export</summary>
-                <div class="text-sm my-2">
-                  <div class="join">
-                    <button id="dump-json-button" class="btn btn-primary join-item" type="button">Export</button>
-                    <button id="import-json-button" class="btn btn-primary join-item" type="button">Import</button>
-                    <button id="copy-json-button" class="btn btn-secondary join-item" type="button">
-                      Copy to clipboard
-                    </button>
-                  </div>
-
-                  <label class="form-control">
-                    <div class="label">
-                      <span class="label-text">JSON can be used for sharing the characters/inventories.</span>
-                    </div>
-
-                    <textarea
-                      id="dump-data-container--json-container"
-                      class="textarea textarea-json textarea-bordered overflow-auto w-full h-36"
-                      placeholder="Data in JSON format"
-                      rows="10"
-                    ></textarea>
-                  </label>
-                </div>
-              </details>
-            </div>
-          </section>
-
-          <!-- Movement/speed help -->
-          <section id="movement-container">
-            <div class="max-w-auto">
-              <details>
-                <summary><span class="emoji-icon">ℹ️</span> Movement</summary>
-                <div class="my-2 overflow-auto">
-                  <table class="mb-4 text-sm table table-zebra table-snw-gen">
-                    <thead class="bg-neutral-content text-left">
-                      <tr>
-                        <th class="text-left uppercase">Weight Carried</th>
-                        <th class="text-left uppercase">Base Movement Rate</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Up to 75 pounds</td>
-                        <td>12</td>
-                      </tr>
-                      <tr>
-                        <td>76–100 pounds</td>
-                        <td>9</td>
-                      </tr>
-                      <tr>
-                        <td>101–150 pounds</td>
-                        <td>6</td>
-                      </tr>
-                      <tr>
-                        <td>151–300 pounds (300-pound maximum)</td>
-                        <td>3</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <h3 class="mt-6 mb-2 text-alt text-base">Indoor, Underground, and City Movement</h3>
-                  <table class="mb-4 text-sm table table-zebra table-snw-gen">
-                    <thead class="bg-neutral-content text-left">
-                      <tr>
-                        <th class="uppercase">Description</th>
-                        <th class="uppercase w-64">Speed</th>
-                        <th class="uppercase">Results</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Walking</td>
-                        <td>
-                          Base movement rate * 20 feet/turn <br />
-                          <div class="my-2 text-details">[3] = 60&nbsp;ft</div>
-                          <div class="my-2 text-alt">[6] = 120&nbsp;ft</div>
-                          <div class="my-2 text-details">[9] = 180&nbsp;ft</div>
-                          <div class="my-2 text-alt">[12] = 240&nbsp;ft</div>
-                        </td>
-                        <td>Mapping and careful observation of the surroundings are possible.</td>
-                      </tr>
-                      <tr>
-                        <td>Running</td>
-                        <td>
-                          Base movement rate * 40 feet/turn <br />
-                          <div class="my-2 text-details">[3] = 120&nbsp;ft</div>
-                          <div class="my-2 text-alt">[6] = 240&nbsp;ft</div>
-                          <div class="my-2 text-details">[9] = 360&nbsp;ft</div>
-                          <div class="my-2 text-alt">[12] = 480&nbsp;ft</div>
-                        </td>
-                        <td>
-                          No mapping permitted. <br />
-                          Characters are automatically surprised and have no chance to surprise others. <br />
-                          The sound of running may attract the attention of enemies.
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>Combat<br /><span class="text-neutral-content">(Complete)</span></td>
-                        <td>
-                          (BMR * 10 ) / 3 <br />
-                          <div class="my-2 text-details">[3] = 10&nbsp;ft</div>
-                          <div class="my-2 text-alt">[6] = 20&nbsp;ft</div>
-                          <div class="my-2 text-details">[9] = 30&nbsp;ft</div>
-                          <div class="my-2 text-alt">[12] = 40&nbsp;ft</div>
-                        </td>
-                        <td>Dashing around, battling your foes. Alternatively, running for your life.</td>
-                      </tr>
-                      <tr>
-                        <td>Combat<br /><span class="text-neutral-content">(Revised)</span></td>
-                        <td>
-                          BMR * 10 <br />
-                          <div class="my-2 text-details">[3] = 30&nbsp;ft</div>
-                          <div class="my-2 text-alt">[6] = 60&nbsp;ft</div>
-                          <div class="my-2 text-details">[9] = 90&nbsp;ft</div>
-                          <div class="my-2 text-alt">[12] = 120&nbsp;ft</div>
-                        </td>
-                        <td></td>
-                      </tr>
-                    </tbody>
-                  </table>
-
-                  <h3 class="mt-6 mb-2 text-alt text-base">Outdoor Movement</h3>
-                  <table class="mb-4 text-sm table table-zebra table-snw-gen">
-                    <thead class="bg-neutral-content text-left">
-                      <tr>
-                        <th class="uppercase">Description</th>
-                        <th class="uppercase w-64">Speed</th>
-                        <th class="uppercase">Results</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Hiking</td>
-                        <td>Base movement rate in miles/day</td>
-                        <td>No forced march checks required.</td>
-                      </tr>
-                      <tr>
-                        <td>Forced March</td>
-                        <td>Double base movement rate in miles/day</td>
-                        <td>Forced march checks required once per day (4d6 vs. strength) to continue at this pace.</td>
-                      </tr>
-                      <tr>
-                        <td>Combat<br /><span class="text-neutral-content">(Complete)</span></td>
-                        <td>
-                          (BMR / 3) * 10 yards per round or <br />
-                          (BMR / 3) * 30 feet per round <br />
-                          <div class="my-2 text-details">[3] = 10&nbsp;yards</div>
-                          <div class="my-2 text-alt">[6] = 20&nbsp;yards</div>
-                          <div class="my-2 text-details">[9] = 30&nbsp;yards</div>
-                          <div class="my-2 text-alt">[12] = 40&nbsp;yards</div>
-                        </td>
-                        <td>Battling your foes or running for your life.</td>
-                      </tr>
-                      <tr>
-                        <td>Combat<br /><span class="text-neutral-content">(Revised)</span></td>
-                        <td>
-                          BMR * 10 yards per round or <br />
-                          BMR * 30 feet per round <br />
-                          <div class="my-2 text-details">[3] = 30&nbsp;yards</div>
-                          <div class="my-2 text-alt">[6] = 60&nbsp;yards</div>
-                          <div class="my-2 text-details">[9] = 90&nbsp;yards</div>
-                          <div class="my-2 text-alt">[12] = 120&nbsp;yards</div>
-                        </td>
-                        <td></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </details>
-
-              <details>
-                <summary>Add Equipment by Name</summary>
-                <div class="py-2">
-                  <div class="mb-2 flex align-items-center">
-                    <input
-                      type="checkbox"
-                      id="equip-import-allow-only-existing"
-                      class="checkbox checkbox-sm border-4 mr-2"
-                      checked
-                    />
-                    <label for="equip-import-allow-only-existing" class="text-gen-400 text-sm"
-                      >Allow only existing</label
-                    >
-                  </div>
-
-                  <label class="form-control">
-                    <div class="label">
-                      <span class="label-text">Items will be added to the selected Inventory.</span>
-                    </div>
-                    <textarea
-                      id="equipment-input"
-                      class="textarea textarea-json textarea-bordered w-full mb-4"
-                      rows="6"
-                      placeholder="Enter each item on a new line"
-                    ></textarea>
-                  </label>
-
-                  <button id="convert-button" class="btn btn-primary">Add items</button>
-                  <div id="error-output" class="my-4 text-red-500"></div>
-                </div>
-              </details>
-            </div>
-          </section>
-        </section>
+      <!-- Controls -->
+      <div class="mb-4 flex items-center space-x-4">
+        <div>
+          <label for="battle-count" class="block mb-1">Number of Battles</label>
+          <input id="battle-count" type="number" min="1" value="50" class="border rounded px-2 py-1 w-24" />
+        </div>
+        <div>
+          <label for="strategy-select" class="block mb-1">Strategy</label>
+          <select id="strategy-select" class="border rounded px-2 py-1">
+            <option value="Average">Average</option>
+            <option value="Random" selected>Random</option>
+          </select>
+        </div>
+        <button id="run-sim" class="mt-6 px-4 py-2 bg-green-600 text-white rounded">Run Simulation</button>
+        <button id="clear-log" class="mt-6 px-4 py-2 bg-gray-600 text-white rounded">Clear Log</button>
       </div>
-      <footer class="page-footer">
-        <div class="flex flex-col items-center justify-between">
-          <div class="mb-4 max-w-full whitespace-normal break-words text-base">
-            <a
-              href="https://github.com/8kto/ttrpg-snw-generator"
-              target="_blank"
-              class="text-alt whitespace-nowrap underline-offset-4 hover:underline"
-            >
-              GitHub
-            </a>
-          </div>
-          <div>
-            <p title="Disclaimer" class="text-center text-sm">
-              This is an unofficial tool for "Swords and Wizardry" and is not endorsed by the game's publishers. All
-              related trademarks belong to their respective owners.
-            </p>
-          </div>
-          <div class="flex items-center my-2">
-            <div class="inline-block text-sm text-accent">
-              <span class="">&copy; 2024, 2025 </span>
-              <a
-                href="https://ivlev.blog/"
-                class="whitespace-nowrap underline-offset-4 hover:underline whitespace-nowrap underline-offset-4 hover:underline"
-                target="_blank"
-              >
-                undefined
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </main>
 
-    <!-- Templates -->
-    <!-- New random char controls -->
-    <template id="template-new-char-controls">
-      <section class="inventory-controls-top-section mt-4 text-sm flex gap-x-1">
-        <button class="add-new-random-char-btn btn btn-sm btn-primary flex items-center">
-          <span class="emoji-icon">♻</span> Generate random character
+      <!-- Progress -->
+      <progress id="progress-bar" value="0" max="100" class="w-full h-2 mb-4"></progress>
+
+      <!-- Tabs -->
+      <div class="mb-2 border-b flex">
+        <button id="tab-log-btn" class="px-4 py-2 -mb-px border-b-2 font-medium text-blue-600 border-blue-600">
+          Log
         </button>
-        <button class="save-char-btn btn btn-sm btn-secondary">Save</button>
-      </section>
-    </template>
-
-    <!-- Character Stats -->
-    <template id="template-char-stats">
-      <div class="bg-white text-gray-600">
-        <div class="char-stats-row"><span class="char-class"></span>, level 1</div>
-        <!-- Primary row -->
-        <div class="char-stats-row flex gap-x-4 text-sm">
-          <div><span class="">HP</span>:<span class="char-hp text-details"></span></div>
-          <div><span class="">Armor Class</span>: <span class="char-ac"></span></div>
-        </div>
-
-        <!-- Primary row B-->
-        <div class="char-stats-row text-sm">
-          To-Hit:
-          <div
-            class="inline-block underline underline-offset-4 decoration-dashed decoration-gray-300 hover:cursor-help"
-          >
-            <span class="mr-1.5 text-details--alt" title="Quick Ascending AC Basic To-Hit">
-              Mêlée: <span class="char-to-hit--melee text-details"></span>
-            </span>
-            <span title="Quick Ascending AC To-Hit for missiles" class="text-details--alt">
-              Missiles: <span class="char-to-hit--missiles text-details"></span>
-            </span>
-          </div>
-        </div>
-
-        <!-- Secondary row A -->
-        <div class="char-stats-row char-saving-throw">
-          <div class="flex items-center">
-            Saving throw: <span class="char-saving-throw--value text-details"></span>
-            <span
-              title="Click to see alternative saving throws"
-              class="char-saving-throw--toggle ml-1 emoji-icon hover:cursor-help"
-              >ℹ️</span
-            >
-          </div>
-          <div class="char-saving-throw--alt-details text-sm" hidden></div>
-          <div class="char-saving-throw--details text-details--alt"></div>
-        </div>
-
-        <!-- Secondary row B -->
-        <div data-compact-hidden class="char-stats-row flex gap-x-3 text-sm">
-          <div class="">
-            Hit Die: <span class="text-details">d<span class="char-hd"></span></span>
-          </div>
-          <div class="">
-            XP: <span class="text-details"><span class="char-xp"></span></span>
-          </div>
-          <div class="">
-            XP bonus: <span class="text-details"><span class="char-xp-bonus"></span>%</span>
-          </div>
-        </div>
-
-        <!-- 3rd row -->
-        <div data-compact-hidden class="char-stats-row flex gap-x-2.5">
-          <div class="text-sm">Gold: <span class="char-gold text-details"></span> GP</div>
-        </div>
-        <div class="text-sm mb-2" hidden></div>
-
-        <!-- Other details -->
-        <div data-compact-hidden class="flex flex-wrap gap-4 mb-2">
-          <div class="w-1/3">
-            <div class="char-stats--armor text-sm" hidden></div>
-          </div>
-
-          <div class="flex-1 w-2/3">
-            <div class="char-stats--alignment text-sm" hidden></div>
-            <div class="char-stats--races text-sm" hidden></div>
-          </div>
-        </div>
-
-        <!-- Caster details -->
-        <div data-compact-hidden class="char-stats--caster-details text-sm mb-2" hidden>
-          <div class="h-1 border-t border-gray-300 my-4">&nbsp;</div>
-          <div class="char-stats--caster-details">
-            <div class="char-stats--caster-details-col-1 mb-4"></div>
-            <div class="char-stats--caster-details-col-2"></div>
-          </div>
-        </div>
-
-        <div data-compact-hidden class="grid lg:grid-cols-2 gap-2 bg-white my-4">
-          <div class="flex flex-col lg:col-span-1">
-            <table class="table-stats table table-zebra table-fixed border-4 flex-grow table-snw-gen">
-              <tbody>
-                <tr class="col-stat-Strength">
-                  <td class="truncate max-w-full">STRENGTH</td>
-                  <td class="w-3/12 text-primary"></td>
-                </tr>
-                <tr class="col-stat-Dexterity">
-                  <td class="truncate max-w-full">DEXTERITY</td>
-                  <td class="w-3/12 text-primary"></td>
-                </tr>
-                <tr class="col-stat-Constitution">
-                  <td class="truncate max-w-full">CONSTITUTION</td>
-                  <td class="w-3/12 text-primary"></td>
-                </tr>
-                <tr class="col-stat-Intelligence">
-                  <td class="truncate max-w-full">INTELLIGENCE</td>
-                  <td class="w-3/12 text-primary"></td>
-                </tr>
-                <tr class="col-stat-Wisdom">
-                  <td class="truncate max-w-full">WISDOM</td>
-                  <td class="w-3/12 text-primary"></td>
-                </tr>
-                <tr class="col-stat-Charisma">
-                  <td class="truncate max-w-full">CHARISMA</td>
-                  <td class="w-3/12 text-primary"></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="flex flex-col lg:col-span-1">
-            <table class="table-bonuses table table-zebra w-full table-fixed border-4 flex-grow text-sm table-snw-gen">
-              <tbody>
-                <tr class="col-bonus-ToHit">
-                  <td class="truncate whitespace-normal max-w-full">Bonus to Hit (STR)</td>
-                  <td class="w-1/3 text-primary"></td>
-                </tr>
-                <tr class="col-bonus-Doors">
-                  <td class="truncate whitespace-normal max-w-full">Open Doors (STR)</td>
-                  <td class="w-1/3 text-primary"></td>
-                </tr>
-                <tr class="col-bonus-Damage">
-                  <td class="truncate max-w-full whitespace-normal">Damage Bonus (STR)</td>
-                  <td class="w-1/3 text-primary"></td>
-                </tr>
-                <tr class="col-bonus-Carry">
-                  <td class="truncate max-w-full whitespace-normal">Carry Modifier (STR)</td>
-                  <td class="w-1/3 text-primary"></td>
-                </tr>
-                <tr class="col-bonus-MissilesToHit">
-                  <td class="truncate max-w-full whitespace-normal">Bonus to Missiles (DEX)</td>
-                  <td class="w-1/3 text-primary"></td>
-                </tr>
-                <tr class="col-bonus-ArmorClass">
-                  <td class="truncate max-w-full whitespace-normal">Armor Bonus (DEX)</td>
-                  <td class="w-1/3 text-primary"></td>
-                </tr>
-                <tr class="col-bonus-HitPoints">
-                  <td class="truncate max-w-full whitespace-normal">Hit Point Bonus (CON)</td>
-                  <td class="w-1/3 text-primary"></td>
-                </tr>
-                <tr class="col-bonus-RaiseDeadSurvivalChance">
-                  <td class="truncate max-w-full whitespace-normal">Raise Dead Survival (CON)</td>
-                  <td class="w-1/3 text-primary"></td>
-                </tr>
-                <tr class="col-bonus-MaxAdditionalLanguages">
-                  <td class="truncate max-w-full whitespace-normal">Additional Languages</td>
-                  <td class="w-1/3 text-primary"></td>
-                </tr>
-                <tr class="col-bonus-MaxNumberOfSpecialHirelings">
-                  <td class="truncate max-w-full whitespace-normal">Max # of Special Hirelings</td>
-                  <td class="w-1/3 text-primary"></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <button id="tab-config-btn" class="px-4 py-2 text-gray-600">Config</button>
       </div>
-    </template>
-    <template id="template-modal">
-      <dialog class="modal">
-        <div class="modal-box bg-white">
-          <h3 class="modal-title text-lg mb-4"></h3>
-          <form method="dialog">
-            <div class="modal-body space-y-4"></div>
-            <div class="modal-action">
-              <button class="modal-cancel-btn btn btn-secondary uppercase" value="cancel" type="button">Cancel</button>
-              <button class="modal-action-btn btn btn-primary uppercase" value="ok" type="submit">Confirm</button>
-            </div>
-          </form>
+      <div id="tab-log" class="">
+        <textarea
+          id="result-log"
+          class="w-full h-48 border rounded p-3 font-mono text-sm"
+          readonly
+          placeholder="Simulation output…"
+        ></textarea>
+      </div>
+      <div id="tab-config" class="hidden">
+        <div class="flex space-x-2 mb-2">
+          <button id="export-config" class="px-3 py-1 bg-green-600 text-white rounded">Export Config</button>
+          <button id="import-config" class="px-3 py-1 bg-blue-600 text-white rounded">Import Config</button>
         </div>
-      </dialog>
-    </template>
-
-    <!-- Weapons help -->
-    <template id="template-Weapons-details">
-      <section class="my-4 text-primary">
-        <ul class="text-xs list-none">
-          <li><span class="text-alt">*</span> When wielded two-handed, gain +1 damage bonus</li>
-          <li><span class="text-alt">†</span> Can be used as either a one-handed or two-handed weapon</li>
-          <li><span class="text-alt">‡</span> Can be used as either a melee or missile weapon</li>
-        </ul>
-      </section>
-    </template>
+        <textarea
+          id="config-area"
+          class="w-full h-48 border rounded p-3 font-mono text-sm"
+          placeholder="Config JSON…"
+        ></textarea>
+      </div>
+    </div>
   </body>
 </html>
