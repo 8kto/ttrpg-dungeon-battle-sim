@@ -4,7 +4,6 @@ import { CasterSpellsMap } from '../../config/snw/Spells'
 import { InventoryItemFlag } from '../../domain/Equipment'
 import type { Inventory } from '../../domain/Inventory'
 import { CharacterClass } from '../../domain/snw/CharacterClass'
-import { battleSimulator } from '../../pages/battle-simulator/wrapper'
 import { assert } from '../assert'
 import { getElementById } from '../layout'
 import { exportedStats } from './__tests__/mocks'
@@ -217,8 +216,6 @@ if (window.opener && window.opener !== window) {
     }
   })
 } else {
-  battleSimulator()
-
   // FIXME remove
   // const testInventory: Inventory = Object.values(exportedStats)[0] // thief
   // const testInventory: Inventory = Object.values(exportedStats)[1] // MU
