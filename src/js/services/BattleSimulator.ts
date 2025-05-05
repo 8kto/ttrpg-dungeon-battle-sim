@@ -1,88 +1,17 @@
-import { Dice, roll, rollDiceFormula } from 'ttrpg-lib-dice'
-
 import type { Logger } from './Logger'
-import type { ICharacter, ICombatStrategy, IMonster, IPlayerCharacter } from './types'
+import { Participant } from './Participant'
+import { AverageStrategy } from './strategies/AverageStrategy'
+import type { ICombatStrategy } from './strategies/ICombatStrategy'
+import { RandomStrategy } from './strategies/RandomStrategy'
+import type { ITargetSelector } from './TargetSelector'
+import { RandomTargetSelector } from './TargetSelector'
+import type { IMonster, IPlayerCharacter } from './types'
 import { Strategy } from './types'
 
 type BattleResult = {
   winner: 'Players' | 'Monsters'
   rounds: number
   survivors: Array<Participant>
-}
-
-class AverageStrategy implements ICombatStrategy {
-  calculateHp([count, dice]: [number, Dice]): number {
-    const avgPerDie = Math.ceil(dice / 2)
-
-    return count * avgPerDie
-  }
-  calculateDamage(damage: string): number {
-    // return Math.ceil(dice / 2)
-    return 0 // FIXME
-  }
-}
-
-class RandomStrategy implements ICombatStrategy {
-  calculateHp([count, dice]: [number, Dice]): number {
-    let sum = 0
-    for (let i = 0; i < count; i++) {
-      sum += roll(dice)
-    }
-
-    return sum
-  }
-  calculateDamage(damage: string): number {
-    return rollDiceFormula(damage)
-  }
-}
-
-interface ITargetSelector {
-  selectTarget(attacker: Participant, enemies: Participant[]): Participant
-}
-
-class RandomTargetSelector implements ITargetSelector {
-  selectTarget(_attacker: Participant, enemies: Participant[]): Participant {
-    const idx = Math.floor(Math.random() * enemies.length)
-
-    return enemies[idx]
-  }
-}
-
-class Participant {
-  public currentHp: number
-
-  constructor(
-    public readonly char: ICharacter,
-    public readonly side: 'Players' | 'Monsters',
-    strategy: ICombatStrategy,
-    private readonly logger: Logger,
-  ) {
-    this.currentHp = strategy.calculateHp(char.hitDice)
-  }
-
-  attack(enemies: Participant[], strategy: ICombatStrategy, targetSelector: ITargetSelector): void {
-    for (const dmgDice of this.char.damage) {
-      const living = enemies.filter((e) => e.currentHp > 0)
-      if (living.length === 0) {
-        break
-      }
-
-      const target = targetSelector.selectTarget(this, living)
-      const attackRoll = roll(Dice.d20) + this.char.toHit
-      if (attackRoll >= target.char.armorClass) {
-        const dmg = strategy.calculateDamage(dmgDice)
-        target.currentHp -= dmg
-
-        this.logger.log(`🗡️ ${this.char.name} attacks ${target.char.name}, damage: ${dmg}`)
-
-        if (target.currentHp <= 0) {
-          this.logger.log(`💀️ ${target.char.name} is dead`)
-        }
-      } else {
-        this.logger.log(`🛡️ ${this.char.name} misses ${target.char.name}`)
-      }
-    }
-  }
 }
 
 export class BattleSimulator {
@@ -142,7 +71,6 @@ export class BattleSimulator {
 
     const winner: 'Players' | 'Monsters' = isAlive('Players') ? 'Players' : 'Monsters'
     const survivors = this.participants.filter((p) => p.currentHp > 0)
-    // .map((p) => ({ ...p.char, currentHp: p.currentHp, side: p.side }))
 
     return {
       rounds: this.roundsCount,

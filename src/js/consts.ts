@@ -1,11 +1,4 @@
-export type CharStats = {
-  prefix: string
-  hdCount: string
-  hdType: string
-  toHit: string
-  armor: string
-  damage: string
-}
+import type { CharStats } from './types'
 
 export const playerDefaults: CharStats = {
   armor: '12',
