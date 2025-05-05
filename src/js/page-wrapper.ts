@@ -1,9 +1,27 @@
+import type { Dice } from 'ttrpg-lib-dice'
+
 import { BattleSimulator } from './services/BattleSimulator'
-import type { CharStats } from './consts'
 import { henchmanDefaults, monsterDefaults, playerDefaults } from './consts'
 import { Logger } from './services/Logger'
 import type { ICharacter } from './services/types'
 import { Strategy } from './services/types'
+import { CharStats } from './types'
+
+// export/import config
+const readConfig = (body: HTMLTableSectionElement): ICharacter[] =>
+  Array.from(body.rows).map((row) => {
+    const ni = row.querySelector('.name-input') as HTMLInputElement
+    const ac = parseInt((row.querySelector('.ac-input') as HTMLInputElement).value, 10)
+    const th = parseInt((row.querySelector('.tohit-input') as HTMLInputElement).value, 10)
+    const hc = parseInt((row.querySelector('.hd-count-input') as HTMLInputElement).value, 10)
+    const ht = parseInt((row.querySelector('.hd-type-select') as HTMLSelectElement).value, 10) as Dice
+    const dmg = (row.querySelector('.damage-input') as HTMLInputElement).value
+      .trim()
+      .split(',')
+      .map((s) => s.trim())
+
+    return { armorClass: ac, damage: dmg, hitDice: [hc, ht], name: ni.value, toHit: th }
+  })
 
 document.addEventListener('DOMContentLoaded', (): void => {
   const playersBody = document.getElementById('players-table') as HTMLTableSectionElement
@@ -171,22 +189,6 @@ document.addEventListener('DOMContentLoaded', (): void => {
     tabLogBtn.classList.remove('border-blue-600', 'text-blue-600')
   })
 
-  // export/import config
-  const readConfig = (body: HTMLTableSectionElement): ICharacter[] =>
-    Array.from(body.rows).map((row) => {
-      const ni = row.querySelector('.name-input') as HTMLInputElement
-      const ac = parseInt((row.querySelector('.ac-input') as HTMLInputElement).value, 10)
-      const th = parseInt((row.querySelector('.tohit-input') as HTMLInputElement).value, 10)
-      const hc = parseInt((row.querySelector('.hd-count-input') as HTMLInputElement).value, 10)
-      const ht = parseInt((row.querySelector('.hd-type-select') as HTMLSelectElement).value, 10)
-      const dmg = (row.querySelector('.damage-input') as HTMLInputElement).value
-        .trim()
-        .split(',')
-        .map((s) => s.trim())
-
-      return { armorClass: ac, damage: dmg, hitDice: [hc, ht], name: ni.value, toHit: th }
-    })
-
   exportCfgBtn.addEventListener('click', (): void => {
     const cfg = {
       monsters: readConfig(monstersBody),
@@ -200,28 +202,30 @@ document.addEventListener('DOMContentLoaded', (): void => {
       const cfg = JSON.parse(configArea.value) as { players: ICharacter[]; monsters: ICharacter[] }
       clearGroup(playersBody, playerDefaults, 0, playerTemplate)
       clearGroup(monstersBody, monsterDefaults, 0, monsterTemplate)
-      cfg.players.forEach((ch) => {
+      cfg.players.forEach((char) => {
         addRow(playersBody, playerDefaults, playerTemplate)
         initDefaults(playersBody.lastElementChild as HTMLTableRowElement, playerDefaults, playersBody)
         // then overwrite with imported values:
         const last = playersBody.lastElementChild as HTMLTableRowElement
-        ;(last.querySelector('.name-input') as HTMLInputElement).value = ch.name
-        ;(last.querySelector('.ac-input') as HTMLInputElement).value = ch.armorClass.toString()
-        ;(last.querySelector('.tohit-input') as HTMLInputElement).value = ch.toHit.toString()
-        ;(last.querySelector('.hd-count-input') as HTMLInputElement).value = ch.hitDice[0].toString()
-        ;(last.querySelector('.hd-type-select') as HTMLSelectElement).value = ch.hitDice[1].toString()
-        ;(last.querySelector('.damage-input') as HTMLInputElement).value = ch.damage.join(',')
+
+        ;(last.querySelector('.name-input') as HTMLInputElement).value = char.name
+        ;(last.querySelector('.ac-input') as HTMLInputElement).value = char.armorClass.toString()
+        ;(last.querySelector('.tohit-input') as HTMLInputElement).value = char.toHit.toString()
+        ;(last.querySelector('.hd-count-input') as HTMLInputElement).value = char.hitDice[0].toString()
+        ;(last.querySelector('.hd-type-select') as HTMLSelectElement).value = String(char.hitDice[1])
+        ;(last.querySelector('.damage-input') as HTMLInputElement).value = char.damage.join(',')
       })
-      cfg.monsters.forEach((ch) => {
+      cfg.monsters.forEach((char) => {
         addRow(monstersBody, monsterDefaults, monsterTemplate)
         initDefaults(monstersBody.lastElementChild as HTMLTableRowElement, monsterDefaults, monstersBody)
         const last = monstersBody.lastElementChild as HTMLTableRowElement
-        ;(last.querySelector('.name-input') as HTMLInputElement).value = ch.name
-        ;(last.querySelector('.ac-input') as HTMLInputElement).value = ch.armorClass.toString()
-        ;(last.querySelector('.tohit-input') as HTMLInputElement).value = ch.toHit.toString()
-        ;(last.querySelector('.hd-count-input') as HTMLInputElement).value = ch.hitDice[0].toString()
-        ;(last.querySelector('.hd-type-select') as HTMLSelectElement).value = ch.hitDice[1].toString()
-        ;(last.querySelector('.damage-input') as HTMLInputElement).value = ch.damage.join(',')
+
+        ;(last.querySelector('.name-input') as HTMLInputElement).value = char.name
+        ;(last.querySelector('.ac-input') as HTMLInputElement).value = char.armorClass.toString()
+        ;(last.querySelector('.tohit-input') as HTMLInputElement).value = char.toHit.toString()
+        ;(last.querySelector('.hd-count-input') as HTMLInputElement).value = char.hitDice[0].toString()
+        ;(last.querySelector('.hd-type-select') as HTMLSelectElement).value = String(char.hitDice[1])
+        ;(last.querySelector('.damage-input') as HTMLInputElement).value = char.damage.join(',')
       })
       reindex(playersBody)
       reindex(monstersBody)
@@ -247,23 +251,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
     const initialP = playersBody.rows.length
     const initialM = monstersBody.rows.length
 
-    const read = (body: HTMLTableSectionElement): ICharacter[] =>
-      Array.from(body.rows).map((row) => {
-        const ni = row.querySelector('.name-input') as HTMLInputElement
-        const ac = parseInt((row.querySelector('.ac-input') as HTMLInputElement).value, 10)
-        const th = parseInt((row.querySelector('.tohit-input') as HTMLInputElement).value, 10)
-        const hc = parseInt((row.querySelector('.hd-count-input') as HTMLInputElement).value, 10)
-        const ht = parseInt((row.querySelector('.hd-type-select') as HTMLSelectElement).value, 10)
-        const dmg = (row.querySelector('.damage-input') as HTMLInputElement).value
-          .trim()
-          .split(',')
-          .map((s) => s.trim())
-
-        return { armorClass: ac, damage: dmg, hitDice: [hc, ht], name: ni.value, toHit: th }
-      })
-
-    const players = read(playersBody)
-    const monsters = read(monstersBody)
+    const players = readConfig(playersBody)
+    const monsters = readConfig(monstersBody)
 
     for (let i = 0; i < runs; i++) {
       await new Promise(requestAnimationFrame)
@@ -288,11 +277,13 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
     logger.log('\n')
     logger.log(
-      `Strategy ${strategySelect.value} — Players win: ${((winsP / runs) * 100).toFixed(1)}%, Monsters win: ${((winsM / runs) * 100).toFixed(1)}%`,
+      `Players win: ${((winsP / runs) * 100).toFixed(1)}%, Monsters win: ${((winsM / runs) * 100).toFixed(1)}%`,
     )
+
     if (winsP) {
       logger.log(`>> Avg Players survivors: ${((survP / (winsP * initialP)) * 100).toFixed(1)}%`)
     }
+    logger.log(`>> Strategy ${strategySelect.value}, ${runs} battles`)
 
     document.body.style.cursor = 'default'
   })
