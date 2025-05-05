@@ -2,15 +2,14 @@ import type { Dice } from 'ttrpg-lib-dice'
 
 import type { ICombatStrategy } from './ICombatStrategy'
 
-export class AverageStrategy implements ICombatStrategy {
+export class MaxStrategy implements ICombatStrategy {
   calculateHp([count, dice]: [number, Dice]): number {
-    const avgPerDie = Math.ceil(dice / 2)
-
-    return count * avgPerDie
+    // maximum roll for each die is the number of faces
+    return count * dice
   }
 
   calculateDamage(damage: string): number {
-    // support formats like "d6", "d8+1", "d10 - 2", "d4-3"
+    // support "d6", "d8+1", "d10 - 2", "d6-3", etc.
     const re = /^d(\d+)\s*([+-]\s*\d+)?$/i
     const match = damage.trim().match(re)
     if (!match) {
@@ -20,10 +19,7 @@ export class AverageStrategy implements ICombatStrategy {
     const sides = parseInt(match[1], 10)
     const mod = match[2] ? parseInt(match[2].replace(/\s+/g, ''), 10) : 0
 
-    // average of a uniform 1..sides is (1 + sides)/2
-    // include modifier, then floor the result
-    const avg = (1 + sides + mod) / 2
-
-    return Math.floor(avg)
+    // full value is max face value + modifier
+    return sides + mod
   }
 }
