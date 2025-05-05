@@ -1,7 +1,7 @@
 import * as diceUtils from 'ttrpg-lib-dice'
+import { Dice } from 'ttrpg-lib-dice'
 
 import { MagicUserSpells } from '../../../config/snw/Magic'
-import { Dice } from '../../../domain/Dice'
 import type { Attributes } from '../../../domain/snw/Attributes'
 import { getMagicUserSpellsList } from '../magic'
 

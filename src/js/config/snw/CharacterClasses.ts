@@ -1,4 +1,5 @@
-import { Dice } from '../../domain/Dice'
+import { Dice } from 'ttrpg-lib-dice'
+
 import type { CharacterClassDef } from '../../domain/snw/CharacterClass'
 import { Alignment, AttrScore, CharacterClass, CharacterRace } from '../../domain/snw/CharacterClass'
 import { ClericSavingThrows, FightersSavingThrows, MagicUsersSavingThrows } from './SavingThrows'
