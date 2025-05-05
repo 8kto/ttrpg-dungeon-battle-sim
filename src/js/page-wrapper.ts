@@ -1,13 +1,13 @@
 import type { Dice } from 'ttrpg-lib-dice'
 
-import { BattleSimulator } from './services/BattleSimulator'
 import { henchmanDefaults, monsterDefaults, playerDefaults } from './consts'
+import { BattleSimulator } from './services/BattleSimulator'
 import { Logger } from './services/Logger'
 import type { ICharacter } from './services/types'
 import { Strategy } from './services/types'
-import { CharStats } from './types'
+import type { CharStats } from './types'
+import { Side } from './types'
 
-// export/import config
 const readConfig = (body: HTMLTableSectionElement): ICharacter[] =>
   Array.from(body.rows).map((row) => {
     const ni = row.querySelector('.name-input') as HTMLInputElement
@@ -246,10 +246,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
     let winsP = 0,
       winsM = 0,
-      survP = 0,
-      survM = 0
+      survP = 0
     const initialP = playersBody.rows.length
-    const initialM = monstersBody.rows.length
 
     const players = readConfig(playersBody)
     const monsters = readConfig(monstersBody)
@@ -267,9 +265,9 @@ document.addEventListener('DOMContentLoaded', (): void => {
       logger.log('\n')
 
       const res = sim.simulate()
-      if (res.winner === 'Players') {
+      if (res.winner === Side.Players) {
         winsP++
-        survP += res.survivors.filter((s) => s.side === 'Players').length
+        survP += res.survivors.filter((s) => s.side === Side.Players).length
       } else {
         winsM++
       }

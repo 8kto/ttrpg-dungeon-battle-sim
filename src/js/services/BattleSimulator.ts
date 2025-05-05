@@ -1,3 +1,4 @@
+import { Side } from '../types'
 import type { Logger } from './Logger'
 import { Participant } from './Participant'
 import { AverageStrategy } from './strategies/AverageStrategy'
@@ -9,7 +10,7 @@ import type { IMonster, IPlayerCharacter } from './types'
 import { Strategy } from './types'
 
 type BattleResult = {
-  winner: 'Players' | 'Monsters'
+  winner: Side
   rounds: number
   survivors: Array<Participant>
 }
@@ -30,24 +31,23 @@ export class BattleSimulator {
     this.strategy = strategyMode === Strategy.Average ? new AverageStrategy() : new RandomStrategy()
 
     this.participants = [
-      ...sideA.map((c) => new Participant(c, 'Players', this.strategy, this.logger)),
-      ...sideB.map((c) => new Participant(c, 'Monsters', this.strategy, this.logger)),
+      ...sideA.map((c) => new Participant(c, Side.Players, this.strategy, this.logger)),
+      ...sideB.map((c) => new Participant(c, Side.Monsters, this.strategy, this.logger)),
     ]
   }
 
   renderDetails(): this {
     this.participants.forEach((p) => {
-      this.logger.log(`${p.side === 'Monsters' ? '🧌' : '🥷'}${p.char.name} HP: ${p.currentHp}`)
+      this.logger.log(`${p.side === Side.Monsters ? '🧌' : '🥷'}${p.char.name} HP: ${p.currentHp}`)
     })
 
     return this
   }
 
   simulate(): BattleResult {
-    const isAlive = (side: 'Players' | 'Monsters'): boolean =>
-      this.participants.some((p) => p.side === side && p.currentHp > 0)
+    const isAlive = (side: Side): boolean => this.participants.some((p) => p.side === side && p.currentHp > 0)
 
-    while (isAlive('Players') && isAlive('Monsters')) {
+    while (isAlive(Side.Players) && isAlive(Side.Monsters)) {
       this.roundsCount++
       this.logger.log(`>>> round ${this.roundsCount}`)
       let battleOver = false
@@ -59,7 +59,7 @@ export class BattleSimulator {
         const enemies = this.participants.filter((e) => e.side !== p.side && e.currentHp > 0)
         p.attack(enemies, this.strategy, this.targetSelector)
 
-        if (!isAlive('Players') || !isAlive('Monsters')) {
+        if (!isAlive(Side.Players) || !isAlive(Side.Monsters)) {
           battleOver = true
           break
         }
@@ -69,7 +69,7 @@ export class BattleSimulator {
       }
     }
 
-    const winner: 'Players' | 'Monsters' = isAlive('Players') ? 'Players' : 'Monsters'
+    const winner: Side = isAlive(Side.Players) ? Side.Players : Side.Monsters
     const survivors = this.participants.filter((p) => p.currentHp > 0)
 
     return {

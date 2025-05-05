@@ -1,5 +1,6 @@
 import { Dice, roll } from 'ttrpg-lib-dice'
 
+import type { Side } from '../types'
 import type { Logger } from './Logger'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
 import type { ITargetSelector } from './TargetSelector'
@@ -10,7 +11,7 @@ export class Participant {
 
   constructor(
     public readonly char: ICharacter,
-    public readonly side: 'Players' | 'Monsters',
+    public readonly side: Side,
     strategy: ICombatStrategy,
     private readonly logger: Logger,
   ) {

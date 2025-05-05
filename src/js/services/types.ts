@@ -8,9 +8,9 @@ export interface ICharacter {
   toHit: number
 }
 
-export interface IPlayerCharacter extends ICharacter {}
+export type IPlayerCharacter = ICharacter
 
-export interface IMonster extends ICharacter {}
+export type IMonster = ICharacter
 
 export enum Strategy {
   Average,

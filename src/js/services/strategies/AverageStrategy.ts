@@ -10,7 +10,8 @@ export class AverageStrategy implements ICombatStrategy {
   }
 
   calculateDamage(damage: string): number {
-    // return Math.ceil(dice / 2)
+    void damage
+
     return 0 // FIXME
   }
 }

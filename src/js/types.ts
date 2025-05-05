@@ -6,3 +6,8 @@ export type CharStats = {
   armor: string
   damage: string
 }
+
+export enum Side {
+  Players = 'Players',
+  Monsters = 'Monsters',
+}
