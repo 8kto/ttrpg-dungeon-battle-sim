@@ -1,4 +1,50 @@
-@import 'common.scss';
-@import 'equip.scss';
-@import 'inventory.scss';
-@import 'theme.retrogame.scss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #333;
+  --neutral-color: #e0cec2;
+  --alt-color: #e76b65;
+  --sub-color: #ddd;
+  --page-bg: #fff;
+  --input-bg: #f9f8f5;
+  --block-bg: #fdfcf8;
+  --primary-font: sans-serif;
+  --cursive-font: 'Uncial Antiqua', cursive;
+
+  background-color: var(--page-bg);
+}
+
+html,
+body {
+  height: 100%;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--primary-font);
+  margin: 0 auto;
+  padding: 0;
+  background: var(--page-bg);
+  color: var(--primary-color);
+  font-size: 16px;
+}
+
+a {
+  color: var(--alt-color);
+}
+
+h1 {
+  font-family: var(--cursive-font);
+  margin: 0;
+  font-size: 36px;
+  color: var(--alt-color);
+}
+
+h2 {
+  font-family: var(--cursive-font);
+  font-size: 24px;
+  color: var(--alt-color);
+  margin: 0 0 10px;
+}

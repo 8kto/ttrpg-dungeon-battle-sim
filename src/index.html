@@ -4,32 +4,25 @@
     <meta charset="UTF-8" />
     <title>Dungeon Battle Simulator by undefined</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script type="module" src="./js/pages/battle-simulator/page-wrapper.ts"></script>
-
-    <!--FIXME drop & use bundled-->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <script type="module" src="js/page-wrapper.ts"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="A browser-based tool for configuring and simulating turn-based combat between two sides—players (including mercenaries) and monsters. Supports custom stats, multiple simulation modes, batch runs, and export/import of configurations."
+      content="A browser-based tool for configuring and simulating turn-based combat between two sides — players (including mercenaries) and monsters. Supports custom stats, multiple simulation modes, batch runs, and export/import of configurations."
     />
-    <meta
-      name="keywords"
-      content="Swords & Wizardry, RPG, character generator, inventory management, tabletop gaming, OSR"
-    />
+    <meta name="keywords" content="RPG, battle simulator, tabletop gaming, OSR, dungeons" />
     <meta name="author" content="undefined" />
     <meta name="theme-color" content="#cec7ba" />
 
-    <meta property="og:title" content="Swords & Wizardry: Character generator, Equipment & Inventory" />
+    <meta property="og:title" content="Dungeon Battle Simulator by undefined" />
     <meta
       property="og:description"
-      content="Character and Inventory generator for Swords & Wizardry (Complete). Random character generation, equipment lists, inventory management, quick equipment sets, local storage saving, JSON export and more."
+      content="A browser-based tool for configuring and simulating turn-based combat between two sides — players (including mercenaries) and monsters. Supports custom stats, multiple simulation modes, batch runs, and export/import of configurations."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://swords-and-wizardry.ivlev.blog/" />
+    <meta property="og:url" content="https://dungeon-battle.ivlev.blog/" />
 
-    <script src="js/component/ui.ts" type="module"></script>
     <link rel="stylesheet" href="./styles/styles.processed.css" />
     <link rel="manifest" href="./site.webmanifest" />
 
@@ -39,12 +32,18 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=EB+Garamond&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body class="bg-gray-100 text-gray-900">
     <div class="container mx-auto p-6">
-      <h1 class="text-3xl font-bold mb-6">Battle Simulator</h1>
-
+      <h1 class="text-3xl font-bold mb-6">Dungeon Battle Simulator</h1>
+      <p class="my-2 text-lg">
+        A browser-based tool for simulating turn-based combat between players and monsters. Compatible with the world’s
+        most popular role-playing game.
+      </p>
       <!-- Players & Henchmen -->
       <section id="players-section" class="mb-8">
         <div class="flex justify-between items-center mb-2">
@@ -194,7 +193,8 @@
       <div id="tab-log" class="">
         <textarea
           id="result-log"
-          class="w-full h-48 border rounded p-3 font-mono text-sm"
+          class="w-full border rounded p-3 font-mono text-sm"
+          rows="15"
           readonly
           placeholder="Simulation output…"
         ></textarea>
@@ -206,10 +206,19 @@
         </div>
         <textarea
           id="config-area"
-          class="w-full h-48 border rounded p-3 font-mono text-sm"
+          class="w-full border rounded p-3 font-mono text-sm"
+          rows="15"
           placeholder="Config JSON…"
         ></textarea>
       </div>
+
+      <footer class="footer text-center p-4 no-print">
+        <div class="align-center mx-auto content-center">
+          <span class="">&copy; 2025</span>
+          <a href="https://dungeon-battle.ivlev.blog/" target="_blank">Dungeon Battle Simulator</a> by
+          <a href="https://ivlev.blog/" target="_blank">undefined</a>
+        </div>
+      </footer>
     </div>
   </body>
 </html>

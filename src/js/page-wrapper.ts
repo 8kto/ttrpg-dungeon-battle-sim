@@ -1,9 +1,9 @@
-import { BattleSimulator } from './BattleSimulator'
+import { BattleSimulator } from './services/BattleSimulator'
 import type { CharStats } from './consts'
 import { henchmanDefaults, monsterDefaults, playerDefaults } from './consts'
-import { Logger } from './Logger'
-import type { ICharacter } from './types'
-import { Strategy } from './types'
+import { Logger } from './services/Logger'
+import type { ICharacter } from './services/types'
+import { Strategy } from './services/types'
 
 document.addEventListener('DOMContentLoaded', (): void => {
   const playersBody = document.getElementById('players-table') as HTMLTableSectionElement
