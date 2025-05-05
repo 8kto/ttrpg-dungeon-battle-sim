@@ -1,66 +1,53 @@
-## Character and inventory generator compatible with Swords & Wizardry (Complete/Revised)
+# Dungeon Battle Simulator
 
-![linter and tests](https://github.com/8kto/ttrpg-snw-generator/actions/workflows/main.yml/badge.svg)
+A browser-based tool for simulating turn-based combat between players and monsters. Compatible with the world’s
+most popular role-playing game.
 
-```
-                           _                         _                  _
-                          | |       ___             (_)                | |
- _____      _____  _ __ __| |___   ( _ )   __      ___ ______ _ _ __ __| |_ __ _   _
-/ __\ \ /\ / / _ \| '__/ _` / __|  / _ \/\ \ \ /\ / / |_  / _` | '__/ _` | '__| | | |
-\__ \\ V  V / (_) | | | (_| \__ \ | (_>  <  \ V  V /| |/ / (_| | | | (_| | |  | |_| |
-|___/ \_/\_/ \___/|_|  \__,_|___/  \___/\/   \_/\_/ |_/___\__,_|_|  \__,_|_|   \__, |
-                                                                                __/ |
-                                                                               |___/
-```
+## Overview
 
-A tool built super quickly for my fellow OSR players.
-I sourced the equipment lists, along with their weights and costs, from the rulebook and used the **BFRPG Equipment Emporium** to fill in any missing weights.
+Battle Simulator models engagements between two groups:
 
-Check out my other TTRPG helper and [generator for the Lamentation of the Flame Princess](https://github.com/8kto/ttrpg-lotfp-helpers) system.
+- **Players & Henchmen**
+- **Monsters**
 
-Contributions are welcome!
+Each combatant can be defined by:
 
-## Disclaimer
+- **Name** (Player, Henchman, or Monster)
+- **Armor Class (AC)**
+- **Attack Bonus (to-hit)**
+- **Hit Dice** (count and die type)
+- **Damage Formulas** (one or more, e.g. `d6,d8+1`)
 
-This is an unofficial tool for "Swords and Wizardry" and is not endorsed by the game's publishers.
-All related trademarks belong to their respective owners.
+Two modes of simulation are available:
 
-## Demo
+- **Average**: uses expected values for hit points and damage
+- **Random**: rolls dice for each attack and hit-point roll
 
-Current URL: https://swords-and-wizardry.ivlev.blog/
+You can run any number of battles in sequence, observe a progress bar, and view detailed per-battle logs or high-level statistics.
 
 ## Features
 
-- [x] Random character generation (check TODO)
-- [x] Spell lists for casters. Magic Users get their spells randomly according to their Intelligence score
-- [x] Lists of equipment, weapons, and armor with weight and cost
-- [x] Inventory management, calculating total weight, cost, and speed
-- [x] Multiple inventories that can be renamed. For example: "Zsusza, the thief", "Zoltan, the mercenary", "Solomon, the donkey", etc.
-- [x] Quick equipment sets that can be selected to save time when generating a new character
-- [x] Saves inventory in the browser's local storage, meaning the selected items will persist after a page reload
-- [x] Displays help on encumbrance and speed
-- [x] Converts text (which can be copied from other sources) into equipment and adds it to the inventory
-- [x] Exports and import characters and their inventories
-- [x] Custom items
-- [x] Builds with WMR
-- [x] Mobiles support (limited, desktop is the prio)
-- [x] Cool retro pixel UI (well, designers needed)
+- **Roster Management**
 
-## Contributions
+  - Add, duplicate, or remove entries for Players, Henchmen, and Monsters
+  - Default settings for each role, editable in-place
 
-Contributions are welcome. Code should follow conventions described in [Code Conventions](./CodeConventions.md).
+- **Simulation Modes**
 
-### TODO
+  - Deterministic (Average) or stochastic (Random) outcomes
+  - Configurable number of simulations
 
-- [ ] Languages support (?)
-- [ ] Add coins
-- [ ] New random character: adjust heuristics (drop hopeless, pick random properly)
-- [ ] Race
-  - [ ] Half elves cannot be pure Fighters or MU, only listed classes (and other races?)
-- [ ] Char: edit numbers
-- [ ] Generate with strict 0e attrs
-- [ ] Fighter Parrying Ability
-- [ ] lighter font/dark themes (?)
-- [ ] Console log with events like "Intelligence: rolled 3d6 with 12 ..." (?)
-- [ ] Reorder inventories
-- [ ] Adjustment to Retainer (CHA)
+- **Progress Feedback**
+
+  - Interactive progress bar
+  - Cursor changes to indicate active simulation
+
+- **Logging and Statistics**
+
+  - Detailed logs for each battle and round
+  - Summary of win percentages and average survivors
+
+- **Configuration Export/Import**
+
+  - Export current setup as JSON
+  - Import from JSON to restore or share settings
