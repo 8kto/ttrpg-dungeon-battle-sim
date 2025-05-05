@@ -1,6 +1,6 @@
 {
-  "name": "Swords & Wizardry RPG: inventory generator",
-  "short_name": "S&W Generator",
+  "name": "A tabletop RPG battle simulator",
+  "short_name": "Dungeon Battle Simulator",
   "icons": [
     {
       "src": "images/android-chrome-192x192.png",
