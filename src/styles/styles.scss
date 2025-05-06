@@ -48,3 +48,7 @@ h2 {
   color: var(--alt-color);
   margin: 0 0 10px;
 }
+
+input[disabled] {
+  cursor: not-allowed;
+}

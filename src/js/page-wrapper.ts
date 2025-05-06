@@ -179,13 +179,13 @@ document.addEventListener('DOMContentLoaded', (): void => {
   tabLogBtn.addEventListener('click', (): void => {
     tabLog.classList.remove('hidden')
     tabConfig.classList.add('hidden')
-    tabLogBtn.classList.add('border-blue-600', 'text-blue-600')
+    tabLogBtn.classList.add('border-b-2', 'border-blue-600', 'text-blue-600')
     tabConfigBtn.classList.remove('border-blue-600', 'text-blue-600')
   })
   tabConfigBtn.addEventListener('click', (): void => {
     tabConfig.classList.remove('hidden')
     tabLog.classList.add('hidden')
-    tabConfigBtn.classList.add('border-blue-600', 'text-blue-600')
+    tabConfigBtn.classList.add('border-b-2', 'border-blue-600', 'text-blue-600')
     tabLogBtn.classList.remove('border-blue-600', 'text-blue-600')
   })
 
