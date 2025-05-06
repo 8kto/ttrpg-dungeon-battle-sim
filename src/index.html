@@ -164,20 +164,78 @@
       </section>
 
       <!-- Controls -->
-      <div class="mb-4 flex items-center space-x-4">
-        <div>
-          <label for="battle-count" class="block mb-1">Number of Battles</label>
-          <input id="battle-count" type="number" min="1" value="50" class="border rounded px-2 py-1 w-24" />
+      <h2 class="text-2xl mt-6">Simulation</h2>
+
+      <div class="mb-4 flex space-x-4 items-end">
+        <!-- Battles -->
+        <div class="flex flex-col">
+          <label for="battle-count" class="mb-1 text-sm">Battles</label>
+          <input id="battle-count" type="number" min="1" value="100" class="w-32 h-10 border rounded px-3" />
         </div>
-        <div>
-          <label for="strategy-select" class="block mb-1">Strategy</label>
-          <select id="strategy-select" class="border rounded px-2 py-1">
-            <option value="Average">Average</option>
-            <option value="Random" selected>Random</option>
+
+        <!-- Strategy -->
+        <div class="flex flex-col">
+          <label for="strategy-select" class="mb-1 text-sm">Strategy</label>
+          <select id="strategy-select" class="w-32 h-10 border rounded px-3 bg-white">
+            <option value="Max" title="Max values for HP and damage">Maximum</option>
+            <option value="Average" title="Average values for HP and damage">Average</option>
+            <option value="Random" title="Roll dices for HP and damage" selected>Random</option>
           </select>
         </div>
-        <button id="run-sim" class="mt-6 px-4 py-2 bg-green-600 text-white rounded">Run Simulation</button>
-        <button id="clear-log" class="mt-6 px-4 py-2 bg-gray-600 text-white rounded">Clear Log</button>
+
+        <!-- Player Bias -->
+        <div class="flex flex-col">
+          <label for="bias-players" class="mb-1 text-sm">
+            <abbr title="Chance of skipping a player's turn (0–100%)">Player Bias (%)</abbr>
+          </label>
+          <input
+            disabled
+            id="bias-players"
+            type="number"
+            min="0"
+            max="100"
+            value="0"
+            class="w-32 h-10 border rounded px-3"
+          />
+        </div>
+
+        <!-- Monster Bias -->
+        <div class="flex flex-col">
+          <label for="bias-monsters" class="mb-1 text-sm">
+            <abbr title="Chance of skipping a monster's turn (0–100%)">Monster Bias (%)</abbr>
+          </label>
+          <input
+            disabled
+            id="bias-monsters"
+            type="number"
+            min="0"
+            max="100"
+            value="0"
+            class="w-32 h-10 border rounded px-3"
+          />
+        </div>
+
+        <!-- Max Attacks -->
+        <div class="flex flex-col">
+          <label for="max-attacks" class="mb-1 text-sm">
+            <abbr title="Maximum number of attacks per figure (0 = unlimited)">Max Attacks</abbr>
+          </label>
+          <input id="max-attacks" disabled type="number" min="0" value="0" class="w-32 h-10 border rounded px-3" />
+        </div>
+
+        <!-- Run Simulation -->
+        <div class="flex flex-col justify-end">
+          <button id="run-sim" class="w-32 h-10 bg-green-600 text-white rounded" title="Start simulation">
+            Run Simulation
+          </button>
+        </div>
+
+        <!-- Clear Log -->
+        <div class="flex flex-col justify-end">
+          <button id="clear-log" class="w-32 h-10 bg-gray-600 text-white rounded" title="Clear log output">
+            Clear Log
+          </button>
+        </div>
       </div>
 
       <!-- Progress -->

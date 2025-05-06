@@ -5,34 +5,24 @@
   "author": "8kto (https://ivlev.blog)",
   "license": "MIT",
   "scripts": {
-    "dev:wmr": "wmr --reload",
-    "dev": "concurrently \"yarn dev:wmr\" \"yarn watch\"",
-    "build:styles": "./scripts/build-styles.sh",
-    "build": "yarn build:styles && wmr build --sourcemap --minify",
-    "serve": "wmr serve",
+    "build": "wmr build --sourcemap --minify",
     "deploy": "scripts/deploy.sh",
-    "dev:old": "npx live-server src --port=3000 --no-browser",
+    "dev": "concurrently \"yarn dev:wmr\" \"yarn watch\"",
+    "dev:wmr": "wmr --reload",
     "format": "prettier . --check",
     "format:fix": "yarn eslint --fix && prettier --write .",
     "lint": "yarn eslint src/",
+    "serve": "wmr serve",
+    "styles": "npx tailwindcss -i src/styles/styles.scss -o src/styles/styles.processed.css -c tailwind.config.js",
     "test": "jest",
     "test:coverage": "jest --collectCoverage",
     "todos": "egrep --color=always -i '(TODO|FIXME)' -r src/",
-    "weok": "yarn tsc && yarn lint && yarn format && yarn test && echo WE OK",
-    "watch": "npm-watch",
-    "styles:main": "npx tailwindcss -i src/styles/styles.scss -o src/styles/styles.processed.css -c tailwind.config.js"
+    "watch": "npm-watch"
   },
   "watch": {
-    "styles:main": {
+    "styles": {
       "patterns": [
         "styles/styles.scss"
-      ],
-      "extensions": "scss",
-      "runOnStart": true
-    },
-    "styles:character": {
-      "patterns": [
-        "styles/character-sheet.scss"
       ],
       "extensions": "scss",
       "runOnStart": true
@@ -43,11 +33,11 @@
     "@babel/preset-env": "^7.24.7",
     "@babel/preset-typescript": "^7.24.7",
     "@types/jest": "^29.5.12",
-    "@typescript-eslint/eslint-plugin": "^7.14.1",
-    "@typescript-eslint/parser": "^7.14.1",
+    "@typescript-eslint/eslint-plugin": "^8.32.0",
+    "@typescript-eslint/parser": "^8.32.0",
     "babel-jest": "^29.7.0",
     "concurrently": "^8.2.2",
-    "eslint": "^8.57.0",
+    "eslint": "^8.32.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",

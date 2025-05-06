@@ -20,11 +20,11 @@ else
 fi
 
 yarn build -- --publicPath "$PUBLIC_PATH"
-mkdir -p /tmp/snw-to-be-deployed
-rm -rf /tmp/snw-to-be-deployed/*
-rsync -av --exclude='*.test.ts' --exclude='*.test.ts.snap' build/ /tmp/snw-to-be-deployed
+mkdir -p /tmp/dngn-to-be-deployed
+rm -rf /tmp/dngn-to-be-deployed/*
+rsync -av --exclude='*.test.ts' --exclude='*.test.ts.snap' build/ /tmp/dngn-to-be-deployed
 
 # Deploy to remote server
 echo "DEPLOY_SSH_PORT: $DEPLOY_SSH_PORT"
 echo "DEPLOY_SSH_HOST: $DEPLOY_SSH_HOST"
-scp -P $DEPLOY_SSH_PORT -r /tmp/snw-to-be-deployed/* $DEPLOY_SSH_HOST
+scp -P $DEPLOY_SSH_PORT -r /tmp/dngn-to-be-deployed/* $DEPLOY_SSH_HOST
