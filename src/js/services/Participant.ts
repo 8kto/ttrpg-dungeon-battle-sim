@@ -13,6 +13,7 @@ export class Participant {
     public readonly char: ICharacter,
     public readonly side: Side,
     strategy: ICombatStrategy,
+    private readonly bias: number,
     private readonly logger: Logger,
   ) {
     this.currentHp = strategy.calculateHp(char.hitDice)
@@ -23,6 +24,11 @@ export class Participant {
       const living = enemies.filter((e) => e.currentHp > 0)
       if (living.length === 0) {
         break
+      }
+
+      if (this.bias && roll(Dice.d100) <= this.bias) {
+        this.logger.log(`🫢 ${this.char.name} skips turn`)
+        continue
       }
 
       const target = targetSelector.selectTarget(this, living)

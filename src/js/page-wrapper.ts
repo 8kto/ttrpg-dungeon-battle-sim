@@ -43,7 +43,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
   const battleCount = document.getElementById('battle-count') as HTMLInputElement
   const strategySelect = document.getElementById('strategy-select') as HTMLSelectElement
-  const biasPlayers = document.getElementById('strategy-select') as HTMLSelectElement
+  const biasPlayersInput = document.getElementById('bias-players') as HTMLInputElement
+  const biasMonstersInput = document.getElementById('bias-monsters') as HTMLInputElement
   const progressBar = document.getElementById('progress-bar') as HTMLProgressElement
 
   const tabLogBtn = document.getElementById('tab-log-btn') as HTMLButtonElement
@@ -244,6 +245,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
     const runs = Math.max(1, parseInt(battleCount.value, 10) || 1)
     const strategy = Strategy[strategySelect.value as keyof typeof Strategy]
+    const biasPlayers = parseInt(biasPlayersInput.value, 10)
+    const biasMonsters = parseInt(biasMonstersInput.value, 10)
 
     let winsP = 0,
       winsM = 0,
@@ -261,7 +264,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
       logger.log('[New battle]')
       logger.log('-'.repeat(80))
 
-      const sim = new BattleSimulator(players, monsters, strategy, logger)
+      const sim = new BattleSimulator(players, monsters, strategy, biasPlayers, biasMonsters, logger)
       sim.renderDetails()
       logger.log('\n')
 

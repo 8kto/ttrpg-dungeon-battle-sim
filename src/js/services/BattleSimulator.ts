@@ -23,14 +23,16 @@ export class BattleSimulator {
     sideA: IPlayerCharacter[],
     sideB: IMonster[],
     strategyMode: Strategy,
+    biasPlayers: number,
+    biasMonsters: number,
     private readonly logger: Logger,
   ) {
     this.targetSelector = new RandomTargetSelector()
     this.strategy = getStrategy(strategyMode)
 
     this.participants = [
-      ...sideA.map((c) => new Participant(c, Side.Players, this.strategy, this.logger)),
-      ...sideB.map((c) => new Participant(c, Side.Monsters, this.strategy, this.logger)),
+      ...sideA.map((c) => new Participant(c, Side.Players, this.strategy, biasPlayers, this.logger)),
+      ...sideB.map((c) => new Participant(c, Side.Monsters, this.strategy, biasMonsters, this.logger)),
     ]
   }
 
