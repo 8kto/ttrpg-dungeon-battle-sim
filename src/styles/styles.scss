@@ -6,7 +6,8 @@
   --primary-color: #333;
   --neutral-color: #e0cec2;
   --alt-color: #e76b65;
-  --sub-color: #ddd;
+  --sub-color: #87ad30;
+  --3rd-color: #e78a65;
   --page-bg: #fff;
   --input-bg: #f9f8f5;
   --block-bg: #fdfcf8;
@@ -32,7 +33,7 @@ body {
 }
 
 a {
-  color: var(--alt-color);
+  color: var(--3rd-color);
 }
 
 h1 {
@@ -45,10 +46,33 @@ h1 {
 h2 {
   font-family: var(--cursive-font);
   font-size: 24px;
-  color: var(--alt-color);
+  color: var(--sub-color);
   margin: 0 0 10px;
 }
 
 input[disabled] {
   cursor: not-allowed;
+}
+
+.primary-button {
+  @apply bg-[#C08081] hover:bg-[#A06565] text-white font-semibold rounded transition-colors duration-200;
+}
+
+.mid-button {
+  @apply px-3 py-1;
+}
+
+.secondary-button {
+  @apply bg-gray-500 hover:bg-gray-600 text-white rounded;
+}
+
+label {
+  color: var(--3rd-color);
+}
+
+table {
+  select,
+  option {
+    min-width: 40px;
+  }
 }

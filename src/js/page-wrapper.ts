@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
   const battleCount = document.getElementById('battle-count') as HTMLInputElement
   const strategySelect = document.getElementById('strategy-select') as HTMLSelectElement
+  const biasPlayers = document.getElementById('strategy-select') as HTMLSelectElement
   const progressBar = document.getElementById('progress-bar') as HTMLProgressElement
 
   const tabLogBtn = document.getElementById('tab-log-btn') as HTMLButtonElement
