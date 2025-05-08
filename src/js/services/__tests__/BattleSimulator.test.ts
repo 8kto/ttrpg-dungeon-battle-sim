@@ -128,8 +128,8 @@ describe('BattleSimulator', () => {
     it('ends early when no valid attacks possible', () => {
       const simulator = new BattleSimulator([mockPlayer], [mockMonster], Strategy.Random, 0, 0, 0, mockLogger)
 
-      simulator// @ts-ignore private
-      .participants
+      // @ts-ignore private
+      simulator.participants
         .forEach((p) => {
           ;(p.isValidTarget as jest.Mock).mockReturnValue(false)
         })
@@ -162,8 +162,8 @@ describe('BattleSimulator', () => {
       const result = simulator.simulate()
       expect(result.rounds).toBe(2)
 
-      simulator// @ts-ignore private
-      .participants
+      // @ts-ignore private
+      simulator.participants
         .every((p) => {
           expect(p.resetAttackLimit).toHaveBeenCalled()
         })

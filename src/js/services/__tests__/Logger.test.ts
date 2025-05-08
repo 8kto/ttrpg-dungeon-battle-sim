@@ -35,7 +35,6 @@ describe('Logger', () => {
     expect(textarea.scrollTop).toBe(textarea.scrollHeight)
   })
 
-
   it('allows subsequent logs to schedule new frame after flush', () => {
     logger.log('One')
     expect(rafSpy).toHaveBeenCalledTimes(1)
