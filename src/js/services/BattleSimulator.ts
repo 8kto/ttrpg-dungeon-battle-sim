@@ -58,6 +58,7 @@ export class BattleSimulator {
       this.participants.forEach((p) => p.resetAttackLimit())
 
       this.logger.log(`>>> round ${this.roundsCount}`)
+      let anyAction = false
 
       // Each combatant does its attacks
       for (const combatant of this.participants) {
@@ -70,7 +71,14 @@ export class BattleSimulator {
           continue
         }
 
+        anyAction = true
         combatant.attack(enemies, this.targetSelector)
+      }
+
+      // if nobody attacked or was attacked this round, end battle
+      if (!anyAction) {
+        this.logger.log('⏸️ No more valid attacks — ending simulation')
+        break
       }
     }
 
