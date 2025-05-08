@@ -129,10 +129,9 @@ describe('BattleSimulator', () => {
       const simulator = new BattleSimulator([mockPlayer], [mockMonster], Strategy.Random, 0, 0, 0, mockLogger)
 
       // @ts-ignore private
-      simulator.participants
-        .forEach((p) => {
-          ;(p.isValidTarget as jest.Mock).mockReturnValue(false)
-        })
+      simulator.participants.forEach((p) => {
+        ;(p.isValidTarget as jest.Mock).mockReturnValue(false)
+      })
 
       jest
         .spyOn(simulator, 'hasSurvivors')
@@ -163,10 +162,9 @@ describe('BattleSimulator', () => {
       expect(result.rounds).toBe(2)
 
       // @ts-ignore private
-      simulator.participants
-        .every((p) => {
-          expect(p.resetAttackLimit).toHaveBeenCalled()
-        })
+      simulator.participants.every((p) => {
+        expect(p.resetAttackLimit).toHaveBeenCalled()
+      })
     })
   })
 
