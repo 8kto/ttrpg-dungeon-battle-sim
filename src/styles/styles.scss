@@ -6,8 +6,10 @@
   --primary-color: #333;
   --neutral-color: #e0cec2;
   --alt-color: #e76b65;
-  --sub-color: #87ad30;
-  --3rd-color: #e78a65;
+  --sub-color: #bc827c;
+  --sub-color-focus: #a06565;
+  --3rd-color: #6a5a8a;
+  --3rd-color-focus: #382f4c;
   --page-bg: #fff;
   --input-bg: #f9f8f5;
   --block-bg: #fdfcf8;
@@ -32,7 +34,7 @@ body {
 }
 
 a {
-  color: var(--3rd-color);
+  color: var(--alt-color);
 }
 
 h1 {
@@ -54,7 +56,12 @@ input[disabled] {
 }
 
 .primary-button {
-  @apply bg-[#C08081] hover:bg-[#A06565] text-white font-semibold rounded transition-colors duration-200;
+  @apply text-white rounded transition-colors duration-200;
+  background: var(--sub-color);
+
+  &:hover {
+    background: var(--sub-color-focus);
+  }
 }
 
 .mid-button {
@@ -62,7 +69,12 @@ input[disabled] {
 }
 
 .secondary-button {
-  @apply bg-gray-500 hover:bg-gray-600 text-white rounded;
+  @apply text-white rounded transition-colors duration-200;
+  background: var(--3rd-color);
+
+  &:hover {
+    background: var(--3rd-color-focus);
+  }
 }
 
 label {
@@ -74,4 +86,16 @@ table {
   option {
     min-width: 40px;
   }
+}
+
+abbr:hover {
+  cursor: help;
+}
+
+#progress-bar::-webkit-progress-value {
+  background-color: var(--alt-color);
+}
+#progress-bar::-ms-fill {
+  background-color: var(--alt-color);
+  border: none; /* remove default inset border */
 }
