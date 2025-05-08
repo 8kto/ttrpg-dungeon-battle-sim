@@ -1,8 +1,9 @@
 import type { Dice } from 'ttrpg-lib-dice'
 
+import { BaseStrategy } from './BaseStrategy'
 import type { ICombatStrategy } from './ICombatStrategy'
 
-export class AverageStrategy implements ICombatStrategy {
+export class AverageStrategy extends BaseStrategy implements ICombatStrategy {
   calculateHp([count, dice]: [number, Dice]): number {
     const avgPerDie = Math.ceil(dice / 2)
 
@@ -10,20 +11,9 @@ export class AverageStrategy implements ICombatStrategy {
   }
 
   calculateDamage(damage: string): number {
-    // support formats like "d6", "d8+1", "d10 - 2", "d4-3"
-    const re = /^d(\d+)\s*([+-]\s*\d+)?$/i
-    const match = damage.trim().match(re)
-    if (!match) {
-      throw new Error(`Invalid damage formula: "${damage}"`)
-    }
+    const { mod, multiplier, sides } = this.getTokens(damage)
 
-    const sides = parseInt(match[1], 10)
-    const mod = match[2] ? parseInt(match[2].replace(/\s+/g, ''), 10) : 0
-
-    // average of a uniform 1..sides is (1 + sides)/2
-    // include modifier, then floor the result
-    const avg = (1 + sides + mod) / 2
-
-    return Math.floor(avg)
+    // Return avg damage
+    return Math.ceil((multiplier * sides + mod) / 2)
   }
 }
