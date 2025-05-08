@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
       progressBar.value = ((i + 1) / runs) * 100
 
       logger.log(`\n${'-'.repeat(80)}`)
-      logger.log('[New battle]')
+      logger.log(`[Battle ${i + 1}]`)
       logger.log('-'.repeat(80))
 
       const battleSimulator = getBattleSimulator()
