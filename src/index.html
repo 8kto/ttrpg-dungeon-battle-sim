@@ -176,7 +176,7 @@
         <!-- Battles -->
         <div class="flex flex-col">
           <label for="battle-count" class="mb-1">Battles</label>
-          <input id="battle-count" type="number" min="1" value="100" class="w-32 h-10 border rounded px-3" />
+          <input id="battle-count" type="number" min="1" value="1" class="w-32 h-10 border rounded px-3" />
         </div>
 
         <!-- Strategy -->
@@ -208,9 +208,11 @@
         <!-- Max Attacks -->
         <div class="flex flex-col">
           <label for="max-attacks" class="mb-1">
-            <abbr title="Maximum number of attacks per figure (0 = unlimited)">Max Attacks</abbr>
+            <abbr title="Maximum number of attacks allowed against a single target (0 = unlimited)"
+              >Max Attacks per Target</abbr
+            >
           </label>
-          <input id="max-attacks" disabled type="number" min="0" value="0" class="w-32 h-10 border rounded px-3" />
+          <input id="max-attacks" type="number" min="0" value="0" class="w-32 h-10 border rounded px-3" />
         </div>
 
         <!-- Run Simulation -->
@@ -260,7 +262,8 @@
         <div class="align-center mx-auto content-center">
           <span class="">&copy; 2025</span>
           <a href="https://dungeon-battle.ivlev.blog/" target="_blank">Dungeon Battle Simulator</a> by
-          <a href="https://ivlev.blog/" target="_blank">undefined</a>
+          <a href="https://ivlev.blog/" target="_blank">undefined</a> |
+          <a href="https://github.com/your-repo" target="_blank">Source on GitHub</a>
         </div>
       </footer>
     </div>
