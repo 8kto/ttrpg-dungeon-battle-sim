@@ -8,35 +8,51 @@ import type { ICharacter } from './types'
 
 export class Participant {
   public currentHp: number
+  public readonly hasAttackLimit: boolean
+  private maxAttacksRemaining: number
 
   constructor(
     public readonly char: ICharacter,
     public readonly side: Side,
-    strategy: ICombatStrategy,
+    private readonly strategy: ICombatStrategy,
     private readonly bias: number,
+    private readonly maxAttacksPerChar: number,
     private readonly logger: Logger,
   ) {
     this.currentHp = strategy.calculateHp(char.hitDice)
+    this.hasAttackLimit = maxAttacksPerChar > 0
+    this.maxAttacksRemaining = maxAttacksPerChar
   }
 
-  attack(enemies: Participant[], strategy: ICombatStrategy, targetSelector: ITargetSelector): void {
-    for (const dmgDice of this.char.damage) {
-      const living = enemies.filter((e) => e.currentHp > 0)
-      if (living.length === 0) {
+  attack(enemies: Participant[], targetSelector: ITargetSelector): void {
+    // skip due to bias?
+    if (this.bias > 0 && roll(Dice.d100) <= this.bias) {
+      this.logger.log(`🫢 ${this.char.name} skips turn`)
+
+      return
+    }
+
+    // number of attacks = number of damage dice
+    let attacksLeft = this.char.damage.length
+
+    while (attacksLeft > 0) {
+      // filter out dead and those who've exhausted their attack‐limit
+      const targets = enemies.filter((e) => e.isValidTarget())
+      if (targets.length === 0) {
         break
       }
 
-      if (this.bias && roll(Dice.d100) <= this.bias) {
-        this.logger.log(`🫢 ${this.char.name} skips turn`)
-        continue
+      const dmgDice = this.char.damage[this.char.damage.length - attacksLeft]
+      const target = targetSelector.selectTarget(targets)
+
+      // consume one attack slot on the target
+      if (target.hasAttackLimit) {
+        target.maxAttacksRemaining--
       }
 
-      const target = targetSelector.selectTarget(this, living)
-      const attackRoll = roll(Dice.d20) + this.char.toHit
-      if (attackRoll >= target.char.armorClass) {
-        const dmg = strategy.calculateDamage(dmgDice)
+      if (this.getAttackRoll() >= target.char.armorClass) {
+        const dmg = this.strategy.calculateDamage(dmgDice)
         target.currentHp -= dmg
-
         this.logger.log(`🗡️ ${this.char.name} attacks ${target.char.name}, damage: ${dmg}`)
 
         if (target.currentHp <= 0) {
@@ -45,6 +61,20 @@ export class Participant {
       } else {
         this.logger.log(`🛡️ ${this.char.name} misses ${target.char.name}`)
       }
+
+      attacksLeft--
     }
+  }
+
+  getAttackRoll(): number {
+    return roll(Dice.d20) + this.char.toHit
+  }
+
+  isValidTarget(): boolean {
+    return this.currentHp > 0 && (!this.hasAttackLimit || this.maxAttacksRemaining > 0)
+  }
+
+  resetAttackLimit(): void {
+    this.maxAttacksRemaining = this.maxAttacksPerChar
   }
 }
