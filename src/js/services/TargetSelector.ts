@@ -1,13 +1,13 @@
+import { getRandomArrayItem } from 'ttrpg-lib-dice'
+
 import type { Participant } from './Participant'
 
 export interface ITargetSelector {
-  selectTarget(attacker: Participant, enemies: Participant[]): Participant
+  selectTarget(enemies: Participant[]): Participant
 }
 
 export class RandomTargetSelector implements ITargetSelector {
-  selectTarget(_attacker: Participant, enemies: Participant[]): Participant {
-    const idx = Math.floor(Math.random() * enemies.length)
-
-    return enemies[idx]
+  selectTarget(enemies: Participant[]): Participant {
+    return getRandomArrayItem(enemies)
   }
 }

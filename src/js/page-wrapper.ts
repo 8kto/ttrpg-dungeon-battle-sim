@@ -43,6 +43,9 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
   const battleCount = document.getElementById('battle-count') as HTMLInputElement
   const strategySelect = document.getElementById('strategy-select') as HTMLSelectElement
+  const biasPlayersInput = document.getElementById('bias-players') as HTMLInputElement
+  const biasMonstersInput = document.getElementById('bias-monsters') as HTMLInputElement
+  const maxAttacksInput = document.getElementById('max-attacks') as HTMLInputElement
   const progressBar = document.getElementById('progress-bar') as HTMLProgressElement
 
   const tabLogBtn = document.getElementById('tab-log-btn') as HTMLButtonElement
@@ -234,6 +237,17 @@ document.addEventListener('DOMContentLoaded', (): void => {
     }
   })
 
+  const getBattleSimulator = (): BattleSimulator => {
+    const players = readConfig(playersBody)
+    const monsters = readConfig(monstersBody)
+    const strategy = Strategy[strategySelect.value as keyof typeof Strategy]
+    const biasPlayers = parseInt(biasPlayersInput.value, 10)
+    const biasMonsters = parseInt(biasMonstersInput.value, 10)
+    const maxAttacksPerChar = parseInt(maxAttacksInput.value, 10)
+
+    return new BattleSimulator(players, monsters, strategy, biasPlayers, biasMonsters, maxAttacksPerChar, logger)
+  }
+
   // run simulation
   runBtn.addEventListener('click', async (e): Promise<void> => {
     e.preventDefault()
@@ -242,15 +256,11 @@ document.addEventListener('DOMContentLoaded', (): void => {
     progressBar.value = 0
 
     const runs = Math.max(1, parseInt(battleCount.value, 10) || 1)
-    const strategy = Strategy[strategySelect.value as keyof typeof Strategy]
 
     let winsP = 0,
       winsM = 0,
       survP = 0
     const initialP = playersBody.rows.length
-
-    const players = readConfig(playersBody)
-    const monsters = readConfig(monstersBody)
 
     for (let i = 0; i < runs; i++) {
       await new Promise(requestAnimationFrame)
@@ -260,11 +270,11 @@ document.addEventListener('DOMContentLoaded', (): void => {
       logger.log('[New battle]')
       logger.log('-'.repeat(80))
 
-      const sim = new BattleSimulator(players, monsters, strategy, logger)
-      sim.renderDetails()
+      const battleSimulator = getBattleSimulator()
+      battleSimulator.renderDetails()
       logger.log('\n')
 
-      const res = sim.simulate()
+      const res = battleSimulator.simulate()
       if (res.winner === Side.Players) {
         winsP++
         survP += res.survivors.filter((s) => s.side === Side.Players).length

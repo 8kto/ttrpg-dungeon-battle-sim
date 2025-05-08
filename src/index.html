@@ -39,143 +39,149 @@
   </head>
   <body class="bg-gray-100 text-gray-900">
     <div class="container mx-auto p-6">
-      <h1 class="text-3xl font-bold mb-6">Dungeon Battle Simulator</h1>
-      <p class="my-2 text-lg">
+      <h1 class="text-4xl font-bold mb-2">Dungeon Battle Simulator</h1>
+      <p class="my-2 text-lg text-gray-500">
         A browser-based tool for simulating turn-based combat between players and monsters. Compatible with the world’s
         most popular role-playing game.
       </p>
-      <!-- Players & Henchmen -->
-      <section id="players-section" class="mb-8">
-        <div class="flex justify-between items-center mb-2">
-          <div class="space-x-2">
-            <button id="add-player" class="px-3 py-1 bg-blue-600 text-white rounded">Add Player</button>
-            <button id="add-henchman" class="px-3 py-1 bg-blue-600 text-white rounded">Add Henchman</button>
-            <button id="clear-players" class="px-3 py-1 bg-gray-600 text-white rounded">Clear Players</button>
-          </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+        <!-- Players & Henchmen -->
+        <section id="players-section" class="mb-8">
           <h2 class="text-2xl">Players & Henchmen</h2>
-        </div>
-        <table class="w-full table-auto bg-white shadow rounded">
-          <thead class="bg-gray-200">
-            <tr>
-              <th class="p-2 text-left">Name</th>
-              <th class="p-2 text-left">AC</th>
-              <th class="p-2 text-left">To Hit</th>
-              <th class="p-2 text-left">HD Count</th>
-              <th class="p-2 text-left">HD Type</th>
-              <th class="p-2 text-left">Damage</th>
-              <th class="p-2"></th>
-            </tr>
-          </thead>
-          <tbody id="players-table" class="divide-y">
-            <tr class="bg-white" data-prefix="Player">
-              <td class="p-2"><input type="text" class="name-input w-full border rounded px-2" required /></td>
-              <td class="p-289">
-                <input type="number" class="ac-input w-full border rounded px-2" required min="0" />
-              </td>
-              <td class="p-2"><input type="number" class="tohit-input w-full border rounded px-2" required /></td>
-              <td class="p-2">
-                <input type="number" class="hd-count-input w-full border rounded px-2" required min="1" />
-              </td>
-              <td class="p-2">
-                <select class="hd-type-select w-full border rounded px-2">
-                  <option value="4">d4</option>
-                  <option value="6">d6</option>
-                  <option value="8">d8</option>
-                  <option value="10">d10</option>
-                  <option value="12">d12</option>
-                  <option value="20">d20</option>
-                  <option value="100">d100</option>
-                </select>
-              </td>
-              <td class="p-2">
-                <input
-                  type="text"
-                  class="damage-input w-full border rounded px-2"
-                  required
-                  pattern="^\d*d\d+(\+\d+)?(,\s*\d*d\d+(\+\d+)?)*$"
-                  placeholder="e.g. d6 or d6,d6"
-                />
-              </td>
-              <td class="p-2 text-center space-x-2">
-                <button class="duplicate-row text-blue-500" title="Duplicate">⎘</button>
-                <button class="remove-row text-red-500" title="Remove">×</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
 
-      <!-- Monsters -->
-      <section id="monsters-section" class="mb-8">
-        <div class="flex justify-between items-center mb-2">
-          <div class="space-x-2">
-            <button id="add-monster" class="px-3 py-1 bg-blue-600 text-white rounded">Add Monster</button>
-            <button id="clear-monsters" class="px-3 py-1 bg-gray-600 text-white rounded">Clear Monsters</button>
+          <div class="flex justify-between items-center mb-2">
+            <div class="space-x-2">
+              <button id="add-player" class="primary-button mid-button">Add Player</button>
+              <button id="add-henchman" class="primary-button mid-button">Add Henchman</button>
+              <button id="clear-players" class="secondary-button mid-button">Clear Players</button>
+            </div>
           </div>
-          <h2 class="text-2xl">Monsters</h2>
-        </div>
-        <table class="w-full table-auto bg-white shadow rounded">
-          <thead class="bg-gray-200">
-            <tr>
-              <th class="p-2 text-left">Name</th>
-              <th class="p-2 text-left">AC</th>
-              <th class="p-2 text-left">To Hit</th>
-              <th class="p-2 text-left">HD Count</th>
-              <th class="p-2 text-left">HD Type</th>
-              <th class="p-2 text-left">Damage</th>
-              <th class="p-2"></th>
-            </tr>
-          </thead>
-          <tbody id="monsters-table" class="divide-y">
-            <tr class="bg-white" data-prefix="Monster">
-              <td class="p-2"><input type="text" class="name-input w-full border rounded px-2" required /></td>
-              <td class="p-2"><input type="number" class="ac-input w-full border rounded px-2" required min="0" /></td>
-              <td class="p-2"><input type="number" class="tohit-input w-full border rounded px-2" required /></td>
-              <td class="p-2">
-                <input type="number" class="hd-count-input w-full border rounded px-2" required min="1" />
-              </td>
-              <td class="p-2">
-                <select class="hd-type-select w-full border rounded px-2">
-                  <option value="4">d4</option>
-                  <option value="6">d6</option>
-                  <option value="8">d8</option>
-                  <option value="10">d10</option>
-                  <option value="12">d12</option>
-                  <option value="20">d20</option>
-                  <option value="100">d100</option>
-                </select>
-              </td>
-              <td class="p-2">
-                <input
-                  type="text"
-                  class="damage-input w-full border rounded px-2"
-                  required
-                  pattern="^\d*d\d+(\+\d+)?(,\s*\d*d\d+(\+\d+)?)*$"
-                  placeholder="e.g. d6 or d6,d6"
-                />
-              </td>
-              <td class="p-2 text-center space-x-2">
-                <button class="duplicate-row text-blue-500" title="Duplicate">⎘</button>
-                <button class="remove-row text-red-500" title="Remove">×</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
+          <table class="w-full table-auto bg-white shadow rounded">
+            <thead class="bg-gray-200">
+              <tr>
+                <th class="p-2 text-left">Name</th>
+                <th class="p-2 text-left">AC</th>
+                <th class="p-2 text-left">To Hit</th>
+                <th class="p-2 text-left">HD Count</th>
+                <th class="p-2 text-left">HD Type</th>
+                <th class="p-2 text-left">Damage</th>
+                <th class="p-2"></th>
+              </tr>
+            </thead>
+            <tbody id="players-table" class="divide-y">
+              <tr class="bg-white" data-prefix="Player">
+                <td class="p-2"><input type="text" class="name-input w-full border rounded px-2" required /></td>
+                <td class="p-289">
+                  <input type="number" class="ac-input w-full border rounded px-2" required min="0" />
+                </td>
+                <td class="p-2"><input type="number" class="tohit-input w-full border rounded px-2" required /></td>
+                <td class="p-2">
+                  <input type="number" class="hd-count-input w-full border rounded px-2" required min="1" />
+                </td>
+                <td class="p-2">
+                  <select class="hd-type-select border rounded px-2">
+                    <option value="4">d4</option>
+                    <option value="6">d6</option>
+                    <option value="8">d8</option>
+                    <option value="10">d10</option>
+                    <option value="12">d12</option>
+                    <option value="20">d20</option>
+                    <option value="100">d100</option>
+                  </select>
+                </td>
+                <td class="p-2">
+                  <input
+                    type="text"
+                    class="damage-input w-full border rounded px-2"
+                    required
+                    pattern="^\d*d\d+(\+\d+)?(,\s*\d*d\d+(\+\d+)?)*$"
+                    placeholder="e.g. d6 or d6,d6"
+                  />
+                </td>
+                <td class="p-2 text-center space-x-2">
+                  <button class="duplicate-row text-blue-500" title="Duplicate">⎘</button>
+                  <button class="remove-row text-red-500" title="Remove">×</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
 
+        <!-- Monsters -->
+        <section id="monsters-section" class="mb-8">
+          <h2 class="text-2xl">Monsters</h2>
+
+          <div class="flex justify-between items-center mb-2">
+            <div class="space-x-2">
+              <button id="add-monster" class="primary-button mid-button">Add Monster</button>
+              <button id="clear-monsters" class="secondary-button mid-button">Clear Monsters</button>
+            </div>
+          </div>
+          <table class="w-full table-auto bg-white shadow rounded">
+            <thead class="bg-gray-200">
+              <tr>
+                <th class="p-2 text-left">Name</th>
+                <th class="p-2 text-left">AC</th>
+                <th class="p-2 text-left">To Hit</th>
+                <th class="p-2 text-left">HD Count</th>
+                <th class="p-2 text-left">HD Type</th>
+                <th class="p-2 text-left">Damage</th>
+                <th class="p-2"></th>
+              </tr>
+            </thead>
+            <tbody id="monsters-table" class="divide-y">
+              <tr class="bg-white" data-prefix="Monster">
+                <td class="p-2"><input type="text" class="name-input w-full border rounded px-2" required /></td>
+                <td class="p-2">
+                  <input type="number" class="ac-input w-full border rounded px-2" required min="0" />
+                </td>
+                <td class="p-2"><input type="number" class="tohit-input w-full border rounded px-2" required /></td>
+                <td class="p-2">
+                  <input type="number" class="hd-count-input w-full border rounded px-2" required min="1" />
+                </td>
+                <td class="p-2">
+                  <select class="hd-type-select border rounded px-2">
+                    <option value="4">d4</option>
+                    <option value="6">d6</option>
+                    <option value="8">d8</option>
+                    <option value="10">d10</option>
+                    <option value="12">d12</option>
+                    <option value="20">d20</option>
+                    <option value="100">d100</option>
+                  </select>
+                </td>
+                <td class="p-2">
+                  <input
+                    type="text"
+                    class="damage-input w-full border rounded px-2"
+                    required
+                    pattern="^\d*d\d+(\+\d+)?(,\s*\d*d\d+(\+\d+)?)*$"
+                    placeholder="e.g. d6 or d6,d6"
+                  />
+                </td>
+                <td class="p-2 text-center space-x-2">
+                  <button class="duplicate-row text-blue-500" title="Duplicate">⎘</button>
+                  <button class="remove-row text-red-500" title="Remove">×</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
       <!-- Controls -->
       <h2 class="text-2xl mt-6">Simulation</h2>
 
       <div class="mb-4 flex space-x-4 items-end">
         <!-- Battles -->
         <div class="flex flex-col">
-          <label for="battle-count" class="mb-1 text-sm">Battles</label>
+          <label for="battle-count" class="mb-1">Battles</label>
           <input id="battle-count" type="number" min="1" value="100" class="w-32 h-10 border rounded px-3" />
         </div>
 
         <!-- Strategy -->
         <div class="flex flex-col">
-          <label for="strategy-select" class="mb-1 text-sm">Strategy</label>
+          <label for="strategy-select" class="mb-1">Strategy</label>
           <select id="strategy-select" class="w-32 h-10 border rounded px-3 bg-white">
             <option value="Max" title="Max values for HP and damage">Maximum</option>
             <option value="Average" title="Average values for HP and damage">Average</option>
@@ -185,56 +191,38 @@
 
         <!-- Player Bias -->
         <div class="flex flex-col">
-          <label for="bias-players" class="mb-1 text-sm">
+          <label for="bias-players" class="mb-1">
             <abbr title="Chance of skipping a player's turn (0–100%)">Player Bias (%)</abbr>
           </label>
-          <input
-            disabled
-            id="bias-players"
-            type="number"
-            min="0"
-            max="100"
-            value="0"
-            class="w-32 h-10 border rounded px-3"
-          />
+          <input id="bias-players" type="number" min="0" max="100" value="5" class="w-32 h-10 border rounded px-3" />
         </div>
 
         <!-- Monster Bias -->
         <div class="flex flex-col">
-          <label for="bias-monsters" class="mb-1 text-sm">
+          <label for="bias-monsters" class="mb-1">
             <abbr title="Chance of skipping a monster's turn (0–100%)">Monster Bias (%)</abbr>
           </label>
-          <input
-            disabled
-            id="bias-monsters"
-            type="number"
-            min="0"
-            max="100"
-            value="0"
-            class="w-32 h-10 border rounded px-3"
-          />
+          <input id="bias-monsters" type="number" min="0" max="100" value="0" class="w-32 h-10 border rounded px-3" />
         </div>
 
         <!-- Max Attacks -->
         <div class="flex flex-col">
-          <label for="max-attacks" class="mb-1 text-sm">
-            <abbr title="Maximum number of attacks per figure (0 = unlimited)">Max Attacks</abbr>
+          <label for="max-attacks" class="mb-1">
+            <abbr title="Maximum number of attacks allowed against a single target (0 = unlimited)"
+              >Max Attacks per Target</abbr
+            >
           </label>
-          <input id="max-attacks" disabled type="number" min="0" value="0" class="w-32 h-10 border rounded px-3" />
+          <input id="max-attacks" type="number" min="0" value="5" class="w-32 h-10 border rounded px-3" />
         </div>
 
         <!-- Run Simulation -->
         <div class="flex flex-col justify-end">
-          <button id="run-sim" class="w-32 h-10 bg-green-600 text-white rounded" title="Start simulation">
-            Run Simulation
-          </button>
+          <button id="run-sim" class="primary-button w-32 h-10" title="Start simulation">Run</button>
         </div>
 
         <!-- Clear Log -->
         <div class="flex flex-col justify-end">
-          <button id="clear-log" class="w-32 h-10 bg-gray-600 text-white rounded" title="Clear log output">
-            Clear Log
-          </button>
+          <button id="clear-log" class="secondary-button w-32 h-10" title="Clear log output">Clear Log</button>
         </div>
       </div>
 
@@ -259,8 +247,8 @@
       </div>
       <div id="tab-config" class="hidden">
         <div class="flex space-x-2 mb-2">
-          <button id="export-config" class="px-3 py-1 bg-green-600 text-white rounded">Export Config</button>
-          <button id="import-config" class="px-3 py-1 bg-blue-600 text-white rounded">Import Config</button>
+          <button id="export-config" class="primary-button mid-button">Export Config</button>
+          <button id="import-config" class="secondary-button mid-button">Import Config</button>
         </div>
         <textarea
           id="config-area"
@@ -274,7 +262,8 @@
         <div class="align-center mx-auto content-center">
           <span class="">&copy; 2025</span>
           <a href="https://dungeon-battle.ivlev.blog/" target="_blank">Dungeon Battle Simulator</a> by
-          <a href="https://ivlev.blog/" target="_blank">undefined</a>
+          <a href="https://ivlev.blog/" target="_blank">undefined</a> |
+          <a href="https://github.com/your-repo" target="_blank">Source on GitHub</a>
         </div>
       </footer>
     </div>

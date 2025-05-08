@@ -23,14 +23,19 @@ export class BattleSimulator {
     sideA: IPlayerCharacter[],
     sideB: IMonster[],
     strategyMode: Strategy,
+    biasPlayers: number,
+    biasMonsters: number,
+    maxAttacksPerChar: number,
     private readonly logger: Logger,
   ) {
     this.targetSelector = new RandomTargetSelector()
     this.strategy = getStrategy(strategyMode)
 
     this.participants = [
-      ...sideA.map((c) => new Participant(c, Side.Players, this.strategy, this.logger)),
-      ...sideB.map((c) => new Participant(c, Side.Monsters, this.strategy, this.logger)),
+      ...sideA.map((c) => new Participant(c, Side.Players, this.strategy, biasPlayers, maxAttacksPerChar, this.logger)),
+      ...sideB.map(
+        (c) => new Participant(c, Side.Monsters, this.strategy, biasMonsters, maxAttacksPerChar, this.logger),
+      ),
     ]
   }
 
@@ -42,32 +47,42 @@ export class BattleSimulator {
     return this
   }
 
+  hasSurvivors(side: Side): boolean {
+    return this.participants.some((p) => p.side === side && p.currentHp > 0)
+  }
+
   simulate(): BattleResult {
-    const isAlive = (side: Side): boolean => this.participants.some((p) => p.side === side && p.currentHp > 0)
-
-    while (isAlive(Side.Players) && isAlive(Side.Monsters)) {
+    // Round: goes while there are two sides
+    while (this.hasSurvivors(Side.Players) && this.hasSurvivors(Side.Monsters)) {
       this.roundsCount++
-      this.logger.log(`>>> round ${this.roundsCount}`)
-      let battleOver = false
+      this.participants.forEach((p) => p.resetAttackLimit())
 
-      for (const p of this.participants) {
-        if (p.currentHp <= 0) {
+      this.logger.log(`>>> round ${this.roundsCount}`)
+      let anyAction = false
+
+      // Each combatant does its attacks
+      for (const combatant of this.participants) {
+        if (combatant.currentHp <= 0) {
           continue
         }
-        const enemies = this.participants.filter((e) => e.side !== p.side && e.currentHp > 0)
-        p.attack(enemies, this.strategy, this.targetSelector)
 
-        if (!isAlive(Side.Players) || !isAlive(Side.Monsters)) {
-          battleOver = true
-          break
+        const enemies = this.participants.filter((e) => e.side !== combatant.side && e.isValidTarget())
+        if (!enemies.length) {
+          continue
         }
+
+        anyAction = true
+        combatant.attack(enemies, this.targetSelector)
       }
-      if (battleOver) {
+
+      // if nobody attacked or was attacked this round, end battle
+      if (!anyAction) {
+        this.logger.log('⏸️ No more valid attacks — ending simulation')
         break
       }
     }
 
-    const winner: Side = isAlive(Side.Players) ? Side.Players : Side.Monsters
+    const winner: Side = this.hasSurvivors(Side.Players) ? Side.Players : Side.Monsters
     const survivors = this.participants.filter((p) => p.currentHp > 0)
 
     return {

@@ -6,7 +6,10 @@
   --primary-color: #333;
   --neutral-color: #e0cec2;
   --alt-color: #e76b65;
-  --sub-color: #ddd;
+  --sub-color: #bc827c;
+  --sub-color-focus: #a06565;
+  --3rd-color: #6a5a8a;
+  --3rd-color-focus: #382f4c;
   --page-bg: #fff;
   --input-bg: #f9f8f5;
   --block-bg: #fdfcf8;
@@ -18,7 +21,6 @@
 
 html,
 body {
-  height: 100%;
   min-height: 100%;
 }
 
@@ -45,10 +47,55 @@ h1 {
 h2 {
   font-family: var(--cursive-font);
   font-size: 24px;
-  color: var(--alt-color);
+  color: var(--sub-color);
   margin: 0 0 10px;
 }
 
 input[disabled] {
   cursor: not-allowed;
+}
+
+.primary-button {
+  @apply text-white rounded transition-colors duration-200;
+  background: var(--sub-color);
+
+  &:hover {
+    background: var(--sub-color-focus);
+  }
+}
+
+.mid-button {
+  @apply px-3 py-1;
+}
+
+.secondary-button {
+  @apply text-white rounded transition-colors duration-200;
+  background: var(--3rd-color);
+
+  &:hover {
+    background: var(--3rd-color-focus);
+  }
+}
+
+label {
+  color: var(--3rd-color);
+}
+
+table {
+  select,
+  option {
+    min-width: 40px;
+  }
+}
+
+abbr:hover {
+  cursor: help;
+}
+
+#progress-bar::-webkit-progress-value {
+  background-color: var(--alt-color);
+}
+#progress-bar::-ms-fill {
+  background-color: var(--alt-color);
+  border: none; /* remove default inset border */
 }
