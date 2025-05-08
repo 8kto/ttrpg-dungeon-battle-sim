@@ -3,6 +3,10 @@
 A browser-based tool for simulating turn-based combat between players and monsters. Compatible with the world’s
 most popular role-playing game.
 
+## Demo
+
+https://dungeon-battle.ivlev.blog/
+
 ## Overview
 
 Battle Simulator models engagements between two groups:
