@@ -1,10 +1,17 @@
-// DivLogger.ts
+export enum LogLevel {
+  INFO,
+  WARNING,
+}
+
 export class Logger {
   private container: HTMLElement
   private buffer: string[] = []
   private scheduled: boolean = false
 
-  constructor(id: string) {
+  constructor(
+    id: string,
+    private level: LogLevel = LogLevel.INFO,
+  ) {
     const el = document.getElementById(id)
     if (!el) {
       throw new Error(`No element with id="${id}"`)
@@ -12,7 +19,15 @@ export class Logger {
     this.container = el
   }
 
-  log(message: string): void {
+  setLevel(level: LogLevel) {
+    this.level = level
+  }
+
+  log(message: string, level: LogLevel = LogLevel.INFO): void {
+    if (level < this.level) {
+      return
+    }
+
     // split out any newlines into separate lines
     message.split('\n').forEach((line) => {
       this.buffer.push(line)
@@ -24,9 +39,15 @@ export class Logger {
     }
   }
 
-  clear(): void {
+  warn(message: string): void {
+    this.log(message, LogLevel.WARNING)
+  }
+
+  clear(): this {
     this.buffer = []
     this.container.innerHTML = ''
+
+    return this
   }
 
   private flush(): void {
