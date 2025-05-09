@@ -19,7 +19,7 @@ export class Logger {
     this.container = el
   }
 
-  setLevel(level: LogLevel) {
+  setLevel(level: LogLevel): void {
     this.level = level
   }
 
