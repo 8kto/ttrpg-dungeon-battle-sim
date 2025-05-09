@@ -17,4 +17,8 @@ export const MonsterNamesChunks = [
   ['Xe', 'na', 'tor'],
   ['El', 'chu', 'bra'],
   ['Ge', '', 'us'],
+  ['Xi', 'bal', 'ba'],
+  ['At', 'itz', 'otl'],
+  ['Chi', 'pa', 'hua'],
+  ['Ana', 'ca', 'ona'],
 ]
