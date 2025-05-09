@@ -143,3 +143,7 @@ abbr:hover {
 .table-header--name {
   min-width: 100px;
 }
+
+#result-log p:empty {
+  height: 1rem;
+}

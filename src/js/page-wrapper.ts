@@ -345,9 +345,10 @@ document.addEventListener('DOMContentLoaded', (): void => {
     const runs = Math.max(1, parseInt(battleCount.value, 10) || 1)
     const initialP = playersBody.rows.length
 
-    logger.lock()
+    const startTime = performance.now()
     const { survP, winsM, winsP } = await runBattles(runs, signal, progressBar, logger, getBattleSimulator)
-    logger.release()
+    const elapsedMs = performance.now() - startTime
+    const elapsedSec = (elapsedMs / 1000).toFixed(1)
 
     logger.log('\n')
     logger.log(
@@ -358,6 +359,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
       logger.log(`>> Avg Players survivors: ${((survP / (winsP * initialP)) * 100).toFixed(1)}%`)
     }
     logger.log(`>> Strategy ${strategySelect.value}, ${runs} battles`)
+    logger.log(`>> Execution time: ${elapsedSec} s`)
 
     document.body.style.cursor = 'default'
   })
