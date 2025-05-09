@@ -22,7 +22,7 @@ Each combatant can be defined by:
 - Hit Dice
 - Damage: formulas like `d6`, `2d4`, `d6+1`. Separate multiple attacks with commas.
 
-Two modes of simulation are available:
+Simulation strategies are:
 
 - **Average**: uses average values for hit points and damage
 - **Random**: rolls dice for each attack and hit-point roll
