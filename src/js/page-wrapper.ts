@@ -376,6 +376,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
     logger.warn(`>> Execution time: ${elapsedSec} s`)
 
     document.body.style.cursor = 'default'
+    stopSimBtn.setAttribute('disabled', 'disabled')
   })
 
   stopSimBtn.addEventListener('click', () => {
