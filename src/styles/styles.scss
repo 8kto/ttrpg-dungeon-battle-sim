@@ -10,6 +10,7 @@
   --sub-color-focus: #a06565;
   --3rd-color: #6a5a8a;
   --3rd-color-focus: #382f4c;
+  --muted-color: #6b7280;
   --page-bg: #fff;
   --input-bg: #f9f8f5;
   --block-bg: #fdfcf8;
@@ -53,8 +54,23 @@ h2 {
   margin: 0 0 10px;
 }
 
-input[disabled] {
+input[disabled],
+button[disabled] {
   cursor: not-allowed;
+}
+
+button[disabled] {
+  &,
+  &:hover {
+    @apply bg-gray-300;
+  }
+}
+
+#stop-sim:not([disabled]) {
+  &,
+  &:hover {
+    background: var(--alt-color);
+  }
 }
 
 .primary-button {
@@ -79,6 +95,10 @@ input[disabled] {
   }
 }
 
+.color-muted {
+  color: var(--muted-color);
+}
+
 label {
   color: var(--3rd-color);
 }
@@ -100,4 +120,15 @@ abbr:hover {
 #progress-bar::-ms-fill {
   background-color: var(--alt-color);
   border: none; /* remove default inset border */
+}
+
+.tab-header {
+  @apply border-b-2 px-4 py-2;
+  color: var(--muted-color);
+
+  &.active {
+    @apply border-blue-600 text-blue-600;
+    color: var(--sub-color);
+    border-color: var(--sub-color);
+  }
 }
