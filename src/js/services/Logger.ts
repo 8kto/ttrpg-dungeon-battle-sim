@@ -7,6 +7,15 @@ export class Logger {
     this.textarea = document.getElementById(id) as HTMLTextAreaElement
   }
 
+  lock(): this {
+    if (this.textarea) {
+      this.textarea.setAttribute('readonly', 'readonly')
+      this.textarea.setAttribute('disabled', 'disabled')
+    }
+
+    return this
+  }
+
   log(message: string): void {
     this.buffer.push(`${message}\n`)
     if (!this.scheduled) {
@@ -26,5 +35,14 @@ export class Logger {
     this.textarea.scrollTop = this.textarea.scrollHeight
     this.buffer = []
     this.scheduled = false
+  }
+
+  release(): this {
+    if (this.textarea) {
+      this.textarea.removeAttribute('readonly')
+      this.textarea.removeAttribute('disabled')
+    }
+
+    return this
   }
 }

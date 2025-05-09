@@ -345,7 +345,9 @@ document.addEventListener('DOMContentLoaded', (): void => {
     const runs = Math.max(1, parseInt(battleCount.value, 10) || 1)
     const initialP = playersBody.rows.length
 
+    logger.lock()
     const { survP, winsM, winsP } = await runBattles(runs, signal, progressBar, logger, getBattleSimulator)
+    logger.release()
 
     logger.log('\n')
     logger.log(
