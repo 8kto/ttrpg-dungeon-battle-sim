@@ -1,11 +1,17 @@
 import type { Dice } from 'ttrpg-lib-dice'
 
-import { HenchmanCharTemplate, MonsterCharTemplate, MonsterTemplates, PlayerCharTemplate, PlayerTemplates } from './consts'
+import {
+  HenchmanCharTemplate,
+  MonsterCharTemplate,
+  MonsterTemplates,
+  PlayerCharTemplate,
+  PlayerTemplates,
+} from './consts'
 import { BattleSimulator } from './services/BattleSimulator'
 import { Logger } from './services/Logger'
 import type { ICharacter } from './services/types'
 import { Strategy } from './services/types'
-import type { CharStats } from './types'
+import type { BattleSimulationConfig, CharStats } from './types'
 import { Side } from './types'
 
 const readConfig = (body: HTMLTableSectionElement): ICharacter[] =>
@@ -32,10 +38,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const addPlayerBtn = document.getElementById('add-player') as HTMLButtonElement
   const addHenchBtn = document.getElementById('add-henchman') as HTMLButtonElement
   const clearPlayersBtn = document.getElementById('clear-players') as HTMLButtonElement
-
   const addMonsterBtn = document.getElementById('add-monster') as HTMLButtonElement
   const clearMonstersBtn = document.getElementById('clear-monsters') as HTMLButtonElement
-
   const runSimBtn = document.getElementById('run-sim') as HTMLButtonElement
   const stopSimBtn = document.getElementById('stop-sim') as HTMLButtonElement
   const clearLogBtn = document.getElementById('clear-log') as HTMLButtonElement
@@ -143,8 +147,12 @@ document.addEventListener('DOMContentLoaded', (): void => {
     row.dataset.prefix = defs.prefix
   }
 
-  const resetTable = (body: HTMLTableSectionElement, defs: CharStats[], template: HTMLTableRowElement): void => {
+  const resetTable = (body: HTMLTableSectionElement): void => {
     Array.from(body.rows).forEach((r) => r.remove())
+  }
+
+  const initTable = (body: HTMLTableSectionElement, defs: CharStats[], template: HTMLTableRowElement): void => {
+    resetTable(body)
 
     for (let i = 0; i < defs.length; i++) {
       addRow(body, defs[i], template)
@@ -152,8 +160,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
   }
 
   // initial setup
-  resetTable(playersBody, PlayerTemplates, playerTemplate)
-  resetTable(monstersBody, MonsterTemplates, monsterTemplate)
+  initTable(playersBody, PlayerTemplates, playerTemplate)
+  initTable(monstersBody, MonsterTemplates, monsterTemplate)
 
   addPlayerBtn.addEventListener('click', (e) => {
     e.preventDefault()
@@ -165,7 +173,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
   })
   clearPlayersBtn.addEventListener('click', (e) => {
     e.preventDefault()
-    resetTable(playersBody, PlayerTemplates, playerTemplate)
+    initTable(playersBody, PlayerTemplates, playerTemplate)
   })
 
   addMonsterBtn.addEventListener('click', (e) => {
@@ -174,7 +182,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
   })
   clearMonstersBtn.addEventListener('click', (e) => {
     e.preventDefault()
-    resetTable(monstersBody, MonsterTemplates, monsterTemplate)
+    initTable(monstersBody, MonsterTemplates, monsterTemplate)
   })
 
   clearLogBtn.addEventListener('click', (e) => {
@@ -197,47 +205,71 @@ document.addEventListener('DOMContentLoaded', (): void => {
   })
 
   exportCfgBtn.addEventListener('click', (): void => {
-    const cfg = {
+    const cfg: BattleSimulationConfig = {
+      battleCount: parseInt(battleCount.value, 10),
+      biasMonsters: parseInt(biasMonstersInput.value, 10),
+      biasPlayers: parseInt(biasPlayersInput.value, 10),
+      maxAttacks: parseInt(maxAttacksInput.value, 10),
       monsters: readConfig(monstersBody),
       players: readConfig(playersBody),
+      strategy: strategySelect.value,
     }
     configArea.value = JSON.stringify(cfg, null, 2)
   })
 
   importCfgBtn.addEventListener('click', (): void => {
     try {
-      const cfg = JSON.parse(configArea.value) as { players: ICharacter[]; monsters: ICharacter[] }
-      resetTable(playersBody, PlayerTemplates, playerTemplate)
-      resetTable(monstersBody, MonsterTemplates, monsterTemplate)
+      const config = JSON.parse(configArea.value) as BattleSimulationConfig
 
-      cfg.players.forEach((char) => {
+      // Global settings
+      if (config.battleCount) {
+        battleCount.value = String(config.battleCount)
+      }
+      if (config.strategy) {
+        strategySelect.value = config.strategy
+      }
+      if (config.biasPlayers) {
+        biasPlayersInput.value = String(config.biasPlayers)
+      }
+      if (config.biasMonsters) {
+        biasMonstersInput.value = String(config.biasMonsters)
+      }
+      if (config.maxAttacks) {
+        maxAttacksInput.value = String(config.maxAttacks)
+      }
+
+      // Char Tables
+      resetTable(playersBody)
+      resetTable(monstersBody)
+
+      config.players.forEach((char) => {
         addRow(playersBody, PlayerCharTemplate, playerTemplate)
-        initRow(playersBody.lastElementChild as HTMLTableRowElement, PlayerCharTemplate)
-        // then overwrite with imported values:
-        const last = playersBody.lastElementChild as HTMLTableRowElement
-
-        ;(last.querySelector('.name-input') as HTMLInputElement).value = char.name
-        ;(last.querySelector('.ac-input') as HTMLInputElement).value = char.armorClass.toString()
-        ;(last.querySelector('.tohit-input') as HTMLInputElement).value = char.toHit.toString()
-        ;(last.querySelector('.hd-count-input') as HTMLInputElement).value = char.hitDice[0].toString()
-        ;(last.querySelector('.hd-type-select') as HTMLSelectElement).value = String(char.hitDice[1])
-        ;(last.querySelector('.damage-input') as HTMLInputElement).value = char.damage.join(',')
+        initRow(playersBody.lastElementChild as HTMLTableRowElement, {
+          armorClass: char.armorClass,
+          damage: char.damage.join(','),
+          hdCount: char.hitDice[0],
+          hdType: char.hitDice[1],
+          prefix: char.name,
+          toHit: char.toHit,
+        })
       })
-      cfg.monsters.forEach((char) => {
+
+      config.monsters.forEach((char) => {
         addRow(monstersBody, MonsterCharTemplate, monsterTemplate)
-        initRow(monstersBody.lastElementChild as HTMLTableRowElement, MonsterCharTemplate)
-        const last = monstersBody.lastElementChild as HTMLTableRowElement
-
-        ;(last.querySelector('.name-input') as HTMLInputElement).value = char.name
-        ;(last.querySelector('.ac-input') as HTMLInputElement).value = char.armorClass.toString()
-        ;(last.querySelector('.tohit-input') as HTMLInputElement).value = char.toHit.toString()
-        ;(last.querySelector('.hd-count-input') as HTMLInputElement).value = char.hitDice[0].toString()
-        ;(last.querySelector('.hd-type-select') as HTMLSelectElement).value = String(char.hitDice[1])
-        ;(last.querySelector('.damage-input') as HTMLInputElement).value = char.damage.join(',')
+        initRow(monstersBody.lastElementChild as HTMLTableRowElement, {
+          armorClass: char.armorClass,
+          damage: char.damage.join(','),
+          hdCount: char.hitDice[0],
+          hdType: char.hitDice[1],
+          prefix: char.name,
+          toHit: char.toHit,
+        })
       })
+
       reindexNames(playersBody)
       reindexNames(monstersBody)
-    } catch {
+    } catch (err) {
+      console.error(err)
       alert('Invalid JSON config')
     }
   })
