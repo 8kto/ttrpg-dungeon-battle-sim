@@ -1,5 +1,6 @@
 import type { Dice } from 'ttrpg-lib-dice'
 
+import { MonsterNamesChunks, PlayerNamesChunks } from './config/names'
 import {
   HenchmanCharTemplate,
   MonsterCharTemplate,
@@ -9,6 +10,7 @@ import {
 } from './consts'
 import { BattleSimulator } from './services/BattleSimulator'
 import { Logger, LogLevel } from './services/Logger'
+import { NameProvider } from './services/NameProvider'
 import type { ICharacter } from './services/types'
 import { Strategy } from './services/types'
 import type { BattleSimulationConfig, CharStats } from './types'
@@ -164,14 +166,16 @@ document.addEventListener('DOMContentLoaded', (): void => {
   // initial setup
   initTable(playersBody, PlayerTemplates, playerTemplate)
   initTable(monstersBody, MonsterTemplates, monsterTemplate)
+  const playersNameProvider = new NameProvider(PlayerNamesChunks)
+  const monsterNameProvider = new NameProvider(MonsterNamesChunks)
 
   addPlayerBtn.addEventListener('click', (e) => {
     e.preventDefault()
-    addRow(playersBody, PlayerCharTemplate, playerTemplate)
+    addRow(playersBody, { ...PlayerCharTemplate, prefix: playersNameProvider.getName() }, playerTemplate)
   })
   addHenchBtn.addEventListener('click', (e) => {
     e.preventDefault()
-    addRow(playersBody, HenchmanCharTemplate, playerTemplate)
+    addRow(playersBody, { ...HenchmanCharTemplate, prefix: playersNameProvider.getName('(H)') }, playerTemplate)
   })
   clearPlayersBtn.addEventListener('click', (e) => {
     e.preventDefault()
@@ -180,7 +184,14 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
   addMonsterBtn.addEventListener('click', (e) => {
     e.preventDefault()
-    addRow(monstersBody, MonsterCharTemplate, monsterTemplate)
+    addRow(
+      monstersBody,
+      {
+        ...MonsterCharTemplate,
+        prefix: monsterNameProvider.getName('(M)'),
+      },
+      monsterTemplate,
+    )
   })
   clearMonstersBtn.addEventListener('click', (e) => {
     e.preventDefault()
