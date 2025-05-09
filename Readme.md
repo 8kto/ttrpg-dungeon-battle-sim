@@ -20,12 +20,13 @@ Each combatant can be defined by:
 - Armor Class (ascending)
 - Attack Bonus (to-hit)
 - Hit Dice
-- Damage: formulas like d6, 2d4, d6+1. Separate multiple attacks with commas.
+- Damage: formulas like `d6`, `2d4`, `d6+1`. Separate multiple attacks with commas.
 
 Two modes of simulation are available:
 
-- **Average**: uses expected values for hit points and damage
+- **Average**: uses average values for hit points and damage
 - **Random**: rolls dice for each attack and hit-point roll
+- **Max**: uses max values for hit points and damage (e.g., `6` for `d6` and `5` for `d4+1`)
 
 ## Features
 
