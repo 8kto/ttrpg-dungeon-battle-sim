@@ -8,7 +8,7 @@ import {
   PlayerTemplates,
 } from './consts'
 import { BattleSimulator } from './services/BattleSimulator'
-import { Logger } from './services/Logger'
+import { Logger, LogLevel } from './services/Logger'
 import type { ICharacter } from './services/types'
 import { Strategy } from './services/types'
 import type { BattleSimulationConfig, CharStats } from './types'
@@ -51,6 +51,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const biasPlayersInput = document.getElementById('bias-players') as HTMLInputElement
   const biasMonstersInput = document.getElementById('bias-monsters') as HTMLInputElement
   const maxAttacksInput = document.getElementById('max-attacks') as HTMLInputElement
+  const logsCheckbox = document.getElementById('logs-checkbox') as HTMLInputElement
+
   const progressBar = document.getElementById('progress-bar') as HTMLProgressElement
 
   const tabLogBtn = document.getElementById('tab-log-btn') as HTMLButtonElement
@@ -303,7 +305,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
     for (let i = 0; i < runs; i++) {
       // if controller.abort() called, stop immediately
       if (signal.aborted) {
-        logger.log('⏹️ Simulation aborted')
+        logger.warn('⏹️ Simulation aborted')
         break
       }
 
@@ -335,7 +337,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
   runSimBtn.addEventListener('click', async (e): Promise<void> => {
     e.preventDefault()
 
-    logger.clear()
+    logger.clear().setLevel(logsCheckbox.checked ? LogLevel.INFO : LogLevel.WARNING)
     controller = new AbortController()
     signal = controller.signal
     document.body.style.cursor = 'wait'
@@ -345,21 +347,22 @@ document.addEventListener('DOMContentLoaded', (): void => {
     const runs = Math.max(1, parseInt(battleCount.value, 10) || 1)
     const initialP = playersBody.rows.length
 
+    logger.warn('Starting simulation...')
     const startTime = performance.now()
     const { survP, winsM, winsP } = await runBattles(runs, signal, progressBar, logger, getBattleSimulator)
     const elapsedMs = performance.now() - startTime
     const elapsedSec = (elapsedMs / 1000).toFixed(1)
 
-    logger.log('\n')
-    logger.log(
+    logger.warn('\n')
+    logger.warn(
       `Players win: ${((winsP / runs) * 100).toFixed(1)}%, Monsters win: ${((winsM / runs) * 100).toFixed(1)}%`,
     )
 
     if (winsP) {
-      logger.log(`>> Avg Players survivors: ${((survP / (winsP * initialP)) * 100).toFixed(1)}%`)
+      logger.warn(`>> Avg Players survivors: ${((survP / (winsP * initialP)) * 100).toFixed(1)}%`)
     }
-    logger.log(`>> Strategy ${strategySelect.value}, ${runs} battles`)
-    logger.log(`>> Execution time: ${elapsedSec} s`)
+    logger.warn(`>> Strategy ${strategySelect.value}, ${runs} battles`)
+    logger.warn(`>> Execution time: ${elapsedSec} s`)
 
     document.body.style.cursor = 'default'
   })

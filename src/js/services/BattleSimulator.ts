@@ -93,7 +93,7 @@ export class BattleSimulator {
 
       // if nobody attacked or was attacked this round, end battle
       if (!anyAction) {
-        this.logger.log('⏸️ No more valid attacks — ending simulation')
+        this.logger.warn('⏸️ No more valid attacks — ending simulation')
         break
       }
     }
