@@ -1,23 +1,23 @@
+// DivLogger.ts
 export class Logger {
-  private textarea: HTMLTextAreaElement
+  private container: HTMLElement
   private buffer: string[] = []
   private scheduled: boolean = false
 
   constructor(id: string) {
-    this.textarea = document.getElementById(id) as HTMLTextAreaElement
-  }
-
-  lock(): this {
-    if (this.textarea) {
-      this.textarea.setAttribute('readonly', 'readonly')
-      this.textarea.setAttribute('disabled', 'disabled')
+    const el = document.getElementById(id)
+    if (!el) {
+      throw new Error(`No element with id="${id}"`)
     }
-
-    return this
+    this.container = el
   }
 
   log(message: string): void {
-    this.buffer.push(`${message}\n`)
+    // split out any newlines into separate lines
+    message.split('\n').forEach((line) => {
+      this.buffer.push(line)
+    })
+
     if (!this.scheduled) {
       this.scheduled = true
       requestAnimationFrame(() => this.flush())
@@ -26,23 +26,21 @@ export class Logger {
 
   clear(): void {
     this.buffer = []
-    this.textarea.value = ''
+    this.container.innerHTML = ''
   }
 
   private flush(): void {
-    // Bulk-append everything in one DOM write
-    this.textarea.value += this.buffer.join('')
-    this.textarea.scrollTop = this.textarea.scrollHeight
+    const frag = document.createDocumentFragment()
+    for (const line of this.buffer) {
+      const p = document.createElement('p')
+      p.textContent = line
+      frag.appendChild(p)
+    }
+    this.container.appendChild(frag)
+    // scroll to bottom
+    this.container.scrollTop = this.container.scrollHeight
+
     this.buffer = []
     this.scheduled = false
-  }
-
-  release(): this {
-    if (this.textarea) {
-      this.textarea.removeAttribute('readonly')
-      this.textarea.removeAttribute('disabled')
-    }
-
-    return this
   }
 }
