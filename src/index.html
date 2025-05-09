@@ -37,10 +37,10 @@
       rel="stylesheet"
     />
   </head>
-  <body class="bg-gray-100 text-gray-900">
+  <body class="bg-gray-100 text-gray-900 min-h-screen">
     <div class="container mx-auto p-6">
       <h1 class="text-4xl font-bold mb-2">Dungeon Battle Simulator</h1>
-      <p class="my-2 text-lg text-gray-500">
+      <p class="my-2 text-lg color-muted">
         A browser-based tool for simulating turn-based combat between players and monsters. Compatible with the world’s
         most popular role-playing game.
       </p>
@@ -60,7 +60,7 @@
           <table class="w-full table-auto bg-white shadow rounded">
             <thead class="bg-gray-200">
               <tr>
-                <th class="p-2 text-left">Name</th>
+                <th class="p-2 text-left table-header--name">Name</th>
                 <th class="p-2 text-left">AC</th>
                 <th class="p-2 text-left">To Hit</th>
                 <th class="p-2 text-left">HD Count</th>
@@ -96,12 +96,12 @@
                     class="damage-input w-full border rounded px-2"
                     required
                     pattern="^\d*d\d+(\+\d+)?(,\s*\d*d\d+(\+\d+)?)*$"
-                    placeholder="e.g. d6 or d6,d6"
+                    title="Use formulas like d6, 2d4, d6+1; separate multiple attacks with commas"
                   />
                 </td>
-                <td class="p-2 text-center space-x-2">
-                  <button class="duplicate-row text-blue-500" title="Duplicate">⎘</button>
-                  <button class="remove-row text-red-500" title="Remove">×</button>
+                <td class="p-2 text-center space-x-2 min-w-12">
+                  <button class="duplicate-row" title="Duplicate">⎘</button>
+                  <button class="remove-row" title="Remove">×</button>
                 </td>
               </tr>
             </tbody>
@@ -121,7 +121,7 @@
           <table class="w-full table-auto bg-white shadow rounded">
             <thead class="bg-gray-200">
               <tr>
-                <th class="p-2 text-left">Name</th>
+                <th class="p-2 text-left table-header--name">Name</th>
                 <th class="p-2 text-left">AC</th>
                 <th class="p-2 text-left">To Hit</th>
                 <th class="p-2 text-left">HD Count</th>
@@ -157,12 +157,12 @@
                     class="damage-input w-full border rounded px-2"
                     required
                     pattern="^\d*d\d+(\+\d+)?(,\s*\d*d\d+(\+\d+)?)*$"
-                    placeholder="e.g. d6 or d6,d6"
+                    title="Use formulas like d6, 2d4, d6+1; separate multiple attacks with commas"
                   />
                 </td>
-                <td class="p-2 text-center space-x-2">
-                  <button class="duplicate-row text-blue-500" title="Duplicate">⎘</button>
-                  <button class="remove-row text-red-500" title="Remove">×</button>
+                <td class="p-2 text-center space-x-2 min-w-12">
+                  <button class="duplicate-row" title="Duplicate">⎘</button>
+                  <button class="remove-row" title="Remove">×</button>
                 </td>
               </tr>
             </tbody>
@@ -224,6 +224,23 @@
         <div class="flex flex-col justify-end">
           <button id="clear-log" class="secondary-button w-32 h-10" title="Clear log output">Clear Log</button>
         </div>
+
+        <!-- Stop simulation -->
+        <div class="flex flex-col justify-end">
+          <button disabled id="stop-sim" class="secondary-button w-32 h-10" title="Start simulation">Stop</button>
+        </div>
+      </div>
+
+      <div class="flex flex-row">
+        <div class="flex items-center space-x-2 mt-2 mb-4">
+          <input
+            id="logs-checkbox"
+            type="checkbox"
+            checked
+            class="h-5 w-5 text-amber-600 bg-amber-50 border-amber-700 rounded focus:ring-2 focus:ring-amber-500"
+          />
+          <label for="logs-checkbox" class="text-amber-900 font-medium"> Logs </label>
+        </div>
       </div>
 
       <!-- Progress -->
@@ -231,21 +248,14 @@
 
       <!-- Tabs -->
       <div class="mb-2 border-b flex">
-        <button id="tab-log-btn" class="px-4 py-2 -mb-px border-b-2 font-medium text-blue-600 border-blue-600">
-          Log
-        </button>
-        <button id="tab-config-btn" class="px-4 py-2 text-gray-600">Config</button>
+        <button id="tab-log-btn" class="tab-header active">Log</button>
+        <button id="tab-config-btn" class="tab-header">Config</button>
       </div>
       <div id="tab-log" class="">
-        <textarea
-          id="result-log"
-          class="w-full border rounded p-3 font-mono text-sm"
-          rows="15"
-          readonly
-          placeholder="Simulation output…"
-        ></textarea>
+        <div id="result-log" class="h-56 overflow-y-auto border rounded p-3 font-mono text-sm bg-white"></div>
       </div>
       <div id="tab-config" class="hidden">
+        <p class="my-4 color-muted">Export players and monsters.</p>
         <div class="flex space-x-2 mb-2">
           <button id="export-config" class="primary-button mid-button">Export Config</button>
           <button id="import-config" class="secondary-button mid-button">Import Config</button>

@@ -1,3 +1,5 @@
+import { shuffleArray } from 'ttrpg-lib-dice'
+
 import { Side } from '../types'
 import type { Logger } from './Logger'
 import { Participant } from './Participant'
@@ -14,14 +16,15 @@ type BattleResult = {
 }
 
 export class BattleSimulator {
-  private readonly participants: Participant[]
   private readonly targetSelector: ITargetSelector
   private readonly strategy: ICombatStrategy
   private roundsCount: number = 0
+  private readonly sidePlayers: Participant[]
+  private readonly sideMonsters: Participant[]
 
   constructor(
-    sideA: IPlayerCharacter[],
-    sideB: IMonster[],
+    players: IPlayerCharacter[],
+    monsters: IMonster[],
     strategyMode: Strategy,
     biasPlayers: number,
     biasMonsters: number,
@@ -31,12 +34,16 @@ export class BattleSimulator {
     this.targetSelector = new RandomTargetSelector()
     this.strategy = getStrategy(strategyMode)
 
-    this.participants = [
-      ...sideA.map((c) => new Participant(c, Side.Players, this.strategy, biasPlayers, maxAttacksPerChar, this.logger)),
-      ...sideB.map(
-        (c) => new Participant(c, Side.Monsters, this.strategy, biasMonsters, maxAttacksPerChar, this.logger),
-      ),
-    ]
+    this.sidePlayers = players.map(
+      (c) => new Participant(c, Side.Players, this.strategy, biasPlayers, maxAttacksPerChar, this.logger),
+    )
+    this.sideMonsters = monsters.map(
+      (c) => new Participant(c, Side.Monsters, this.strategy, biasMonsters, maxAttacksPerChar, this.logger),
+    )
+  }
+
+  get participants(): Participant[] {
+    return this.sidePlayers.concat(this.sideMonsters)
   }
 
   renderDetails(): this {
@@ -45,6 +52,10 @@ export class BattleSimulator {
     })
 
     return this
+  }
+
+  getSortedByInitiative(): Participant[][] {
+    return shuffleArray([this.sidePlayers, this.sideMonsters])
   }
 
   hasSurvivors(side: Side): boolean {
@@ -57,16 +68,21 @@ export class BattleSimulator {
       this.roundsCount++
       this.participants.forEach((p) => p.resetAttackLimit())
 
-      this.logger.log(`>>> round ${this.roundsCount}`)
       let anyAction = false
+      const sides = this.getSortedByInitiative()
+      const combatants = shuffleArray(sides[0]).concat(shuffleArray(sides[1]))
+      const initiativeSfx = combatants[0].side === Side.Players ? 'players won initiative' : 'monsters won initiative'
+
+      this.logger.log(`>>> round ${this.roundsCount}, ${initiativeSfx}`)
 
       // Each combatant does its attacks
-      for (const combatant of this.participants) {
+      for (const combatant of combatants) {
         if (combatant.currentHp <= 0) {
           continue
         }
 
-        const enemies = this.participants.filter((e) => e.side !== combatant.side && e.isValidTarget())
+        // The target will be chosen randomly
+        const enemies = combatant.side === Side.Players ? this.sideMonsters : this.sidePlayers
         if (!enemies.length) {
           continue
         }
@@ -77,7 +93,7 @@ export class BattleSimulator {
 
       // if nobody attacked or was attacked this round, end battle
       if (!anyAction) {
-        this.logger.log('⏸️ No more valid attacks — ending simulation')
+        this.logger.warn('⏸️ No more valid attacks — ending simulation')
         break
       }
     }

@@ -3,6 +3,10 @@
 A browser-based tool for simulating turn-based combat between players and monsters. Compatible with the world’s
 most popular role-playing game.
 
+## Demo
+
+https://dungeon-battle.ivlev.blog/
+
 ## Overview
 
 Battle Simulator models engagements between two groups:
@@ -16,7 +20,7 @@ Each combatant can be defined by:
 - Armor Class (ascending)
 - Attack Bonus (to-hit)
 - Hit Dice
-- Damage: one or more attacks, e.g. `d6, d8+1`
+- Damage: formulas like d6, 2d4, d6+1. Separate multiple attacks with commas.
 
 Two modes of simulation are available:
 

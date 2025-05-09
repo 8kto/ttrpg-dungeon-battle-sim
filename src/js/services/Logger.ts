@@ -1,29 +1,66 @@
+export enum LogLevel {
+  INFO,
+  WARNING,
+}
+
 export class Logger {
-  private textarea: HTMLTextAreaElement
+  private container: HTMLElement
   private buffer: string[] = []
   private scheduled: boolean = false
 
-  constructor(id: string) {
-    this.textarea = document.getElementById(id) as HTMLTextAreaElement
+  constructor(
+    id: string,
+    private level: LogLevel = LogLevel.INFO,
+  ) {
+    const el = document.getElementById(id)
+    if (!el) {
+      throw new Error(`No element with id="${id}"`)
+    }
+    this.container = el
   }
 
-  log(message: string): void {
-    this.buffer.push(`${message}\n`)
+  setLevel(level: LogLevel): void {
+    this.level = level
+  }
+
+  log(message: string, level: LogLevel = LogLevel.INFO): void {
+    if (level < this.level) {
+      return
+    }
+
+    // split out any newlines into separate lines
+    message.split('\n').forEach((line) => {
+      this.buffer.push(line)
+    })
+
     if (!this.scheduled) {
       this.scheduled = true
       requestAnimationFrame(() => this.flush())
     }
   }
 
-  clear(): void {
+  warn(message: string): void {
+    this.log(message, LogLevel.WARNING)
+  }
+
+  clear(): this {
     this.buffer = []
-    this.textarea.value = ''
+    this.container.innerHTML = ''
+
+    return this
   }
 
   private flush(): void {
-    // Bulk-append everything in one DOM write
-    this.textarea.value += this.buffer.join('')
-    this.textarea.scrollTop = this.textarea.scrollHeight
+    const frag = document.createDocumentFragment()
+    for (const line of this.buffer) {
+      const p = document.createElement('p')
+      p.textContent = line
+      frag.appendChild(p)
+    }
+    this.container.appendChild(frag)
+    // scroll to bottom
+    this.container.scrollTop = this.container.scrollHeight
+
     this.buffer = []
     this.scheduled = false
   }
