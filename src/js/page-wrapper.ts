@@ -36,7 +36,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const addMonsterBtn = document.getElementById('add-monster') as HTMLButtonElement
   const clearMonstersBtn = document.getElementById('clear-monsters') as HTMLButtonElement
 
-  const runBtn = document.getElementById('run-sim') as HTMLButtonElement
+  const runSimBtn = document.getElementById('run-sim') as HTMLButtonElement
+  const stopSimBtn = document.getElementById('stop-sim') as HTMLButtonElement
   const clearLogBtn = document.getElementById('clear-log') as HTMLButtonElement
   const exportCfgBtn = document.getElementById('export-config') as HTMLButtonElement
   const importCfgBtn = document.getElementById('import-config') as HTMLButtonElement
@@ -54,6 +55,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const tabConfig = document.getElementById('tab-config') as HTMLDivElement
   const configArea = document.getElementById('config-area') as HTMLTextAreaElement
 
+  let controller = new AbortController()
+  let { signal } = controller
   const logger = new Logger('result-log')
 
   const bindRow = (row: HTMLTableRowElement, defs: CharStats, body: HTMLTableSectionElement): void => {
@@ -182,14 +185,14 @@ document.addEventListener('DOMContentLoaded', (): void => {
   tabLogBtn.addEventListener('click', (): void => {
     tabLog.classList.remove('hidden')
     tabConfig.classList.add('hidden')
-    tabLogBtn.classList.add('border-b-2', 'border-blue-600', 'text-blue-600')
-    tabConfigBtn.classList.remove('border-blue-600', 'text-blue-600')
+    tabLogBtn.classList.add('active')
+    tabConfigBtn.classList.remove('active')
   })
   tabConfigBtn.addEventListener('click', (): void => {
     tabConfig.classList.remove('hidden')
     tabLog.classList.add('hidden')
-    tabConfigBtn.classList.add('border-b-2', 'border-blue-600', 'text-blue-600')
-    tabLogBtn.classList.remove('border-blue-600', 'text-blue-600')
+    tabConfigBtn.classList.add('active')
+    tabLogBtn.classList.remove('active')
   })
 
   exportCfgBtn.addEventListener('click', (): void => {
@@ -248,33 +251,42 @@ document.addEventListener('DOMContentLoaded', (): void => {
     return new BattleSimulator(players, monsters, strategy, biasPlayers, biasMonsters, maxAttacksPerChar, logger)
   }
 
-  // run simulation
-  runBtn.addEventListener('click', async (e): Promise<void> => {
-    e.preventDefault()
-    logger.clear()
-    document.body.style.cursor = 'wait'
-    progressBar.value = 0
-
-    const runs = Math.max(1, parseInt(battleCount.value, 10) || 1)
-
+  const runBattles = async (
+    runs: number,
+    signal: AbortSignal,
+    progressBar: HTMLProgressElement,
+    logger: Logger,
+    getBattleSimulator: () => BattleSimulator,
+  ): Promise<{
+    survP: number
+    winsM: number
+    winsP: number
+  }> => {
     let winsP = 0,
       winsM = 0,
       survP = 0
-    const initialP = playersBody.rows.length
 
     for (let i = 0; i < runs; i++) {
+      // if controller.abort() called, stop immediately
+      if (signal.aborted) {
+        logger.log('⏹️ Simulation aborted')
+        break
+      }
+
+      // allow UI to update
       await new Promise(requestAnimationFrame)
+
       progressBar.value = ((i + 1) / runs) * 100
 
       logger.log(`\n${'-'.repeat(80)}`)
       logger.log(`[Battle ${i + 1}]`)
       logger.log('-'.repeat(80))
 
-      const battleSimulator = getBattleSimulator()
-      battleSimulator.renderDetails()
+      const sim = getBattleSimulator()
+      sim.renderDetails()
       logger.log('\n')
 
-      const res = battleSimulator.simulate()
+      const res = sim.simulate()
       if (res.winner === Side.Players) {
         winsP++
         survP += res.survivors.filter((s) => s.side === Side.Players).length
@@ -282,6 +294,24 @@ document.addEventListener('DOMContentLoaded', (): void => {
         winsM++
       }
     }
+
+    return { survP, winsM, winsP }
+  }
+
+  runSimBtn.addEventListener('click', async (e): Promise<void> => {
+    e.preventDefault()
+
+    logger.clear()
+    controller = new AbortController()
+    signal = controller.signal
+    document.body.style.cursor = 'wait'
+    progressBar.value = 0
+    stopSimBtn.removeAttribute('disabled')
+
+    const runs = Math.max(1, parseInt(battleCount.value, 10) || 1)
+    const initialP = playersBody.rows.length
+
+    const { survP, winsM, winsP } = await runBattles(runs, signal, progressBar, logger, getBattleSimulator)
 
     logger.log('\n')
     logger.log(
@@ -294,5 +324,10 @@ document.addEventListener('DOMContentLoaded', (): void => {
     logger.log(`>> Strategy ${strategySelect.value}, ${runs} battles`)
 
     document.body.style.cursor = 'default'
+  })
+
+  stopSimBtn.addEventListener('click', () => {
+    controller.abort()
+    stopSimBtn.setAttribute('disabled', 'disabled')
   })
 })
