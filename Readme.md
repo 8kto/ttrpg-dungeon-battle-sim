@@ -30,8 +30,7 @@ Two modes of simulation are available:
 
 ## Features
 
-- Deterministic (Average) or stochastic (Random) outcomes
-- Configurable number of simulations
+- Simulation can be configured with Stratege, Battles number, Biases for skipping turns for both sides, Maximum attacks allowed per figure.
 - Detailed logs for each battle and round
 - Summary of win percentages and average survivors
 - Export and Import from JSON to restore or share settings
