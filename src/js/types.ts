@@ -1,9 +1,11 @@
+import type { Dice } from 'ttrpg-lib-dice'
+
 export type CharStats = {
   prefix: string
-  hdCount: string
-  hdType: string
-  toHit: string
-  armor: string
+  hdCount: number
+  hdType: Dice
+  toHit: number
+  armorClass: number
   damage: string
 }
 

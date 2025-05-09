@@ -1,6 +1,6 @@
 import type { Dice } from 'ttrpg-lib-dice'
 
-import { henchmanDefaults, monsterDefaults, playerDefaults } from './consts'
+import { HenchmanCharTemplate, MonsterCharTemplate, MonsterTemplates, PlayerCharTemplate, PlayerTemplates } from './consts'
 import { BattleSimulator } from './services/BattleSimulator'
 import { Logger } from './services/Logger'
 import type { ICharacter } from './services/types'
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
   let { signal } = controller
   const logger = new Logger('result-log')
 
-  const bindRow = (row: HTMLTableRowElement, defs: CharStats, body: HTMLTableSectionElement): void => {
+  const bindRowControls = (row: HTMLTableRowElement, defs: CharStats, body: HTMLTableSectionElement): void => {
     const removeBtn = row.querySelector('.remove-row') as HTMLButtonElement
     const dupBtn = row.querySelector('.duplicate-row') as HTMLButtonElement
 
@@ -69,49 +69,53 @@ document.addEventListener('DOMContentLoaded', (): void => {
     dupBtn.addEventListener('click', (e): void => {
       e.preventDefault()
       const clone = row.cloneNode(true) as HTMLTableRowElement
+
       // copy all fields
       inputs.forEach((inp, i) => {
         const target = clone.querySelectorAll('input')[i] as HTMLInputElement
         target.value = inp.value
       })
+
       selects.forEach((sel, i) => {
         const target = clone.querySelectorAll('select')[i] as HTMLSelectElement
         target.selectedIndex = sel.selectedIndex
       })
+
       clone.dataset.prefix = defs.prefix
       body.insertBefore(clone, row.nextSibling)
-      bindRow(clone, defs, body)
-      reindex(body)
+
+      bindRowControls(clone, defs, body)
+      reindexNames(body)
     })
 
     removeBtn.addEventListener('click', (e): void => {
       e.preventDefault()
       if (body.rows.length > 1) {
         row.remove()
-        reindex(body)
+        reindexNames(body)
       }
     })
   }
 
-  const reindex = (body: HTMLTableSectionElement): void => {
-    let pCount = 1,
-      hCount = 1,
-      mCount = 1
+  const reindexNames = (body: HTMLTableSectionElement): void => {
+    const nameIndices: Record<string, number> = {}
 
     Array.from(body.rows).forEach((row) => {
-      // const prefix = row.dataset.prefix as string
-      const ni = row.querySelector('.name-input') as HTMLInputElement
-
-      if (ni.value.startsWith('Player')) {
-        ni.value = `Player ${pCount++}`
+      const name = row.dataset.prefix
+      if (!name) {
+        return
       }
 
-      if (ni.value.startsWith('Monster')) {
-        ni.value = `Monster ${mCount++}`
-      }
+      if (!nameIndices[name]) {
+        nameIndices[name] = 1
+      } else {
+        ++nameIndices[name]
+        const nameInput = row.querySelector<HTMLInputElement>('.name-input')
+        if (!nameInput) {
+          return
+        }
 
-      if (ni.value.startsWith('Henchman')) {
-        ni.value = `Henchman ${hCount++}`
+        nameInput.value = `${name} ${nameIndices[name]}`
       }
     })
   }
@@ -122,58 +126,55 @@ document.addEventListener('DOMContentLoaded', (): void => {
     newRow.querySelectorAll('input').forEach((inp) => (inp.value = ''))
     newRow.querySelectorAll('select').forEach((sel) => ((sel as HTMLSelectElement).selectedIndex = 0))
     body.appendChild(newRow)
-    bindRow(newRow, defs, body)
-    initDefaults(newRow, defs, body)
-    reindex(body)
+
+    bindRowControls(newRow, defs, body)
+    initRow(newRow, defs)
+    reindexNames(body)
   }
 
-  const initDefaults = (row: HTMLTableRowElement, defs: CharStats, body: HTMLTableSectionElement): void => {
-    const idx = Array.from(body.rows).indexOf(row) + 1
-    row.dataset.prefix = defs.prefix
-    ;(row.querySelector('.name-input') as HTMLInputElement).value = `${defs.prefix} ${idx}`
-    ;(row.querySelector('.ac-input') as HTMLInputElement).value = defs.armor
-    ;(row.querySelector('.tohit-input') as HTMLInputElement).value = defs.toHit
-    ;(row.querySelector('.hd-count-input') as HTMLInputElement).value = defs.hdCount
-    ;(row.querySelector('.hd-type-select') as HTMLSelectElement).value = defs.hdType
+  const initRow = (row: HTMLTableRowElement, defs: CharStats): void => {
+    ;(row.querySelector('.name-input') as HTMLInputElement).value = defs.prefix
+    ;(row.querySelector('.ac-input') as HTMLInputElement).value = defs.armorClass.toString()
+    ;(row.querySelector('.tohit-input') as HTMLInputElement).value = defs.toHit.toString()
+    ;(row.querySelector('.hd-count-input') as HTMLInputElement).value = defs.hdCount.toString()
+    ;(row.querySelector('.hd-type-select') as HTMLSelectElement).value = defs.hdType.toString()
     ;(row.querySelector('.damage-input') as HTMLInputElement).value = defs.damage
+
+    row.dataset.prefix = defs.prefix
   }
 
-  const clearGroup = (
-    body: HTMLTableSectionElement,
-    defs: CharStats,
-    count: number,
-    template: HTMLTableRowElement,
-  ): void => {
+  const resetTable = (body: HTMLTableSectionElement, defs: CharStats[], template: HTMLTableRowElement): void => {
     Array.from(body.rows).forEach((r) => r.remove())
-    for (let i = 0; i < count; i++) {
-      addRow(body, defs, template)
+
+    for (let i = 0; i < defs.length; i++) {
+      addRow(body, defs[i], template)
     }
   }
 
   // initial setup
-  clearGroup(playersBody, playerDefaults, 5, playerTemplate)
-  clearGroup(monstersBody, monsterDefaults, 1, monsterTemplate)
+  resetTable(playersBody, PlayerTemplates, playerTemplate)
+  resetTable(monstersBody, MonsterTemplates, monsterTemplate)
 
   addPlayerBtn.addEventListener('click', (e) => {
     e.preventDefault()
-    addRow(playersBody, playerDefaults, playerTemplate)
+    addRow(playersBody, PlayerCharTemplate, playerTemplate)
   })
   addHenchBtn.addEventListener('click', (e) => {
     e.preventDefault()
-    addRow(playersBody, henchmanDefaults, playerTemplate)
+    addRow(playersBody, HenchmanCharTemplate, playerTemplate)
   })
   clearPlayersBtn.addEventListener('click', (e) => {
     e.preventDefault()
-    clearGroup(playersBody, playerDefaults, 1, playerTemplate)
+    resetTable(playersBody, PlayerTemplates, playerTemplate)
   })
 
   addMonsterBtn.addEventListener('click', (e) => {
     e.preventDefault()
-    addRow(monstersBody, monsterDefaults, monsterTemplate)
+    addRow(monstersBody, MonsterCharTemplate, monsterTemplate)
   })
   clearMonstersBtn.addEventListener('click', (e) => {
     e.preventDefault()
-    clearGroup(monstersBody, monsterDefaults, 1, monsterTemplate)
+    resetTable(monstersBody, MonsterTemplates, monsterTemplate)
   })
 
   clearLogBtn.addEventListener('click', (e) => {
@@ -206,11 +207,12 @@ document.addEventListener('DOMContentLoaded', (): void => {
   importCfgBtn.addEventListener('click', (): void => {
     try {
       const cfg = JSON.parse(configArea.value) as { players: ICharacter[]; monsters: ICharacter[] }
-      clearGroup(playersBody, playerDefaults, 0, playerTemplate)
-      clearGroup(monstersBody, monsterDefaults, 0, monsterTemplate)
+      resetTable(playersBody, PlayerTemplates, playerTemplate)
+      resetTable(monstersBody, MonsterTemplates, monsterTemplate)
+
       cfg.players.forEach((char) => {
-        addRow(playersBody, playerDefaults, playerTemplate)
-        initDefaults(playersBody.lastElementChild as HTMLTableRowElement, playerDefaults, playersBody)
+        addRow(playersBody, PlayerCharTemplate, playerTemplate)
+        initRow(playersBody.lastElementChild as HTMLTableRowElement, PlayerCharTemplate)
         // then overwrite with imported values:
         const last = playersBody.lastElementChild as HTMLTableRowElement
 
@@ -222,8 +224,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
         ;(last.querySelector('.damage-input') as HTMLInputElement).value = char.damage.join(',')
       })
       cfg.monsters.forEach((char) => {
-        addRow(monstersBody, monsterDefaults, monsterTemplate)
-        initDefaults(monstersBody.lastElementChild as HTMLTableRowElement, monsterDefaults, monstersBody)
+        addRow(monstersBody, MonsterCharTemplate, monsterTemplate)
+        initRow(monstersBody.lastElementChild as HTMLTableRowElement, MonsterCharTemplate)
         const last = monstersBody.lastElementChild as HTMLTableRowElement
 
         ;(last.querySelector('.name-input') as HTMLInputElement).value = char.name
@@ -233,8 +235,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
         ;(last.querySelector('.hd-type-select') as HTMLSelectElement).value = String(char.hitDice[1])
         ;(last.querySelector('.damage-input') as HTMLInputElement).value = char.damage.join(',')
       })
-      reindex(playersBody)
-      reindex(monstersBody)
+      reindexNames(playersBody)
+      reindexNames(monstersBody)
     } catch {
       alert('Invalid JSON config')
     }
