@@ -308,10 +308,13 @@ document.addEventListener('DOMContentLoaded', (): void => {
     survP: number
     winsM: number
     winsP: number
+    roundsTotal: number
+    roundsAvg: number
   }> => {
     let winsP = 0,
       winsM = 0,
-      survP = 0
+      survP = 0,
+      roundsTotal = 0
 
     for (let i = 0; i < runs; i++) {
       // if controller.abort() called, stop immediately
@@ -340,9 +343,13 @@ document.addEventListener('DOMContentLoaded', (): void => {
       } else {
         winsM++
       }
-    }
+      roundsTotal += res.rounds
 
-    return { survP, winsM, winsP }
+      logger.log(`>>> total rounds: ${res.rounds}`)
+    }
+    const roundsAvg = parseFloat((roundsTotal / runs).toFixed(1))
+
+    return { roundsAvg, roundsTotal, survP, winsM, winsP }
   }
 
   runSimBtn.addEventListener('click', async (e): Promise<void> => {
@@ -360,7 +367,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
     logger.warn('Starting simulation...')
     const startTime = performance.now()
-    const { survP, winsM, winsP } = await runBattles(runs, signal, progressBar, logger, getBattleSimulator)
+    const { roundsAvg, survP, winsM, winsP } = await runBattles(runs, signal, progressBar, logger, getBattleSimulator)
     const elapsedMs = performance.now() - startTime
     const elapsedSec = (elapsedMs / 1000).toFixed(1)
 
@@ -373,6 +380,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
       logger.warn(`>> Avg Players survivors: ${((survP / (winsP * initialP)) * 100).toFixed(1)}%`)
     }
     logger.warn(`>> Strategy ${strategySelect.value}, ${runs} battles`)
+    logger.warn(`>> Avg Rounds: ${roundsAvg}`)
     logger.warn(`>> Execution time: ${elapsedSec} s`)
 
     document.body.style.cursor = 'default'
