@@ -54,9 +54,9 @@ describe('Logger', () => {
   })
 
   it('respects log level: suppresses INFO below threshold', () => {
-    logger.setLevel(LogLevel.WARNING)
-    logger.log('info 1', LogLevel.INFO)
-    logger.log('info 2', LogLevel.INFO)
+    logger.setLevel(LogLevel.NO_SKIP)
+    logger.log('info 1', LogLevel.CAN_SKIP)
+    logger.log('info 2', LogLevel.CAN_SKIP)
     // nothing logged
     expect(container.querySelectorAll('p')).toHaveLength(0)
 

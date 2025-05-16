@@ -1,16 +1,16 @@
 export enum LogLevel {
-  INFO,
-  WARNING,
+  CAN_SKIP,
+  NO_SKIP,
 }
 
 export class Logger {
-  private container: HTMLElement
+  private readonly container: HTMLElement
   private buffer: string[] = []
   private scheduled: boolean = false
 
   constructor(
     id: string,
-    private level: LogLevel = LogLevel.INFO,
+    private level: LogLevel = LogLevel.CAN_SKIP,
   ) {
     const el = document.getElementById(id)
     if (!el) {
@@ -23,7 +23,7 @@ export class Logger {
     this.level = level
   }
 
-  log(message: string, level: LogLevel = LogLevel.INFO): void {
+  log(message: string, level: LogLevel = LogLevel.CAN_SKIP): void {
     if (level < this.level) {
       return
     }
@@ -40,7 +40,7 @@ export class Logger {
   }
 
   warn(message: string): void {
-    this.log(message, LogLevel.WARNING)
+    this.log(message, LogLevel.NO_SKIP)
   }
 
   clear(): this {
@@ -63,5 +63,17 @@ export class Logger {
 
     this.buffer = []
     this.scheduled = false
+  }
+
+  lineBreak(level: LogLevel = LogLevel.CAN_SKIP): void {
+    this.log('\n', level)
+  }
+
+  delimiter(level: LogLevel = LogLevel.CAN_SKIP): void {
+    this.log('-'.repeat(80), level)
+  }
+
+  getContainer(): HTMLElement {
+    return this.container
   }
 }
