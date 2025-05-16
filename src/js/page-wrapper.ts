@@ -16,6 +16,11 @@ import { Strategy } from './services/types'
 import type { BattleSimulationConfig, CharStats } from './types'
 import { Side } from './types'
 
+const waitUiUpdate = async (): Promise<void> => {
+  // allow UI to update
+  await new Promise(requestAnimationFrame)
+}
+
 const readConfig = (body: HTMLTableSectionElement): ICharacter[] =>
   Array.from(body.rows).map((row) => {
     const ni = row.querySelector('.name-input') as HTMLInputElement
@@ -201,7 +206,30 @@ document.addEventListener('DOMContentLoaded', (): void => {
   clearLogBtn.addEventListener('click', (e) => {
     e.preventDefault()
     logger.clear()
+    progressBar.value = 0
   })
+
+  const initProgressDisplay = (): void => {
+    document.body.style.cursor = 'wait'
+
+    if (logsCheckbox.checked) {
+      progressBar.value = 0
+    } else {
+      runSimBtn.classList.add('inline-loading-indicator')
+      logger.getContainer().classList.add('bg-muted')
+    }
+  }
+
+  const stopProgressDisplay = (): void => {
+    if (logsCheckbox.checked) {
+      progressBar.value = 100
+    } else {
+      runSimBtn.classList.remove('inline-loading-indicator')
+      logger.getContainer().classList.remove('bg-muted')
+    }
+
+    document.body.style.cursor = 'default'
+  }
 
   // tab switching
   tabLogBtn.addEventListener('click', (): void => {
@@ -217,6 +245,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
     tabLogBtn.classList.remove('active')
   })
 
+  // Import/Export
   exportCfgBtn.addEventListener('click', (): void => {
     const cfg: BattleSimulationConfig = {
       battleCount: parseInt(battleCount.value, 10),
@@ -304,6 +333,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
     progressBar: HTMLProgressElement,
     logger: Logger,
     getBattleSimulator: () => BattleSimulator,
+    isLogEnabled: boolean,
   ): Promise<{
     survP: number
     winsM: number
@@ -323,18 +353,21 @@ document.addEventListener('DOMContentLoaded', (): void => {
         break
       }
 
-      // allow UI to update
-      await new Promise(requestAnimationFrame)
+      if (isLogEnabled && i % 50 === 0) {
+        await waitUiUpdate()
+        progressBar.value = ((i + 1) / runs) * 100
+      }
+      if (!isLogEnabled && i % 500 === 0) {
+        await waitUiUpdate()
+      }
 
-      progressBar.value = ((i + 1) / runs) * 100
-
-      logger.log(`\n${'-'.repeat(80)}`)
+      logger.delimiter()
       logger.log(`[Battle ${i + 1}]`)
-      logger.log('-'.repeat(80))
+      logger.delimiter()
 
       const sim = getBattleSimulator()
       sim.renderDetails()
-      logger.log('\n')
+      logger.lineBreak()
 
       const res = sim.simulate()
       if (res.winner === Side.Players) {
@@ -347,31 +380,47 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
       logger.log(`>>> total rounds: ${res.rounds}`)
     }
+
     const roundsAvg = parseFloat((roundsTotal / runs).toFixed(1))
 
     return { roundsAvg, roundsTotal, survP, winsM, winsP }
   }
 
+  const prepareUiForSimulation = (): void => {
+    logger.clear().setLevel(logsCheckbox.checked ? LogLevel.CAN_SKIP : LogLevel.NO_SKIP)
+    stopSimBtn.removeAttribute('disabled')
+  }
+  const releaseUiAfterSimulation = (): void => {
+    stopSimBtn.setAttribute('disabled', 'disabled')
+  }
+
   runSimBtn.addEventListener('click', async (e): Promise<void> => {
     e.preventDefault()
 
-    logger.clear().setLevel(logsCheckbox.checked ? LogLevel.INFO : LogLevel.WARNING)
+    initProgressDisplay()
+    prepareUiForSimulation()
+
     controller = new AbortController()
     signal = controller.signal
-    document.body.style.cursor = 'wait'
-    progressBar.value = 0
-    stopSimBtn.removeAttribute('disabled')
 
     const runs = Math.max(1, parseInt(battleCount.value, 10) || 1)
     const initialP = playersBody.rows.length
+    const isLogEnabled = logsCheckbox.checked
 
     logger.warn('Starting simulation...')
     const startTime = performance.now()
-    const { roundsAvg, survP, winsM, winsP } = await runBattles(runs, signal, progressBar, logger, getBattleSimulator)
+    const { roundsAvg, survP, winsM, winsP } = await runBattles(
+      runs,
+      signal,
+      progressBar,
+      logger,
+      getBattleSimulator,
+      isLogEnabled,
+    )
     const elapsedMs = performance.now() - startTime
     const elapsedSec = (elapsedMs / 1000).toFixed(1)
 
-    logger.warn('\n')
+    logger.lineBreak(LogLevel.NO_SKIP)
     logger.warn(
       `Players win: ${((winsP / runs) * 100).toFixed(1)}%, Monsters win: ${((winsM / runs) * 100).toFixed(1)}%`,
     )
@@ -383,12 +432,12 @@ document.addEventListener('DOMContentLoaded', (): void => {
     logger.warn(`>> Avg Rounds: ${roundsAvg}`)
     logger.warn(`>> Execution time: ${elapsedSec} s`)
 
-    document.body.style.cursor = 'default'
-    stopSimBtn.setAttribute('disabled', 'disabled')
+    stopProgressDisplay()
+    releaseUiAfterSimulation()
   })
 
   stopSimBtn.addEventListener('click', () => {
     controller.abort()
-    stopSimBtn.setAttribute('disabled', 'disabled')
+    releaseUiAfterSimulation()
   })
 })
