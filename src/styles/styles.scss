@@ -83,7 +83,7 @@ button[disabled] {
 }
 
 .mid-button {
-  @apply px-3 py-1;
+  @apply px-4 py-1.5;
 }
 
 .secondary-button {
@@ -99,6 +99,10 @@ button[disabled] {
   color: var(--muted-color);
 }
 
+.bg-muted {
+  @apply bg-gray-200;
+}
+
 label {
   color: var(--3rd-color);
 }
@@ -110,6 +114,9 @@ table {
   }
 }
 
+abbr {
+  text-underline-offset: 0.2rem;
+}
 abbr:hover {
   cursor: help;
 }
@@ -119,7 +126,7 @@ abbr:hover {
 }
 #progress-bar::-ms-fill {
   background-color: var(--alt-color);
-  border: none; /* remove default inset border */
+  border: none;
 }
 
 .tab-header {
@@ -146,4 +153,45 @@ abbr:hover {
 
 #result-log p:empty {
   height: 1rem;
+}
+
+@keyframes rotate360 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.logo-img {
+  display: inline-block;
+  transform-origin: center;
+
+  &:hover {
+    animation: rotate360 1s ease-in-out forwards;
+  }
+}
+
+@keyframes rotate-emoji {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#run-sim {
+  position: relative;
+  background: var(--alt-color);
+
+  &.inline-loading-indicator::after {
+    content: '🕸️';
+    display: inline-block;
+    margin-left: 0.5rem;
+    opacity: 1;
+    animation: rotate-emoji 1s linear infinite;
+  }
+}
+
+#result-log {
+  transition: background-color 0.2s ease;
 }
