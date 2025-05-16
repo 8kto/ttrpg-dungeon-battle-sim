@@ -39,7 +39,10 @@
   </head>
   <body class="bg-gray-100 text-gray-900 min-h-screen">
     <div class="container mx-auto p-6">
-      <h1 class="text-4xl font-bold mb-2">Dungeon Battle Simulator</h1>
+      <h1 class="text-4xl font-bold mb-2 flex items-center">
+        <img src="/images/android-chrome-192x192.png" alt="" class="logo-img w-12 h-12 mr-4" />
+        Dungeon Battle Simulator
+      </h1>
       <p class="my-2 text-lg color-muted">
         A browser-based tool for simulating turn-based combat between players and monsters. Compatible with the world’s
         most popular role-playing game.
@@ -51,10 +54,10 @@
           <h2 class="text-2xl">Players & Henchmen</h2>
 
           <div class="flex justify-between items-center mb-2">
-            <div class="space-x-2">
+            <div class="space-x-1">
               <button id="add-player" class="primary-button mid-button">Add Player</button>
               <button id="add-henchman" class="primary-button mid-button">Add Henchman</button>
-              <button id="clear-players" class="secondary-button mid-button">Clear Players</button>
+              <button id="clear-players" class="secondary-button mid-button">Clear</button>
             </div>
           </div>
           <table class="w-full table-auto bg-white shadow rounded">
@@ -113,9 +116,9 @@
           <h2 class="text-2xl">Monsters</h2>
 
           <div class="flex justify-between items-center mb-2">
-            <div class="space-x-2">
+            <div class="space-x-1">
               <button id="add-monster" class="primary-button mid-button">Add Monster</button>
-              <button id="clear-monsters" class="secondary-button mid-button">Clear Monsters</button>
+              <button id="clear-monsters" class="secondary-button mid-button">Clear</button>
             </div>
           </div>
           <table class="w-full table-auto bg-white shadow rounded">
@@ -176,7 +179,7 @@
         <!-- Battles -->
         <div class="flex flex-col">
           <label for="battle-count" class="mb-1">Battles</label>
-          <input id="battle-count" type="number" min="1" value="100" class="w-32 h-10 border rounded px-3" />
+          <input id="battle-count" type="number" min="1" value="1000" class="w-32 h-10 border rounded px-3" />
         </div>
 
         <!-- Strategy -->
@@ -215,18 +218,14 @@
           <input id="max-attacks" type="number" min="0" value="5" class="w-32 h-10 border rounded px-3" />
         </div>
 
-        <!-- Run Simulation -->
-        <div class="flex flex-col justify-end">
+        <div class="flex justify-end space-x-2">
+          <!-- Run Simulation -->
           <button id="run-sim" class="primary-button w-32 h-10" title="Start simulation">Run</button>
-        </div>
 
-        <!-- Clear Log -->
-        <div class="flex flex-col justify-end">
-          <button id="clear-log" class="secondary-button w-32 h-10" title="Clear log output">Clear Log</button>
-        </div>
+          <!-- Clear Log -->
+          <button id="clear-log" class="secondary-button w-32 h-10" title="Clear log output">Clear</button>
 
-        <!-- Stop simulation -->
-        <div class="flex flex-col justify-end">
+          <!-- Stop simulation -->
           <button disabled id="stop-sim" class="secondary-button w-32 h-10" title="Start simulation">Stop</button>
         </div>
       </div>
@@ -239,7 +238,9 @@
             checked
             class="h-5 w-5 text-amber-600 bg-amber-50 border-amber-700 rounded focus:ring-2 focus:ring-amber-500"
           />
-          <label for="logs-checkbox" class="text-amber-900 font-medium"> Logs </label>
+          <label for="logs-checkbox" class="text-amber-900 font-medium">
+            <abbr title="Disable this for large battle counts (e.g., 2000–3000 or more)."> Print logs </abbr>
+          </label>
         </div>
       </div>
 
@@ -273,7 +274,7 @@
           <span class="">&copy; 2025</span>
           <a href="https://dungeon-battle.ivlev.blog/" target="_blank">Dungeon Battle Simulator</a> by
           <a href="https://ivlev.blog/" target="_blank">undefined</a> |
-          <a href="https://github.com/your-repo" target="_blank">Source on GitHub</a>
+          <a href="https://github.com/8kto/ttrpg-dungeon-battle-sim" target="_blank">Source on GitHub</a>
         </div>
       </footer>
     </div>
