@@ -6,23 +6,17 @@ import {
   PlayerCharTemplate,
   PlayerTemplates,
 } from './consts'
-import { BattleSimulator } from './services/BattleSimulator'
 import { LogLevel } from './services/ILogger'
 import { Logger } from './services/Logger'
 import { NameProvider } from './services/NameProvider'
 import { getStrategy } from './services/strategies/getStrategy'
 import { validateCharacters } from './services/validateCharacters'
-import type { BattleStats } from './simulation/stats'
-import { addBattleResult, createStats, formatSummary } from './simulation/stats'
+import { SimulationRunner } from './simulation/SimulationRunner'
+import { formatSummary } from './simulation/stats'
 import type { BattleSimulationConfig } from './types'
 import { CharTable } from './ui/CharTable'
 import { SettingsForm } from './ui/SettingsForm'
 import { bindTabs } from './ui/tabs'
-
-const waitUiUpdate = async (): Promise<void> => {
-  // allow UI to update
-  await new Promise(requestAnimationFrame)
-}
 
 const byId = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T
 
@@ -45,9 +39,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const playersNameProvider = new NameProvider(PlayerNamesChunks)
   const monsterNameProvider = new NameProvider(MonsterNamesChunks)
 
-  let controller = new AbortController()
-  let { signal } = controller
   const logger = new Logger('result-log')
+  const runner = new SimulationRunner()
 
   // initial setup
   playersTable.init(PlayerTemplates)
@@ -96,83 +89,20 @@ document.addEventListener('DOMContentLoaded', (): void => {
     }
   })
 
-  const initProgressDisplay = (logsEnabled: boolean): void => {
+  const startProgressDisplay = (logsEnabled: boolean): void => {
     document.body.style.cursor = 'wait'
+    progressBar.value = 0
 
-    if (logsEnabled) {
-      progressBar.value = 0
-    } else {
+    if (!logsEnabled) {
       runSimBtn.classList.add('inline-loading-indicator')
       logger.getContainer().classList.add('bg-muted')
     }
   }
 
-  const stopProgressDisplay = (logsEnabled: boolean): void => {
-    if (logsEnabled) {
-      progressBar.value = 100
-    } else {
-      runSimBtn.classList.remove('inline-loading-indicator')
-      logger.getContainer().classList.remove('bg-muted')
-    }
-
+  const stopProgressDisplay = (): void => {
+    runSimBtn.classList.remove('inline-loading-indicator')
+    logger.getContainer().classList.remove('bg-muted')
     document.body.style.cursor = 'default'
-  }
-
-  const getBattleSimulator = (): BattleSimulator => {
-    const { biasMonsters, biasPlayers, maxAttacksPerTarget, rounding, strategy } = settings.read()
-
-    return new BattleSimulator(
-      playersTable.read(),
-      monstersTable.read(),
-      strategy,
-      rounding,
-      biasPlayers,
-      biasMonsters,
-      maxAttacksPerTarget,
-      logger,
-    )
-  }
-
-  const runBattles = async (
-    runs: number,
-    signal: AbortSignal,
-    progressBar: HTMLProgressElement,
-    logger: Logger,
-    getBattleSimulator: () => BattleSimulator,
-    isLogEnabled: boolean,
-  ): Promise<BattleStats> => {
-    const stats = createStats()
-
-    for (let i = 0; i < runs; i++) {
-      // if controller.abort() called, stop immediately
-      if (signal.aborted) {
-        logger.warn('⏹️ Simulation aborted')
-        break
-      }
-
-      if (isLogEnabled && i % 50 === 0) {
-        await waitUiUpdate()
-        progressBar.value = ((i + 1) / runs) * 100
-      }
-      if (!isLogEnabled && i % 500 === 0) {
-        await waitUiUpdate()
-      }
-
-      logger.delimiter()
-      logger.log(`[Battle ${i + 1}]`)
-      logger.delimiter()
-
-      const sim = getBattleSimulator()
-      sim.renderDetails()
-      logger.lineBreak()
-
-      const res = sim.simulate()
-      addBattleResult(stats, res)
-
-      logger.log(`>>> total rounds: ${res.rounds}`)
-    }
-
-    return stats
   }
 
   const validateInput = (): string[] => {
@@ -186,8 +116,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
     ]
   }
 
-  const prepareUiForSimulation = (logsEnabled: boolean): void => {
-    logger.clear().setLevel(logsEnabled ? LogLevel.CAN_SKIP : LogLevel.NO_SKIP)
+  const lockUiForSimulation = (): void => {
     runSimBtn.setAttribute('disabled', 'disabled')
     stopSimBtn.removeAttribute('disabled')
   }
@@ -197,31 +126,38 @@ document.addEventListener('DOMContentLoaded', (): void => {
   }
 
   onClick('run-sim', async (): Promise<void> => {
+    logger.clear()
+
     const errors = validateInput()
     if (errors.length > 0) {
-      logger.clear()
       logger.warn('Invalid configuration:')
       errors.forEach((err) => logger.warn(`>> ${err}`))
 
       return
     }
 
-    const { battleCount: runs, logsEnabled } = settings.read()
-    initProgressDisplay(logsEnabled)
-    prepareUiForSimulation(logsEnabled)
+    // the configuration is read once and sent to the worker as plain data
+    const request = { monsters: monstersTable.read(), players: playersTable.read(), settings: settings.read() }
+    const runs = request.settings.battleCount
 
-    controller = new AbortController()
-    signal = controller.signal
+    startProgressDisplay(request.settings.logsEnabled)
+    lockUiForSimulation()
 
     try {
       logger.warn('Starting simulation...')
       const startTime = performance.now()
-      const stats = await runBattles(runs, signal, progressBar, logger, getBattleSimulator, logsEnabled)
+      const { aborted, stats } = await runner.run(request, (current, lines) => {
+        logger.write(lines)
+        progressBar.value = (current.completed / runs) * 100
+      })
 
+      if (aborted) {
+        logger.warn('⏹️ Simulation aborted')
+      }
       logger.lineBreak(LogLevel.NO_SKIP)
       formatSummary(stats, {
         elapsedMs: performance.now() - startTime,
-        playersCount: playersTable.size,
+        playersCount: request.players.length,
         runs,
         strategyLabel: settings.strategyLabel,
       }).forEach((line) => logger.warn(line))
@@ -229,14 +165,11 @@ document.addEventListener('DOMContentLoaded', (): void => {
       console.error(err)
       logger.warn(`Simulation failed: ${err instanceof Error ? err.message : String(err)}`)
     } finally {
-      stopProgressDisplay(logsEnabled)
+      stopProgressDisplay()
       releaseUiAfterSimulation()
     }
   })
 
-  // UI is released by the run handler once the battle loop actually stops
-  onClick('stop-sim', () => {
-    controller.abort()
-    stopSimBtn.setAttribute('disabled', 'disabled')
-  })
+  // stops the worker immediately; the run handler then reports stats of the finished battles
+  onClick('stop-sim', () => runner.stop())
 })
