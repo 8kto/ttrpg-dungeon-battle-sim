@@ -366,6 +366,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
     getBattleSimulator: () => BattleSimulator,
     isLogEnabled: boolean,
   ): Promise<{
+    completed: number
+    draws: number
     survP: number
     winsM: number
     winsP: number
@@ -374,8 +376,10 @@ document.addEventListener('DOMContentLoaded', (): void => {
   }> => {
     let winsP = 0,
       winsM = 0,
+      draws = 0,
       survP = 0,
-      roundsTotal = 0
+      roundsTotal = 0,
+      completed = 0
 
     for (let i = 0; i < runs; i++) {
       // if controller.abort() called, stop immediately
@@ -404,17 +408,21 @@ document.addEventListener('DOMContentLoaded', (): void => {
       if (res.winner === Side.Players) {
         winsP++
         survP += res.survivors.filter((s) => s.side === Side.Players).length
-      } else {
+      } else if (res.winner === Side.Monsters) {
         winsM++
+      } else {
+        draws++
       }
       roundsTotal += res.rounds
+      completed++
 
       logger.log(`>>> total rounds: ${res.rounds}`)
     }
 
-    const roundsAvg = parseFloat((roundsTotal / runs).toFixed(1))
+    // the run may be aborted, so average over completed battles only
+    const roundsAvg = completed > 0 ? parseFloat((roundsTotal / completed).toFixed(1)) : 0
 
-    return { roundsAvg, roundsTotal, survP, winsM, winsP }
+    return { completed, draws, roundsAvg, roundsTotal, survP, winsM, winsP }
   }
 
   const validateInput = (): string[] => {
@@ -437,6 +445,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const releaseUiAfterSimulation = (): void => {
     stopSimBtn.setAttribute('disabled', 'disabled')
   }
+
+  const percent = (value: number, total: number): string => ((value / total) * 100).toFixed(1)
 
   runSimBtn.addEventListener('click', async (e): Promise<void> => {
     e.preventDefault()
@@ -462,7 +472,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
     logger.warn('Starting simulation...')
     const startTime = performance.now()
-    const { roundsAvg, survP, winsM, winsP } = await runBattles(
+    const { completed, draws, roundsAvg, survP, winsM, winsP } = await runBattles(
       runs,
       signal,
       progressBar,
@@ -474,17 +484,21 @@ document.addEventListener('DOMContentLoaded', (): void => {
     const elapsedSec = (elapsedMs / 1000).toFixed(1)
 
     logger.lineBreak(LogLevel.NO_SKIP)
-    logger.warn(
-      `Players win: ${((winsP / runs) * 100).toFixed(1)}%, Monsters win: ${((winsM / runs) * 100).toFixed(1)}%`,
-    )
-
-    if (winsP) {
-      logger.warn(`>> Avg Players survivors: ${((survP / (winsP * initialP)) * 100).toFixed(1)}%`)
+    if (completed === 0) {
+      logger.warn('No battles completed')
+    } else {
+      logger.warn(`Players win: ${percent(winsP, completed)}%, Monsters win: ${percent(winsM, completed)}%`)
+      if (draws > 0) {
+        logger.warn(`>> Draws (round limit reached): ${percent(draws, completed)}%`)
+      }
+      if (winsP > 0) {
+        logger.warn(`>> Avg Players survivors: ${percent(survP, winsP * initialP)}%`)
+      }
+      const roundingInfo = roundingSelect.disabled ? '' : ` (rounding ${roundingSelect.value})`
+      logger.warn(`>> Strategy ${strategySelect.value}${roundingInfo}, ${completed} of ${runs} battles`)
+      logger.warn(`>> Avg Rounds: ${roundsAvg}`)
+      logger.warn(`>> Execution time: ${elapsedSec} s`)
     }
-    const roundingInfo = roundingSelect.disabled ? '' : ` (rounding ${roundingSelect.value})`
-    logger.warn(`>> Strategy ${strategySelect.value}${roundingInfo}, ${runs} battles`)
-    logger.warn(`>> Avg Rounds: ${roundsAvg}`)
-    logger.warn(`>> Execution time: ${elapsedSec} s`)
 
     stopProgressDisplay()
     releaseUiAfterSimulation()
