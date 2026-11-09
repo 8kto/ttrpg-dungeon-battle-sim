@@ -21,6 +21,7 @@ export type BattleSimulationConfig = {
   monsters: ICharacter[]
   battleCount: number
   strategy: string
+  rounding?: string // optional: configs exported before the setting existed don't have it
   biasPlayers: number
   biasMonsters: number
   maxAttacks: number

@@ -7,7 +7,7 @@ import { Participant } from '../Participant'
 import { getStrategy } from '../strategies/getStrategy'
 import type { ICombatStrategy } from '../strategies/ICombatStrategy'
 import type { ICharacter, IMonster, IPlayerCharacter } from '../types'
-import { Strategy } from '../types'
+import { Rounding, Strategy } from '../types'
 
 jest.mock('../Participant')
 jest.mock('../strategies/getStrategy')
@@ -68,8 +68,9 @@ describe('BattleSimulator', () => {
 
   describe('constructor', () => {
     it('creates participants for both sides', () => {
-      new BattleSimulator([mockPlayer], [mockMonster], Strategy.Random, 0, 0, 0, mockLogger)
+      new BattleSimulator([mockPlayer], [mockMonster], Strategy.Average, Rounding.Down, 0, 0, 0, mockLogger)
 
+      expect(getStrategy).toHaveBeenCalledWith(Strategy.Average, Rounding.Down)
       expect(Participant).toHaveBeenCalledWith(mockPlayer, Side.Players, mockStrategy, 0, 0, mockLogger)
       expect(Participant).toHaveBeenCalledWith(mockMonster, Side.Monsters, mockStrategy, 0, 0, mockLogger)
     })
@@ -77,14 +78,23 @@ describe('BattleSimulator', () => {
 
   describe('hasSurvivors', () => {
     it('returns true when side has living participants', () => {
-      const simulator = new BattleSimulator([mockPlayer], [mockMonster], Strategy.Random, 0, 0, 0, mockLogger)
+      const simulator = new BattleSimulator(
+        [mockPlayer],
+        [mockMonster],
+        Strategy.Random,
+        Rounding.Up,
+        0,
+        0,
+        0,
+        mockLogger,
+      )
 
       expect(simulator.hasSurvivors(Side.Players)).toBe(true)
       expect(simulator.hasSurvivors(Side.Monsters)).toBe(true)
     })
 
     it('returns false when side has no living participants [A]', () => {
-      const simulator = new BattleSimulator([mockPlayer], [], Strategy.Random, 0, 0, 0, mockLogger)
+      const simulator = new BattleSimulator([mockPlayer], [], Strategy.Random, Rounding.Up, 0, 0, 0, mockLogger)
 
       expect(simulator.hasSurvivors(Side.Monsters)).toBe(false)
     })
@@ -93,14 +103,32 @@ describe('BattleSimulator', () => {
       mockStrategy.calculateDamage.mockReturnValue(1)
       mockStrategy.calculateHp.mockReturnValueOnce(6).mockReturnValueOnce(0)
 
-      const simulator = new BattleSimulator([mockPlayer], [mockMonster], Strategy.Random, 0, 0, 0, mockLogger)
+      const simulator = new BattleSimulator(
+        [mockPlayer],
+        [mockMonster],
+        Strategy.Random,
+        Rounding.Up,
+        0,
+        0,
+        0,
+        mockLogger,
+      )
       expect(simulator.hasSurvivors(Side.Monsters)).toBe(false)
     })
   })
 
   describe('simulate', () => {
     it('ends when one side is defeated', () => {
-      const simulator = new BattleSimulator([mockPlayer], [mockMonster], Strategy.Random, 0, 0, 0, mockLogger)
+      const simulator = new BattleSimulator(
+        [mockPlayer],
+        [mockMonster],
+        Strategy.Random,
+        Rounding.Up,
+        0,
+        0,
+        0,
+        mockLogger,
+      )
 
       // Force end condition
       jest
@@ -126,7 +154,16 @@ describe('BattleSimulator', () => {
     })
 
     it('ends in a draw when the round limit is reached', () => {
-      const simulator = new BattleSimulator([mockPlayer], [mockMonster], Strategy.Random, 0, 0, 0, mockLogger)
+      const simulator = new BattleSimulator(
+        [mockPlayer],
+        [mockMonster],
+        Strategy.Random,
+        Rounding.Up,
+        0,
+        0,
+        0,
+        mockLogger,
+      )
 
       // nobody ever dies
       jest.spyOn(simulator, 'hasSurvivors').mockReturnValue(true)
@@ -140,7 +177,16 @@ describe('BattleSimulator', () => {
     it('resets attack limits each round', () => {
       mockStrategy.calculateDamage.mockReturnValue(3)
       mockStrategy.calculateHp.mockReturnValueOnce(5).mockReturnValueOnce(6)
-      const simulator = new BattleSimulator([mockPlayer], [mockMonster], Strategy.Random, 0, 0, 3, mockLogger)
+      const simulator = new BattleSimulator(
+        [mockPlayer],
+        [mockMonster],
+        Strategy.Random,
+        Rounding.Up,
+        0,
+        0,
+        3,
+        mockLogger,
+      )
 
       jest
         .spyOn(simulator, 'hasSurvivors')
@@ -163,7 +209,16 @@ describe('BattleSimulator', () => {
   describe('renderDetails', () => {
     it('logs participant statuses', () => {
       mockStrategy.calculateHp.mockReturnValueOnce(3).mockReturnValueOnce(4)
-      const simulator = new BattleSimulator([mockPlayer], [mockMonster], Strategy.Random, 0, 0, 0, mockLogger)
+      const simulator = new BattleSimulator(
+        [mockPlayer],
+        [mockMonster],
+        Strategy.Random,
+        Rounding.Up,
+        0,
+        0,
+        0,
+        mockLogger,
+      )
 
       simulator.renderDetails()
       expect(mockLogger.log).toHaveBeenCalledWith(expect.stringContaining('🥷Warrior HP: 3'))

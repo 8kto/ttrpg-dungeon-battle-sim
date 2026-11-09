@@ -12,7 +12,7 @@ import { BattleSimulator } from './services/BattleSimulator'
 import { Logger, LogLevel } from './services/Logger'
 import { NameProvider } from './services/NameProvider'
 import type { ICharacter } from './services/types'
-import { Strategy } from './services/types'
+import { Rounding, Strategy } from './services/types'
 import type { BattleSimulationConfig, CharStats } from './types'
 import { Side } from './types'
 
@@ -59,6 +59,17 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const biasMonstersInput = document.getElementById('bias-monsters') as HTMLInputElement
   const maxAttacksInput = document.getElementById('max-attacks') as HTMLInputElement
   const logsCheckbox = document.getElementById('logs-checkbox') as HTMLInputElement
+  const roundingSelect = document.getElementById('rounding-select') as HTMLSelectElement
+
+  const getSelectedStrategy = (): Strategy => Strategy[strategySelect.value as keyof typeof Strategy]
+  const getSelectedRounding = (): Rounding => Rounding[roundingSelect.value as keyof typeof Rounding]
+
+  // rounding is used by the Average strategy only
+  const syncRoundingState = (): void => {
+    roundingSelect.disabled = getSelectedStrategy() !== Strategy.Average
+  }
+  strategySelect.addEventListener('change', syncRoundingState)
+  syncRoundingState()
 
   const progressBar = document.getElementById('progress-bar') as HTMLProgressElement
 
@@ -254,6 +265,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
       maxAttacks: parseInt(maxAttacksInput.value, 10),
       monsters: readConfig(monstersBody),
       players: readConfig(playersBody),
+      rounding: roundingSelect.value,
       strategy: strategySelect.value,
     }
     configArea.value = JSON.stringify(cfg, null, 2)
@@ -270,6 +282,10 @@ document.addEventListener('DOMContentLoaded', (): void => {
       if (config.strategy) {
         strategySelect.value = config.strategy
       }
+      if (config.rounding) {
+        roundingSelect.value = config.rounding
+      }
+      syncRoundingState()
       if (config.biasPlayers) {
         biasPlayersInput.value = String(config.biasPlayers)
       }
@@ -319,12 +335,20 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const getBattleSimulator = (): BattleSimulator => {
     const players = readConfig(playersBody)
     const monsters = readConfig(monstersBody)
-    const strategy = Strategy[strategySelect.value as keyof typeof Strategy]
     const biasPlayers = parseInt(biasPlayersInput.value, 10)
     const biasMonsters = parseInt(biasMonstersInput.value, 10)
     const maxAttacksPerTarget = parseInt(maxAttacksInput.value, 10)
 
-    return new BattleSimulator(players, monsters, strategy, biasPlayers, biasMonsters, maxAttacksPerTarget, logger)
+    return new BattleSimulator(
+      players,
+      monsters,
+      getSelectedStrategy(),
+      getSelectedRounding(),
+      biasPlayers,
+      biasMonsters,
+      maxAttacksPerTarget,
+      logger,
+    )
   }
 
   const runBattles = async (
@@ -428,7 +452,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
     if (winsP) {
       logger.warn(`>> Avg Players survivors: ${((survP / (winsP * initialP)) * 100).toFixed(1)}%`)
     }
-    logger.warn(`>> Strategy ${strategySelect.value}, ${runs} battles`)
+    const roundingInfo = roundingSelect.disabled ? '' : ` (rounding ${roundingSelect.value})`
+    logger.warn(`>> Strategy ${strategySelect.value}${roundingInfo}, ${runs} battles`)
     logger.warn(`>> Avg Rounds: ${roundsAvg}`)
     logger.warn(`>> Execution time: ${elapsedSec} s`)
 
