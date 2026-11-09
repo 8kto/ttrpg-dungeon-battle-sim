@@ -1,5 +1,3 @@
-import type { Dice } from 'ttrpg-lib-dice'
-
 import { MonsterNamesChunks, PlayerNamesChunks } from './config/names'
 import {
   HenchmanCharTemplate,
@@ -13,221 +11,94 @@ import { LogLevel } from './services/ILogger'
 import { Logger } from './services/Logger'
 import { NameProvider } from './services/NameProvider'
 import { getStrategy } from './services/strategies/getStrategy'
-import type { ICharacter } from './services/types'
-import { Rounding, Strategy } from './services/types'
 import { validateCharacters } from './services/validateCharacters'
-import type { BattleSimulationConfig, CharStats } from './types'
+import type { BattleSimulationConfig } from './types'
 import { Side } from './types'
+import { CharTable } from './ui/CharTable'
+import { SettingsForm } from './ui/SettingsForm'
+import { bindTabs } from './ui/tabs'
 
 const waitUiUpdate = async (): Promise<void> => {
   // allow UI to update
   await new Promise(requestAnimationFrame)
 }
 
-const readConfig = (body: HTMLTableSectionElement): ICharacter[] =>
-  Array.from(body.rows).map((row) => {
-    const ni = row.querySelector('.name-input') as HTMLInputElement
-    const ac = parseInt((row.querySelector('.ac-input') as HTMLInputElement).value, 10)
-    const th = parseInt((row.querySelector('.tohit-input') as HTMLInputElement).value, 10)
-    const hc = parseInt((row.querySelector('.hd-count-input') as HTMLInputElement).value, 10)
-    const ht = parseInt((row.querySelector('.hd-type-select') as HTMLSelectElement).value, 10) as Dice
-    const dmg = (row.querySelector('.damage-input') as HTMLInputElement).value
-      .trim()
-      .split(',')
-      .map((s) => s.trim())
-      .filter((s) => s !== '')
+const byId = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T
 
-    return { armorClass: ac, damage: dmg, hitDice: [hc, ht], name: ni.value, toHit: th }
+const onClick = (id: string, handler: () => void): void => {
+  byId(id).addEventListener('click', (e): void => {
+    e.preventDefault()
+    handler()
   })
+}
 
 document.addEventListener('DOMContentLoaded', (): void => {
-  const playersBody = document.getElementById('players-table') as HTMLTableSectionElement
-  const monstersBody = document.getElementById('monsters-table') as HTMLTableSectionElement
-  const playerTemplate = playersBody.querySelector('tr') as HTMLTableRowElement
-  const monsterTemplate = monstersBody.querySelector('tr') as HTMLTableRowElement
+  const runSimBtn = byId<HTMLButtonElement>('run-sim')
+  const stopSimBtn = byId<HTMLButtonElement>('stop-sim')
+  const progressBar = byId<HTMLProgressElement>('progress-bar')
+  const configArea = byId<HTMLTextAreaElement>('config-area')
 
-  const addPlayerBtn = document.getElementById('add-player') as HTMLButtonElement
-  const addHenchBtn = document.getElementById('add-henchman') as HTMLButtonElement
-  const clearPlayersBtn = document.getElementById('clear-players') as HTMLButtonElement
-  const addMonsterBtn = document.getElementById('add-monster') as HTMLButtonElement
-  const clearMonstersBtn = document.getElementById('clear-monsters') as HTMLButtonElement
-  const runSimBtn = document.getElementById('run-sim') as HTMLButtonElement
-  const stopSimBtn = document.getElementById('stop-sim') as HTMLButtonElement
-  const clearLogBtn = document.getElementById('clear-log') as HTMLButtonElement
-  const exportCfgBtn = document.getElementById('export-config') as HTMLButtonElement
-  const importCfgBtn = document.getElementById('import-config') as HTMLButtonElement
-
-  const battleCount = document.getElementById('battle-count') as HTMLInputElement
-  const strategySelect = document.getElementById('strategy-select') as HTMLSelectElement
-  const biasPlayersInput = document.getElementById('bias-players') as HTMLInputElement
-  const biasMonstersInput = document.getElementById('bias-monsters') as HTMLInputElement
-  const maxAttacksInput = document.getElementById('max-attacks') as HTMLInputElement
-  const logsCheckbox = document.getElementById('logs-checkbox') as HTMLInputElement
-  const roundingSelect = document.getElementById('rounding-select') as HTMLSelectElement
-
-  const getSelectedStrategy = (): Strategy => Strategy[strategySelect.value as keyof typeof Strategy]
-  const getSelectedRounding = (): Rounding => Rounding[roundingSelect.value as keyof typeof Rounding]
-
-  // rounding is used by the Average strategy only
-  const syncRoundingState = (): void => {
-    roundingSelect.disabled = getSelectedStrategy() !== Strategy.Average
-  }
-  strategySelect.addEventListener('change', syncRoundingState)
-  syncRoundingState()
-
-  const progressBar = document.getElementById('progress-bar') as HTMLProgressElement
-
-  const tabLogBtn = document.getElementById('tab-log-btn') as HTMLButtonElement
-  const tabConfigBtn = document.getElementById('tab-config-btn') as HTMLButtonElement
-  const tabLog = document.getElementById('tab-log') as HTMLDivElement
-  const tabConfig = document.getElementById('tab-config') as HTMLDivElement
-  const configArea = document.getElementById('config-area') as HTMLTextAreaElement
+  const settings = new SettingsForm()
+  const playersTable = new CharTable(byId('players-table'))
+  const monstersTable = new CharTable(byId('monsters-table'))
+  const playersNameProvider = new NameProvider(PlayerNamesChunks)
+  const monsterNameProvider = new NameProvider(MonsterNamesChunks)
 
   let controller = new AbortController()
   let { signal } = controller
   const logger = new Logger('result-log')
 
-  const bindRowControls = (row: HTMLTableRowElement, defs: CharStats, body: HTMLTableSectionElement): void => {
-    const removeBtn = row.querySelector('.remove-row') as HTMLButtonElement
-    const dupBtn = row.querySelector('.duplicate-row') as HTMLButtonElement
-
-    const inputs = Array.from(row.querySelectorAll('input')) as HTMLInputElement[]
-    const selects = Array.from(row.querySelectorAll('select')) as HTMLSelectElement[]
-
-    dupBtn.addEventListener('click', (e): void => {
-      e.preventDefault()
-      const clone = row.cloneNode(true) as HTMLTableRowElement
-
-      // copy all fields
-      inputs.forEach((inp, i) => {
-        const target = clone.querySelectorAll('input')[i] as HTMLInputElement
-        target.value = inp.value
-      })
-
-      selects.forEach((sel, i) => {
-        const target = clone.querySelectorAll('select')[i] as HTMLSelectElement
-        target.selectedIndex = sel.selectedIndex
-      })
-
-      clone.dataset.prefix = defs.prefix
-      body.insertBefore(clone, row.nextSibling)
-
-      bindRowControls(clone, defs, body)
-      reindexNames(body)
-    })
-
-    removeBtn.addEventListener('click', (e): void => {
-      e.preventDefault()
-      if (body.rows.length > 1) {
-        row.remove()
-        reindexNames(body)
-      }
-    })
-  }
-
-  const reindexNames = (body: HTMLTableSectionElement): void => {
-    const nameIndices: Record<string, number> = {}
-
-    Array.from(body.rows).forEach((row) => {
-      const name = row.dataset.prefix
-      if (!name) {
-        return
-      }
-
-      if (!nameIndices[name]) {
-        nameIndices[name] = 1
-      } else {
-        ++nameIndices[name]
-        const nameInput = row.querySelector<HTMLInputElement>('.name-input')
-        if (!nameInput) {
-          return
-        }
-
-        nameInput.value = `${name} ${nameIndices[name]}`
-      }
-    })
-  }
-
-  const addRow = (body: HTMLTableSectionElement, defs: CharStats, template: HTMLTableRowElement): void => {
-    const newRow = template.cloneNode(true) as HTMLTableRowElement
-    newRow.dataset.prefix = defs.prefix
-    newRow.querySelectorAll('input').forEach((inp) => (inp.value = ''))
-    newRow.querySelectorAll('select').forEach((sel) => ((sel as HTMLSelectElement).selectedIndex = 0))
-    body.appendChild(newRow)
-
-    bindRowControls(newRow, defs, body)
-    initRow(newRow, defs)
-    reindexNames(body)
-  }
-
-  const initRow = (row: HTMLTableRowElement, defs: CharStats): void => {
-    ;(row.querySelector('.name-input') as HTMLInputElement).value = defs.prefix
-    ;(row.querySelector('.ac-input') as HTMLInputElement).value = defs.armorClass.toString()
-    ;(row.querySelector('.tohit-input') as HTMLInputElement).value = defs.toHit.toString()
-    ;(row.querySelector('.hd-count-input') as HTMLInputElement).value = defs.hdCount.toString()
-    ;(row.querySelector('.hd-type-select') as HTMLSelectElement).value = defs.hdType.toString()
-    ;(row.querySelector('.damage-input') as HTMLInputElement).value = defs.damage
-
-    row.dataset.prefix = defs.prefix
-  }
-
-  const resetTable = (body: HTMLTableSectionElement): void => {
-    Array.from(body.rows).forEach((r) => r.remove())
-  }
-
-  const initTable = (body: HTMLTableSectionElement, defs: CharStats[], template: HTMLTableRowElement): void => {
-    resetTable(body)
-
-    for (let i = 0; i < defs.length; i++) {
-      addRow(body, defs[i], template)
-    }
-  }
-
   // initial setup
-  initTable(playersBody, PlayerTemplates, playerTemplate)
-  initTable(monstersBody, MonsterTemplates, monsterTemplate)
-  const playersNameProvider = new NameProvider(PlayerNamesChunks)
-  const monsterNameProvider = new NameProvider(MonsterNamesChunks)
+  playersTable.init(PlayerTemplates)
+  monstersTable.init(MonsterTemplates)
 
-  addPlayerBtn.addEventListener('click', (e) => {
-    e.preventDefault()
-    addRow(playersBody, { ...PlayerCharTemplate, prefix: playersNameProvider.getName() }, playerTemplate)
-  })
-  addHenchBtn.addEventListener('click', (e) => {
-    e.preventDefault()
-    addRow(playersBody, { ...HenchmanCharTemplate, prefix: playersNameProvider.getName('(H)') }, playerTemplate)
-  })
-  clearPlayersBtn.addEventListener('click', (e) => {
-    e.preventDefault()
-    initTable(playersBody, PlayerTemplates, playerTemplate)
-  })
+  onClick('add-player', () => playersTable.addRow({ ...PlayerCharTemplate, prefix: playersNameProvider.getName() }))
+  onClick('add-henchman', () =>
+    playersTable.addRow({ ...HenchmanCharTemplate, prefix: playersNameProvider.getName('(H)') }),
+  )
+  onClick('clear-players', () => playersTable.init(PlayerTemplates))
+  onClick('add-monster', () =>
+    monstersTable.addRow({ ...MonsterCharTemplate, prefix: monsterNameProvider.getName('(M)') }),
+  )
+  onClick('clear-monsters', () => monstersTable.init(MonsterTemplates))
 
-  addMonsterBtn.addEventListener('click', (e) => {
-    e.preventDefault()
-    addRow(
-      monstersBody,
-      {
-        ...MonsterCharTemplate,
-        prefix: monsterNameProvider.getName('(M)'),
-      },
-      monsterTemplate,
-    )
-  })
-  clearMonstersBtn.addEventListener('click', (e) => {
-    e.preventDefault()
-    initTable(monstersBody, MonsterTemplates, monsterTemplate)
-  })
-
-  clearLogBtn.addEventListener('click', (e) => {
-    e.preventDefault()
+  onClick('clear-log', () => {
     logger.clear()
     progressBar.value = 0
   })
 
-  const initProgressDisplay = (): void => {
+  bindTabs([
+    { button: byId('tab-log-btn'), panel: byId('tab-log') },
+    { button: byId('tab-config-btn'), panel: byId('tab-config') },
+  ])
+
+  // Import/Export
+  onClick('export-config', () => {
+    const cfg: BattleSimulationConfig = {
+      ...settings.toConfig(),
+      monsters: monstersTable.read(),
+      players: playersTable.read(),
+    }
+    configArea.value = JSON.stringify(cfg, null, 2)
+  })
+
+  onClick('import-config', () => {
+    try {
+      const config = JSON.parse(configArea.value) as BattleSimulationConfig
+
+      settings.applyConfig(config)
+      playersTable.load(config.players)
+      monstersTable.load(config.monsters)
+    } catch (err) {
+      console.error(err)
+      alert('Invalid JSON config')
+    }
+  })
+
+  const initProgressDisplay = (logsEnabled: boolean): void => {
     document.body.style.cursor = 'wait'
 
-    if (logsCheckbox.checked) {
+    if (logsEnabled) {
       progressBar.value = 0
     } else {
       runSimBtn.classList.add('inline-loading-indicator')
@@ -235,8 +106,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
     }
   }
 
-  const stopProgressDisplay = (): void => {
-    if (logsCheckbox.checked) {
+  const stopProgressDisplay = (logsEnabled: boolean): void => {
+    if (logsEnabled) {
       progressBar.value = 100
     } else {
       runSimBtn.classList.remove('inline-loading-indicator')
@@ -246,112 +117,14 @@ document.addEventListener('DOMContentLoaded', (): void => {
     document.body.style.cursor = 'default'
   }
 
-  // tab switching
-  tabLogBtn.addEventListener('click', (): void => {
-    tabLog.classList.remove('hidden')
-    tabConfig.classList.add('hidden')
-    tabLogBtn.classList.add('active')
-    tabConfigBtn.classList.remove('active')
-  })
-  tabConfigBtn.addEventListener('click', (): void => {
-    tabConfig.classList.remove('hidden')
-    tabLog.classList.add('hidden')
-    tabConfigBtn.classList.add('active')
-    tabLogBtn.classList.remove('active')
-  })
-
-  // Import/Export
-  exportCfgBtn.addEventListener('click', (): void => {
-    const cfg: BattleSimulationConfig = {
-      battleCount: parseInt(battleCount.value, 10),
-      biasMonsters: parseInt(biasMonstersInput.value, 10),
-      biasPlayers: parseInt(biasPlayersInput.value, 10),
-      maxAttacks: parseInt(maxAttacksInput.value, 10),
-      monsters: readConfig(monstersBody),
-      players: readConfig(playersBody),
-      rounding: roundingSelect.value,
-      strategy: strategySelect.value,
-    }
-    configArea.value = JSON.stringify(cfg, null, 2)
-  })
-
-  importCfgBtn.addEventListener('click', (): void => {
-    try {
-      const config = JSON.parse(configArea.value) as BattleSimulationConfig
-
-      // Global settings
-      if (config.battleCount) {
-        battleCount.value = String(config.battleCount)
-      }
-      if (config.strategy) {
-        strategySelect.value = config.strategy
-      }
-      if (config.rounding) {
-        roundingSelect.value = config.rounding
-      }
-      syncRoundingState()
-      // 0 is a valid bias, so check for presence only
-      // eslint-disable-next-line no-undefined
-      if (config.biasPlayers !== undefined) {
-        biasPlayersInput.value = String(config.biasPlayers)
-      }
-      // eslint-disable-next-line no-undefined
-      if (config.biasMonsters !== undefined) {
-        biasMonstersInput.value = String(config.biasMonsters)
-      }
-      // eslint-disable-next-line no-undefined
-      if (config.maxAttacks !== undefined) {
-        maxAttacksInput.value = String(config.maxAttacks)
-      }
-
-      // Char Tables
-      resetTable(playersBody)
-      resetTable(monstersBody)
-
-      config.players.forEach((char) => {
-        addRow(playersBody, PlayerCharTemplate, playerTemplate)
-        initRow(playersBody.lastElementChild as HTMLTableRowElement, {
-          armorClass: char.armorClass,
-          damage: char.damage.join(','),
-          hdCount: char.hitDice[0],
-          hdType: char.hitDice[1],
-          prefix: char.name,
-          toHit: char.toHit,
-        })
-      })
-
-      config.monsters.forEach((char) => {
-        addRow(monstersBody, MonsterCharTemplate, monsterTemplate)
-        initRow(monstersBody.lastElementChild as HTMLTableRowElement, {
-          armorClass: char.armorClass,
-          damage: char.damage.join(','),
-          hdCount: char.hitDice[0],
-          hdType: char.hitDice[1],
-          prefix: char.name,
-          toHit: char.toHit,
-        })
-      })
-
-      reindexNames(playersBody)
-      reindexNames(monstersBody)
-    } catch (err) {
-      console.error(err)
-      alert('Invalid JSON config')
-    }
-  })
-
   const getBattleSimulator = (): BattleSimulator => {
-    const players = readConfig(playersBody)
-    const monsters = readConfig(monstersBody)
-    const biasPlayers = parseInt(biasPlayersInput.value, 10)
-    const biasMonsters = parseInt(biasMonstersInput.value, 10)
-    const maxAttacksPerTarget = parseInt(maxAttacksInput.value, 10)
+    const { biasMonsters, biasPlayers, maxAttacksPerTarget, rounding, strategy } = settings.read()
 
     return new BattleSimulator(
-      players,
-      monsters,
-      getSelectedStrategy(),
-      getSelectedRounding(),
+      playersTable.read(),
+      monstersTable.read(),
+      strategy,
+      rounding,
       biasPlayers,
       biasMonsters,
       maxAttacksPerTarget,
@@ -427,20 +200,18 @@ document.addEventListener('DOMContentLoaded', (): void => {
   }
 
   const validateInput = (): string[] => {
-    const strategy = getStrategy(getSelectedStrategy(), getSelectedRounding())
-    const maxAttacks = parseInt(maxAttacksInput.value, 10)
-    const settingsErrors =
-      Number.isInteger(maxAttacks) && maxAttacks >= 0 ? [] : ['Max Attacks per Target must be 0 (unlimited) or more']
+    const { rounding, strategy } = settings.read()
+    const combatStrategy = getStrategy(strategy, rounding)
 
     return [
-      ...settingsErrors,
-      ...validateCharacters(readConfig(playersBody), strategy, 'Players'),
-      ...validateCharacters(readConfig(monstersBody), strategy, 'Monsters'),
+      ...settings.validate(),
+      ...validateCharacters(playersTable.read(), combatStrategy, 'Players'),
+      ...validateCharacters(monstersTable.read(), combatStrategy, 'Monsters'),
     ]
   }
 
-  const prepareUiForSimulation = (): void => {
-    logger.clear().setLevel(logsCheckbox.checked ? LogLevel.CAN_SKIP : LogLevel.NO_SKIP)
+  const prepareUiForSimulation = (logsEnabled: boolean): void => {
+    logger.clear().setLevel(logsEnabled ? LogLevel.CAN_SKIP : LogLevel.NO_SKIP)
     runSimBtn.setAttribute('disabled', 'disabled')
     stopSimBtn.removeAttribute('disabled')
   }
@@ -451,9 +222,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
   const percent = (value: number, total: number): string => ((value / total) * 100).toFixed(1)
 
-  runSimBtn.addEventListener('click', async (e): Promise<void> => {
-    e.preventDefault()
-
+  onClick('run-sim', async (): Promise<void> => {
     const errors = validateInput()
     if (errors.length > 0) {
       logger.clear()
@@ -463,15 +232,14 @@ document.addEventListener('DOMContentLoaded', (): void => {
       return
     }
 
-    initProgressDisplay()
-    prepareUiForSimulation()
+    const { battleCount: runs, logsEnabled } = settings.read()
+    initProgressDisplay(logsEnabled)
+    prepareUiForSimulation(logsEnabled)
 
     controller = new AbortController()
     signal = controller.signal
 
-    const runs = Math.max(1, parseInt(battleCount.value, 10) || 1)
-    const initialP = playersBody.rows.length
-    const isLogEnabled = logsCheckbox.checked
+    const initialP = playersTable.size
 
     try {
       logger.warn('Starting simulation...')
@@ -482,7 +250,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
         progressBar,
         logger,
         getBattleSimulator,
-        isLogEnabled,
+        logsEnabled,
       )
       const elapsedMs = performance.now() - startTime
       const elapsedSec = (elapsedMs / 1000).toFixed(1)
@@ -501,21 +269,20 @@ document.addEventListener('DOMContentLoaded', (): void => {
       if (winsP > 0) {
         logger.warn(`>> Avg Players survivors: ${percent(survP, winsP * initialP)}%`)
       }
-      const roundingInfo = roundingSelect.disabled ? '' : ` (rounding ${roundingSelect.value})`
-      logger.warn(`>> Strategy ${strategySelect.value}${roundingInfo}, ${completed} of ${runs} battles`)
+      logger.warn(`>> Strategy ${settings.strategyLabel}, ${completed} of ${runs} battles`)
       logger.warn(`>> Avg Rounds: ${roundsAvg}`)
       logger.warn(`>> Execution time: ${elapsedSec} s`)
     } catch (err) {
       console.error(err)
       logger.warn(`Simulation failed: ${err instanceof Error ? err.message : String(err)}`)
     } finally {
-      stopProgressDisplay()
+      stopProgressDisplay(logsEnabled)
       releaseUiAfterSimulation()
     }
   })
 
   // UI is released by the run handler once the battle loop actually stops
-  stopSimBtn.addEventListener('click', () => {
+  onClick('stop-sim', () => {
     controller.abort()
     stopSimBtn.setAttribute('disabled', 'disabled')
   })
