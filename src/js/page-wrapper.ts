@@ -440,9 +440,11 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
   const prepareUiForSimulation = (): void => {
     logger.clear().setLevel(logsCheckbox.checked ? LogLevel.CAN_SKIP : LogLevel.NO_SKIP)
+    runSimBtn.setAttribute('disabled', 'disabled')
     stopSimBtn.removeAttribute('disabled')
   }
   const releaseUiAfterSimulation = (): void => {
+    runSimBtn.removeAttribute('disabled')
     stopSimBtn.setAttribute('disabled', 'disabled')
   }
 
@@ -470,23 +472,27 @@ document.addEventListener('DOMContentLoaded', (): void => {
     const initialP = playersBody.rows.length
     const isLogEnabled = logsCheckbox.checked
 
-    logger.warn('Starting simulation...')
-    const startTime = performance.now()
-    const { completed, draws, roundsAvg, survP, winsM, winsP } = await runBattles(
-      runs,
-      signal,
-      progressBar,
-      logger,
-      getBattleSimulator,
-      isLogEnabled,
-    )
-    const elapsedMs = performance.now() - startTime
-    const elapsedSec = (elapsedMs / 1000).toFixed(1)
+    try {
+      logger.warn('Starting simulation...')
+      const startTime = performance.now()
+      const { completed, draws, roundsAvg, survP, winsM, winsP } = await runBattles(
+        runs,
+        signal,
+        progressBar,
+        logger,
+        getBattleSimulator,
+        isLogEnabled,
+      )
+      const elapsedMs = performance.now() - startTime
+      const elapsedSec = (elapsedMs / 1000).toFixed(1)
 
-    logger.lineBreak(LogLevel.NO_SKIP)
-    if (completed === 0) {
-      logger.warn('No battles completed')
-    } else {
+      logger.lineBreak(LogLevel.NO_SKIP)
+      if (completed === 0) {
+        logger.warn('No battles completed')
+
+        return
+      }
+
       logger.warn(`Players win: ${percent(winsP, completed)}%, Monsters win: ${percent(winsM, completed)}%`)
       if (draws > 0) {
         logger.warn(`>> Draws (round limit reached): ${percent(draws, completed)}%`)
@@ -498,14 +504,18 @@ document.addEventListener('DOMContentLoaded', (): void => {
       logger.warn(`>> Strategy ${strategySelect.value}${roundingInfo}, ${completed} of ${runs} battles`)
       logger.warn(`>> Avg Rounds: ${roundsAvg}`)
       logger.warn(`>> Execution time: ${elapsedSec} s`)
+    } catch (err) {
+      console.error(err)
+      logger.warn(`Simulation failed: ${err instanceof Error ? err.message : String(err)}`)
+    } finally {
+      stopProgressDisplay()
+      releaseUiAfterSimulation()
     }
-
-    stopProgressDisplay()
-    releaseUiAfterSimulation()
   })
 
+  // UI is released by the run handler once the battle loop actually stops
   stopSimBtn.addEventListener('click', () => {
     controller.abort()
-    releaseUiAfterSimulation()
+    stopSimBtn.setAttribute('disabled', 'disabled')
   })
 })
