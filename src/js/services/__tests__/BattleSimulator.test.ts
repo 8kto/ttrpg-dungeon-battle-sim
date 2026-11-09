@@ -154,7 +154,7 @@ describe('BattleSimulator', () => {
       expect(result.rounds).toBe(2)
 
       // @ts-ignore private
-      simulator.participants.every((p) => {
+      simulator.participants.forEach((p) => {
         expect(p.resetAttackLimit).toHaveBeenCalled()
       })
     })
