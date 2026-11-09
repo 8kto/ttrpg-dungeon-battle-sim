@@ -58,7 +58,8 @@ export class Participant {
     }
 
     if (this.rollToHit() >= target.char.armorClass) {
-      const dmg = this.strategy.calculateDamage(dmgFormula)
+      // negative modifiers must not heal the target
+      const dmg = Math.max(0, this.strategy.calculateDamage(dmgFormula))
       target.currentHp -= dmg
       this.logger.log(`🗡️ ${this.char.name} attacks ${target.char.name}, damage: ${dmg}`)
 
