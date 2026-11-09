@@ -58,6 +58,12 @@ describe('Participant', () => {
       const withoutLimit = new Participant(mockChar, Side.Players, mockStrategy, 0, 0, mockLogger)
       expect(withoutLimit.hasAttackLimit).toBe(false)
     })
+
+    it.each([-1, 1.5, NaN])('throws on invalid max attacks per target [%d]', (maxAttacks) => {
+      expect(() => new Participant(mockChar, Side.Players, mockStrategy, 0, maxAttacks, mockLogger)).toThrowError(
+        /Invalid max attacks per target/,
+      )
+    })
   })
 
   describe('shouldSkip', () => {
@@ -156,7 +162,7 @@ describe('Participant', () => {
   })
 
   describe('resetAttackLimit', () => {
-    it('resets attacksRemaining to initial value', () => {
+    it('resets maxAttacksRemaining to initial value', () => {
       const participant = new Participant(mockChar, Side.Players, mockStrategy, 0, 3, mockLogger)
       const attacker = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
 

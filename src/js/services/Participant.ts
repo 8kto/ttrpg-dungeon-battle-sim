@@ -20,6 +20,10 @@ export class Participant {
     private readonly maxAttacksPerTarget: number, // 0 = unlimited
     private readonly logger: Logger,
   ) {
+    if (!Number.isInteger(maxAttacksPerTarget) || maxAttacksPerTarget < 0) {
+      throw new Error(`Invalid max attacks per target: ${maxAttacksPerTarget}`)
+    }
+
     this.currentHp = strategy.calculateHp(char.hitDice)
     this.hasAttackLimit = maxAttacksPerTarget > 0
     this.attacksRemaining = maxAttacksPerTarget

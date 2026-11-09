@@ -11,8 +11,10 @@ import {
 import { BattleSimulator } from './services/BattleSimulator'
 import { Logger, LogLevel } from './services/Logger'
 import { NameProvider } from './services/NameProvider'
+import { getStrategy } from './services/strategies/getStrategy'
 import type { ICharacter } from './services/types'
 import { Rounding, Strategy } from './services/types'
+import { validateCharacters } from './services/validateCharacters'
 import type { BattleSimulationConfig, CharStats } from './types'
 import { Side } from './types'
 
@@ -32,6 +34,7 @@ const readConfig = (body: HTMLTableSectionElement): ICharacter[] =>
       .trim()
       .split(',')
       .map((s) => s.trim())
+      .filter((s) => s !== '')
 
     return { armorClass: ac, damage: dmg, hitDice: [hc, ht], name: ni.value, toHit: th }
   })
@@ -410,6 +413,19 @@ document.addEventListener('DOMContentLoaded', (): void => {
     return { roundsAvg, roundsTotal, survP, winsM, winsP }
   }
 
+  const validateInput = (): string[] => {
+    const strategy = getStrategy(getSelectedStrategy(), getSelectedRounding())
+    const maxAttacks = parseInt(maxAttacksInput.value, 10)
+    const settingsErrors =
+      Number.isInteger(maxAttacks) && maxAttacks >= 0 ? [] : ['Max Attacks per Target must be 0 (unlimited) or more']
+
+    return [
+      ...settingsErrors,
+      ...validateCharacters(readConfig(playersBody), strategy, 'Players'),
+      ...validateCharacters(readConfig(monstersBody), strategy, 'Monsters'),
+    ]
+  }
+
   const prepareUiForSimulation = (): void => {
     logger.clear().setLevel(logsCheckbox.checked ? LogLevel.CAN_SKIP : LogLevel.NO_SKIP)
     stopSimBtn.removeAttribute('disabled')
@@ -420,6 +436,15 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
   runSimBtn.addEventListener('click', async (e): Promise<void> => {
     e.preventDefault()
+
+    const errors = validateInput()
+    if (errors.length > 0) {
+      logger.clear()
+      logger.warn('Invalid configuration:')
+      errors.forEach((err) => logger.warn(`>> ${err}`))
+
+      return
+    }
 
     initProgressDisplay()
     prepareUiForSimulation()
