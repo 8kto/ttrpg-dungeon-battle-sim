@@ -289,13 +289,17 @@ document.addEventListener('DOMContentLoaded', (): void => {
         roundingSelect.value = config.rounding
       }
       syncRoundingState()
-      if (config.biasPlayers) {
+      // 0 is a valid bias, so check for presence only
+      // eslint-disable-next-line no-undefined
+      if (config.biasPlayers !== undefined) {
         biasPlayersInput.value = String(config.biasPlayers)
       }
-      if (config.biasMonsters) {
+      // eslint-disable-next-line no-undefined
+      if (config.biasMonsters !== undefined) {
         biasMonstersInput.value = String(config.biasMonsters)
       }
-      if (config.maxAttacks) {
+      // eslint-disable-next-line no-undefined
+      if (config.maxAttacks !== undefined) {
         maxAttacksInput.value = String(config.maxAttacks)
       }
 
