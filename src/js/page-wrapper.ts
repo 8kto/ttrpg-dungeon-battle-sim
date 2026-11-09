@@ -9,7 +9,8 @@ import {
   PlayerTemplates,
 } from './consts'
 import { BattleSimulator } from './services/BattleSimulator'
-import { Logger, LogLevel } from './services/Logger'
+import { LogLevel } from './services/ILogger'
+import { Logger } from './services/Logger'
 import { NameProvider } from './services/NameProvider'
 import { getStrategy } from './services/strategies/getStrategy'
 import type { ICharacter } from './services/types'

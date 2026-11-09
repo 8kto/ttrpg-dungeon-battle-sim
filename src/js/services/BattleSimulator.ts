@@ -1,7 +1,7 @@
 import { shuffleArray } from 'ttrpg-lib-dice'
 
 import { Side } from '../types'
-import type { Logger } from './Logger'
+import type { ILogger } from './ILogger'
 import { Participant } from './Participant'
 import { getStrategy } from './strategies/getStrategy'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
@@ -33,7 +33,7 @@ export class BattleSimulator {
     biasPlayers: number,
     biasMonsters: number,
     maxAttacksPerTarget: number,
-    private readonly logger: Logger,
+    private readonly logger: ILogger,
   ) {
     this.targetSelector = new RandomTargetSelector()
     this.strategy = getStrategy(strategyMode, rounding)

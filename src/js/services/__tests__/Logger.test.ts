@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { Logger, LogLevel } from '../Logger'
+import { LogLevel } from '../ILogger'
+import { Logger } from '../Logger'
 
 describe('Logger', () => {
   let container: HTMLElement

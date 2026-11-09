@@ -1,7 +1,7 @@
 import { Dice, roll } from 'ttrpg-lib-dice'
 
 import { Side } from '../../types'
-import type { Logger } from '../Logger'
+import type { ILogger } from '../ILogger'
 import { Participant } from '../Participant'
 import type { ICombatStrategy } from '../strategies/ICombatStrategy'
 import type { ICharacter } from '../types'
@@ -36,9 +36,9 @@ describe('Participant', () => {
     calculateHp: jest.fn().mockReturnValue(10),
   }
 
-  const mockLogger: Logger = {
+  const mockLogger: ILogger = {
     log: jest.fn(),
-  } as object as Logger
+  } as object as ILogger
 
   beforeEach(() => {
     jest.clearAllMocks()

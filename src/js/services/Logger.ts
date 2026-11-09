@@ -1,9 +1,8 @@
-export enum LogLevel {
-  CAN_SKIP,
-  NO_SKIP,
-}
+import type { ILogger } from './ILogger'
+import { LogLevel } from './ILogger'
 
-export class Logger {
+// Renders log lines into a DOM container
+export class Logger implements ILogger {
   private readonly container: HTMLElement
   private buffer: string[] = []
   private scheduled: boolean = false

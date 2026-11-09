@@ -1,7 +1,7 @@
 import { Dice, roll } from 'ttrpg-lib-dice'
 
 import type { Side } from '../types'
-import type { Logger } from './Logger'
+import type { ILogger } from './ILogger'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
 import type { ITargetSelector } from './TargetSelector'
 import type { ICharacter } from './types'
@@ -18,7 +18,7 @@ export class Participant {
     private readonly strategy: ICombatStrategy,
     private readonly bias: number,
     private readonly maxAttacksPerTarget: number, // 0 = unlimited
-    private readonly logger: Logger,
+    private readonly logger: ILogger,
   ) {
     if (!Number.isInteger(maxAttacksPerTarget) || maxAttacksPerTarget < 0) {
       throw new Error(`Invalid max attacks per target: ${maxAttacksPerTarget}`)

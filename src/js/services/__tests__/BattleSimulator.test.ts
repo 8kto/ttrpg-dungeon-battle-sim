@@ -2,7 +2,7 @@ import { Dice } from 'ttrpg-lib-dice'
 
 import { Side } from '../../types'
 import { BattleSimulator, MAX_ROUNDS } from '../BattleSimulator'
-import type { Logger } from '../Logger'
+import type { ILogger } from '../ILogger'
 import { Participant } from '../Participant'
 import { getStrategy } from '../strategies/getStrategy'
 import type { ICombatStrategy } from '../strategies/ICombatStrategy'
@@ -16,7 +16,7 @@ jest.mock('../TargetSelector')
 const mockLogger = {
   error: jest.fn(),
   log: jest.fn(),
-} as object as Logger
+} as object as ILogger
 
 const mockStrategy = {
   calculateDamage: jest.fn().mockReturnValue(5),
@@ -49,7 +49,7 @@ describe('BattleSimulator', () => {
         strategy: ICombatStrategy,
         bias: number,
         maxAttacksPerTarget: number,
-        logger: Logger,
+        logger: ILogger,
       ) => ({
         attack: jest.fn(),
         attacksRemaining: maxAttacksPerTarget,
