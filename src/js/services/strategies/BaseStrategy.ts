@@ -1,12 +1,29 @@
+type FormulaTokens = {
+  multiplier: number
+  sides: number
+  mod: number
+}
+
 export class BaseStrategy {
   // support "d6", "2d6", "3d10+2", "4d8 - 3", etc.
   private static readonly FORMULA_RE: RegExp = /^(\d*)d(\d+)\s*([+-]\s*\d+)?$/i
 
-  getTokens(damageFormula: string): {
-    multiplier: number
-    sides: number
-    mod: number
-  } {
+  // formulas are parsed on every attack, but there are only a few distinct ones per simulation
+  private static readonly tokensCache: Map<string, Readonly<FormulaTokens>> = new Map()
+
+  getTokens(damageFormula: string): Readonly<FormulaTokens> {
+    const cached = BaseStrategy.tokensCache.get(damageFormula)
+    if (cached) {
+      return cached
+    }
+
+    const tokens = BaseStrategy.parseFormula(damageFormula)
+    BaseStrategy.tokensCache.set(damageFormula, tokens)
+
+    return tokens
+  }
+
+  private static parseFormula(damageFormula: string): Readonly<FormulaTokens> {
     const match = damageFormula.trim().match(BaseStrategy.FORMULA_RE)
     if (!match) {
       throw new Error(`Invalid damage formula: "${damageFormula}"`)
@@ -19,10 +36,6 @@ export class BaseStrategy {
     // parse optional modifier
     const mod = match[3] ? parseInt(match[3].replace(/\s+/g, ''), 10) : 0
 
-    return {
-      mod: mod ?? 0,
-      multiplier,
-      sides,
-    }
+    return Object.freeze({ mod, multiplier, sides })
   }
 }
