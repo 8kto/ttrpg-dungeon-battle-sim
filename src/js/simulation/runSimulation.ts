@@ -1,9 +1,13 @@
 import { BattleSimulator } from '../services/BattleSimulator'
 import type { ILogger } from '../services/ILogger'
+import { NullLogger } from '../services/NullLogger'
 import type { ICharacter } from '../services/types'
 import type { SimulationSettings } from '../types'
 import type { BattleStats } from './stats'
 import { addBattleResult, createStats } from './stats'
+
+// battle details are logged for this many battles only, statistics cover all of them
+export const MAX_LOGGED_BATTLES = 500
 
 // Everything needed to run a simulation; plain data, so it can be sent to a worker
 export type SimulationRequest = {
@@ -19,11 +23,19 @@ export const runSimulation = (
   onBattle: (stats: BattleStats) => void = (): void => {},
 ): BattleStats => {
   const stats = createStats()
+  const silentLogger = new NullLogger()
 
   for (let i = 0; i < settings.battleCount; i++) {
-    logger.delimiter()
-    logger.log(`[Battle ${i + 1}]`)
-    logger.delimiter()
+    if (i === MAX_LOGGED_BATTLES && logger.isVerbose()) {
+      logger.lineBreak()
+      logger.log(`... details of further battles are not logged (limit: ${MAX_LOGGED_BATTLES} battles)`)
+    }
+    // thousands of logged battles would only bloat the page
+    const battleLogger = i < MAX_LOGGED_BATTLES ? logger : silentLogger
+
+    battleLogger.delimiter()
+    battleLogger.log(`[Battle ${i + 1}]`)
+    battleLogger.delimiter()
 
     const sim = new BattleSimulator(
       players,
@@ -33,15 +45,15 @@ export const runSimulation = (
       settings.biasPlayers,
       settings.biasMonsters,
       settings.maxAttacksPerTarget,
-      logger,
+      battleLogger,
     )
     sim.renderDetails()
-    logger.lineBreak()
+    battleLogger.lineBreak()
 
     const res = sim.simulate()
     addBattleResult(stats, res)
 
-    logger.log(`>>> total rounds: ${res.rounds}`)
+    battleLogger.log(`>>> total rounds: ${res.rounds}`)
     onBattle(stats)
   }
 

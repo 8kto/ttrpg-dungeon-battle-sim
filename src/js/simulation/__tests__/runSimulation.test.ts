@@ -5,7 +5,7 @@ import { LogLevel } from '../../services/ILogger'
 import type { ICharacter } from '../../services/types'
 import { Rounding, Strategy } from '../../services/types'
 import type { SimulationRequest } from '../runSimulation'
-import { runSimulation } from '../runSimulation'
+import { MAX_LOGGED_BATTLES, runSimulation } from '../runSimulation'
 
 // players always hit, monsters never do: the outcome is deterministic
 const hero: ICharacter = { armorClass: 30, damage: ['d6'], hitDice: [1, Dice.d8], name: 'Hero', toHit: 100 }
@@ -50,6 +50,19 @@ describe('runSimulation', () => {
     expect(lines).toContain('[Battle 1]')
     expect(lines).toContain('🥷Hero HP: 8')
     expect(lines).toContain('>>> total rounds: 1')
+  })
+
+  it(`logs details of the first ${MAX_LOGGED_BATTLES} battles only`, () => {
+    const logger = new BufferLogger()
+    const stats = runSimulation(makeRequest({ battleCount: MAX_LOGGED_BATTLES + 2 }), logger)
+
+    const lines = logger.drain()
+    expect(stats.completed).toBe(MAX_LOGGED_BATTLES + 2)
+    expect(lines).toContain(`[Battle ${MAX_LOGGED_BATTLES}]`)
+    expect(lines).not.toContain(`[Battle ${MAX_LOGGED_BATTLES + 1}]`)
+    expect(lines[lines.length - 1]).toBe(
+      `... details of further battles are not logged (limit: ${MAX_LOGGED_BATTLES} battles)`,
+    )
   })
 
   it('logs nothing when not verbose', () => {
