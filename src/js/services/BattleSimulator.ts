@@ -12,7 +12,7 @@ import type { IMonster, IPlayerCharacter, Rounding, Strategy } from './types'
 // Guards against endless battles (nobody can hit, everybody skips turns, etc.)
 export const MAX_ROUNDS = 1000
 
-type BattleResult = {
+export type BattleResult = {
   winner: Side | null // null is a draw: round limit reached
   rounds: number
   survivors: Array<Participant>

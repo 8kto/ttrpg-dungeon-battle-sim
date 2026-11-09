@@ -12,8 +12,9 @@ import { Logger } from './services/Logger'
 import { NameProvider } from './services/NameProvider'
 import { getStrategy } from './services/strategies/getStrategy'
 import { validateCharacters } from './services/validateCharacters'
+import type { BattleStats } from './simulation/stats'
+import { addBattleResult, createStats, formatSummary } from './simulation/stats'
 import type { BattleSimulationConfig } from './types'
-import { Side } from './types'
 import { CharTable } from './ui/CharTable'
 import { SettingsForm } from './ui/SettingsForm'
 import { bindTabs } from './ui/tabs'
@@ -139,21 +140,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
     logger: Logger,
     getBattleSimulator: () => BattleSimulator,
     isLogEnabled: boolean,
-  ): Promise<{
-    completed: number
-    draws: number
-    survP: number
-    winsM: number
-    winsP: number
-    roundsTotal: number
-    roundsAvg: number
-  }> => {
-    let winsP = 0,
-      winsM = 0,
-      draws = 0,
-      survP = 0,
-      roundsTotal = 0,
-      completed = 0
+  ): Promise<BattleStats> => {
+    const stats = createStats()
 
     for (let i = 0; i < runs; i++) {
       // if controller.abort() called, stop immediately
@@ -179,24 +167,12 @@ document.addEventListener('DOMContentLoaded', (): void => {
       logger.lineBreak()
 
       const res = sim.simulate()
-      if (res.winner === Side.Players) {
-        winsP++
-        survP += res.survivors.filter((s) => s.side === Side.Players).length
-      } else if (res.winner === Side.Monsters) {
-        winsM++
-      } else {
-        draws++
-      }
-      roundsTotal += res.rounds
-      completed++
+      addBattleResult(stats, res)
 
       logger.log(`>>> total rounds: ${res.rounds}`)
     }
 
-    // the run may be aborted, so average over completed battles only
-    const roundsAvg = completed > 0 ? parseFloat((roundsTotal / completed).toFixed(1)) : 0
-
-    return { completed, draws, roundsAvg, roundsTotal, survP, winsM, winsP }
+    return stats
   }
 
   const validateInput = (): string[] => {
@@ -220,8 +196,6 @@ document.addEventListener('DOMContentLoaded', (): void => {
     stopSimBtn.setAttribute('disabled', 'disabled')
   }
 
-  const percent = (value: number, total: number): string => ((value / total) * 100).toFixed(1)
-
   onClick('run-sim', async (): Promise<void> => {
     const errors = validateInput()
     if (errors.length > 0) {
@@ -239,39 +213,18 @@ document.addEventListener('DOMContentLoaded', (): void => {
     controller = new AbortController()
     signal = controller.signal
 
-    const initialP = playersTable.size
-
     try {
       logger.warn('Starting simulation...')
       const startTime = performance.now()
-      const { completed, draws, roundsAvg, survP, winsM, winsP } = await runBattles(
-        runs,
-        signal,
-        progressBar,
-        logger,
-        getBattleSimulator,
-        logsEnabled,
-      )
-      const elapsedMs = performance.now() - startTime
-      const elapsedSec = (elapsedMs / 1000).toFixed(1)
+      const stats = await runBattles(runs, signal, progressBar, logger, getBattleSimulator, logsEnabled)
 
       logger.lineBreak(LogLevel.NO_SKIP)
-      if (completed === 0) {
-        logger.warn('No battles completed')
-
-        return
-      }
-
-      logger.warn(`Players win: ${percent(winsP, completed)}%, Monsters win: ${percent(winsM, completed)}%`)
-      if (draws > 0) {
-        logger.warn(`>> Draws (round limit reached): ${percent(draws, completed)}%`)
-      }
-      if (winsP > 0) {
-        logger.warn(`>> Avg Players survivors: ${percent(survP, winsP * initialP)}%`)
-      }
-      logger.warn(`>> Strategy ${settings.strategyLabel}, ${completed} of ${runs} battles`)
-      logger.warn(`>> Avg Rounds: ${roundsAvg}`)
-      logger.warn(`>> Execution time: ${elapsedSec} s`)
+      formatSummary(stats, {
+        elapsedMs: performance.now() - startTime,
+        playersCount: playersTable.size,
+        runs,
+        strategyLabel: settings.strategyLabel,
+      }).forEach((line) => logger.warn(line))
     } catch (err) {
       console.error(err)
       logger.warn(`Simulation failed: ${err instanceof Error ? err.message : String(err)}`)
