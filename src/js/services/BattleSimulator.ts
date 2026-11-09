@@ -51,6 +51,10 @@ export class BattleSimulator {
   }
 
   renderDetails(): this {
+    if (!this.logger.isVerbose()) {
+      return this
+    }
+
     this.participants.forEach((p) => {
       this.logger.log(`${p.side === Side.Monsters ? '🧌' : '🥷'}${p.char.name} HP: ${p.currentHp}`)
     })
@@ -84,9 +88,11 @@ export class BattleSimulator {
 
       const sides = this.getSortedByInitiative()
       const combatants = shuffleArray(sides[0]).concat(shuffleArray(sides[1]))
-      const initiativeSfx = combatants[0].side === Side.Players ? 'players won initiative' : 'monsters won initiative'
 
-      this.logger.log(`>>> round ${this.roundsCount}, ${initiativeSfx}`)
+      if (this.logger.isVerbose()) {
+        const initiativeSfx = combatants[0].side === Side.Players ? 'players won initiative' : 'monsters won initiative'
+        this.logger.log(`>>> round ${this.roundsCount}, ${initiativeSfx}`)
+      }
 
       // Each combatant does its attacks
       for (const combatant of combatants) {

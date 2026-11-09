@@ -9,4 +9,6 @@ export interface ILogger {
   warn(message: string): void
   lineBreak(level?: LogLevel): void
   delimiter(level?: LogLevel): void
+  // whether skippable (CAN_SKIP) messages are recorded; lets callers avoid building them
+  isVerbose(): boolean
 }

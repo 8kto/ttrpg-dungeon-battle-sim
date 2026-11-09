@@ -37,6 +37,7 @@ describe('Participant', () => {
   }
 
   const mockLogger: ILogger = {
+    isVerbose: jest.fn().mockReturnValue(true),
     log: jest.fn(),
   } as object as ILogger
 
@@ -144,6 +145,17 @@ describe('Participant', () => {
       attacker.performOneAttack(target, '1d6')
       expect(target.currentHp).toBe(10)
       expect(mockLogger.log).toHaveBeenCalledWith('🛡️ Players misses Monsters')
+    })
+
+    it('deals damage without building log messages when logger is not verbose', () => {
+      ;(mockLogger.isVerbose as jest.Mock).mockReturnValueOnce(false)
+      const attacker = new Participant(mockChar, Side.Players, mockStrategy, 0, 0, mockLogger)
+      const target = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
+      jest.spyOn(attacker, 'rollToHit').mockReturnValue(20) // Hit
+
+      attacker.performOneAttack(target, '1d6')
+      expect(target.currentHp).toBe(5)
+      expect(mockLogger.log).not.toHaveBeenCalled()
     })
   })
 

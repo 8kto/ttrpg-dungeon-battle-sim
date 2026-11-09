@@ -36,7 +36,9 @@ export class Participant {
 
   attack(enemies: Participant[], targetSelector: ITargetSelector): void {
     if (this.shouldSkip()) {
-      this.logger.log(`🫢 ${this.char.name} skips turn`)
+      if (this.logger.isVerbose()) {
+        this.logger.log(`🫢 ${this.char.name} skips turn`)
+      }
 
       return
     }
@@ -66,12 +68,16 @@ export class Participant {
       // negative modifiers must not heal the target
       const dmg = Math.max(0, this.strategy.calculateDamage(dmgFormula))
       target.currentHp -= dmg
-      this.logger.log(`🗡️ ${this.char.name} attacks ${target.char.name}, damage: ${dmg}`)
 
-      if (target.currentHp <= 0) {
-        this.logger.log(`💀️ ${target.char.name} is dead`)
+      // log messages are built only when they will be shown: this is the hottest path
+      if (this.logger.isVerbose()) {
+        this.logger.log(`🗡️ ${this.char.name} attacks ${target.char.name}, damage: ${dmg}`)
+
+        if (target.currentHp <= 0) {
+          this.logger.log(`💀️ ${target.char.name} is dead`)
+        }
       }
-    } else {
+    } else if (this.logger.isVerbose()) {
       this.logger.log(`🛡️ ${this.char.name} misses ${target.char.name}`)
     }
   }

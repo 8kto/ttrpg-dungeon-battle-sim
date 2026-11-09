@@ -15,6 +15,7 @@ jest.mock('../TargetSelector')
 
 const mockLogger = {
   error: jest.fn(),
+  isVerbose: jest.fn().mockReturnValue(true),
   log: jest.fn(),
 } as object as ILogger
 
@@ -223,6 +224,23 @@ describe('BattleSimulator', () => {
       simulator.renderDetails()
       expect(mockLogger.log).toHaveBeenCalledWith(expect.stringContaining('🥷Warrior HP: 3'))
       expect(mockLogger.log).toHaveBeenCalledWith(expect.stringContaining('🧌Goblin HP: 4'))
+    })
+
+    it('logs nothing when logger is not verbose', () => {
+      ;(mockLogger.isVerbose as jest.Mock).mockReturnValueOnce(false)
+      const simulator = new BattleSimulator(
+        [mockPlayer],
+        [mockMonster],
+        Strategy.Random,
+        Rounding.Up,
+        0,
+        0,
+        0,
+        mockLogger,
+      )
+
+      simulator.renderDetails()
+      expect(mockLogger.log).not.toHaveBeenCalled()
     })
   })
 })

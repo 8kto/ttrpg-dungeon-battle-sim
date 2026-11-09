@@ -22,6 +22,10 @@ export class Logger implements ILogger {
     this.level = level
   }
 
+  isVerbose(): boolean {
+    return this.level === LogLevel.CAN_SKIP
+  }
+
   log(message: string, level: LogLevel = LogLevel.CAN_SKIP): void {
     if (level < this.level) {
       return
