@@ -31,17 +31,17 @@ export class BattleSimulator {
     strategyMode: Strategy,
     biasPlayers: number,
     biasMonsters: number,
-    maxAttacksPerChar: number,
+    maxAttacksPerTarget: number,
     private readonly logger: Logger,
   ) {
     this.targetSelector = new RandomTargetSelector()
     this.strategy = getStrategy(strategyMode)
 
     this.sidePlayers = players.map(
-      (c) => new Participant(c, Side.Players, this.strategy, biasPlayers, maxAttacksPerChar, this.logger),
+      (c) => new Participant(c, Side.Players, this.strategy, biasPlayers, maxAttacksPerTarget, this.logger),
     )
     this.sideMonsters = monsters.map(
-      (c) => new Participant(c, Side.Monsters, this.strategy, biasMonsters, maxAttacksPerChar, this.logger),
+      (c) => new Participant(c, Side.Monsters, this.strategy, biasMonsters, maxAttacksPerTarget, this.logger),
     )
   }
 

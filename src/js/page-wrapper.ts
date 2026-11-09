@@ -322,9 +322,9 @@ document.addEventListener('DOMContentLoaded', (): void => {
     const strategy = Strategy[strategySelect.value as keyof typeof Strategy]
     const biasPlayers = parseInt(biasPlayersInput.value, 10)
     const biasMonsters = parseInt(biasMonstersInput.value, 10)
-    const maxAttacksPerChar = parseInt(maxAttacksInput.value, 10)
+    const maxAttacksPerTarget = parseInt(maxAttacksInput.value, 10)
 
-    return new BattleSimulator(players, monsters, strategy, biasPlayers, biasMonsters, maxAttacksPerChar, logger)
+    return new BattleSimulator(players, monsters, strategy, biasPlayers, biasMonsters, maxAttacksPerTarget, logger)
   }
 
   const runBattles = async (

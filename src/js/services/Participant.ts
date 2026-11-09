@@ -9,19 +9,20 @@ import type { ICharacter } from './types'
 export class Participant {
   public currentHp: number
   public readonly hasAttackLimit: boolean
-  private maxAttacksRemaining: number
+  // how many more times this participant can be attacked in the current round
+  private attacksRemaining: number
 
   constructor(
     public readonly char: ICharacter,
     public readonly side: Side,
     private readonly strategy: ICombatStrategy,
     private readonly bias: number,
-    private readonly maxAttacksPerChar: number,
+    private readonly maxAttacksPerTarget: number, // 0 = unlimited
     private readonly logger: Logger,
   ) {
     this.currentHp = strategy.calculateHp(char.hitDice)
-    this.hasAttackLimit = maxAttacksPerChar > 0
-    this.maxAttacksRemaining = maxAttacksPerChar
+    this.hasAttackLimit = maxAttacksPerTarget > 0
+    this.attacksRemaining = maxAttacksPerTarget
   }
 
   shouldSkip(): boolean {
@@ -54,7 +55,7 @@ export class Participant {
   performOneAttack(target: Participant, dmgFormula: string): void {
     // consume one attack slot on the target
     if (target.hasAttackLimit) {
-      target.maxAttacksRemaining--
+      target.attacksRemaining--
     }
 
     if (this.rollToHit() >= target.char.armorClass) {
@@ -76,10 +77,10 @@ export class Participant {
   }
 
   isValidTarget(): boolean {
-    return this.currentHp > 0 && (!this.hasAttackLimit || this.maxAttacksRemaining > 0)
+    return this.currentHp > 0 && (!this.hasAttackLimit || this.attacksRemaining > 0)
   }
 
   resetAttackLimit(): void {
-    this.maxAttacksRemaining = this.maxAttacksPerChar
+    this.attacksRemaining = this.maxAttacksPerTarget
   }
 }

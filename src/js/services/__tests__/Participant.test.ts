@@ -51,7 +51,7 @@ describe('Participant', () => {
       expect(participant.currentHp).toBe(10)
     })
 
-    it('sets hasAttackLimit correctly based on maxAttacksPerChar', () => {
+    it('sets hasAttackLimit correctly based on maxAttacksPerTarget', () => {
       const withLimit = new Participant(mockChar, Side.Players, mockStrategy, 0, 2, mockLogger)
       expect(withLimit.hasAttackLimit).toBe(true)
 
@@ -156,7 +156,7 @@ describe('Participant', () => {
   })
 
   describe('resetAttackLimit', () => {
-    it('resets maxAttacksRemaining to initial value', () => {
+    it('resets attacksRemaining to initial value', () => {
       const participant = new Participant(mockChar, Side.Players, mockStrategy, 0, 3, mockLogger)
       const attacker = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
 
