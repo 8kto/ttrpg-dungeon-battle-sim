@@ -9,8 +9,11 @@ import type { ITargetSelector } from './TargetSelector'
 import { RandomTargetSelector } from './TargetSelector'
 import type { IMonster, IPlayerCharacter, Strategy } from './types'
 
+// Guards against endless battles (nobody can hit, everybody skips turns, etc.)
+export const MAX_ROUNDS = 1000
+
 type BattleResult = {
-  winner: Side
+  winner: Side | null // null is a draw: round limit reached
   rounds: number
   survivors: Array<Participant>
 }
@@ -65,10 +68,19 @@ export class BattleSimulator {
   simulate(): BattleResult {
     // Round: goes while there are two sides
     while (this.hasSurvivors(Side.Players) && this.hasSurvivors(Side.Monsters)) {
+      if (this.roundsCount >= MAX_ROUNDS) {
+        this.logger.log(`⏸️ Round limit (${MAX_ROUNDS}) reached — draw`)
+
+        return {
+          rounds: this.roundsCount,
+          survivors: this.participants.filter((p) => p.currentHp > 0),
+          winner: null,
+        }
+      }
+
       this.roundsCount++
       this.participants.forEach((p) => p.resetAttackLimit())
 
-      let anyAction = false
       const sides = this.getSortedByInitiative()
       const combatants = shuffleArray(sides[0]).concat(shuffleArray(sides[1]))
       const initiativeSfx = combatants[0].side === Side.Players ? 'players won initiative' : 'monsters won initiative'
@@ -83,18 +95,7 @@ export class BattleSimulator {
 
         // The target will be chosen randomly
         const enemies = combatant.side === Side.Players ? this.sideMonsters : this.sidePlayers
-        if (!enemies.length) {
-          continue
-        }
-
-        anyAction = true
         combatant.attack(enemies, this.targetSelector)
-      }
-
-      // if nobody attacked or was attacked this round, end battle
-      if (!anyAction) {
-        this.logger.warn('⏸️ No more valid attacks — ending simulation')
-        break
       }
     }
 

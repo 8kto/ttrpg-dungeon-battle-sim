@@ -1,7 +1,7 @@
 import { Dice } from 'ttrpg-lib-dice'
 
 import { Side } from '../../types'
-import { BattleSimulator } from '../BattleSimulator'
+import { BattleSimulator, MAX_ROUNDS } from '../BattleSimulator'
 import type { Logger } from '../Logger'
 import { Participant } from '../Participant'
 import { getStrategy } from '../strategies/getStrategy'
@@ -125,25 +125,16 @@ describe('BattleSimulator', () => {
       )
     })
 
-    // FIXME mock dice rolls with initiative
-    it.skip('ends early when no valid attacks possible', () => {
+    it('ends in a draw when the round limit is reached', () => {
       const simulator = new BattleSimulator([mockPlayer], [mockMonster], Strategy.Random, 0, 0, 0, mockLogger)
 
-      // @ts-ignore private
-      simulator.participants.forEach((p) => {
-        ;(p.isValidTarget as jest.Mock).mockReturnValue(false)
-      })
-
-      jest
-        .spyOn(simulator, 'hasSurvivors')
-        .mockReturnValueOnce(true)
-        .mockReturnValueOnce(true)
-        .mockImplementation((side) => side !== Side.Monsters)
+      // nobody ever dies
+      jest.spyOn(simulator, 'hasSurvivors').mockReturnValue(true)
 
       const result = simulator.simulate()
-      expect(mockLogger.log).toHaveBeenCalledWith(expect.stringMatching('>>> round 1, '))
-      expect(mockLogger.log).toHaveBeenCalledWith('⏸️ No more valid attacks — ending simulation')
-      expect(result.rounds).toBe(1)
+      expect(result.rounds).toBe(MAX_ROUNDS)
+      expect(result.winner).toBeNull()
+      expect(mockLogger.log).toHaveBeenCalledWith(`⏸️ Round limit (${MAX_ROUNDS}) reached — draw`)
     })
 
     it('resets attack limits each round', () => {
