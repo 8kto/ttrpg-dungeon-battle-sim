@@ -1,7 +1,7 @@
 import { Dice, roll } from 'ttrpg-lib-dice'
 
 import { Side } from '../../types'
-import type { Logger } from '../Logger'
+import type { ILogger } from '../ILogger'
 import { Participant } from '../Participant'
 import type { ICombatStrategy } from '../strategies/ICombatStrategy'
 import type { ICharacter } from '../types'
@@ -36,9 +36,10 @@ describe('Participant', () => {
     calculateHp: jest.fn().mockReturnValue(10),
   }
 
-  const mockLogger: Logger = {
+  const mockLogger: ILogger = {
+    isVerbose: jest.fn().mockReturnValue(true),
     log: jest.fn(),
-  } as object as Logger
+  } as object as ILogger
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -51,12 +52,18 @@ describe('Participant', () => {
       expect(participant.currentHp).toBe(10)
     })
 
-    it('sets hasAttackLimit correctly based on maxAttacksPerChar', () => {
+    it('sets hasAttackLimit correctly based on maxAttacksPerTarget', () => {
       const withLimit = new Participant(mockChar, Side.Players, mockStrategy, 0, 2, mockLogger)
       expect(withLimit.hasAttackLimit).toBe(true)
 
       const withoutLimit = new Participant(mockChar, Side.Players, mockStrategy, 0, 0, mockLogger)
       expect(withoutLimit.hasAttackLimit).toBe(false)
+    })
+
+    it.each([-1, 1.5, NaN])('throws on invalid max attacks per target [%d]', (maxAttacks) => {
+      expect(() => new Participant(mockChar, Side.Players, mockStrategy, 0, maxAttacks, mockLogger)).toThrowError(
+        /Invalid max attacks per target/,
+      )
     })
   })
 
@@ -138,6 +145,17 @@ describe('Participant', () => {
       attacker.performOneAttack(target, '1d6')
       expect(target.currentHp).toBe(10)
       expect(mockLogger.log).toHaveBeenCalledWith('🛡️ Players misses Monsters')
+    })
+
+    it('deals damage without building log messages when logger is not verbose', () => {
+      ;(mockLogger.isVerbose as jest.Mock).mockReturnValueOnce(false)
+      const attacker = new Participant(mockChar, Side.Players, mockStrategy, 0, 0, mockLogger)
+      const target = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
+      jest.spyOn(attacker, 'rollToHit').mockReturnValue(20) // Hit
+
+      attacker.performOneAttack(target, '1d6')
+      expect(target.currentHp).toBe(5)
+      expect(mockLogger.log).not.toHaveBeenCalled()
     })
   })
 

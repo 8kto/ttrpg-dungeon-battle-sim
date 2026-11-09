@@ -17,3 +17,9 @@ export enum Strategy {
   Random,
   Max,
 }
+
+// How fractional averages (e.g. d8 = 4.5) are turned into whole numbers
+export enum Rounding {
+  Up,
+  Down,
+}

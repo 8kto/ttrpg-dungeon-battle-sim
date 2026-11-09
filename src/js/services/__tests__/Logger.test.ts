@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { Logger, LogLevel } from '../Logger'
+import { LogLevel } from '../ILogger'
+import { Logger } from '../Logger'
 
 describe('Logger', () => {
   let container: HTMLElement
@@ -63,6 +64,12 @@ describe('Logger', () => {
     logger.warn('a warning')
     expect(container.querySelectorAll('p')).toHaveLength(1)
     expect(container.querySelector('p')!.textContent).toBe('a warning')
+  })
+
+  it('isVerbose() is true only when skippable messages are logged', () => {
+    expect(logger.isVerbose()).toBe(true)
+    logger.setLevel(LogLevel.NO_SKIP)
+    expect(logger.isVerbose()).toBe(false)
   })
 
   it('clear() empties container and buffer', () => {

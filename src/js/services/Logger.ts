@@ -1,17 +1,15 @@
-export enum LogLevel {
-  CAN_SKIP,
-  NO_SKIP,
-}
+import { BaseLogger } from './BaseLogger'
+import { LogLevel } from './ILogger'
 
-export class Logger {
+// Renders log lines into a DOM container
+export class Logger extends BaseLogger {
   private readonly container: HTMLElement
   private buffer: string[] = []
   private scheduled: boolean = false
 
-  constructor(
-    id: string,
-    private level: LogLevel = LogLevel.CAN_SKIP,
-  ) {
+  constructor(id: string, level: LogLevel = LogLevel.CAN_SKIP) {
+    super(level)
+
     const el = document.getElementById(id)
     if (!el) {
       throw new Error(`No element with id="${id}"`)
@@ -19,15 +17,23 @@ export class Logger {
     this.container = el
   }
 
-  setLevel(level: LogLevel): void {
-    this.level = level
+  // appends messages already filtered elsewhere (e.g. received from the simulation worker)
+  write(messages: string[]): void {
+    messages.forEach((message) => this.output(message))
   }
 
-  log(message: string, level: LogLevel = LogLevel.CAN_SKIP): void {
-    if (level < this.level) {
-      return
-    }
+  clear(): this {
+    this.buffer = []
+    this.container.innerHTML = ''
 
+    return this
+  }
+
+  getContainer(): HTMLElement {
+    return this.container
+  }
+
+  protected output(message: string): void {
     // split out any newlines into separate lines
     message.split('\n').forEach((line) => {
       this.buffer.push(line)
@@ -37,17 +43,6 @@ export class Logger {
       this.scheduled = true
       requestAnimationFrame(() => this.flush())
     }
-  }
-
-  warn(message: string): void {
-    this.log(message, LogLevel.NO_SKIP)
-  }
-
-  clear(): this {
-    this.buffer = []
-    this.container.innerHTML = ''
-
-    return this
   }
 
   private flush(): void {
@@ -63,17 +58,5 @@ export class Logger {
 
     this.buffer = []
     this.scheduled = false
-  }
-
-  lineBreak(level: LogLevel = LogLevel.CAN_SKIP): void {
-    this.log('\n', level)
-  }
-
-  delimiter(level: LogLevel = LogLevel.CAN_SKIP): void {
-    this.log('-'.repeat(80), level)
-  }
-
-  getContainer(): HTMLElement {
-    return this.container
   }
 }
