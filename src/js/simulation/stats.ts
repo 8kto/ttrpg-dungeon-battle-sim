@@ -1,3 +1,4 @@
+import type { EffectCounters } from '../services/attacks/types'
 import type { BattleResult } from '../services/BattleSimulator'
 import { Side } from '../types'
 
@@ -5,6 +6,7 @@ import { Side } from '../types'
 export type BattleStats = {
   completed: number
   draws: number
+  effects: EffectCounters
   roundsTotal: number
   survivingPlayers: number // summed over battles won by the players
   winsMonsters: number
@@ -21,6 +23,7 @@ export type SummaryContext = {
 export const createStats = (): BattleStats => ({
   completed: 0,
   draws: 0,
+  effects: {},
   roundsTotal: 0,
   survivingPlayers: 0,
   winsMonsters: 0,
@@ -38,6 +41,12 @@ export const addBattleResult = (stats: BattleStats, result: BattleResult): void 
   }
   stats.roundsTotal += result.rounds
   stats.completed++
+
+  Object.entries(result.effects).forEach(([label, { applied, hasSave, saved }]) => {
+    const total = (stats.effects[label] ??= { applied: 0, hasSave, saved: 0 })
+    total.applied += applied
+    total.saved += saved
+  })
 }
 
 const percent = (value: number, total: number): string => ((value / total) * 100).toFixed(1)
@@ -56,6 +65,12 @@ export const formatSummary = (stats: BattleStats, context: SummaryContext): stri
   if (winsPlayers > 0) {
     lines.push(`>> Avg Players survivors: ${percent(survivingPlayers, winsPlayers * context.playersCount)}%`)
   }
+  Object.keys(stats.effects)
+    .sort()
+    .forEach((label) => {
+      const { applied, hasSave, saved } = stats.effects[label]
+      lines.push(`>> ${label}: ${applied} applied${hasSave ? `, ${saved} saved` : ''}`)
+    })
   lines.push(
     `>> Strategy ${context.strategyLabel}, ${completed} of ${context.runs} battles`,
     `>> Avg Rounds: ${parseFloat((roundsTotal / completed).toFixed(1))}`,
