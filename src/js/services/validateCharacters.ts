@@ -1,4 +1,4 @@
-import { formulasOf, parseDamage } from './attacks/parseDamage'
+import { getFormulasOf, parseDamage } from './attacks/parseDamage'
 import { SaveType } from './attacks/types'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
 import type { ICharacter } from './types'
@@ -23,7 +23,7 @@ const validateDamage = (damage: string, strategy: ICombatStrategy): string[] => 
   try {
     return parseDamage(damage)
       .flat()
-      .flatMap(formulasOf)
+      .flatMap(getFormulasOf)
       .filter((formula) => !isValidFormula(formula, strategy))
       .map((formula) => `invalid damage formula "${formula}"`)
   } catch (err) {

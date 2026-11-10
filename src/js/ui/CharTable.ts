@@ -15,7 +15,7 @@ const toCharStats = (char: ICharacter): CharStats => ({
   toHit: char.toHit,
 })
 
-const saveInput = (group: HTMLElement, save: SaveType): HTMLInputElement =>
+const getSaveInput = (group: HTMLElement, save: SaveType): HTMLInputElement =>
   group.querySelector(`.save-input[data-save="${save}"]`) as HTMLInputElement
 
 // Editable table of characters (one side of the battle); every character is a <tbody class="char">
@@ -28,7 +28,7 @@ export class CharTable {
   }
 
   get size(): number {
-    return this.groups.length
+    return this.getGroups().length
   }
 
   init(defs: CharStats[]): void {
@@ -52,7 +52,7 @@ export class CharTable {
   }
 
   read(): ICharacter[] {
-    return this.groups.map((group) => {
+    return this.getGroups().map((group) => {
       const ni = group.querySelector('.name-input') as HTMLInputElement
       const ac = parseInt((group.querySelector('.ac-input') as HTMLInputElement).value, 10)
       const th = parseInt((group.querySelector('.tohit-input') as HTMLInputElement).value, 10)
@@ -60,19 +60,19 @@ export class CharTable {
       const ht = parseInt((group.querySelector('.hd-type-select') as HTMLSelectElement).value, 10) as Dice
       const dmg = (group.querySelector('.damage-input') as HTMLInputElement).value.trim()
       const saves = Object.fromEntries(
-        Object.values(SaveType).map((save) => [save, parseInt(saveInput(group, save).value, 10)]),
+        Object.values(SaveType).map((save) => [save, parseInt(getSaveInput(group, save).value, 10)]),
       ) as Saves
 
       return { armorClass: ac, damage: dmg, hitDice: [hc, ht], name: ni.value, saves, toHit: th }
     })
   }
 
-  private get groups(): HTMLTableSectionElement[] {
+  private getGroups(): HTMLTableSectionElement[] {
     return Array.from(this.table.querySelectorAll<HTMLTableSectionElement>('tbody.char'))
   }
 
   private reset(): void {
-    this.groups.forEach((g) => g.remove())
+    this.getGroups().forEach((g) => g.remove())
   }
 
   private initGroup(group: HTMLTableSectionElement, defs: CharStats): void {
@@ -84,7 +84,7 @@ export class CharTable {
     ;(group.querySelector('.damage-input') as HTMLInputElement).value = defs.damage
 
     const saves = defs.saves ?? DEFAULT_SAVES
-    Object.values(SaveType).forEach((save) => (saveInput(group, save).value = saves[save].toString()))
+    Object.values(SaveType).forEach((save) => (getSaveInput(group, save).value = saves[save].toString()))
 
     group.dataset.prefix = defs.prefix
   }
@@ -123,7 +123,7 @@ export class CharTable {
   private reindexNames(): void {
     const nameIndices: Record<string, number> = {}
 
-    this.groups.forEach((group) => {
+    this.getGroups().forEach((group) => {
       const name = group.dataset.prefix
       if (!name) {
         return

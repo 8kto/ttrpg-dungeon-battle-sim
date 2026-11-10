@@ -1,6 +1,6 @@
-import { formulasOf, parseAttack, parseDamage } from '../parseDamage'
+import { getFormulasOf, parseAttack, parseDamage } from '../parseDamage'
 import type { AttackEffect } from '../types'
-import { SaveType } from '../types'
+import { ModifierKind, SaveType } from '../types'
 
 const sources = (input: string): string[][] => parseDamage(input).map((option) => option.map((a) => a.source))
 
@@ -27,33 +27,53 @@ describe('parseDamage', () => {
   it.each<[string, AttackEffect]>([
     [
       'd6[paralyze,paralyze(d4)]',
-      { label: 'paralyze', modifiers: [{ duration: 'd4', kind: 'paralyze' }], save: SaveType.Paralyze, saveMod: 0 },
+      {
+        label: 'paralyze',
+        modifiers: [{ duration: 'd4', kind: ModifierKind.Paralyze }],
+        save: SaveType.Paralyze,
+        saveMod: 0,
+      },
     ],
     [
       'd6[paralyze(+2),paralyze(d4)]',
-      { label: 'paralyze', modifiers: [{ duration: 'd4', kind: 'paralyze' }], save: SaveType.Paralyze, saveMod: 2 },
+      {
+        label: 'paralyze',
+        modifiers: [{ duration: 'd4', kind: ModifierKind.Paralyze }],
+        save: SaveType.Paralyze,
+        saveMod: 2,
+      },
     ],
     [
       'd6[poison(-2), save_or_die]',
-      { label: 'poison', modifiers: [{ kind: 'save_or_die' }], save: SaveType.Poison, saveMod: -2 },
+      { label: 'poison', modifiers: [{ kind: ModifierKind.SaveOrDie }], save: SaveType.Poison, saveMod: -2 },
     ],
     [
       'd6[magic,save_or_die]',
-      { label: 'magic', modifiers: [{ kind: 'save_or_die' }], save: SaveType.Magic, saveMod: 0 },
+      { label: 'magic', modifiers: [{ kind: ModifierKind.SaveOrDie }], save: SaveType.Magic, saveMod: 0 },
     ],
     [
       'd6[magic,d8]',
-      { label: 'magic', modifiers: [{ damage: 'd8', kind: 'extra_damage' }], save: SaveType.Magic, saveMod: 0 },
+      {
+        label: 'magic',
+        modifiers: [{ damage: 'd8', kind: ModifierKind.ExtraDamage }],
+        save: SaveType.Magic,
+        saveMod: 0,
+      },
     ],
     [
       'd6[breath,save_for_half(d8)]',
-      { label: 'breath', modifiers: [{ damage: 'd8', kind: 'save_for_half' }], save: SaveType.Breath, saveMod: 0 },
+      {
+        label: 'breath',
+        modifiers: [{ damage: 'd8', kind: ModifierKind.SaveForHalf }],
+        save: SaveType.Breath,
+        saveMod: 0,
+      },
     ],
     [
       'd6[poison,damage_each_round(d4)]',
       {
         label: 'poison',
-        modifiers: [{ damage: 'd4', duration: null, kind: 'damage_each_round' }],
+        modifiers: [{ damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }],
         save: SaveType.Poison,
         saveMod: 0,
       },
@@ -62,19 +82,27 @@ describe('parseDamage', () => {
       'd6[poison,damage_each_round(d4,3)]',
       {
         label: 'poison',
-        modifiers: [{ damage: 'd4', duration: '3', kind: 'damage_each_round' }],
+        modifiers: [{ damage: 'd4', duration: '3', kind: ModifierKind.DamageEachRound }],
         save: SaveType.Poison,
         saveMod: 0,
       },
     ],
     [
       'd6[🧊,damage_each_round(d4)]',
-      { label: '🧊', modifiers: [{ damage: 'd4', duration: null, kind: 'damage_each_round' }], save: null, saveMod: 0 },
+      {
+        label: '🧊',
+        modifiers: [{ damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }],
+        save: null,
+        saveMod: 0,
+      },
     ],
-    ['d6[🧊+2,d4]', { label: '🧊+2', modifiers: [{ damage: 'd4', kind: 'extra_damage' }], save: null, saveMod: 0 }],
+    [
+      'd6[🧊+2,d4]',
+      { label: '🧊+2', modifiers: [{ damage: 'd4', kind: ModifierKind.ExtraDamage }], save: null, saveMod: 0 },
+    ],
     [
       'd6[poisonous,d4]',
-      { label: 'poisonous', modifiers: [{ damage: 'd4', kind: 'extra_damage' }], save: null, saveMod: 0 },
+      { label: 'poisonous', modifiers: [{ damage: 'd4', kind: ModifierKind.ExtraDamage }], save: null, saveMod: 0 },
     ],
     ['d6[knife]', { label: 'knife', modifiers: [], save: null, saveMod: 0 }],
   ])('parses effect of "%s"', (input, expected) => {
@@ -97,7 +125,7 @@ describe('parseDamage', () => {
     expect(strip('D6 [ Poison ( -2 ) , SAVE_OR_DIE ] | D8')).toEqual(strip('d6[poison(-2),save_or_die]|d8'))
     expect(parseAttack(' D6 [ Poison , Damage_Each_Round( D4 , 3 ) ] ')).toMatchObject({
       damage: 'd6',
-      effect: { modifiers: [{ damage: 'd4', duration: '3', kind: 'damage_each_round' }] },
+      effect: { modifiers: [{ damage: 'd4', duration: '3', kind: ModifierKind.DamageEachRound }] },
     })
   })
 
@@ -130,7 +158,7 @@ describe('parseDamage', () => {
   })
 
   it('lists formulas for validation', () => {
-    expect(formulasOf(parseAttack('d6[poison,damage_each_round(d4,3),save_for_half(2d6)]'))).toEqual([
+    expect(getFormulasOf(parseAttack('d6[poison,damage_each_round(d4,3),save_for_half(2d6)]'))).toEqual([
       'd6',
       'd4',
       '3',

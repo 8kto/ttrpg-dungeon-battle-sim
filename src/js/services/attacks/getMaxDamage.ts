@@ -4,7 +4,7 @@ const TERM_RE = /([+-]?)\s*(?:(\d*)d(\d+)|(\d+))/gi
 
 // Maximum value of any formula the Random strategy accepts, e.g. "d6+d4" → 10
 // TODO migrate to dice lib
-export const maxDamage = (formula: string): number => {
+export const getMaxDamage = (formula: string): number => {
   const text = formula.trim()
   if (!FORMULA_RE.test(text)) {
     throw new Error(`Invalid damage formula: "${formula}"`)

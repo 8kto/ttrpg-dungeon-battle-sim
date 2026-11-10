@@ -17,12 +17,21 @@ export const DEFAULT_SAVES: Readonly<Saves> = Object.freeze({
   poison: 12,
 })
 
+// values are the modifier names as written in the damage field
+export enum ModifierKind {
+  Paralyze = 'paralyze',
+  SaveOrDie = 'save_or_die',
+  SaveForHalf = 'save_for_half',
+  ExtraDamage = 'extra_damage',
+  DamageEachRound = 'damage_each_round',
+}
+
 export type Modifier =
-  | { kind: 'paralyze'; duration: string | null } // null = until the end of battle
-  | { kind: 'save_or_die' }
-  | { kind: 'save_for_half'; damage: string }
-  | { kind: 'extra_damage'; damage: string } // bare formula, e.g. [magic,d8]
-  | { kind: 'damage_each_round'; damage: string; duration: string | null }
+  | { kind: ModifierKind.Paralyze; duration: string | null } // null = until the end of battle
+  | { kind: ModifierKind.SaveOrDie }
+  | { kind: ModifierKind.SaveForHalf; damage: string }
+  | { kind: ModifierKind.ExtraDamage; damage: string } // bare formula, e.g. [magic,d8]
+  | { kind: ModifierKind.DamageEachRound; damage: string; duration: string | null }
 
 export type AttackEffect = {
   label: string // save name for save tags (without bonus), otherwise the tag text as written

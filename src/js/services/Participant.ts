@@ -1,14 +1,22 @@
 import { Dice, roll } from 'ttrpg-lib-dice'
 
 import type { Side } from '../types'
-import { ActiveEffects, effectKey } from './attacks/ActiveEffects'
-import { maxDamage } from './attacks/maxDamage'
+import type { ActiveEffect } from './attacks/ActiveEffects'
+import { ActiveEffects, getEffectKey } from './attacks/ActiveEffects'
+import { getMaxDamage } from './attacks/getMaxDamage'
 import { parseDamage } from './attacks/parseDamage'
-import type { Attack, AttackEffect, AttackOption, EffectCounters } from './attacks/types'
+import type { Attack, AttackEffect, AttackOption, EffectCounters, Modifier } from './attacks/types'
+import { ModifierKind } from './attacks/types'
 import type { ILogger } from './ILogger'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
 import type { ITargetSelector } from './TargetSelector'
 import type { ICharacter } from './types'
+
+// modifiers that leave a lasting effect on the target
+type LastingModifier = Extract<Modifier, { kind: ActiveEffect['kind'] }>
+
+const formatDuration = (remaining: number | null): string =>
+  remaining === null ? 'until the end of battle' : `for ${remaining} turns`
 
 export class Participant {
   public currentHp: number
@@ -44,11 +52,11 @@ export class Participant {
 
   // Resolves lasting effects at the start of the own turn; false when the participant can't act
   startTurn(): boolean {
-    for (const effect of this.effects.damageOverTime) {
-      const dmg = this.effectValue(effect.damage as string)
+    for (const effect of this.effects.getDamageOverTime()) {
+      const dmg = this.getEffectValue(effect.damage as string)
       this.currentHp -= dmg
       if (this.logger.isVerbose()) {
-        this.logger.log(`🔥 ${this.char.name} takes ${dmg} damage (${effect.label} damage_each_round)`) // FIXME hardcoded mod name
+        this.logger.log(`🔥 ${this.char.name} takes ${dmg} damage (${effect.label} ${effect.kind})`)
       }
     }
     if (this.currentHp <= 0) {
@@ -113,12 +121,12 @@ export class Participant {
     const helpless = target.isParalyzed
     if (helpless || this.rollToHit() >= target.char.armorClass) {
       // negative modifiers must not heal the target
-      const dmg = helpless ? Math.max(0, maxDamage(attack.damage)) : this.effectValue(attack.damage)
+      const dmg = helpless ? Math.max(0, getMaxDamage(attack.damage)) : this.getEffectValue(attack.damage)
       target.currentHp -= dmg
 
       // log messages are built only when they will be shown: this is the hottest path
       if (this.logger.isVerbose()) {
-        this.logger.log(`🗡️ ${this.char.name} attacks ${target.char.name}${this.weaponInfo(attack)}, damage: ${dmg}`)
+        this.logger.log(`🗡️ ${this.char.name} attacks ${target.char.name}${this.getWeaponInfo(attack)}, damage: ${dmg}`)
 
         if (target.currentHp <= 0) {
           this.logger.log(`💀️ ${target.char.name} is dead`)
@@ -129,7 +137,7 @@ export class Participant {
         this.applyEffect(target, attack.effect)
       }
     } else if (this.logger.isVerbose()) {
-      this.logger.log(`🛡️ ${this.char.name} misses ${target.char.name}${this.weaponInfo(attack)}`)
+      this.logger.log(`🛡️ ${this.char.name} misses ${target.char.name}${this.getWeaponInfo(attack)}`)
     }
   }
 
@@ -148,53 +156,69 @@ export class Participant {
       }
 
       switch (modifier.kind) {
-        case 'save_for_half': {
-          const dmg = this.effectValue(modifier.damage)
-          this.dealEffectDamage(target, saved ? Math.floor(dmg / 2) : dmg, `${effect.label} save_for_half`)
+        case ModifierKind.SaveForHalf: {
+          const dmg = this.getEffectValue(modifier.damage)
+          this.dealEffectDamage(target, saved ? Math.floor(dmg / 2) : dmg, `${effect.label} ${modifier.kind}`)
           break
         }
-        case 'extra_damage':
+        case ModifierKind.ExtraDamage:
           if (!saved) {
-            this.dealEffectDamage(target, this.effectValue(modifier.damage), effect.label)
+            this.dealEffectDamage(target, this.getEffectValue(modifier.damage), effect.label)
           }
           break
-        case 'save_or_die':
+        case ModifierKind.SaveOrDie:
           if (!saved) {
             target.currentHp = Math.min(target.currentHp, 0)
             if (this.logger.isVerbose()) {
-              this.logger.log(`💀 ${target.char.name} dies (save_or_die)`)
+              this.logger.log(`💀 ${target.char.name} dies (${modifier.kind})`)
             }
           }
           break
-        case 'paralyze':
-        case 'damage_each_round': {
-          if (saved) {
-            break
-          }
-          const remaining = modifier.duration === null ? null : this.effectValue(modifier.duration)
-          if (remaining !== null && remaining <= 0) {
-            break
-          }
-          const added = target.effects.add({
-            damage: modifier.kind === 'damage_each_round' ? modifier.damage : null,
-            key: effectKey(effect.label, modifier),
-            kind: modifier.kind,
-            label: effect.label,
-            // paralysis is immediate, damage over time starts next round
-            pending: modifier.kind === 'damage_each_round',
-            remaining,
-          })
-          if (added && this.logger.isVerbose()) {
-            const duration = remaining === null ? 'until the end of battle' : `for ${remaining} turns`
-            this.logger.log(
-              modifier.kind === 'paralyze'
-                ? `🧊 ${target.char.name} paralyzed ${duration}`
-                : `🔥 ${target.char.name} affected by ${effect.label} damage_each_round ${duration}`,
-            )
+        case ModifierKind.Paralyze:
+        case ModifierKind.DamageEachRound:
+          if (!saved) {
+            this.addLastingEffect(target, effect.label, modifier)
           }
           break
-        }
+        default:
+          throw new Error(`Unknown modifier: ${JSON.stringify(modifier)}`)
       }
+    }
+  }
+
+  private addLastingEffect(target: Participant, label: string, modifier: LastingModifier): void {
+    const remaining = modifier.duration === null ? null : this.getEffectValue(modifier.duration)
+    if (remaining !== null && remaining <= 0) {
+      return
+    }
+
+    const key = getEffectKey(label, modifier)
+    switch (modifier.kind) {
+      case ModifierKind.Paralyze: {
+        // paralysis is immediate
+        const added = target.effects.add({ damage: null, key, kind: modifier.kind, label, pending: false, remaining })
+        if (added && this.logger.isVerbose()) {
+          this.logger.log(`🧊 ${target.char.name} paralyzed ${formatDuration(remaining)}`)
+        }
+        break
+      }
+      case ModifierKind.DamageEachRound: {
+        // damage over time starts next round
+        const added = target.effects.add({
+          damage: modifier.damage,
+          key,
+          kind: modifier.kind,
+          label,
+          pending: true,
+          remaining,
+        })
+        if (added && this.logger.isVerbose()) {
+          this.logger.log(`🔥 ${target.char.name} affected by ${label} ${modifier.kind} ${formatDuration(remaining)}`)
+        }
+        break
+      }
+      default:
+        throw new Error(`Unknown lasting modifier: ${JSON.stringify(modifier)}`)
     }
   }
 
@@ -237,12 +261,12 @@ export class Participant {
   }
 
   // damage, durations and other effect values are computed by the strategy; negative values count as 0
-  private effectValue(formula: string): number {
+  private getEffectValue(formula: string): number {
     return Math.max(0, this.strategy.calculateDamage(formula))
   }
 
   // " with knife (d6)" for tagged attacks, nothing for plain ones
-  private weaponInfo({ damage, effect }: Attack): string {
+  private getWeaponInfo({ damage, effect }: Attack): string {
     return effect ? ` with ${effect.label} (${damage})` : ''
   }
 

@@ -1,6 +1,6 @@
-import { maxDamage } from '../maxDamage'
+import { getMaxDamage } from '../getMaxDamage'
 
-describe('maxDamage', () => {
+describe('getMaxDamage', () => {
   it.each<[string, number]>([
     ['d6', 6],
     ['d6+1', 7],
@@ -9,10 +9,10 @@ describe('maxDamage', () => {
     ['5', 5],
     ['2d4 + 1', 9],
   ])('"%s" → %d', (formula, expected) => {
-    expect(maxDamage(formula)).toBe(expected)
+    expect(getMaxDamage(formula)).toBe(expected)
   })
 
   it.each(['', 'd', 'hello', 'd6+'])('throws on "%s"', (formula) => {
-    expect(() => maxDamage(formula)).toThrow(`Invalid damage formula: "${formula}"`)
+    expect(() => getMaxDamage(formula)).toThrow(`Invalid damage formula: "${formula}"`)
   })
 })

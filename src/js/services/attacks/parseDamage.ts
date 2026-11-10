@@ -1,5 +1,5 @@
 import type { Attack, AttackEffect, AttackOption, Modifier } from './types'
-import { SaveType } from './types'
+import { ModifierKind, SaveType } from './types'
 
 const SAVE_NAMES: string[] = Object.values(SaveType)
 const OPENING: Record<string, string> = { '(': ')', '[': ']' }
@@ -68,7 +68,7 @@ const parseTag = (tag: string): Pick<AttackEffect, 'label' | 'save' | 'saveMod'>
 
 const parseModifier = (text: string, hasSave: boolean): Modifier => {
   if (FORMULA_RE.test(text)) {
-    return { damage: normalizeFormula(text), kind: 'extra_damage' }
+    return { damage: normalizeFormula(text), kind: ModifierKind.ExtraDamage }
   }
 
   const match = text.match(NAMED_MODIFIER_RE)
@@ -89,22 +89,22 @@ const parseModifier = (text: string, hasSave: boolean): Modifier => {
   }
 
   switch (name) {
-    case 'paralyze':
+    case ModifierKind.Paralyze:
       if (args.length > 1) {
         throw new Error('paralyze takes at most one argument')
       }
 
-      return { duration: args[0] ?? null, kind: 'paralyze' }
+      return { duration: args[0] ?? null, kind: ModifierKind.Paralyze }
 
-    case 'save_or_die':
+    case ModifierKind.SaveOrDie:
       if (args.length > 0) {
         throw new Error('save_or_die takes no arguments')
       }
       requireSave()
 
-      return { kind: 'save_or_die' }
+      return { kind: ModifierKind.SaveOrDie }
 
-    case 'save_for_half':
+    case ModifierKind.SaveForHalf:
       if (args.length === 0) {
         throw new Error('save_for_half requires a damage formula')
       }
@@ -113,9 +113,9 @@ const parseModifier = (text: string, hasSave: boolean): Modifier => {
       }
       requireSave()
 
-      return { damage: args[0], kind: 'save_for_half' }
+      return { damage: args[0], kind: ModifierKind.SaveForHalf }
 
-    case 'damage_each_round':
+    case ModifierKind.DamageEachRound:
       if (args.length === 0) {
         throw new Error('damage_each_round requires a damage formula')
       }
@@ -123,7 +123,7 @@ const parseModifier = (text: string, hasSave: boolean): Modifier => {
         throw new Error('damage_each_round takes at most two arguments')
       }
 
-      return { damage: args[0], duration: args[1] ?? null, kind: 'damage_each_round' }
+      return { damage: args[0], duration: args[1] ?? null, kind: ModifierKind.DamageEachRound }
 
     default:
       throw new Error(`unknown modifier "${match[1]}"`)
@@ -209,21 +209,25 @@ export const parseDamage = (input: string): AttackOption[] => {
 }
 
 // The weapon formula and every formula used by modifiers, for validation
-export const formulasOf = ({ damage, effect }: Attack): string[] => {
+export const getFormulasOf = ({ damage, effect }: Attack): string[] => {
   const formulas = [damage]
 
   effect?.modifiers.forEach((modifier) => {
     switch (modifier.kind) {
-      case 'paralyze':
+      case ModifierKind.Paralyze:
         formulas.push(...(modifier.duration === null ? [] : [modifier.duration]))
         break
-      case 'save_for_half':
-      case 'extra_damage':
+      case ModifierKind.SaveOrDie:
+        break
+      case ModifierKind.SaveForHalf:
+      case ModifierKind.ExtraDamage:
         formulas.push(modifier.damage)
         break
-      case 'damage_each_round':
+      case ModifierKind.DamageEachRound:
         formulas.push(modifier.damage, ...(modifier.duration === null ? [] : [modifier.duration]))
         break
+      default:
+        throw new Error(`Unknown modifier: ${JSON.stringify(modifier)}`)
     }
   })
 

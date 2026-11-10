@@ -1,10 +1,15 @@
 import type { ActiveEffect } from '../ActiveEffects'
-import { ActiveEffects, effectKey } from '../ActiveEffects'
+import { ActiveEffects, getEffectKey } from '../ActiveEffects'
+import { ModifierKind } from '../types'
 
 const dot = (label: string, damage: string, remaining: number | null, pending: boolean = false): ActiveEffect => ({
   damage,
-  key: effectKey(label, { damage, duration: remaining === null ? null : String(remaining), kind: 'damage_each_round' }),
-  kind: 'damage_each_round',
+  key: getEffectKey(label, {
+    damage,
+    duration: remaining === null ? null : String(remaining),
+    kind: ModifierKind.DamageEachRound,
+  }),
+  kind: ModifierKind.DamageEachRound,
   label,
   pending,
   remaining,
@@ -12,28 +17,31 @@ const dot = (label: string, damage: string, remaining: number | null, pending: b
 
 const paralysis = (remaining: number | null): ActiveEffect => ({
   damage: null,
-  key: effectKey('paralyze', { duration: remaining === null ? null : String(remaining), kind: 'paralyze' }),
-  kind: 'paralyze',
+  key: getEffectKey('paralyze', {
+    duration: remaining === null ? null : String(remaining),
+    kind: ModifierKind.Paralyze,
+  }),
+  kind: ModifierKind.Paralyze,
   label: 'paralyze',
   pending: false,
   remaining,
 })
 
 describe('ActiveEffects', () => {
-  describe('effectKey', () => {
+  describe('getEffectKey', () => {
     it('is the same for the same label and modifier', () => {
       // poison and poison(-2) both have the label "poison"
-      expect(effectKey('poison', { damage: 'd4', duration: null, kind: 'damage_each_round' })).toBe(
-        effectKey('poison', { damage: 'd4', duration: null, kind: 'damage_each_round' }),
+      expect(getEffectKey('poison', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound })).toBe(
+        getEffectKey('poison', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }),
       )
     })
 
     it('differs by label, damage or duration', () => {
-      const key = effectKey('poison', { damage: 'd4', duration: null, kind: 'damage_each_round' })
+      const key = getEffectKey('poison', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound })
 
-      expect(effectKey('fire', { damage: 'd4', duration: null, kind: 'damage_each_round' })).not.toBe(key)
-      expect(effectKey('poison', { damage: 'd6', duration: null, kind: 'damage_each_round' })).not.toBe(key)
-      expect(effectKey('poison', { damage: 'd4', duration: '3', kind: 'damage_each_round' })).not.toBe(key)
+      expect(getEffectKey('fire', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound })).not.toBe(key)
+      expect(getEffectKey('poison', { damage: 'd6', duration: null, kind: ModifierKind.DamageEachRound })).not.toBe(key)
+      expect(getEffectKey('poison', { damage: 'd4', duration: '3', kind: ModifierKind.DamageEachRound })).not.toBe(key)
     })
   })
 
@@ -44,8 +52,8 @@ describe('ActiveEffects', () => {
     expect(effects.add(first)).toBe(true)
     effects.tick()
     expect(effects.add(dot('poison', 'd4', 3))).toBe(false)
-    expect(effects.damageOverTime).toHaveLength(1)
-    expect(effects.damageOverTime[0].remaining).toBe(2)
+    expect(effects.getDamageOverTime()).toHaveLength(1)
+    expect(effects.getDamageOverTime()[0].remaining).toBe(2)
   })
 
   it('stacks different effects', () => {
@@ -53,7 +61,7 @@ describe('ActiveEffects', () => {
     effects.add(dot('poison', 'd4', null))
     effects.add(dot('fire', 'd4', null))
 
-    expect(effects.damageOverTime.map((e) => e.label)).toEqual(['poison', 'fire'])
+    expect(effects.getDamageOverTime().map((e) => e.label)).toEqual(['poison', 'fire'])
   })
 
   it('ticks finite effects and drops finished ones', () => {
@@ -80,15 +88,15 @@ describe('ActiveEffects', () => {
     const effects = new ActiveEffects()
     effects.add(dot('fire', 'd4', 3, true))
 
-    expect(effects.damageOverTime).toEqual([])
+    expect(effects.getDamageOverTime()).toEqual([])
     effects.tick()
 
     effects.endRound()
-    expect(effects.damageOverTime).toHaveLength(1)
-    expect(effects.damageOverTime[0].remaining).toBe(3)
+    expect(effects.getDamageOverTime()).toHaveLength(1)
+    expect(effects.getDamageOverTime()[0].remaining).toBe(3)
     effects.tick()
     effects.tick()
     effects.tick()
-    expect(effects.damageOverTime).toEqual([])
+    expect(effects.getDamageOverTime()).toEqual([])
   })
 })
