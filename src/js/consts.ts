@@ -51,7 +51,7 @@ export const HenchmanCharTemplate: CharStats = {
 export const MonsterTemplates: CharStats[] = [
   {
     armorClass: 13,
-    damage: 'd6,d6',
+    damage: 'd6[claws],d6[horns]',
     hdCount: 4,
     hdType: Dice.d8,
     prefix: 'Monster',
