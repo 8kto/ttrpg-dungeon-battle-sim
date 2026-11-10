@@ -7,7 +7,6 @@
 - Модальное окно с деталями ошибок конфига/синтаксиса, найденных перед симуляцией (сейчас они пишутся в лог).
 - Иммунитеты (нежить к яду и т.п.)
 - Все монстры из 0e
-- Bias max 99?
 - use Dice lib (ttrpg-lib-dice) where possible
 - convert utils set into a service, damage parser
 - message storage, to keep all the message templates in one place
