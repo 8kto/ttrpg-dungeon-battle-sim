@@ -9,3 +9,21 @@
 - Все монстры из 0e
 - Bias max 99?
 - use Dice lib (ttrpg-lib-dice) where possible
+- enum for Modifiers
+- convert utils set into a service, damage parser
+- message storage, to keep all the message templates in one place
+- avoid patterns like
+```ts
+  modifier.kind === 'paralyze'
+    ? `🧊 ${target.char.name} paralyzed ${duration}`
+    : `🔥 ${target.char.name} affected by ${effect.label} damage_each_round ${duration}`,
+```
+instead:
+```ts
+switch (modifier.kind) {
+  case:
+
+  default:
+    throw new Error()
+}
+```
