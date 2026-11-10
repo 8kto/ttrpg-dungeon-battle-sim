@@ -1,6 +1,7 @@
 import { shuffleArray } from 'ttrpg-lib-dice'
 
 import { Side } from '../types'
+import type { EffectCounters } from './attacks/types'
 import type { ILogger } from './ILogger'
 import { Participant } from './Participant'
 import { getStrategy } from './strategies/getStrategy'
@@ -16,6 +17,7 @@ export type BattleResult = {
   winner: Side | null // null is a draw: round limit reached
   rounds: number
   survivors: Array<Participant>
+  effects: EffectCounters
 }
 
 export class BattleSimulator {
@@ -24,6 +26,7 @@ export class BattleSimulator {
   private roundsCount: number = 0
   private readonly sidePlayers: Participant[]
   private readonly sideMonsters: Participant[]
+  private readonly effectCounters: EffectCounters = {}
 
   constructor(
     players: IPlayerCharacter[],
@@ -39,10 +42,28 @@ export class BattleSimulator {
     this.strategy = getStrategy(strategyMode, rounding)
 
     this.sidePlayers = players.map(
-      (c) => new Participant(c, Side.Players, this.strategy, biasPlayers, maxAttacksPerTarget, this.logger),
+      (c) =>
+        new Participant(
+          c,
+          Side.Players,
+          this.strategy,
+          biasPlayers,
+          maxAttacksPerTarget,
+          this.logger,
+          this.effectCounters,
+        ),
     )
     this.sideMonsters = monsters.map(
-      (c) => new Participant(c, Side.Monsters, this.strategy, biasMonsters, maxAttacksPerTarget, this.logger),
+      (c) =>
+        new Participant(
+          c,
+          Side.Monsters,
+          this.strategy,
+          biasMonsters,
+          maxAttacksPerTarget,
+          this.logger,
+          this.effectCounters,
+        ),
     )
   }
 
@@ -77,6 +98,7 @@ export class BattleSimulator {
         this.logger.log(`⏸️ Round limit (${MAX_ROUNDS}) reached — draw`)
 
         return {
+          effects: this.effectCounters,
           rounds: this.roundsCount,
           survivors: this.participants.filter((p) => p.currentHp > 0),
           winner: null,
@@ -96,7 +118,7 @@ export class BattleSimulator {
 
       // Each combatant does its attacks
       for (const combatant of combatants) {
-        if (combatant.currentHp <= 0) {
+        if (combatant.currentHp <= 0 || !combatant.startTurn()) {
           continue
         }
 
@@ -104,12 +126,15 @@ export class BattleSimulator {
         const enemies = combatant.side === Side.Players ? this.sideMonsters : this.sidePlayers
         combatant.attack(enemies, this.targetSelector)
       }
+
+      this.participants.forEach((p) => p.endRound())
     }
 
     const winner: Side = this.hasSurvivors(Side.Players) ? Side.Players : Side.Monsters
     const survivors = this.participants.filter((p) => p.currentHp > 0)
 
     return {
+      effects: this.effectCounters,
       rounds: this.roundsCount,
       survivors,
       winner,
