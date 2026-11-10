@@ -1,3 +1,5 @@
+import { formulasOf, parseDamage } from './attacks/parseDamage'
+import { SaveType } from './attacks/types'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
 import type { ICharacter } from './types'
 
@@ -8,6 +10,24 @@ const isValidFormula = (formula: string, strategy: ICombatStrategy): boolean => 
     return true
   } catch {
     return false
+  }
+}
+
+const capitalize = (text: string): string => `${text[0].toUpperCase()}${text.slice(1)}`
+
+const validateDamage = (damage: string, strategy: ICombatStrategy): string[] => {
+  if (damage.trim() === '') {
+    return ['no damage formula']
+  }
+
+  try {
+    return parseDamage(damage)
+      .flat()
+      .flatMap(formulasOf)
+      .filter((formula) => !isValidFormula(formula, strategy))
+      .map((formula) => `invalid damage formula "${formula}"`)
+  } catch (err) {
+    return [(err as Error).message]
   }
 }
 
@@ -32,12 +52,14 @@ export const validateCharacters = (chars: ICharacter[], strategy: ICombatStrateg
     if (!Number.isInteger(hdCount) || hdCount < 1 || !Number.isFinite(hdType)) {
       errors.push(`${label}: invalid Hit Dice`)
     }
-    if (char.damage.length === 0) {
-      errors.push(`${label}: no damage formula`)
-    }
-    char.damage
-      .filter((formula) => !isValidFormula(formula, strategy))
-      .forEach((formula) => errors.push(`${label}: invalid damage formula "${formula}"`))
+    validateDamage(char.damage, strategy).forEach((error) => errors.push(`${label}: ${error}`))
+    Object.values(SaveType)
+      .filter((save) => {
+        const value = char.saves[save]
+
+        return !Number.isInteger(value) || value < 0 || value > 20
+      })
+      .forEach((save) => errors.push(`${label}: invalid ${capitalize(save)} save`))
   })
 
   return errors
