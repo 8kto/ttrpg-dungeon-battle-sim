@@ -1,6 +1,7 @@
 import { Dice } from 'ttrpg-lib-dice'
 
 import { Side } from '../../types'
+import { DEFAULT_SAVES } from '../attacks/types'
 import { BattleSimulator, MAX_ROUNDS } from '../BattleSimulator'
 import type { ILogger } from '../ILogger'
 import { Participant } from '../Participant'
@@ -26,17 +27,19 @@ const mockStrategy = {
 
 const mockPlayer: IPlayerCharacter = {
   armorClass: 16,
-  damage: ['1d8'],
+  damage: '1d8',
   hitDice: [1, Dice.d10],
   name: 'Warrior',
+  saves: DEFAULT_SAVES,
   toHit: 4,
 }
 
 const mockMonster: IMonster = {
   armorClass: 13,
-  damage: ['1d4'],
+  damage: '1d4',
   hitDice: [1, Dice.d6],
   name: 'Goblin',
+  saves: DEFAULT_SAVES,
   toHit: 2,
 }
 
@@ -56,11 +59,13 @@ describe('BattleSimulator', () => {
         attacksRemaining: maxAttacksPerTarget,
         char,
         currentHp: strategy.calculateHp(char.hitDice),
+        endRound: jest.fn(),
         hasAttackLimit: maxAttacksPerTarget > 0,
         isValidTarget: jest.fn().mockReturnValue(true),
         logger,
         resetAttackLimit: jest.fn(),
         side,
+        startTurn: jest.fn().mockReturnValue(true),
         strategy,
       }),
     )
@@ -72,8 +77,8 @@ describe('BattleSimulator', () => {
       new BattleSimulator([mockPlayer], [mockMonster], Strategy.Average, Rounding.Down, 0, 0, 0, mockLogger)
 
       expect(getStrategy).toHaveBeenCalledWith(Strategy.Average, Rounding.Down)
-      expect(Participant).toHaveBeenCalledWith(mockPlayer, Side.Players, mockStrategy, 0, 0, mockLogger)
-      expect(Participant).toHaveBeenCalledWith(mockMonster, Side.Monsters, mockStrategy, 0, 0, mockLogger)
+      expect(Participant).toHaveBeenCalledWith(mockPlayer, Side.Players, mockStrategy, 0, 0, mockLogger, {})
+      expect(Participant).toHaveBeenCalledWith(mockMonster, Side.Monsters, mockStrategy, 0, 0, mockLogger, {})
     })
   })
 
@@ -119,6 +124,73 @@ describe('BattleSimulator', () => {
   })
 
   describe('simulate', () => {
+    // participants as created by the mocked Participant constructor
+    const created = (): Array<{ attack: jest.Mock; endRound: jest.Mock; startTurn: jest.Mock }> =>
+      (Participant as jest.Mock).mock.results.map((r) => r.value)
+
+    const simulateRounds = (simulator: BattleSimulator, rounds: number): ReturnType<BattleSimulator['simulate']> => {
+      const spy = jest.spyOn(simulator, 'hasSurvivors')
+      for (let i = 0; i < rounds; i++) {
+        spy.mockReturnValueOnce(true).mockReturnValueOnce(true)
+      }
+      spy.mockReturnValue(false)
+
+      return simulator.simulate()
+    }
+
+    it('ends every round for all participants', () => {
+      const simulator = new BattleSimulator(
+        [mockPlayer],
+        [mockMonster],
+        Strategy.Random,
+        Rounding.Up,
+        0,
+        0,
+        0,
+        mockLogger,
+      )
+      simulateRounds(simulator, 2)
+
+      created().forEach((p) => expect(p.endRound).toHaveBeenCalledTimes(2))
+    })
+
+    it('skips combatants that cannot act', () => {
+      const simulator = new BattleSimulator(
+        [mockPlayer],
+        [mockMonster],
+        Strategy.Random,
+        Rounding.Up,
+        0,
+        0,
+        0,
+        mockLogger,
+      )
+      const [player, monster] = created()
+      player.startTurn.mockReturnValue(false)
+      simulateRounds(simulator, 1)
+
+      expect(player.attack).not.toHaveBeenCalled()
+      expect(monster.attack).toHaveBeenCalledTimes(1)
+    })
+
+    it('returns effect counters shared by all participants', () => {
+      const simulator = new BattleSimulator(
+        [mockPlayer],
+        [mockMonster],
+        Strategy.Random,
+        Rounding.Up,
+        0,
+        0,
+        0,
+        mockLogger,
+      )
+      const [[, , , , , , playerCounters], [, , , , , , monsterCounters]] = (Participant as jest.Mock).mock.calls
+      const result = simulateRounds(simulator, 1)
+
+      expect(playerCounters).toBe(monsterCounters)
+      expect(result.effects).toBe(playerCounters)
+    })
+
     it('ends when one side is defeated', () => {
       const simulator = new BattleSimulator(
         [mockPlayer],

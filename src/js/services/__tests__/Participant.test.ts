@@ -1,6 +1,9 @@
 import { Dice, roll } from 'ttrpg-lib-dice'
 
 import { Side } from '../../types'
+import { parseAttack } from '../attacks/parseDamage'
+import type { AttackOption } from '../attacks/types'
+import { DEFAULT_SAVES } from '../attacks/types'
 import type { ILogger } from '../ILogger'
 import { Participant } from '../Participant'
 import type { ICombatStrategy } from '../strategies/ICombatStrategy'
@@ -17,23 +20,28 @@ jest.mock('ttrpg-lib-dice', () => ({
 describe('Participant', () => {
   const mockChar: ICharacter = {
     armorClass: 15,
-    damage: ['1d6'],
+    damage: '1d6',
     hitDice: [1, Dice.d10],
     name: Side.Players,
+    saves: DEFAULT_SAVES,
     toHit: 3,
   }
 
   const mockEnemyChar: ICharacter = {
     armorClass: 13,
-    damage: ['1d4'],
+    damage: '1d4',
     hitDice: [1, Dice.d8],
     name: Side.Monsters,
+    saves: DEFAULT_SAVES,
     toHit: 1,
   }
+
+  const firstOption = (options: AttackOption[]): AttackOption => options[0]
 
   const mockStrategy: ICombatStrategy = {
     calculateDamage: jest.fn().mockReturnValue(5),
     calculateHp: jest.fn().mockReturnValue(10),
+    pickOption: jest.fn(firstOption),
   }
 
   const mockLogger: ILogger = {
@@ -93,10 +101,11 @@ describe('Participant', () => {
       const mockStrategyLocal: ICombatStrategy = {
         calculateDamage: jest.fn().mockReturnValueOnce(5).mockReturnValueOnce(10),
         calculateHp: jest.fn().mockReturnValue(10),
+        pickOption: jest.fn(firstOption),
       }
 
       const participant = new Participant(
-        { ...mockChar, damage: ['1d6', '1d8'] },
+        { ...mockChar, damage: '1d6, 1d8' },
         Side.Players,
         mockStrategyLocal,
         0,
@@ -126,13 +135,89 @@ describe('Participant', () => {
     })
   })
 
+  describe('attack options', () => {
+    const makeEnemies = (): Participant[] => [
+      new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger),
+    ]
+
+    it('makes all attacks of the picked option', () => {
+      const strategy: ICombatStrategy = { ...mockStrategy, pickOption: jest.fn((options) => options[0]) }
+      const participant = new Participant({ ...mockChar, damage: 'd6,d6|d8' }, Side.Players, strategy, 0, 0, mockLogger)
+      const enemies = makeEnemies()
+      const selector = { selectTarget: jest.fn().mockReturnValue(enemies[0]) }
+      jest.spyOn(participant, 'rollToHit').mockReturnValue(1) // Miss
+
+      participant.attack(enemies, selector)
+
+      expect(strategy.pickOption).toHaveBeenCalledWith([[parseAttack('d6'), parseAttack('d6')], [parseAttack('d8')]])
+      expect(selector.selectTarget).toHaveBeenCalledTimes(2)
+    })
+
+    it('logs the picked option only when there are options', () => {
+      const withOptions = new Participant(
+        { ...mockChar, damage: 'd6,d6|d8' },
+        Side.Players,
+        mockStrategy,
+        0,
+        0,
+        mockLogger,
+      )
+      const enemies = makeEnemies()
+      jest.spyOn(withOptions, 'rollToHit').mockReturnValue(1)
+      withOptions.attack(enemies, { selectTarget: jest.fn().mockReturnValue(enemies[0]) })
+      expect(mockLogger.log).toHaveBeenCalledWith('🎲 Players uses: d6, d6')
+
+      jest.clearAllMocks()
+      const single = new Participant(mockChar, Side.Players, mockStrategy, 0, 0, mockLogger)
+      jest.spyOn(single, 'rollToHit').mockReturnValue(1)
+      single.attack(enemies, { selectTarget: jest.fn().mockReturnValue(enemies[0]) })
+      expect(mockLogger.log).not.toHaveBeenCalledWith(expect.stringContaining('🎲'))
+    })
+
+    it('does not pick an option when skipping the turn', () => {
+      ;(roll as jest.Mock).mockReturnValue(10) // <= 10 bias
+      const participant = new Participant(
+        { ...mockChar, damage: 'd6|d8' },
+        Side.Players,
+        mockStrategy,
+        10,
+        0,
+        mockLogger,
+      )
+      participant.attack(makeEnemies(), { selectTarget: jest.fn() })
+      expect(mockStrategy.pickOption).not.toHaveBeenCalled()
+    })
+  })
+
   describe('performOneAttack', () => {
+    it('logs plain attacks as before', () => {
+      const attacker = new Participant(mockChar, Side.Players, mockStrategy, 0, 0, mockLogger)
+      const target = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
+      jest.spyOn(attacker, 'rollToHit').mockReturnValue(20) // Hit
+
+      attacker.performOneAttack(target, parseAttack('d6'))
+      expect(mockLogger.log).toHaveBeenCalledWith('🗡️ Players attacks Monsters, damage: 5')
+    })
+
+    it('labels tagged attacks', () => {
+      const attacker = new Participant(mockChar, Side.Players, mockStrategy, 0, 0, mockLogger)
+      const target = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
+      const rollToHit = jest.spyOn(attacker, 'rollToHit').mockReturnValueOnce(20).mockReturnValueOnce(1)
+
+      attacker.performOneAttack(target, parseAttack('d6[knife]'))
+      attacker.performOneAttack(target, parseAttack('d6[knife]'))
+
+      expect(rollToHit).toHaveBeenCalledTimes(2)
+      expect(mockLogger.log).toHaveBeenCalledWith('🗡️ Players attacks Monsters with knife (d6), damage: 5')
+      expect(mockLogger.log).toHaveBeenCalledWith('🛡️ Players misses Monsters with knife (d6)')
+    })
+
     it('deals damage and logs hit on successful attack', () => {
       const attacker = new Participant(mockChar, Side.Players, mockStrategy, 0, 0, mockLogger)
       const target = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
       jest.spyOn(attacker, 'rollToHit').mockReturnValue(20) // Hit
 
-      attacker.performOneAttack(target, '1d6')
+      attacker.performOneAttack(target, parseAttack('1d6'))
       expect(target.currentHp).toBe(5)
       expect(mockLogger.log).toHaveBeenCalledWith('🗡️ Players attacks Monsters, damage: 5')
     })
@@ -142,7 +227,7 @@ describe('Participant', () => {
       const target = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
       jest.spyOn(attacker, 'rollToHit').mockReturnValue(10) // Miss
 
-      attacker.performOneAttack(target, '1d6')
+      attacker.performOneAttack(target, parseAttack('1d6'))
       expect(target.currentHp).toBe(10)
       expect(mockLogger.log).toHaveBeenCalledWith('🛡️ Players misses Monsters')
     })
@@ -153,7 +238,7 @@ describe('Participant', () => {
       const target = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
       jest.spyOn(attacker, 'rollToHit').mockReturnValue(20) // Hit
 
-      attacker.performOneAttack(target, '1d6')
+      attacker.performOneAttack(target, parseAttack('1d6'))
       expect(target.currentHp).toBe(5)
       expect(mockLogger.log).not.toHaveBeenCalled()
     })
@@ -168,7 +253,7 @@ describe('Participant', () => {
       const exhausted = new Participant(mockChar, Side.Players, mockStrategy, 0, 1, mockLogger)
       const attacker = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
       expect(exhausted.isValidTarget()).toBe(true)
-      attacker.performOneAttack(exhausted, '1d4')
+      attacker.performOneAttack(exhausted, parseAttack('1d4'))
       expect(exhausted.isValidTarget()).toBe(false)
     })
   })
@@ -181,7 +266,7 @@ describe('Participant', () => {
       // Exhaust attacks
       Array(3)
         .fill(null)
-        .forEach(() => attacker.performOneAttack(participant, '1d4'))
+        .forEach(() => attacker.performOneAttack(participant, parseAttack('1d4')))
 
       expect(participant.isValidTarget()).toBe(false)
       participant.resetAttackLimit()

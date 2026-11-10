@@ -1,5 +1,6 @@
 import { Dice } from 'ttrpg-lib-dice'
 
+import { DEFAULT_SAVES } from '../../services/attacks/types'
 import { BufferLogger } from '../../services/BufferLogger'
 import { LogLevel } from '../../services/ILogger'
 import type { ICharacter } from '../../services/types'
@@ -8,8 +9,22 @@ import type { SimulationRequest } from '../runSimulation'
 import { MAX_LOGGED_BATTLES, runSimulation } from '../runSimulation'
 
 // players always hit, monsters never do: the outcome is deterministic
-const hero: ICharacter = { armorClass: 30, damage: ['d6'], hitDice: [1, Dice.d8], name: 'Hero', toHit: 100 }
-const goblin: ICharacter = { armorClass: 1, damage: ['d4'], hitDice: [1, Dice.d6], name: 'Goblin', toHit: -100 }
+const hero: ICharacter = {
+  armorClass: 30,
+  damage: 'd6',
+  hitDice: [1, Dice.d8],
+  name: 'Hero',
+  saves: DEFAULT_SAVES,
+  toHit: 100,
+}
+const goblin: ICharacter = {
+  armorClass: 1,
+  damage: 'd4',
+  hitDice: [1, Dice.d6],
+  name: 'Goblin',
+  saves: DEFAULT_SAVES,
+  toHit: -100,
+}
 
 const makeRequest = (overrides: Partial<SimulationRequest['settings']> = {}): SimulationRequest => ({
   monsters: [goblin],
@@ -34,6 +49,7 @@ describe('runSimulation', () => {
     expect(stats).toEqual({
       completed: 3,
       draws: 0,
+      effects: {},
       roundsTotal: 3,
       survivingPlayers: 3,
       winsMonsters: 0,

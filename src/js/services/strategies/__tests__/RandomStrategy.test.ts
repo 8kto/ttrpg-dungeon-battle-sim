@@ -1,5 +1,6 @@
 import * as dice from 'ttrpg-lib-dice'
 
+import { parseDamage } from '../../attacks/parseDamage'
 import { RandomStrategy } from '../RandomStrategy'
 
 describe('RandomStrategy', () => {
@@ -42,5 +43,14 @@ describe('RandomStrategy', () => {
       expect(rdfSpy).toHaveBeenCalledTimes(1)
       expect(rdfSpy).toHaveBeenCalledWith(formula)
     })
+  })
+
+  it('picks options at random', () => {
+    const options = parseDamage('d6,d6|d8')
+    const spy = jest.spyOn(dice, 'getRandomArrayItem').mockReturnValueOnce(options[1])
+
+    expect(strategy.pickOption(options)).toBe(options[1])
+    expect(spy).toHaveBeenCalledWith(options)
+    spy.mockRestore()
   })
 })
