@@ -60,7 +60,7 @@
               <button id="clear-players" class="secondary-button mid-button">Clear</button>
             </div>
           </div>
-          <table class="w-full table-auto bg-white shadow rounded">
+          <table id="players-table" class="w-full table-auto bg-white shadow rounded">
             <thead class="bg-gray-200">
               <tr>
                 <th class="p-2 text-left table-header--name">Name</th>
@@ -72,7 +72,7 @@
                 <th class="p-2"></th>
               </tr>
             </thead>
-            <tbody id="players-table" class="divide-y">
+            <tbody class="char border-t">
               <tr class="bg-white" data-prefix="Player">
                 <td class="p-2"><input type="text" class="name-input w-full border rounded px-2" required /></td>
                 <td class="p-289">
@@ -98,13 +98,69 @@
                     type="text"
                     class="damage-input w-full border rounded px-2"
                     required
-                    pattern="^\d*d\d+(\+\d+)?(,\s*\d*d\d+(\+\d+)?)*$"
-                    title="Use formulas like d6, 2d4, d6+1; separate multiple attacks with commas"
+                    title="Formulas like d6, 2d4+1. Comma = attacks in one turn, | = alternative options. Tags in brackets: d6[knife]|d4[dagger], d6[poison,save_or_die], d6[paralyze(+2),paralyze(d4)], d6[breath,save_for_half(d8)], d6[🧊,damage_each_round(d4,3)]"
                   />
                 </td>
                 <td class="p-2 text-center space-x-2 min-w-12">
                   <button class="duplicate-row" title="Duplicate">⎘</button>
                   <button class="remove-row" title="Remove">×</button>
+                </td>
+              </tr>
+              <tr class="saves-row bg-white">
+                <td colspan="7" class="px-2 pb-2">
+                  <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-700">
+                    <span class="font-medium">Saves</span>
+                    <label class="flex items-center gap-1">
+                      Paralyze
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        class="save-input w-16 border rounded px-1"
+                        data-save="paralyze"
+                      />
+                    </label>
+                    <label class="flex items-center gap-1">
+                      Poison
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        class="save-input w-16 border rounded px-1"
+                        data-save="poison"
+                      />
+                    </label>
+                    <label class="flex items-center gap-1">
+                      Breath
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        class="save-input w-16 border rounded px-1"
+                        data-save="breath"
+                      />
+                    </label>
+                    <label class="flex items-center gap-1">
+                      Device
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        class="save-input w-16 border rounded px-1"
+                        data-save="device"
+                      />
+                    </label>
+                    <label class="flex items-center gap-1">
+                      Magic
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        class="save-input w-16 border rounded px-1"
+                        data-save="magic"
+                      />
+                    </label>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -121,7 +177,7 @@
               <button id="clear-monsters" class="secondary-button mid-button">Clear</button>
             </div>
           </div>
-          <table class="w-full table-auto bg-white shadow rounded">
+          <table id="monsters-table" class="w-full table-auto bg-white shadow rounded">
             <thead class="bg-gray-200">
               <tr>
                 <th class="p-2 text-left table-header--name">Name</th>
@@ -133,7 +189,7 @@
                 <th class="p-2"></th>
               </tr>
             </thead>
-            <tbody id="monsters-table" class="divide-y">
+            <tbody class="char border-t">
               <tr class="bg-white" data-prefix="Monster">
                 <td class="p-2"><input type="text" class="name-input w-full border rounded px-2" required /></td>
                 <td class="p-2">
@@ -159,13 +215,68 @@
                     type="text"
                     class="damage-input w-full border rounded px-2"
                     required
-                    pattern="^\d*d\d+(\+\d+)?(,\s*\d*d\d+(\+\d+)?)*$"
-                    title="Use formulas like d6, 2d4, d6+1; separate multiple attacks with commas"
                   />
                 </td>
                 <td class="p-2 text-center space-x-2 min-w-12">
                   <button class="duplicate-row" title="Duplicate">⎘</button>
                   <button class="remove-row" title="Remove">×</button>
+                </td>
+              </tr>
+              <tr class="saves-row bg-white">
+                <td colspan="7" class="px-2 pb-2">
+                  <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-700">
+                    <span class="font-medium">Saves</span>
+                    <label class="flex items-center gap-1">
+                      Paralyze
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        class="save-input w-16 border rounded px-1"
+                        data-save="paralyze"
+                      />
+                    </label>
+                    <label class="flex items-center gap-1">
+                      Poison
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        class="save-input w-16 border rounded px-1"
+                        data-save="poison"
+                      />
+                    </label>
+                    <label class="flex items-center gap-1">
+                      Breath
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        class="save-input w-16 border rounded px-1"
+                        data-save="breath"
+                      />
+                    </label>
+                    <label class="flex items-center gap-1">
+                      Device
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        class="save-input w-16 border rounded px-1"
+                        data-save="device"
+                      />
+                    </label>
+                    <label class="flex items-center gap-1">
+                      Magic
+                      <input
+                        type="number"
+                        min="0"
+                        max="20"
+                        class="save-input w-16 border rounded px-1"
+                        data-save="magic"
+                      />
+                    </label>
+                  </div>
                 </td>
               </tr>
             </tbody>
