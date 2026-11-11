@@ -1,6 +1,6 @@
 import { BattleSimulator } from '../services/BattleSimulator'
-import type { ILogger } from '../services/ILogger'
-import { NullLogger } from '../services/NullLogger'
+import type { ILogger } from '../services/logger/ILogger'
+import { NullLogger } from '../services/logger/NullLogger'
 import type { ICharacter } from '../services/types'
 import type { SimulationSettings } from '../types'
 import type { BattleStats } from './stats'

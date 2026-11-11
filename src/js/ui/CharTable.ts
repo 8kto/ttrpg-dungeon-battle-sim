@@ -1,27 +1,34 @@
 import type { Dice } from 'ttrpg-lib-dice'
 
+import type { Saves } from '../services/attacks/types'
+import { DEFAULT_SAVES, SaveType } from '../services/attacks/types'
 import type { ICharacter } from '../services/types'
 import type { CharStats } from '../types'
 
 const toCharStats = (char: ICharacter): CharStats => ({
   armorClass: char.armorClass,
-  damage: char.damage.join(','),
+  damage: char.damage,
   hdCount: char.hitDice[0],
   hdType: char.hitDice[1],
   prefix: char.name,
+  saves: char.saves,
   toHit: char.toHit,
 })
 
-// Editable table of characters (one side of the battle)
-export class CharTable {
-  private readonly template: HTMLTableRowElement
+const getSaveInput = (group: HTMLElement, save: SaveType): HTMLInputElement =>
+  group.querySelector(`.save-input[data-save="${save}"]`) as HTMLInputElement
 
-  constructor(private readonly body: HTMLTableSectionElement) {
-    this.template = body.querySelector('tr') as HTMLTableRowElement
+// Editable table of characters (one side of the battle); every character is a <tbody class="char">
+// with the main row and the saves row
+export class CharTable {
+  private readonly template: HTMLTableSectionElement
+
+  constructor(private readonly table: HTMLTableElement) {
+    this.template = table.querySelector('tbody.char') as HTMLTableSectionElement
   }
 
   get size(): number {
-    return this.body.rows.length
+    return this.getGroups().length
   }
 
   init(defs: CharStats[]): void {
@@ -34,84 +41,90 @@ export class CharTable {
   }
 
   addRow(defs: CharStats): void {
-    const newRow = this.template.cloneNode(true) as HTMLTableRowElement
-    newRow.querySelectorAll('input').forEach((inp) => (inp.value = ''))
-    newRow.querySelectorAll('select').forEach((sel) => (sel.selectedIndex = 0))
-    this.body.appendChild(newRow)
+    const group = this.template.cloneNode(true) as HTMLTableSectionElement
+    group.querySelectorAll('input').forEach((inp) => (inp.value = ''))
+    group.querySelectorAll('select').forEach((sel) => (sel.selectedIndex = 0))
+    this.table.appendChild(group)
 
-    this.bindRowControls(newRow, defs)
-    this.initRow(newRow, defs)
+    this.bindControls(group, defs)
+    this.initGroup(group, defs)
     this.reindexNames()
   }
 
   read(): ICharacter[] {
-    return Array.from(this.body.rows).map((row) => {
-      const ni = row.querySelector('.name-input') as HTMLInputElement
-      const ac = parseInt((row.querySelector('.ac-input') as HTMLInputElement).value, 10)
-      const th = parseInt((row.querySelector('.tohit-input') as HTMLInputElement).value, 10)
-      const hc = parseInt((row.querySelector('.hd-count-input') as HTMLInputElement).value, 10)
-      const ht = parseInt((row.querySelector('.hd-type-select') as HTMLSelectElement).value, 10) as Dice
-      const dmg = (row.querySelector('.damage-input') as HTMLInputElement).value
-        .trim()
-        .split(',')
-        .map((s) => s.trim())
-        .filter((s) => s !== '')
+    return this.getGroups().map((group) => {
+      const ni = group.querySelector('.name-input') as HTMLInputElement
+      const ac = parseInt((group.querySelector('.ac-input') as HTMLInputElement).value, 10)
+      const th = parseInt((group.querySelector('.tohit-input') as HTMLInputElement).value, 10)
+      const hc = parseInt((group.querySelector('.hd-count-input') as HTMLInputElement).value, 10)
+      const ht = parseInt((group.querySelector('.hd-type-select') as HTMLSelectElement).value, 10) as Dice
+      const dmg = (group.querySelector('.damage-input') as HTMLInputElement).value.trim()
+      const saves = Object.fromEntries(
+        Object.values(SaveType).map((save) => [save, parseInt(getSaveInput(group, save).value, 10)]),
+      ) as Saves
 
-      return { armorClass: ac, damage: dmg, hitDice: [hc, ht], name: ni.value, toHit: th }
+      return { armorClass: ac, damage: dmg, hitDice: [hc, ht], name: ni.value, saves, toHit: th }
     })
   }
 
+  private getGroups(): HTMLTableSectionElement[] {
+    return Array.from(this.table.querySelectorAll<HTMLTableSectionElement>('tbody.char'))
+  }
+
   private reset(): void {
-    Array.from(this.body.rows).forEach((r) => r.remove())
+    this.getGroups().forEach((g) => g.remove())
   }
 
-  private initRow(row: HTMLTableRowElement, defs: CharStats): void {
-    ;(row.querySelector('.name-input') as HTMLInputElement).value = defs.prefix
-    ;(row.querySelector('.ac-input') as HTMLInputElement).value = defs.armorClass.toString()
-    ;(row.querySelector('.tohit-input') as HTMLInputElement).value = defs.toHit.toString()
-    ;(row.querySelector('.hd-count-input') as HTMLInputElement).value = defs.hdCount.toString()
-    ;(row.querySelector('.hd-type-select') as HTMLSelectElement).value = defs.hdType.toString()
-    ;(row.querySelector('.damage-input') as HTMLInputElement).value = defs.damage
+  private initGroup(group: HTMLTableSectionElement, defs: CharStats): void {
+    ;(group.querySelector('.name-input') as HTMLInputElement).value = defs.prefix
+    ;(group.querySelector('.ac-input') as HTMLInputElement).value = defs.armorClass.toString()
+    ;(group.querySelector('.tohit-input') as HTMLInputElement).value = defs.toHit.toString()
+    ;(group.querySelector('.hd-count-input') as HTMLInputElement).value = defs.hdCount.toString()
+    ;(group.querySelector('.hd-type-select') as HTMLSelectElement).value = defs.hdType.toString()
+    ;(group.querySelector('.damage-input') as HTMLInputElement).value = defs.damage
 
-    row.dataset.prefix = defs.prefix
+    const saves = defs.saves ?? DEFAULT_SAVES
+    Object.values(SaveType).forEach((save) => (getSaveInput(group, save).value = saves[save].toString()))
+
+    group.dataset.prefix = defs.prefix
   }
 
-  private bindRowControls(row: HTMLTableRowElement, defs: CharStats): void {
-    const removeBtn = row.querySelector('.remove-row') as HTMLButtonElement
-    const dupBtn = row.querySelector('.duplicate-row') as HTMLButtonElement
+  private bindControls(group: HTMLTableSectionElement, defs: CharStats): void {
+    const removeBtn = group.querySelector('.remove-row') as HTMLButtonElement
+    const dupBtn = group.querySelector('.duplicate-row') as HTMLButtonElement
 
     dupBtn.addEventListener('click', (e): void => {
       e.preventDefault()
-      const clone = row.cloneNode(true) as HTMLTableRowElement
+      const clone = group.cloneNode(true) as HTMLTableSectionElement
       const cloneInputs = clone.querySelectorAll('input')
       const cloneSelects = clone.querySelectorAll('select')
 
       // cloneNode doesn't copy current values, only attributes
-      row.querySelectorAll('input').forEach((inp, i) => (cloneInputs[i].value = inp.value))
-      row.querySelectorAll('select').forEach((sel, i) => (cloneSelects[i].selectedIndex = sel.selectedIndex))
+      group.querySelectorAll('input').forEach((inp, i) => (cloneInputs[i].value = inp.value))
+      group.querySelectorAll('select').forEach((sel, i) => (cloneSelects[i].selectedIndex = sel.selectedIndex))
 
       clone.dataset.prefix = defs.prefix
-      this.body.insertBefore(clone, row.nextSibling)
+      this.table.insertBefore(clone, group.nextSibling)
 
-      this.bindRowControls(clone, defs)
+      this.bindControls(clone, defs)
       this.reindexNames()
     })
 
     removeBtn.addEventListener('click', (e): void => {
       e.preventDefault()
-      if (this.body.rows.length > 1) {
-        row.remove()
+      if (this.size > 1) {
+        group.remove()
         this.reindexNames()
       }
     })
   }
 
-  // rows with the same prefix get numbered names: "Goblin", "Goblin 2", "Goblin 3"...
+  // characters with the same prefix get numbered names: "Goblin", "Goblin 2", "Goblin 3"...
   private reindexNames(): void {
     const nameIndices: Record<string, number> = {}
 
-    Array.from(this.body.rows).forEach((row) => {
-      const name = row.dataset.prefix
+    this.getGroups().forEach((group) => {
+      const name = group.dataset.prefix
       if (!name) {
         return
       }
@@ -120,7 +133,7 @@ export class CharTable {
         nameIndices[name] = 1
       } else {
         ++nameIndices[name]
-        const nameInput = row.querySelector<HTMLInputElement>('.name-input')
+        const nameInput = group.querySelector<HTMLInputElement>('.name-input')
         if (!nameInput) {
           return
         }

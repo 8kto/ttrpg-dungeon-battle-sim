@@ -1,5 +1,7 @@
 import type { Dice } from 'ttrpg-lib-dice'
+import { getRandomArrayItem } from 'ttrpg-lib-dice'
 
+import type { AttackOption } from '../attacks/types'
 import { Rounding } from '../types'
 import { BaseStrategy } from './BaseStrategy'
 import type { ICombatStrategy } from './ICombatStrategy'
@@ -18,6 +20,10 @@ export class AverageStrategy extends BaseStrategy implements ICombatStrategy {
     const { mod, multiplier, sides } = this.getTokens(damage)
 
     return this.round((multiplier * (sides + 1)) / 2 + mod)
+  }
+
+  pickOption(options: AttackOption[]): AttackOption {
+    return getRandomArrayItem(options)
   }
 
   private round(value: number): number {

@@ -1,4 +1,5 @@
 import { MonsterNamesChunks, PlayerNamesChunks } from './config/names'
+import type { MonsterTrait } from './consts'
 import {
   HenchmanCharTemplate,
   MonsterCharTemplate,
@@ -6,8 +7,8 @@ import {
   PlayerCharTemplate,
   PlayerTemplates,
 } from './consts'
-import { LogLevel } from './services/ILogger'
-import { Logger } from './services/Logger'
+import { LogLevel } from './services/logger/ILogger'
+import { Logger } from './services/logger/Logger'
 import { NameProvider } from './services/NameProvider'
 import { getStrategy } from './services/strategies/getStrategy'
 import { validateCharacters } from './services/validateCharacters'
@@ -17,6 +18,7 @@ import type { BattleSimulationConfig } from './types'
 import { CharTable } from './ui/CharTable'
 import { SettingsForm } from './ui/SettingsForm'
 import { bindTabs } from './ui/tabs'
+import { addTraitAttacks } from './utils/addTraitAttacks'
 
 const byId = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T
 
@@ -51,8 +53,17 @@ document.addEventListener('DOMContentLoaded', (): void => {
     playersTable.addRow({ ...HenchmanCharTemplate, prefix: playersNameProvider.getName('(H)') }),
   )
   onClick('clear-players', () => playersTable.init(PlayerTemplates))
+  const readMonsterTraits = (): MonsterTrait[] =>
+    Array.from(document.querySelectorAll<HTMLInputElement>('.monster-trait:checked')).map(
+      (cb) => cb.dataset.trait as MonsterTrait,
+    )
+
   onClick('add-monster', () =>
-    monstersTable.addRow({ ...MonsterCharTemplate, prefix: monsterNameProvider.getName('(M)') }),
+    monstersTable.addRow({
+      ...MonsterCharTemplate,
+      damage: addTraitAttacks(readMonsterTraits()),
+      prefix: monsterNameProvider.getName('(M)'),
+    }),
   )
   onClick('clear-monsters', () => monstersTable.init(MonsterTemplates))
 

@@ -24,6 +24,11 @@ export class BaseStrategy {
   }
 
   private static parseFormula(damageFormula: string): Readonly<FormulaTokens> {
+    // plain integers are used for effect durations, e.g. damage_each_round(d4,3)
+    if (/^\d+$/.test(damageFormula.trim())) {
+      return Object.freeze({ mod: parseInt(damageFormula, 10), multiplier: 0, sides: 0 })
+    }
+
     const match = damageFormula.trim().match(BaseStrategy.FORMULA_RE)
     if (!match) {
       throw new Error(`Invalid damage formula: "${damageFormula}"`)

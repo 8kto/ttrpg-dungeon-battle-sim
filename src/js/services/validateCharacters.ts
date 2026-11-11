@@ -1,3 +1,6 @@
+import { DamageParser } from './attacks/DamageParser'
+import type { IDamageParser } from './attacks/IDamageParser'
+import { SaveType } from './attacks/types'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
 import type { ICharacter } from './types'
 
@@ -11,8 +14,32 @@ const isValidFormula = (formula: string, strategy: ICombatStrategy): boolean => 
   }
 }
 
+const capitalize = (text: string): string => `${text[0].toUpperCase()}${text.slice(1)}`
+
+const validateDamage = (damage: string, strategy: ICombatStrategy, damageParser: IDamageParser): string[] => {
+  if (damage.trim() === '') {
+    return ['no damage formula']
+  }
+
+  try {
+    return damageParser
+      .parseDamage(damage)
+      .flat()
+      .flatMap((attack) => damageParser.getFormulasOf(attack))
+      .filter((formula) => !isValidFormula(formula, strategy))
+      .map((formula) => `invalid damage formula "${formula}"`)
+  } catch (err) {
+    return [(err as Error).message]
+  }
+}
+
 // Returns a list of human-readable errors; empty list means the characters are valid
-export const validateCharacters = (chars: ICharacter[], strategy: ICombatStrategy, sideName: string): string[] => {
+export const validateCharacters = (
+  chars: ICharacter[],
+  strategy: ICombatStrategy,
+  sideName: string,
+  damageParser: IDamageParser = new DamageParser(),
+): string[] => {
   if (chars.length === 0) {
     return [`${sideName}: no characters`]
   }
@@ -32,12 +59,14 @@ export const validateCharacters = (chars: ICharacter[], strategy: ICombatStrateg
     if (!Number.isInteger(hdCount) || hdCount < 1 || !Number.isFinite(hdType)) {
       errors.push(`${label}: invalid Hit Dice`)
     }
-    if (char.damage.length === 0) {
-      errors.push(`${label}: no damage formula`)
-    }
-    char.damage
-      .filter((formula) => !isValidFormula(formula, strategy))
-      .forEach((formula) => errors.push(`${label}: invalid damage formula "${formula}"`))
+    validateDamage(char.damage, strategy, damageParser).forEach((error) => errors.push(`${label}: ${error}`))
+    Object.values(SaveType)
+      .filter((save) => {
+        const value = char.saves[save]
+
+        return !Number.isInteger(value) || value < 0 || value > 20
+      })
+      .forEach((save) => errors.push(`${label}: invalid ${capitalize(save)} save`))
   })
 
   return errors
