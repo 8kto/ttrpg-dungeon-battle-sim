@@ -176,6 +176,20 @@
               <button id="add-monster" class="primary-button mid-button">Add Monster</button>
               <button id="clear-monsters" class="secondary-button mid-button">Clear</button>
             </div>
+            <div class="flex items-center space-x-2">
+              <label class="flex items-center gap-1 text-amber-900 font-medium">
+                <input type="checkbox" class="monster-trait" data-trait="poisonous" />
+                <abbr title="New monsters get an extra attack: d4[poison, save_or_die]">Poisonous</abbr>
+              </label>
+              <label class="flex items-center gap-1 text-amber-900 font-medium">
+                <input type="checkbox" class="monster-trait" data-trait="paralyzing" />
+                <abbr title="New monsters get an extra attack: d4[paralyze, paralyze(d4)]">Paralysis</abbr>
+              </label>
+              <label class="flex items-center gap-1 text-amber-900 font-medium">
+                <input type="checkbox" class="monster-trait" data-trait="fiery" />
+                <abbr title="New monsters get an extra attack: d4[fire, damage_each_round(d4, 3)]">Fiery</abbr>
+              </label>
+            </div>
           </div>
           <table id="monsters-table" class="w-full table-auto bg-white shadow rounded">
             <thead class="bg-gray-200">

@@ -60,3 +60,16 @@ export const MonsterTemplates: CharStats[] = [
 ]
 
 export const MonsterCharTemplate: CharStats = MonsterTemplates[0]
+
+export enum MonsterTrait {
+  Poisonous = 'poisonous',
+  Paralyzing = 'paralyzing',
+  Fiery = 'fiery',
+}
+
+// Extra attack a new monster gets for every trait checked next to the Add Monster button
+export const MonsterTraitAttacks: Record<MonsterTrait, string> = {
+  [MonsterTrait.Poisonous]: 'd4[poison, save_or_die]',
+  [MonsterTrait.Paralyzing]: 'd4[paralyze, paralyze(d4)]',
+  [MonsterTrait.Fiery]: 'd4[fire, damage_each_round(d4, 3)]',
+}
