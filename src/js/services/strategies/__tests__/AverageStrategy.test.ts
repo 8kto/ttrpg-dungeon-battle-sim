@@ -1,7 +1,7 @@
 import * as dice from 'ttrpg-lib-dice'
 import { Dice } from 'ttrpg-lib-dice'
 
-import { parseDamage } from '../../attacks/parseDamage'
+import { DamageParser } from '../../attacks/DamageParser'
 import { Rounding } from '../../types'
 import { AverageStrategy } from '../AverageStrategy'
 
@@ -58,7 +58,7 @@ describe('AverageStrategy', () => {
   })
 
   it('picks options at random', () => {
-    const options = parseDamage('d6,d6|d8')
+    const options = new DamageParser().parseDamage('d6,d6|d8')
     const spy = jest.spyOn(dice, 'getRandomArrayItem').mockReturnValueOnce(options[1])
 
     expect(strategyUp.pickOption(options)).toBe(options[1])

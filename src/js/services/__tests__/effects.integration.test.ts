@@ -2,7 +2,7 @@ import * as dice from 'ttrpg-lib-dice'
 import { Dice } from 'ttrpg-lib-dice'
 
 import { Side } from '../../types'
-import { parseAttack } from '../attacks/parseDamage'
+import { DamageParser } from '../attacks/DamageParser'
 import type { EffectCounters, Saves } from '../attacks/types'
 import { DEFAULT_SAVES } from '../attacks/types'
 import { BattleSimulator, MAX_ROUNDS } from '../BattleSimulator'
@@ -14,6 +14,8 @@ import { MaxStrategy } from '../strategies/MaxStrategy'
 import { RandomStrategy } from '../strategies/RandomStrategy'
 import type { ICharacter } from '../types'
 import { Rounding, Strategy } from '../types'
+
+const damageParser = new DamageParser()
 
 // 10d10 under the Max strategy: 100 HP, enough to survive any test attack
 const makeChar = (name: string, saves: Partial<Saves> = {}): ICharacter => ({
@@ -41,7 +43,11 @@ describe('effects in battle', () => {
     const target = make(makeChar('Fighter', targetSaves), Side.Players, strategy)
     jest.spyOn(attacker, 'rollToHit').mockReturnValue(100)
 
-    return { attacker, hit: (attack: string): void => attacker.performOneAttack(target, parseAttack(attack)), target }
+    return {
+      attacker,
+      hit: (attack: string): void => attacker.performOneAttack(target, damageParser.parseAttack(attack)),
+      target,
+    }
   }
 
   // the turn of a participant at the start of a new round

@@ -1,7 +1,7 @@
 import { Dice, roll } from 'ttrpg-lib-dice'
 
 import { Side } from '../../types'
-import { parseAttack } from '../attacks/parseDamage'
+import { DamageParser } from '../attacks/DamageParser'
 import type { AttackOption } from '../attacks/types'
 import { DEFAULT_SAVES } from '../attacks/types'
 import type { ILogger } from '../logger/ILogger'
@@ -16,6 +16,8 @@ jest.mock('ttrpg-lib-dice', () => ({
   },
   roll: jest.fn(),
 }))
+
+const damageParser = new DamageParser()
 
 describe('Participant', () => {
   const mockChar: ICharacter = {
@@ -149,7 +151,10 @@ describe('Participant', () => {
 
       participant.attack(enemies, selector)
 
-      expect(strategy.pickOption).toHaveBeenCalledWith([[parseAttack('d6'), parseAttack('d6')], [parseAttack('d8')]])
+      expect(strategy.pickOption).toHaveBeenCalledWith([
+        [damageParser.parseAttack('d6'), damageParser.parseAttack('d6')],
+        [damageParser.parseAttack('d8')],
+      ])
       expect(selector.selectTarget).toHaveBeenCalledTimes(2)
     })
 
@@ -195,7 +200,7 @@ describe('Participant', () => {
       const target = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
       jest.spyOn(attacker, 'rollToHit').mockReturnValue(20) // Hit
 
-      attacker.performOneAttack(target, parseAttack('d6'))
+      attacker.performOneAttack(target, damageParser.parseAttack('d6'))
       expect(mockLogger.log).toHaveBeenCalledWith('🗡️ Players attacks Monsters, damage: 5')
     })
 
@@ -204,8 +209,8 @@ describe('Participant', () => {
       const target = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
       const rollToHit = jest.spyOn(attacker, 'rollToHit').mockReturnValueOnce(20).mockReturnValueOnce(1)
 
-      attacker.performOneAttack(target, parseAttack('d6[knife]'))
-      attacker.performOneAttack(target, parseAttack('d6[knife]'))
+      attacker.performOneAttack(target, damageParser.parseAttack('d6[knife]'))
+      attacker.performOneAttack(target, damageParser.parseAttack('d6[knife]'))
 
       expect(rollToHit).toHaveBeenCalledTimes(2)
       expect(mockLogger.log).toHaveBeenCalledWith('🗡️ Players attacks Monsters with knife (d6), damage: 5')
@@ -217,7 +222,7 @@ describe('Participant', () => {
       const target = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
       jest.spyOn(attacker, 'rollToHit').mockReturnValue(20) // Hit
 
-      attacker.performOneAttack(target, parseAttack('1d6'))
+      attacker.performOneAttack(target, damageParser.parseAttack('1d6'))
       expect(target.currentHp).toBe(5)
       expect(mockLogger.log).toHaveBeenCalledWith('🗡️ Players attacks Monsters, damage: 5')
     })
@@ -227,7 +232,7 @@ describe('Participant', () => {
       const target = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
       jest.spyOn(attacker, 'rollToHit').mockReturnValue(10) // Miss
 
-      attacker.performOneAttack(target, parseAttack('1d6'))
+      attacker.performOneAttack(target, damageParser.parseAttack('1d6'))
       expect(target.currentHp).toBe(10)
       expect(mockLogger.log).toHaveBeenCalledWith('🛡️ Players misses Monsters')
     })
@@ -238,7 +243,7 @@ describe('Participant', () => {
       const target = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
       jest.spyOn(attacker, 'rollToHit').mockReturnValue(20) // Hit
 
-      attacker.performOneAttack(target, parseAttack('1d6'))
+      attacker.performOneAttack(target, damageParser.parseAttack('1d6'))
       expect(target.currentHp).toBe(5)
       expect(mockLogger.log).not.toHaveBeenCalled()
     })
@@ -253,7 +258,7 @@ describe('Participant', () => {
       const exhausted = new Participant(mockChar, Side.Players, mockStrategy, 0, 1, mockLogger)
       const attacker = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
       expect(exhausted.isValidTarget()).toBe(true)
-      attacker.performOneAttack(exhausted, parseAttack('1d4'))
+      attacker.performOneAttack(exhausted, damageParser.parseAttack('1d4'))
       expect(exhausted.isValidTarget()).toBe(false)
     })
   })
@@ -266,7 +271,7 @@ describe('Participant', () => {
       // Exhaust attacks
       Array(3)
         .fill(null)
-        .forEach(() => attacker.performOneAttack(participant, parseAttack('1d4')))
+        .forEach(() => attacker.performOneAttack(participant, damageParser.parseAttack('1d4')))
 
       expect(participant.isValidTarget()).toBe(false)
       participant.resetAttackLimit()

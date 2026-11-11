@@ -1,12 +1,14 @@
-import { getFormulasOf, parseAttack, parseDamage } from '../parseDamage'
+import { DamageParser } from '../DamageParser'
 import type { AttackEffect } from '../types'
 import { ModifierKind, SaveType } from '../types'
 
-const sources = (input: string): string[][] => parseDamage(input).map((option) => option.map((a) => a.source))
+const parser = new DamageParser()
 
-describe('parseDamage', () => {
+const sources = (input: string): string[][] => parser.parseDamage(input).map((option) => option.map((a) => a.source))
+
+describe('DamageParser', () => {
   it('parses plain formulas', () => {
-    expect(parseDamage('d6+1, d4')).toEqual([
+    expect(parser.parseDamage('d6+1, d4')).toEqual([
       [
         { damage: 'd6+1', effect: null, source: 'd6+1' },
         { damage: 'd4', effect: null, source: 'd4' },
@@ -106,11 +108,11 @@ describe('parseDamage', () => {
     ],
     ['d6[knife]', { label: 'knife', modifiers: [], save: null, saveMod: 0 }],
   ])('parses effect of "%s"', (input, expected) => {
-    expect(parseAttack(input).effect).toEqual(expected)
+    expect(parser.parseAttack(input).effect).toEqual(expected)
   })
 
   it('parses label-only options', () => {
-    const [[knife], [dagger]] = parseDamage('d6[knife]|d4[dagger]')
+    const [[knife], [dagger]] = parser.parseDamage('d6[knife]|d4[dagger]')
 
     expect(knife.damage).toBe('d6')
     expect(knife.effect?.label).toBe('knife')
@@ -120,10 +122,10 @@ describe('parseDamage', () => {
 
   it('ignores case and whitespace', () => {
     const strip = (input: string): unknown =>
-      parseDamage(input).map((option) => option.map(({ damage, effect }) => ({ damage, effect })))
+      parser.parseDamage(input).map((option) => option.map(({ damage, effect }) => ({ damage, effect })))
 
     expect(strip('D6 [ Poison ( -2 ) , SAVE_OR_DIE ] | D8')).toEqual(strip('d6[poison(-2),save_or_die]|d8'))
-    expect(parseAttack(' D6 [ Poison , Damage_Each_Round( D4 , 3 ) ] ')).toMatchObject({
+    expect(parser.parseAttack(' D6 [ Poison , Damage_Each_Round( D4 , 3 ) ] ')).toMatchObject({
       damage: 'd6',
       effect: { modifiers: [{ damage: 'd4', duration: '3', kind: ModifierKind.DamageEachRound }] },
     })
@@ -154,15 +156,32 @@ describe('parseDamage', () => {
     ['d6[poison,damage_each_round(d4,2,1)]', /at most two arguments/],
     ['d6[poison,save_or_die(d4)]', /save_or_die takes no arguments/],
   ])('rejects malformed damage "%s"', (input, error) => {
-    expect(() => parseDamage(input)).toThrow(error)
+    expect(() => parser.parseDamage(input)).toThrow(error)
   })
 
   it('lists formulas for validation', () => {
-    expect(getFormulasOf(parseAttack('d6[poison,damage_each_round(d4,3),save_for_half(2d6)]'))).toEqual([
+    expect(parser.getFormulasOf(parser.parseAttack('d6[poison,damage_each_round(d4,3),save_for_half(2d6)]'))).toEqual([
       'd6',
       'd4',
       '3',
       '2d6',
     ])
+  })
+
+  describe('getMaxDamage', () => {
+    it.each<[string, number]>([
+      ['d6', 6],
+      ['d6+1', 7],
+      ['d6+d4', 10],
+      ['2d6-1', 11],
+      ['5', 5],
+      ['2d4 + 1', 9],
+    ])('"%s" → %d', (formula, expected) => {
+      expect(parser.getMaxDamage(formula)).toBe(expected)
+    })
+
+    it.each(['', 'd', 'hello', 'd6+'])('throws on "%s"', (formula) => {
+      expect(() => parser.getMaxDamage(formula)).toThrow(`Invalid damage formula: "${formula}"`)
+    })
   })
 })

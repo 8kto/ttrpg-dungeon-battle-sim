@@ -1,6 +1,6 @@
 import { Dice } from 'ttrpg-lib-dice'
 
-import { parseDamage } from '../../attacks/parseDamage'
+import { DamageParser } from '../../attacks/DamageParser'
 import { MaxStrategy } from '../MaxStrategy'
 
 describe('MaxStrategy', () => {
@@ -49,7 +49,8 @@ describe('MaxStrategy', () => {
   })
 
   describe('pickOption', () => {
-    const picked = (damage: string): string[] => strategy.pickOption(parseDamage(damage)).map((a) => a.source)
+    const picked = (damage: string): string[] =>
+      strategy.pickOption(new DamageParser().parseDamage(damage)).map((a) => a.source)
 
     it('picks the option with the highest max damage', () => {
       expect(picked('d6,d6|d8')).toEqual(['d6', 'd6'])
