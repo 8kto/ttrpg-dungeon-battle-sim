@@ -1,5 +1,5 @@
-import { BufferLogger } from '../services/BufferLogger'
-import { LogLevel } from '../services/ILogger'
+import { BufferLogger } from '../services/logger/BufferLogger'
+import { LogLevel } from '../services/logger/ILogger'
 import type { SimulationRequest } from './runSimulation'
 import { runSimulation } from './runSimulation'
 import type { BattleStats } from './stats'

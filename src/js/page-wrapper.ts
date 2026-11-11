@@ -6,8 +6,8 @@ import {
   PlayerCharTemplate,
   PlayerTemplates,
 } from './consts'
-import { LogLevel } from './services/ILogger'
-import { Logger } from './services/Logger'
+import { LogLevel } from './services/logger/ILogger'
+import { Logger } from './services/logger/Logger'
 import { NameProvider } from './services/NameProvider'
 import { getStrategy } from './services/strategies/getStrategy'
 import { validateCharacters } from './services/validateCharacters'

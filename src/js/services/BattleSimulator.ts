@@ -2,7 +2,7 @@ import { shuffleArray } from 'ttrpg-lib-dice'
 
 import { Side } from '../types'
 import type { EffectCounters } from './attacks/types'
-import type { ILogger } from './ILogger'
+import type { ILogger } from './logger/ILogger'
 import { Participant } from './Participant'
 import { getStrategy } from './strategies/getStrategy'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
