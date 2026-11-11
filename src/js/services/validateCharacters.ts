@@ -1,4 +1,5 @@
-import { getFormulasOf, parseDamage } from './attacks/parseDamage'
+import { DamageParser } from './attacks/DamageParser'
+import type { IDamageParser } from './attacks/IDamageParser'
 import { SaveType } from './attacks/types'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
 import type { ICharacter } from './types'
@@ -15,15 +16,16 @@ const isValidFormula = (formula: string, strategy: ICombatStrategy): boolean => 
 
 const capitalize = (text: string): string => `${text[0].toUpperCase()}${text.slice(1)}`
 
-const validateDamage = (damage: string, strategy: ICombatStrategy): string[] => {
+const validateDamage = (damage: string, strategy: ICombatStrategy, damageParser: IDamageParser): string[] => {
   if (damage.trim() === '') {
     return ['no damage formula']
   }
 
   try {
-    return parseDamage(damage)
+    return damageParser
+      .parseDamage(damage)
       .flat()
-      .flatMap(getFormulasOf)
+      .flatMap((attack) => damageParser.getFormulasOf(attack))
       .filter((formula) => !isValidFormula(formula, strategy))
       .map((formula) => `invalid damage formula "${formula}"`)
   } catch (err) {
@@ -32,7 +34,12 @@ const validateDamage = (damage: string, strategy: ICombatStrategy): string[] => 
 }
 
 // Returns a list of human-readable errors; empty list means the characters are valid
-export const validateCharacters = (chars: ICharacter[], strategy: ICombatStrategy, sideName: string): string[] => {
+export const validateCharacters = (
+  chars: ICharacter[],
+  strategy: ICombatStrategy,
+  sideName: string,
+  damageParser: IDamageParser = new DamageParser(),
+): string[] => {
   if (chars.length === 0) {
     return [`${sideName}: no characters`]
   }
@@ -52,7 +59,7 @@ export const validateCharacters = (chars: ICharacter[], strategy: ICombatStrateg
     if (!Number.isInteger(hdCount) || hdCount < 1 || !Number.isFinite(hdType)) {
       errors.push(`${label}: invalid Hit Dice`)
     }
-    validateDamage(char.damage, strategy).forEach((error) => errors.push(`${label}: ${error}`))
+    validateDamage(char.damage, strategy, damageParser).forEach((error) => errors.push(`${label}: ${error}`))
     Object.values(SaveType)
       .filter((save) => {
         const value = char.saves[save]

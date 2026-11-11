@@ -3,8 +3,8 @@ import { Dice, roll } from 'ttrpg-lib-dice'
 import type { Side } from '../types'
 import type { ActiveEffect } from './attacks/ActiveEffects'
 import { ActiveEffects, getEffectKey } from './attacks/ActiveEffects'
-import { getMaxDamage } from './attacks/getMaxDamage'
-import { parseDamage } from './attacks/parseDamage'
+import { DamageParser } from './attacks/DamageParser'
+import type { IDamageParser } from './attacks/IDamageParser'
 import type { Attack, AttackEffect, AttackOption, EffectCounters, Modifier } from './attacks/types'
 import { ModifierKind } from './attacks/types'
 import type { ILogger } from './logger/ILogger'
@@ -34,13 +34,14 @@ export class Participant {
     private readonly maxAttacksPerTarget: number, // 0 = unlimited
     private readonly logger: ILogger,
     private readonly effectCounters: EffectCounters = {},
+    private readonly damageParser: IDamageParser = new DamageParser(),
   ) {
     if (!Number.isInteger(maxAttacksPerTarget) || maxAttacksPerTarget < 0) {
       throw new Error(`Invalid max attacks per target: ${maxAttacksPerTarget}`)
     }
 
     // parsed once per participant, not on every attack
-    this.options = parseDamage(char.damage)
+    this.options = damageParser.parseDamage(char.damage)
     this.currentHp = strategy.calculateHp(char.hitDice)
     this.hasAttackLimit = maxAttacksPerTarget > 0
     this.attacksRemaining = maxAttacksPerTarget
@@ -121,7 +122,9 @@ export class Participant {
     const helpless = target.isParalyzed
     if (helpless || this.rollToHit() >= target.char.armorClass) {
       // negative modifiers must not heal the target
-      const dmg = helpless ? Math.max(0, getMaxDamage(attack.damage)) : this.getEffectValue(attack.damage)
+      const dmg = helpless
+        ? Math.max(0, this.damageParser.getMaxDamage(attack.damage))
+        : this.getEffectValue(attack.damage)
       target.currentHp -= dmg
 
       // log messages are built only when they will be shown: this is the hottest path
