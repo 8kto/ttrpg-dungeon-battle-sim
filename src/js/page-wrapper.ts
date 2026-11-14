@@ -16,6 +16,7 @@ import { SimulationRunner } from './simulation/SimulationRunner'
 import { formatSummary } from './simulation/stats'
 import type { BattleSimulationConfig } from './types'
 import { CharTable } from './ui/CharTable'
+import { bindModal } from './ui/modal'
 import { SettingsForm } from './ui/SettingsForm'
 import { bindTabs } from './ui/tabs'
 import { addTraitAttacks } from './utils/addTraitAttacks'
@@ -76,6 +77,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
     { button: byId('tab-log-btn'), panel: byId('tab-log') },
     { button: byId('tab-config-btn'), panel: byId('tab-config') },
   ])
+
+  bindModal(byId('damage-help'), document.querySelectorAll<HTMLElement>('.damage-help-btn'))
 
   // Import/Export
   onClick('export-config', () => {

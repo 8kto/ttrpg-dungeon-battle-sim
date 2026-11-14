@@ -195,3 +195,56 @@ abbr:hover {
 #result-log {
   transition: background-color 0.2s ease;
 }
+
+.damage-help-btn {
+  @apply ml-1 w-5 h-5 rounded-full text-xs text-white leading-5 align-middle;
+  background: var(--3rd-color);
+
+  &:hover {
+    background: var(--3rd-color-focus);
+  }
+}
+
+.help-modal {
+  @apply rounded shadow-lg p-0 w-full max-w-2xl;
+  background: var(--block-bg);
+  color: var(--primary-color);
+
+  &::backdrop {
+    background: rgb(0 0 0 / 40%);
+  }
+
+  h3 {
+    @apply font-semibold mt-4 mb-1;
+    color: var(--3rd-color);
+  }
+
+  ul {
+    @apply list-disc pl-5 space-y-1;
+  }
+
+  code {
+    @apply px-1 rounded bg-gray-200 text-sm whitespace-nowrap;
+  }
+}
+
+.help-modal__content {
+  @apply p-6;
+}
+
+.help-modal__close {
+  @apply text-2xl leading-none px-2;
+  color: var(--alt-color);
+}
+
+.help-modal__table {
+  @apply w-full text-sm;
+
+  td {
+    @apply py-1 pr-3 align-top border-t;
+  }
+
+  td:first-child {
+    @apply whitespace-nowrap;
+  }
+}

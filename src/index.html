@@ -68,7 +68,10 @@
                 <th class="p-2 text-left">To Hit</th>
                 <th class="p-2 text-left">HD Count</th>
                 <th class="p-2 text-left">HD Type</th>
-                <th class="p-2 text-left">Damage</th>
+                <th class="p-2 text-left whitespace-nowrap">
+                  Damage
+                  <button class="damage-help-btn" type="button" title="Damage syntax help">?</button>
+                </th>
                 <th class="p-2"></th>
               </tr>
             </thead>
@@ -199,7 +202,10 @@
                 <th class="p-2 text-left">To Hit</th>
                 <th class="p-2 text-left">HD Count</th>
                 <th class="p-2 text-left">HD Type</th>
-                <th class="p-2 text-left">Damage</th>
+                <th class="p-2 text-left whitespace-nowrap">
+                  Damage
+                  <button class="damage-help-btn" type="button" title="Damage syntax help">?</button>
+                </th>
                 <th class="p-2"></th>
               </tr>
             </thead>
@@ -407,6 +413,80 @@
           placeholder="Config JSON…"
         ></textarea>
       </div>
+
+      <!-- Damage syntax help -->
+      <dialog id="damage-help" class="help-modal" aria-labelledby="damage-help-title">
+        <div class="help-modal__content">
+          <div class="flex justify-between items-start mb-4">
+            <h2 id="damage-help-title">Damage syntax</h2>
+            <button class="help-modal__close" type="button" title="Close" data-close-modal>×</button>
+          </div>
+
+          <h3>Attacks and options</h3>
+          <ul>
+            <li><code>d6</code>, <code>2d4+1</code>, <code>d6+d4</code>, <code>5</code> — damage formula</li>
+            <li><code>,</code> separates attacks made in one turn: <code>d6, d6, d8</code> attacks three times</li>
+            <li>
+              <code>|</code> separates alternative options, one option is used per turn:
+              <code>d6, d6 | d8</code> attacks twice with <code>d6</code> or once with <code>d8</code>. The Max strategy
+              picks the option with the highest max damage, Random and Average pick one at random
+            </li>
+          </ul>
+
+          <h3>Tags</h3>
+          <p>Tags in brackets after a formula apply on hit: <code>d6[tag, modifier, ...]</code></p>
+          <ul>
+            <li>A tag without modifiers just labels the attack in the log: <code>d6[knife] | d4[dagger]</code></li>
+            <li>
+              A save name as the tag (<code>paralyze</code>, <code>poison</code>, <code>breath</code>,
+              <code>device</code>, <code>magic</code>) makes the target roll that save once per attack; a bonus or
+              penalty goes in parentheses with a sign: <code>poison(-2)</code>, <code>paralyze(+2)</code>
+            </li>
+            <li>Any other tag (<code>fire</code>, <code>🧊</code>) has no save: modifiers always apply</li>
+          </ul>
+
+          <h3>Modifiers</h3>
+          <p>Applied on a failed save or when the tag has no save.</p>
+          <table class="help-modal__table">
+            <tbody>
+              <tr>
+                <td><code>paralyze</code><br /><code>paralyze(d4)</code></td>
+                <td>
+                  The target skips its turns until the end of battle / for d4 turns; attacks against it hit
+                  automatically for max weapon damage, and it fails all saves
+                </td>
+              </tr>
+              <tr>
+                <td><code>save_or_die</code></td>
+                <td>The target dies; requires a save tag</td>
+              </tr>
+              <tr>
+                <td><code>save_for_half(d8)</code></td>
+                <td>d8 damage, half (rounded down) on a successful save; requires a save tag</td>
+              </tr>
+              <tr>
+                <td><code>d8</code></td>
+                <td>Extra d8 damage</td>
+              </tr>
+              <tr>
+                <td><code>damage_each_round(d4)</code><br /><code>damage_each_round(d4, 3)</code></td>
+                <td>
+                  d4 damage at the start of each of the target's turns from the next round, until the end of battle /
+                  for 3 turns; identical effects don't stack
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Examples</h3>
+          <ul>
+            <li><code>d6[poison, save_or_die]</code></li>
+            <li><code>d6[paralyze(+2), paralyze(d4)]</code></li>
+            <li><code>d6[breath, save_for_half(2d6)]</code></li>
+            <li><code>d4, d4 | d10[fire, damage_each_round(d4, 3)]</code></li>
+          </ul>
+        </div>
+      </dialog>
 
       <footer class="footer text-center p-4 no-print">
         <div class="align-center mx-auto content-center">
