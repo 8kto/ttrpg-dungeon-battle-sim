@@ -4,6 +4,7 @@ import type { Saves } from '../services/attacks/types'
 import { DEFAULT_SAVES, SaveType } from '../services/attacks/types'
 import type { ICharacter } from '../services/types'
 import type { CharStats } from '../types'
+import type { DamageField } from './DamageField'
 
 const toCharStats = (char: ICharacter): CharStats => ({
   armorClass: char.armorClass,
@@ -18,12 +19,22 @@ const toCharStats = (char: ICharacter): CharStats => ({
 const getSaveInput = (group: HTMLElement, save: SaveType): HTMLInputElement =>
   group.querySelector(`.save-input[data-save="${save}"]`) as HTMLInputElement
 
+const setSavesExpanded = (group: HTMLElement, expanded: boolean): void => {
+  const toggle = group.querySelector('.saves-toggle') as HTMLButtonElement
+  ;(group.querySelector('.saves-row') as HTMLTableRowElement).hidden = !expanded
+  toggle.setAttribute('aria-expanded', String(expanded))
+  toggle.textContent = expanded ? 'Saves ▾' : 'Saves ▸'
+}
+
 // Editable table of characters (one side of the battle); every character is a <tbody class="char">
-// with the main row and the saves row
+// with the main row, the attacks row and the saves row
 export class CharTable {
   private readonly template: HTMLTableSectionElement
 
-  constructor(private readonly table: HTMLTableElement) {
+  constructor(
+    private readonly table: HTMLTableElement,
+    private readonly damageField: DamageField | null = null,
+  ) {
     this.template = table.querySelector('tbody.char') as HTMLTableSectionElement
   }
 
@@ -48,6 +59,7 @@ export class CharTable {
 
     this.bindControls(group, defs)
     this.initGroup(group, defs)
+    this.damageField?.attach(group)
     this.reindexNames()
   }
 
@@ -92,6 +104,12 @@ export class CharTable {
   private bindControls(group: HTMLTableSectionElement, defs: CharStats): void {
     const removeBtn = group.querySelector('.remove-row') as HTMLButtonElement
     const dupBtn = group.querySelector('.duplicate-row') as HTMLButtonElement
+    const savesToggle = group.querySelector('.saves-toggle') as HTMLButtonElement
+
+    savesToggle.addEventListener('click', (e): void => {
+      e.preventDefault()
+      setSavesExpanded(group, savesToggle.getAttribute('aria-expanded') !== 'true')
+    })
 
     dupBtn.addEventListener('click', (e): void => {
       e.preventDefault()
@@ -107,6 +125,7 @@ export class CharTable {
       this.table.insertBefore(clone, group.nextSibling)
 
       this.bindControls(clone, defs)
+      this.damageField?.attach(clone)
       this.reindexNames()
     })
 

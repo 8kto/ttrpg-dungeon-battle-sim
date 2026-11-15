@@ -16,6 +16,7 @@ import { SimulationRunner } from './simulation/SimulationRunner'
 import { formatSummary } from './simulation/stats'
 import type { BattleSimulationConfig } from './types'
 import { CharTable } from './ui/CharTable'
+import { DamageField } from './ui/DamageField'
 import { bindModal } from './ui/modal'
 import { SettingsForm } from './ui/SettingsForm'
 import { bindTabs } from './ui/tabs'
@@ -37,8 +38,9 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const configArea = byId<HTMLTextAreaElement>('config-area')
 
   const settings = new SettingsForm()
-  const playersTable = new CharTable(byId('players-table'))
-  const monstersTable = new CharTable(byId('monsters-table'))
+  const damageField = new DamageField()
+  const playersTable = new CharTable(byId('players-table'), damageField)
+  const monstersTable = new CharTable(byId('monsters-table'), damageField)
   const playersNameProvider = new NameProvider(PlayerNamesChunks)
   const monsterNameProvider = new NameProvider(MonsterNamesChunks)
 

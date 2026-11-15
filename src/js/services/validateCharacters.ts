@@ -16,7 +16,11 @@ const isValidFormula = (formula: string, strategy: ICombatStrategy): boolean => 
 
 const capitalize = (text: string): string => `${text[0].toUpperCase()}${text.slice(1)}`
 
-const validateDamage = (damage: string, strategy: ICombatStrategy, damageParser: IDamageParser): string[] => {
+export const validateDamage = (
+  damage: string,
+  strategy: ICombatStrategy,
+  damageParser: IDamageParser = new DamageParser(),
+): string[] => {
   if (damage.trim() === '') {
     return ['no damage formula']
   }

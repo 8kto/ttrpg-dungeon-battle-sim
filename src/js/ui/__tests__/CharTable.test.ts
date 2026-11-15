@@ -3,10 +3,11 @@ import { Dice } from 'ttrpg-lib-dice'
 import { DEFAULT_SAVES } from '../../services/attacks/types'
 import type { CharStats } from '../../types'
 import { CharTable } from '../CharTable'
+import { DamageField } from '../DamageField'
 
 const saveInput = (save: string): string => `<label>${save}</label><input class="save-input" data-save="${save}" />`
 
-// one character: the main row and the saves row
+// one character: the main row, the attacks row and the saves row
 const charTemplate = `
   <tbody class="char">
     <tr>
@@ -21,11 +22,19 @@ const charTemplate = `
           <option value="8">d8</option>
         </select>
       </td>
-      <td><input class="damage-input" /></td>
       <td><button class="duplicate-row"></button><button class="remove-row"></button></td>
     </tr>
-    <tr class="saves-row">
-      <td colspan="7">${['paralyze', 'poison', 'breath', 'device', 'magic'].map(saveInput).join('')}</td>
+    <tr class="attacks-row">
+      <td colspan="5">
+        <input class="damage-input" hidden />
+        <div class="damage-error" hidden></div>
+        <div class="damage-preview" hidden></div>
+        <button class="damage-edit-btn">Edit</button>
+        <button class="saves-toggle" aria-expanded="false">Saves ▸</button>
+      </td>
+    </tr>
+    <tr class="saves-row" hidden>
+      <td colspan="5">${['paralyze', 'poison', 'breath', 'device', 'magic'].map(saveInput).join('')}</td>
     </tr>
   </tbody>`
 
@@ -85,6 +94,42 @@ describe('CharTable', () => {
     expect(table.read()[1].saves.magic).toBe(5)
   })
 
+  describe('saves', () => {
+    const savesRow = (index: number): HTMLElement => element.querySelectorAll<HTMLElement>('.saves-row')[index]
+    const toggle = (index: number): HTMLButtonElement =>
+      element.querySelectorAll<HTMLButtonElement>('.saves-toggle')[index]
+
+    it('are collapsed by default', () => {
+      table.init([goblin])
+      expect(savesRow(0).hidden).toBe(true)
+      expect(toggle(0).getAttribute('aria-expanded')).toBe('false')
+    })
+
+    it('are expanded and collapsed by their own toggle', () => {
+      table.init([goblin, goblin])
+      click('.saves-toggle', 1)
+      expect(savesRow(0).hidden).toBe(true)
+      expect(savesRow(1).hidden).toBe(false)
+      expect(toggle(1).getAttribute('aria-expanded')).toBe('true')
+      expect(toggle(1).textContent).toBe('Saves ▾')
+
+      click('.saves-toggle', 1)
+      expect(savesRow(1).hidden).toBe(true)
+      expect(toggle(1).textContent).toBe('Saves ▸')
+    })
+
+    it('keep their state and toggle in a duplicate', () => {
+      table.init([goblin])
+      click('.saves-toggle')
+      click('.duplicate-row')
+      expect(savesRow(1).hidden).toBe(false)
+
+      click('.saves-toggle', 1)
+      expect(savesRow(0).hidden).toBe(false)
+      expect(savesRow(1).hidden).toBe(true)
+    })
+  })
+
   it('removes the whole character but keeps the last one', () => {
     table.init([goblin, goblin])
     click('.remove-row')
@@ -107,5 +152,33 @@ describe('CharTable', () => {
     table.load([fighter])
 
     expect(table.read()).toEqual([fighter])
+  })
+
+  describe('with a damage field', () => {
+    const preview = (index: number): HTMLElement => element.querySelectorAll<HTMLElement>('.damage-preview')[index]
+
+    const chipCount = (index: number): number => preview(index).querySelectorAll('.damage-chip').length
+
+    beforeEach(() => {
+      table = new CharTable(element, new DamageField())
+    })
+
+    it('renders the damage of new rows', () => {
+      table.init([goblin, { ...goblin, damage: 'd8' }])
+      expect(chipCount(0)).toBe(2)
+      expect(chipCount(1)).toBe(1)
+    })
+
+    it('keeps the damage field of a duplicate live', () => {
+      table.init([{ ...goblin, damage: 'd8' }])
+      click('.duplicate-row')
+      click('.damage-edit-btn', 1)
+      input('.damage-input', 1).value = 'd6, d6'
+      input('.damage-input', 1).dispatchEvent(new Event('input'))
+
+      expect(chipCount(0)).toBe(1)
+      expect(chipCount(1)).toBe(2)
+      expect(input('.damage-input', 0).hidden).toBe(true)
+    })
   })
 })
