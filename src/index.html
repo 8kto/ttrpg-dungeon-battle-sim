@@ -38,7 +38,7 @@
     />
   </head>
   <body class="bg-gray-100 text-gray-900 min-h-screen">
-    <div class="container mx-auto p-6">
+    <div class="container mx-auto pt-6">
       <h1 class="text-4xl font-bold mb-2 flex items-center">
         <img src="/images/android-chrome-192x192.png" alt="" class="logo-img w-12 h-12 mr-4" />
         Dungeon Battle Simulator
@@ -60,109 +60,118 @@
               <button id="clear-players" class="secondary-button mid-button">Clear</button>
             </div>
           </div>
-          <table id="players-table" class="w-full table-auto bg-white shadow rounded">
-            <thead class="bg-gray-200">
+          <table id="players-table" class="char-table w-full table-auto bg-white shadow rounded">
+            <thead class="char-table__head">
               <tr>
-                <th class="p-2 text-left table-header--name">Name</th>
-                <th class="p-2 text-left">AC</th>
-                <th class="p-2 text-left">To Hit</th>
-                <th class="p-2 text-left">HD Count</th>
-                <th class="p-2 text-left">HD Type</th>
-                <th class="p-2 text-left whitespace-nowrap">
-                  Damage
+                <th class="table-header--name">Name</th>
+                <th>AC</th>
+                <th>To Hit</th>
+                <th>HD</th>
+                <th class="text-right">
                   <button class="damage-help-btn" type="button" title="Damage syntax help">?</button>
                 </th>
-                <th class="p-2"></th>
               </tr>
             </thead>
             <tbody class="char border-t">
-              <tr class="bg-white" data-prefix="Player">
-                <td class="p-2"><input type="text" class="name-input w-full border rounded px-2" required /></td>
-                <td class="p-289">
-                  <input type="number" class="ac-input w-full border rounded px-2" required min="0" />
+              <tr data-prefix="Player">
+                <td class="w-full"><input type="text" class="name-input w-full border rounded px-2" required /></td>
+                <td><input type="number" class="ac-input num-input border rounded px-2" required min="0" /></td>
+                <td><input type="number" class="tohit-input num-input border rounded px-2" required /></td>
+                <td>
+                  <div class="flex items-center gap-1">
+                    <input type="number" class="hd-count-input num-input border rounded px-2" required min="1" />
+                    <select class="hd-type-select border rounded px-1">
+                      <option value="4">d4</option>
+                      <option value="6">d6</option>
+                      <option value="8">d8</option>
+                      <option value="10">d10</option>
+                      <option value="12">d12</option>
+                      <option value="20">d20</option>
+                      <option value="100">d100</option>
+                    </select>
+                  </div>
                 </td>
-                <td class="p-2"><input type="number" class="tohit-input w-full border rounded px-2" required /></td>
-                <td class="p-2">
-                  <input type="number" class="hd-count-input w-full border rounded px-2" required min="1" />
-                </td>
-                <td class="p-2">
-                  <select class="hd-type-select border rounded px-2">
-                    <option value="4">d4</option>
-                    <option value="6">d6</option>
-                    <option value="8">d8</option>
-                    <option value="10">d10</option>
-                    <option value="12">d12</option>
-                    <option value="20">d20</option>
-                    <option value="100">d100</option>
-                  </select>
-                </td>
-                <td class="p-2">
-                  <input
-                    type="text"
-                    class="damage-input w-full border rounded px-2"
-                    required
-                    title="Formulas like d6, 2d4+1. Comma = attacks in one turn, | = alternative options. Tags in brackets: d6[knife]|d4[dagger], d6[poison,save_or_die], d6[paralyze(+2),paralyze(d4)], d6[breath,save_for_half(d8)], d6[🧊,damage_each_round(d4,3)]"
-                  />
-                </td>
-                <td class="p-2 text-center space-x-2 min-w-12">
-                  <button class="duplicate-row" title="Duplicate">⎘</button>
-                  <button class="remove-row" title="Remove">×</button>
+                <td class="text-right whitespace-nowrap">
+                  <button class="duplicate-row row-action" title="Duplicate">⎘</button>
+                  <button class="remove-row row-action" title="Remove">×</button>
                 </td>
               </tr>
-              <tr class="saves-row bg-white">
-                <td colspan="7" class="px-2 pb-2">
-                  <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-700">
-                    <span class="font-medium">Saves</span>
-                    <label class="flex items-center gap-1">
-                      Paralyze
+              <tr class="attacks-row">
+                <td colspan="5">
+                  <div class="flex items-start gap-2">
+                    <span class="row-label">Damage</span>
+                    <div class="flex-1">
                       <input
-                        type="number"
-                        min="0"
-                        max="20"
-                        class="save-input w-16 border rounded px-1"
-                        data-save="paralyze"
+                        type="text"
+                        class="damage-input w-full border rounded px-2"
+                        required
+                        hidden
+                        title="Formulas like d6, 2d4+1. Comma = attacks in one turn, | = alternative options. Tags in brackets: d6[knife]|d4[dagger], d6[poison,save_or_die], d6[paralyze(+2),paralyze(d4)], d6[breath,save_for_half(d8)], d6[🧊,damage_each_round(d4,3)]"
                       />
-                    </label>
-                    <label class="flex items-center gap-1">
-                      Poison
-                      <input
-                        type="number"
-                        min="0"
-                        max="20"
-                        class="save-input w-16 border rounded px-1"
-                        data-save="poison"
-                      />
-                    </label>
-                    <label class="flex items-center gap-1">
-                      Breath
-                      <input
-                        type="number"
-                        min="0"
-                        max="20"
-                        class="save-input w-16 border rounded px-1"
-                        data-save="breath"
-                      />
-                    </label>
-                    <label class="flex items-center gap-1">
-                      Device
-                      <input
-                        type="number"
-                        min="0"
-                        max="20"
-                        class="save-input w-16 border rounded px-1"
-                        data-save="device"
-                      />
-                    </label>
-                    <label class="flex items-center gap-1">
-                      Magic
-                      <input
-                        type="number"
-                        min="0"
-                        max="20"
-                        class="save-input w-16 border rounded px-1"
-                        data-save="magic"
-                      />
-                    </label>
+                      <div class="damage-error" hidden></div>
+                      <div class="damage-preview" title="Click to edit" hidden></div>
+                    </div>
+                    <button class="damage-edit-btn row-toggle" type="button">Edit</button>
+                    <button class="saves-toggle row-toggle" type="button" aria-expanded="false">Saves ▸</button>
+                  </div>
+                </td>
+              </tr>
+              <tr class="saves-row" hidden>
+                <td colspan="5">
+                  <div class="flex items-start gap-2">
+                    <span class="row-label">Saves</span>
+                    <div class="flex flex-1 flex-wrap items-center gap-x-3 gap-y-1">
+                      <label class="save-label">
+                        Paralyze
+                        <input
+                          type="number"
+                          min="0"
+                          max="20"
+                          class="save-input border rounded px-1"
+                          data-save="paralyze"
+                        />
+                      </label>
+                      <label class="save-label">
+                        Poison
+                        <input
+                          type="number"
+                          min="0"
+                          max="20"
+                          class="save-input border rounded px-1"
+                          data-save="poison"
+                        />
+                      </label>
+                      <label class="save-label">
+                        Breath
+                        <input
+                          type="number"
+                          min="0"
+                          max="20"
+                          class="save-input border rounded px-1"
+                          data-save="breath"
+                        />
+                      </label>
+                      <label class="save-label">
+                        Device
+                        <input
+                          type="number"
+                          min="0"
+                          max="20"
+                          class="save-input border rounded px-1"
+                          data-save="device"
+                        />
+                      </label>
+                      <label class="save-label">
+                        Magic
+                        <input
+                          type="number"
+                          min="0"
+                          max="20"
+                          class="save-input border rounded px-1"
+                          data-save="magic"
+                        />
+                      </label>
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -194,104 +203,118 @@
               </label>
             </div>
           </div>
-          <table id="monsters-table" class="w-full table-auto bg-white shadow rounded">
-            <thead class="bg-gray-200">
+          <table id="monsters-table" class="char-table w-full table-auto bg-white shadow rounded">
+            <thead class="char-table__head">
               <tr>
-                <th class="p-2 text-left table-header--name">Name</th>
-                <th class="p-2 text-left">AC</th>
-                <th class="p-2 text-left">To Hit</th>
-                <th class="p-2 text-left">HD Count</th>
-                <th class="p-2 text-left">HD Type</th>
-                <th class="p-2 text-left whitespace-nowrap">
-                  Damage
+                <th class="table-header--name">Name</th>
+                <th>AC</th>
+                <th>To Hit</th>
+                <th>HD</th>
+                <th class="text-right">
                   <button class="damage-help-btn" type="button" title="Damage syntax help">?</button>
                 </th>
-                <th class="p-2"></th>
               </tr>
             </thead>
             <tbody class="char border-t">
-              <tr class="bg-white" data-prefix="Monster">
-                <td class="p-2"><input type="text" class="name-input w-full border rounded px-2" required /></td>
-                <td class="p-2">
-                  <input type="number" class="ac-input w-full border rounded px-2" required min="0" />
+              <tr data-prefix="Monster">
+                <td class="w-full"><input type="text" class="name-input w-full border rounded px-2" required /></td>
+                <td><input type="number" class="ac-input num-input border rounded px-2" required min="0" /></td>
+                <td><input type="number" class="tohit-input num-input border rounded px-2" required /></td>
+                <td>
+                  <div class="flex items-center gap-1">
+                    <input type="number" class="hd-count-input num-input border rounded px-2" required min="1" />
+                    <select class="hd-type-select border rounded px-1">
+                      <option value="4">d4</option>
+                      <option value="6">d6</option>
+                      <option value="8">d8</option>
+                      <option value="10">d10</option>
+                      <option value="12">d12</option>
+                      <option value="20">d20</option>
+                      <option value="100">d100</option>
+                    </select>
+                  </div>
                 </td>
-                <td class="p-2"><input type="number" class="tohit-input w-full border rounded px-2" required /></td>
-                <td class="p-2">
-                  <input type="number" class="hd-count-input w-full border rounded px-2" required min="1" />
-                </td>
-                <td class="p-2">
-                  <select class="hd-type-select border rounded px-2">
-                    <option value="4">d4</option>
-                    <option value="6">d6</option>
-                    <option value="8">d8</option>
-                    <option value="10">d10</option>
-                    <option value="12">d12</option>
-                    <option value="20">d20</option>
-                    <option value="100">d100</option>
-                  </select>
-                </td>
-                <td class="p-2">
-                  <input type="text" class="damage-input w-full border rounded px-2" required />
-                </td>
-                <td class="p-2 text-center space-x-2 min-w-12">
-                  <button class="duplicate-row" title="Duplicate">⎘</button>
-                  <button class="remove-row" title="Remove">×</button>
+                <td class="text-right whitespace-nowrap">
+                  <button class="duplicate-row row-action" title="Duplicate">⎘</button>
+                  <button class="remove-row row-action" title="Remove">×</button>
                 </td>
               </tr>
-              <tr class="saves-row bg-white">
-                <td colspan="7" class="px-2 pb-2">
-                  <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-700">
-                    <span class="font-medium">Saves</span>
-                    <label class="flex items-center gap-1">
-                      Paralyze
+              <tr class="attacks-row">
+                <td colspan="5">
+                  <div class="flex items-start gap-2">
+                    <span class="row-label">Damage</span>
+                    <div class="flex-1">
                       <input
-                        type="number"
-                        min="0"
-                        max="20"
-                        class="save-input w-16 border rounded px-1"
-                        data-save="paralyze"
+                        type="text"
+                        class="damage-input w-full border rounded px-2"
+                        required
+                        hidden
+                        title="Formulas like d6, 2d4+1. Comma = attacks in one turn, | = alternative options. Tags in brackets: d6[knife]|d4[dagger], d6[poison,save_or_die], d6[paralyze(+2),paralyze(d4)], d6[breath,save_for_half(d8)], d6[🧊,damage_each_round(d4,3)]"
                       />
-                    </label>
-                    <label class="flex items-center gap-1">
-                      Poison
-                      <input
-                        type="number"
-                        min="0"
-                        max="20"
-                        class="save-input w-16 border rounded px-1"
-                        data-save="poison"
-                      />
-                    </label>
-                    <label class="flex items-center gap-1">
-                      Breath
-                      <input
-                        type="number"
-                        min="0"
-                        max="20"
-                        class="save-input w-16 border rounded px-1"
-                        data-save="breath"
-                      />
-                    </label>
-                    <label class="flex items-center gap-1">
-                      Device
-                      <input
-                        type="number"
-                        min="0"
-                        max="20"
-                        class="save-input w-16 border rounded px-1"
-                        data-save="device"
-                      />
-                    </label>
-                    <label class="flex items-center gap-1">
-                      Magic
-                      <input
-                        type="number"
-                        min="0"
-                        max="20"
-                        class="save-input w-16 border rounded px-1"
-                        data-save="magic"
-                      />
-                    </label>
+                      <div class="damage-error" hidden></div>
+                      <div class="damage-preview" title="Click to edit" hidden></div>
+                    </div>
+                    <button class="damage-edit-btn row-toggle" type="button">Edit</button>
+                    <button class="saves-toggle row-toggle" type="button" aria-expanded="false">Saves ▸</button>
+                  </div>
+                </td>
+              </tr>
+              <tr class="saves-row" hidden>
+                <td colspan="5">
+                  <div class="flex items-start gap-2">
+                    <span class="row-label">Saves</span>
+                    <div class="flex flex-1 flex-wrap items-center gap-x-3 gap-y-1">
+                      <label class="save-label">
+                        Paralyze
+                        <input
+                          type="number"
+                          min="0"
+                          max="20"
+                          class="save-input border rounded px-1"
+                          data-save="paralyze"
+                        />
+                      </label>
+                      <label class="save-label">
+                        Poison
+                        <input
+                          type="number"
+                          min="0"
+                          max="20"
+                          class="save-input border rounded px-1"
+                          data-save="poison"
+                        />
+                      </label>
+                      <label class="save-label">
+                        Breath
+                        <input
+                          type="number"
+                          min="0"
+                          max="20"
+                          class="save-input border rounded px-1"
+                          data-save="breath"
+                        />
+                      </label>
+                      <label class="save-label">
+                        Device
+                        <input
+                          type="number"
+                          min="0"
+                          max="20"
+                          class="save-input border rounded px-1"
+                          data-save="device"
+                        />
+                      </label>
+                      <label class="save-label">
+                        Magic
+                        <input
+                          type="number"
+                          min="0"
+                          max="20"
+                          class="save-input border rounded px-1"
+                          data-save="magic"
+                        />
+                      </label>
+                    </div>
                   </div>
                 </td>
               </tr>

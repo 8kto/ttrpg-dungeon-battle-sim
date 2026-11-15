@@ -14,6 +14,9 @@
   --page-bg: #fff;
   --input-bg: #f9f8f5;
   --block-bg: #fdfcf8;
+  --row-alt-bg: #f2f2f2;
+  --table-head-bg: #e3deed;
+  --table-border: #e2ddeb;
   --primary-font: sans-serif;
   --cursive-font: 'Uncial Antiqua', cursive;
 
@@ -52,6 +55,12 @@ h2 {
   font-size: 24px;
   color: var(--sub-color);
   margin: 0 0 10px;
+}
+
+input,
+select,
+textarea {
+  @apply font-mono;
 }
 
 input[disabled],
@@ -151,6 +160,61 @@ abbr:hover {
   min-width: 100px;
 }
 
+/* every character is a tbody: the main row, the damage row and the (collapsible) saves row */
+.char-table {
+  th {
+    @apply px-2 py-1.5 text-left text-sm font-semibold whitespace-nowrap;
+    color: var(--3rd-color-focus);
+  }
+
+  tbody.char {
+    border-top: 1px solid var(--table-border);
+  }
+  /* stripes separate characters rather than their rows */
+  tbody.char:nth-of-type(even) {
+    background: var(--row-alt-bg);
+  }
+
+  tbody.char td {
+    @apply px-2 pb-1.5;
+  }
+  tbody.char tr:first-child td {
+    @apply pt-2;
+  }
+  tbody.char tr:last-child td,
+  tr.attacks-row:has(+ tr[hidden]) td {
+    @apply pb-2;
+  }
+}
+.char-table__head {
+  background: var(--table-head-bg);
+}
+
+.num-input {
+  width: 3.75rem;
+}
+.save-input {
+  width: 3rem;
+}
+
+.row-label {
+  @apply w-16 shrink-0 text-xs uppercase tracking-wide leading-7;
+  color: var(--muted-color);
+}
+
+.save-label {
+  @apply flex items-center gap-1 text-xs;
+}
+
+.row-action {
+  @apply px-1 text-lg leading-none;
+}
+
+.row-toggle {
+  @apply text-xs leading-7 whitespace-nowrap hover:underline;
+  color: var(--3rd-color);
+}
+
 #result-log p:empty {
   height: 1rem;
 }
@@ -194,6 +258,67 @@ abbr:hover {
 
 #result-log {
   transition: background-color 0.2s ease;
+}
+
+.damage-input--invalid {
+  border-color: var(--alt-color);
+  outline-color: var(--alt-color);
+}
+
+.damage-error {
+  @apply mt-1 text-xs;
+  color: var(--alt-color);
+}
+
+.damage-preview {
+  @apply flex flex-wrap items-center gap-x-2 gap-y-1 min-h-7 cursor-pointer;
+}
+.damage-input + .damage-error,
+.damage-input:not([hidden]) ~ .damage-preview {
+  @apply mt-1;
+}
+.damage-preview[hidden] {
+  display: none;
+}
+.damage-preview__option {
+  @apply inline-flex flex-wrap gap-1;
+}
+.damage-preview__or {
+  @apply text-xs uppercase;
+  color: var(--muted-color);
+}
+
+/* attack chip; save effects are colored by the save type */
+.damage-chip {
+  @apply inline-flex items-center rounded border text-xs font-mono overflow-hidden bg-gray-100 border-gray-300;
+
+  > span {
+    @apply px-1.5 py-0.5;
+  }
+  > span + span {
+    border-left: 1px solid rgb(0 0 0 / 10%);
+  }
+}
+.damage-chip__formula {
+  @apply font-semibold;
+}
+.damage-chip--tag {
+  @apply bg-gray-100 border-gray-400 text-gray-800;
+}
+.damage-chip--poison {
+  @apply bg-green-50 border-green-400 text-green-900;
+}
+.damage-chip--paralyze {
+  @apply bg-sky-50 border-sky-400 text-sky-900;
+}
+.damage-chip--breath {
+  @apply bg-orange-50 border-orange-400 text-orange-900;
+}
+.damage-chip--device {
+  @apply bg-amber-50 border-amber-400 text-amber-900;
+}
+.damage-chip--magic {
+  @apply bg-violet-50 border-violet-400 text-violet-900;
 }
 
 .damage-help-btn {
