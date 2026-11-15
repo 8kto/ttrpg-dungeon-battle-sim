@@ -1,21 +1,20 @@
-import { applyFeatureFlagClasses, isFeatureEnabled, parseFeatureFlags } from '../featureFlags'
+import { applyFeatureFlagClasses, parseFeatureFlags } from '../featureFlags'
+
+const known = ['demo', 'other']
 
 describe('parseFeatureFlags', () => {
   it('returns nothing without the ff param', () => {
-    expect(parseFeatureFlags('')).toEqual([])
-    expect(parseFeatureFlags('?bg=desk')).toEqual([])
+    expect(parseFeatureFlags('', known)).toEqual([])
+    expect(parseFeatureFlags('?bg=demo', known)).toEqual([])
   })
 
   it('reads comma separated flags and drops unknown ones', () => {
-    expect(parseFeatureFlags('?ff=desk-bg')).toEqual(['desk-bg'])
-    expect(parseFeatureFlags('?ff=unknown, desk-bg')).toEqual(['desk-bg'])
+    expect(parseFeatureFlags('?ff=demo', known)).toEqual(['demo'])
+    expect(parseFeatureFlags('?ff=unknown, other,demo', known)).toEqual(['other', 'demo'])
   })
-})
 
-describe('isFeatureEnabled', () => {
-  it('checks a single flag', () => {
-    expect(isFeatureEnabled('desk-bg', '?ff=desk-bg')).toBe(true)
-    expect(isFeatureEnabled('desk-bg', '?ff=other')).toBe(false)
+  it('ignores flags that are not registered', () => {
+    expect(parseFeatureFlags('?ff=demo')).toEqual([])
   })
 })
 
@@ -23,8 +22,8 @@ describe('applyFeatureFlagClasses', () => {
   it('adds a class per flag', () => {
     const target = document.createElement('body')
 
-    applyFeatureFlagClasses('?ff=desk-bg', target)
+    applyFeatureFlagClasses('?ff=demo,other', target, known)
 
-    expect(Array.from(target.classList)).toEqual(['ff--desk-bg'])
+    expect(Array.from(target.classList)).toEqual(['ff--demo', 'ff--other'])
   })
 })

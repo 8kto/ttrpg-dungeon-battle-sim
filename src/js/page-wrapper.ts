@@ -64,13 +64,15 @@ document.addEventListener('DOMContentLoaded', (): void => {
       (cb) => cb.dataset.trait as MonsterTrait,
     )
 
-  onClick('add-monster', () =>
+  onClick('add-monster', () => {
+    const traits = readMonsterTraits()
+
     monstersTable.addRow({
       ...MonsterCharTemplate,
-      damage: addTraitAttacks(readMonsterTraits()),
+      damage: addTraitAttacks(traits, traits.length? '' : 'd6[claws]'),
       prefix: monsterNameProvider.getName('(M)'),
-    }),
-  )
+    })
+  })
   onClick('clear-monsters', () => monstersTable.init(MonsterTemplates))
 
   onClick('clear-log', () => {

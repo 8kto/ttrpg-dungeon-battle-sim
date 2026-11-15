@@ -11,7 +11,7 @@
   --3rd-color: #6a5a8a;
   --3rd-color-focus: #382f4c;
   --muted-color: #6b7280;
-  --page-bg: #fff;
+  --page-bg: #14110f;
   --input-bg: #f9f8f5;
   --block-bg: #fdfcf8;
   --row-alt-bg: #f2f2f2;
@@ -387,14 +387,13 @@ abbr:hover {
   padding-bottom: 0;
 }
 
-/* ?ff=desk-bg: a wooden desk with the sections laid on it as sheets of paper */
+/* the page is a rough dungeon wall, lit by a torch in the middle, with the sections laid on it as sheets of paper */
 body {
-  background-color: #2e1d12;
-  background-image: radial-gradient(ellipse at 50% 35%, transparent 35%, rgb(0 0 0 / 55%) 100%),
-    url('/images/desk-wood.svg');
+  background-image: radial-gradient(ellipse at 50% 30%, rgb(255 170 80 / 10%), transparent 45%, rgb(0 0 0 / 65%) 100%),
+    url('/images/dungeon-stone.svg');
   background-size:
     100% 100%,
-    1200px auto;
+    960px auto;
   background-attachment: fixed, scroll;
 
   h1 {
@@ -419,5 +418,31 @@ body {
   }
   #simulation-section > h2:first-child {
     margin-top: 0;
+  }
+
+  /* hand-drawn underline; flipped differently per section, so the strokes don't look identical */
+  section > h2 {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 6px;
+    margin-bottom: 14px;
+  }
+  section > h2::after {
+    content: '';
+    position: absolute;
+    left: -6px;
+    right: -14px;
+    bottom: -6px;
+    height: 14px;
+    background-color: currentColor;
+    mask: url('/images/hand-underline.svg') center / 100% 100% no-repeat;
+    transform: rotate(-0.6deg);
+    opacity: 0.85;
+  }
+  #monsters-section > h2::after {
+    transform: scaleX(-1) rotate(-0.8deg);
+  }
+  #simulation-section > h2::after {
+    transform: scaleY(-1) rotate(0.5deg);
   }
 }

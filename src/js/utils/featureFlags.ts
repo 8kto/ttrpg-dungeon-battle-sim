@@ -1,20 +1,22 @@
-// Experimental features, toggled via the URL: ?ff=desk-bg or several at once: ?ff=desk-bg,other
+// Experimental features, toggled via the URL: ?ff=some-flag or several at once: ?ff=some-flag,other
 // Register a flag here to use it; unknown values are ignored
-export const FeatureFlags = ['desk-bg'] as const
+export const FeatureFlags = [] as const
 export type FeatureFlag = (typeof FeatureFlags)[number]
 
-const isFeatureFlag = (value: string): value is FeatureFlag => (FeatureFlags as readonly string[]).includes(value)
-
-export const parseFeatureFlags = (search: string): FeatureFlag[] =>
+export const parseFeatureFlags = (search: string, known: readonly string[] = FeatureFlags): string[] =>
   (new URLSearchParams(search).get('ff') ?? '')
     .split(',')
     .map((value) => value.trim())
-    .filter(isFeatureFlag)
+    .filter((value) => known.includes(value))
 
 export const isFeatureEnabled = (flag: FeatureFlag, search: string = window.location.search): boolean =>
   parseFeatureFlags(search).includes(flag)
 
 // Exposes the flags to CSS as `ff--<flag>` classes, so purely visual features need no JS
-export const applyFeatureFlagClasses = (search: string, target: HTMLElement): void => {
-  parseFeatureFlags(search).forEach((flag) => target.classList.add(`ff--${flag}`))
+export const applyFeatureFlagClasses = (
+  search: string,
+  target: HTMLElement,
+  known: readonly string[] = FeatureFlags,
+): void => {
+  parseFeatureFlags(search, known).forEach((flag) => target.classList.add(`ff--${flag}`))
 }
