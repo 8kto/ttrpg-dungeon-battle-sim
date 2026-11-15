@@ -21,6 +21,7 @@ import { bindModal } from './ui/modal'
 import { SettingsForm } from './ui/SettingsForm'
 import { bindTabs } from './ui/tabs'
 import { addTraitAttacks } from './utils/addTraitAttacks'
+import { applyFeatureFlagClasses } from './utils/featureFlags'
 
 const byId = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T
 
@@ -32,6 +33,8 @@ const onClick = (id: string, handler: () => void): void => {
 }
 
 document.addEventListener('DOMContentLoaded', (): void => {
+  applyFeatureFlagClasses(window.location.search, document.body)
+
   const runSimBtn = byId<HTMLButtonElement>('run-sim')
   const stopSimBtn = byId<HTMLButtonElement>('stop-sim')
   const progressBar = byId<HTMLProgressElement>('progress-bar')
