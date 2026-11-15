@@ -43,12 +43,12 @@
         <img src="/images/android-chrome-192x192.png" alt="" class="logo-img w-12 h-12 mr-4" />
         Dungeon Battle Simulator
       </h1>
-      <p class="my-2 text-lg color-muted">
+      <p class="my-2 text-lg">
         A browser-based tool for simulating turn-based combat between players and monsters. Compatible with the world’s
         most popular role-playing game.
       </p>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
         <!-- Players & Henchmen -->
         <section id="players-section" class="mb-8">
           <h2 class="text-2xl">Players & Henchmen</h2>
@@ -322,120 +322,122 @@
           </table>
         </section>
       </div>
-      <!-- Controls -->
-      <h2 class="text-2xl mt-6">Simulation</h2>
+      <section id="simulation-section">
+        <!-- Controls -->
+        <h2 class="text-2xl mt-6">Simulation</h2>
 
-      <div class="mb-4 flex space-x-4 items-end">
-        <!-- Battles -->
-        <div class="flex flex-col">
-          <label for="battle-count" class="mb-1">Battles</label>
-          <input id="battle-count" type="number" min="1" value="1000" class="w-32 h-10 border rounded px-3" />
+        <div class="mb-4 flex space-x-4 items-end">
+          <!-- Battles -->
+          <div class="flex flex-col">
+            <label for="battle-count" class="mb-1">Battles</label>
+            <input id="battle-count" type="number" min="1" value="1000" class="w-32 h-10 border rounded px-3" />
+          </div>
+
+          <!-- Strategy -->
+          <div class="flex flex-col">
+            <label for="strategy-select" class="mb-1">Strategy</label>
+            <select id="strategy-select" class="w-32 h-10 border rounded px-3 bg-white">
+              <option value="Max" title="Max values for HP and damage">Maximum</option>
+              <option value="Average" title="Average values for HP and damage">Average</option>
+              <option value="Random" title="Roll dices for HP and damage" selected>Random</option>
+            </select>
+          </div>
+
+          <!-- Player Bias -->
+          <div class="flex flex-col">
+            <label for="bias-players" class="mb-1">
+              <abbr title="Chance of skipping a player's turn (0–99%)">Player Bias (%)</abbr>
+            </label>
+            <input id="bias-players" type="number" min="0" max="99" value="5" class="w-32 h-10 border rounded px-3" />
+          </div>
+
+          <!-- Monster Bias -->
+          <div class="flex flex-col">
+            <label for="bias-monsters" class="mb-1">
+              <abbr title="Chance of skipping a monster's turn (0–99%)">Monster Bias (%)</abbr>
+            </label>
+            <input id="bias-monsters" type="number" min="0" max="99" value="0" class="w-32 h-10 border rounded px-3" />
+          </div>
+
+          <!-- Max Attacks -->
+          <div class="flex flex-col">
+            <label for="max-attacks" class="mb-1">
+              <abbr title="Maximum number of attacks allowed against a single target (0 = unlimited)"
+                >Max Attacks per Target</abbr
+              >
+            </label>
+            <input id="max-attacks" type="number" min="0" value="5" class="w-32 h-10 border rounded px-3" />
+          </div>
+
+          <div class="flex justify-end space-x-2">
+            <!-- Run Simulation -->
+            <button id="run-sim" class="primary-button w-32 h-10" title="Start simulation">Run</button>
+
+            <!-- Clear Log -->
+            <button id="clear-log" class="secondary-button w-32 h-10" title="Clear log output">Clear</button>
+
+            <!-- Stop simulation -->
+            <button disabled id="stop-sim" class="secondary-button w-32 h-10" title="Start simulation">Stop</button>
+          </div>
         </div>
 
-        <!-- Strategy -->
-        <div class="flex flex-col">
-          <label for="strategy-select" class="mb-1">Strategy</label>
-          <select id="strategy-select" class="w-32 h-10 border rounded px-3 bg-white">
-            <option value="Max" title="Max values for HP and damage">Maximum</option>
-            <option value="Average" title="Average values for HP and damage">Average</option>
-            <option value="Random" title="Roll dices for HP and damage" selected>Random</option>
-          </select>
-        </div>
+        <div class="flex flex-row">
+          <div class="flex items-center space-x-2 mt-2 mb-4">
+            <input
+              id="logs-checkbox"
+              type="checkbox"
+              checked
+              class="h-5 w-5 text-amber-600 bg-amber-50 border-amber-700 rounded focus:ring-2 focus:ring-amber-500"
+            />
+            <label for="logs-checkbox" class="text-amber-900 font-medium">
+              <abbr title="Log battle details (first 500 battles only). Disable for faster large runs.">
+                Print logs
+              </abbr>
+            </label>
+          </div>
 
-        <!-- Player Bias -->
-        <div class="flex flex-col">
-          <label for="bias-players" class="mb-1">
-            <abbr title="Chance of skipping a player's turn (0–99%)">Player Bias (%)</abbr>
-          </label>
-          <input id="bias-players" type="number" min="0" max="99" value="5" class="w-32 h-10 border rounded px-3" />
-        </div>
-
-        <!-- Monster Bias -->
-        <div class="flex flex-col">
-          <label for="bias-monsters" class="mb-1">
-            <abbr title="Chance of skipping a monster's turn (0–99%)">Monster Bias (%)</abbr>
-          </label>
-          <input id="bias-monsters" type="number" min="0" max="99" value="0" class="w-32 h-10 border rounded px-3" />
-        </div>
-
-        <!-- Max Attacks -->
-        <div class="flex flex-col">
-          <label for="max-attacks" class="mb-1">
-            <abbr title="Maximum number of attacks allowed against a single target (0 = unlimited)"
-              >Max Attacks per Target</abbr
+          <!-- Rounding (Average strategy only) -->
+          <div class="flex items-center space-x-2 mt-2 mb-4 ml-6">
+            <label for="rounding-select" class="text-amber-900 font-medium">
+              <abbr title="How fractional averages are rounded (e.g. d8 = 4.5). Used by the Average strategy only."
+                >Rounding</abbr
+              >
+            </label>
+            <select
+              id="rounding-select"
+              class="w-32 h-8 border rounded px-2 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
-          </label>
-          <input id="max-attacks" type="number" min="0" value="5" class="w-32 h-10 border rounded px-3" />
+              <option value="Up" selected>Up</option>
+              <option value="Down">Down</option>
+            </select>
+          </div>
         </div>
 
-        <div class="flex justify-end space-x-2">
-          <!-- Run Simulation -->
-          <button id="run-sim" class="primary-button w-32 h-10" title="Start simulation">Run</button>
+        <!-- Progress -->
+        <progress id="progress-bar" value="0" max="100" class="w-full h-2 mb-4"></progress>
 
-          <!-- Clear Log -->
-          <button id="clear-log" class="secondary-button w-32 h-10" title="Clear log output">Clear</button>
-
-          <!-- Stop simulation -->
-          <button disabled id="stop-sim" class="secondary-button w-32 h-10" title="Start simulation">Stop</button>
+        <!-- Tabs -->
+        <div class="mb-2 border-b flex">
+          <button id="tab-log-btn" class="tab-header active">Log</button>
+          <button id="tab-config-btn" class="tab-header">Config</button>
         </div>
-      </div>
-
-      <div class="flex flex-row">
-        <div class="flex items-center space-x-2 mt-2 mb-4">
-          <input
-            id="logs-checkbox"
-            type="checkbox"
-            checked
-            class="h-5 w-5 text-amber-600 bg-amber-50 border-amber-700 rounded focus:ring-2 focus:ring-amber-500"
-          />
-          <label for="logs-checkbox" class="text-amber-900 font-medium">
-            <abbr title="Log battle details (first 500 battles only). Disable for faster large runs.">
-              Print logs
-            </abbr>
-          </label>
+        <div id="tab-log" class="">
+          <div id="result-log" class="h-96 overflow-y-auto border rounded p-3 font-mono text-sm bg-white"></div>
         </div>
-
-        <!-- Rounding (Average strategy only) -->
-        <div class="flex items-center space-x-2 mt-2 mb-4 ml-6">
-          <label for="rounding-select" class="text-amber-900 font-medium">
-            <abbr title="How fractional averages are rounded (e.g. d8 = 4.5). Used by the Average strategy only."
-              >Rounding</abbr
-            >
-          </label>
-          <select
-            id="rounding-select"
-            class="w-32 h-8 border rounded px-2 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <option value="Up" selected>Up</option>
-            <option value="Down">Down</option>
-          </select>
+        <div id="tab-config" class="hidden">
+          <p class="my-4 color-muted">Export players and monsters.</p>
+          <div class="flex space-x-2 mb-2">
+            <button id="export-config" class="primary-button mid-button">Export Config</button>
+            <button id="import-config" class="secondary-button mid-button">Import Config</button>
+          </div>
+          <textarea
+            id="config-area"
+            class="w-full border rounded p-3 font-mono text-sm"
+            rows="15"
+            placeholder="Config JSON…"
+          ></textarea>
         </div>
-      </div>
-
-      <!-- Progress -->
-      <progress id="progress-bar" value="0" max="100" class="w-full h-2 mb-4"></progress>
-
-      <!-- Tabs -->
-      <div class="mb-2 border-b flex">
-        <button id="tab-log-btn" class="tab-header active">Log</button>
-        <button id="tab-config-btn" class="tab-header">Config</button>
-      </div>
-      <div id="tab-log" class="">
-        <div id="result-log" class="h-96 overflow-y-auto border rounded p-3 font-mono text-sm bg-white"></div>
-      </div>
-      <div id="tab-config" class="hidden">
-        <p class="my-4 color-muted">Export players and monsters.</p>
-        <div class="flex space-x-2 mb-2">
-          <button id="export-config" class="primary-button mid-button">Export Config</button>
-          <button id="import-config" class="secondary-button mid-button">Import Config</button>
-        </div>
-        <textarea
-          id="config-area"
-          class="w-full border rounded p-3 font-mono text-sm"
-          rows="15"
-          placeholder="Config JSON…"
-        ></textarea>
-      </div>
+      </section>
 
       <!-- Damage syntax help -->
       <dialog id="damage-help" class="help-modal" aria-labelledby="damage-help-title">
