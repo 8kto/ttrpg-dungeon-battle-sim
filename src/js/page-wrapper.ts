@@ -85,7 +85,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
     { button: byId('tab-config-btn'), panel: byId('tab-config') },
   ])
 
-  bindModal(byId('damage-help'), document.querySelectorAll<HTMLElement>('.damage-help-btn'))
+  bindModal(byId('damage-help'), document.querySelectorAll<HTMLElement>('.damage-help-btn, [data-open-damage-help]'))
+  bindModal(byId('app-help'), [byId('app-help-btn')])
 
   // Import/Export
   onClick('export-config', () => {

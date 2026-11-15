@@ -39,10 +39,13 @@
   </head>
   <body class="text-gray-900 min-h-screen">
     <div class="container mx-auto pt-6">
-      <h1 class="text-4xl font-bold mb-2 flex items-center">
-        <img src="/images/android-chrome-192x192.png" alt="" class="logo-img w-12 h-12 mr-4" />
-        Dungeon Battle Simulator
-      </h1>
+      <header class="flex items-center justify-between gap-4 mb-2">
+        <h1 class="text-4xl font-bold flex items-center">
+          <img src="/images/android-chrome-192x192.png" alt="" class="logo-img w-12 h-12 mr-4" />
+          Dungeon Battle Simulator
+        </h1>
+        <button id="app-help-btn" type="button" class="secondary-button mid-button shrink-0">How it works</button>
+      </header>
       <p class="my-2 text-lg">
         Tool for simulating turn-based combat between players and monsters. Compatible with the world’s most popular
         role-playing game.
@@ -452,6 +455,147 @@
           ></textarea>
         </div>
       </section>
+
+      <!-- App help -->
+      <dialog id="app-help" class="help-modal help-modal--wide" aria-labelledby="app-help-title">
+        <div class="help-modal__content">
+          <div class="help-modal__header">
+            <h2 id="app-help-title">How it works</h2>
+            <button class="help-modal__close" type="button" title="Close" data-close-modal>×</button>
+          </div>
+
+          <p>
+            Set up both sides, choose the simulation settings and press <b>Run</b>. The simulator plays the battle many
+            times and shows how often each side wins.
+          </p>
+
+          <h3>A battle</h3>
+          <ul>
+            <li>
+              Each round both sides roll initiative: the winning side acts first, its members act in random order, then
+              the other side does the same
+            </li>
+            <li>
+              On its turn a combatant makes all attacks of one damage option. An attack hits when
+              <code>d20 + To Hit ≥ AC</code> of the target (ascending AC)
+            </li>
+            <li>A combatant at 0 HP or less is dead and takes no further part in the battle</li>
+            <li>
+              The battle ends when one side is wiped out; after 1000 rounds it is a draw (e.g. nobody can hit anybody)
+            </li>
+          </ul>
+
+          <h3>Characters</h3>
+          <table class="help-modal__table">
+            <tbody>
+              <tr>
+                <td>AC</td>
+                <td>Armor class, ascending: the higher, the harder to hit</td>
+              </tr>
+              <tr>
+                <td>To Hit</td>
+                <td>Bonus added to the d20 attack roll</td>
+              </tr>
+              <tr>
+                <td>HD</td>
+                <td>Hit dice: count and die type, e.g. 4 × d8. Hit points are calculated by the strategy</td>
+              </tr>
+              <tr>
+                <td>Damage</td>
+                <td>
+                  Attacks, alternative options and their effects (poison, paralysis, fire...); click the chips to edit.
+                  See <button type="button" class="help-link" data-open-damage-help>damage syntax</button>
+                </td>
+              </tr>
+              <tr>
+                <td>Saves</td>
+                <td>
+                  Saving throws vs paralysis, poison, breath, device and magic. A save succeeds when
+                  <code>d20 + modifier ≥ save value</code>; the modifier comes from the attack, e.g.
+                  <code>poison(-2)</code>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <ul>
+            <li>
+              <b>Add Player</b>, <b>Add Henchman</b> and <b>Add Monster</b> add a character from a template;
+              <b>⎘</b> duplicates a row, <b>×</b> removes it, <b>Clear</b> restores the default party or monsters
+            </li>
+            <li>
+              <b>Poisonous</b>, <b>Paralysis</b> and <b>Fiery</b> give an extra special attack to the monsters added
+              afterwards; existing monsters are not changed
+            </li>
+          </ul>
+
+          <h3>Simulation settings</h3>
+          <table class="help-modal__table">
+            <tbody>
+              <tr>
+                <td>Battles</td>
+                <td>How many battles to play; more battles give more stable percentages</td>
+              </tr>
+              <tr>
+                <td>Strategy</td>
+                <td>
+                  How hit points and damage are calculated: <b>Maximum</b> takes max values, <b>Average</b> the average
+                  ones, <b>Random</b> rolls the dice. Attack rolls and saves are always rolled
+                </td>
+              </tr>
+              <tr>
+                <td>Rounding</td>
+                <td>How the Average strategy rounds fractions, e.g. d8 = 4.5 becomes 5 (Up) or 4 (Down)</td>
+              </tr>
+              <tr>
+                <td>Targeting</td>
+                <td>
+                  <b>Random</b>: every attack picks a random enemy. <b>Focus</b>: an attacker sticks to one enemy until
+                  one of them dies; if that enemy is out of attack slots this round (see below), the attack goes to
+                  someone else, but the focus stays
+                </td>
+              </tr>
+              <tr>
+                <td>Player / Monster Bias</td>
+                <td>
+                  Chance (%) that a combatant of the side wastes its turn: hesitation, a bad position, morale. Use it to
+                  tilt the balance without changing the stats
+                </td>
+              </tr>
+              <tr>
+                <td>Max Attacks per Target</td>
+                <td>
+                  How many attacks a single combatant can receive per round, as when only a few enemies can reach it in
+                  a corridor; 0 means unlimited
+                </td>
+              </tr>
+              <tr>
+                <td>Print logs</td>
+                <td>Log every roll of the first 500 battles; turn it off to run thousands of battles faster</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Results</h3>
+          <ul>
+            <li><b>Players win / Monsters win</b>: share of battles won by each side</li>
+            <li><b>Draws</b>: battles stopped by the round limit</li>
+            <li>
+              <b>Avg Players survivors</b>: how many of the players are still alive at the end of the battles they won
+            </li>
+            <li>
+              Effect lines: how many times each special effect was applied and how many times it was saved against
+            </li>
+            <li><b>Avg Rounds</b>: battle length</li>
+            <li><b>Stop</b> interrupts the run; the summary covers the battles finished so far</li>
+          </ul>
+
+          <h3>Config</h3>
+          <p>
+            The <b>Config</b> tab exports both sides and the settings as JSON and imports them back: keep your setups in
+            a file or share them.
+          </p>
+        </div>
+      </dialog>
 
       <!-- Damage syntax help -->
       <dialog id="damage-help" class="help-modal" aria-labelledby="damage-help-title">

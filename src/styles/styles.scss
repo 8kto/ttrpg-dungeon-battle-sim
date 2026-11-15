@@ -362,8 +362,27 @@ abbr:hover {
   }
 }
 
+.help-modal--wide {
+  @apply max-w-3xl;
+}
+
 .help-modal__content {
   @apply p-6;
+}
+
+/* stays in place while a long help text scrolls */
+.help-modal__header {
+  @apply sticky top-0 -mx-6 -mt-6 mb-2 px-6 pt-6 pb-2 flex justify-between items-start;
+  background: var(--block-bg);
+}
+
+.help-link {
+  @apply underline underline-offset-2;
+  color: var(--3rd-color);
+
+  &:hover {
+    color: var(--3rd-color-focus);
+  }
 }
 
 .help-modal__close {
@@ -399,7 +418,7 @@ body {
   h1 {
     text-shadow: 0 2px 6px rgb(0 0 0 / 60%);
   }
-  h1 + p,
+  header + p,
   .footer {
     color: #d9c7b0;
   }
