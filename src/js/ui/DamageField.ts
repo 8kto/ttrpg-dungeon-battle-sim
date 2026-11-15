@@ -98,14 +98,15 @@ export class DamageField {
     return { error, input, preview, toggle }
   }
 
-  // invalid damage keeps the input open
+  // invalid damage keeps the input open; chips are shown only while it's closed
   private setEditing(elements: FieldElements, editing: boolean): void {
-    const { input, toggle } = elements
+    const { input, preview, toggle } = elements
     const valid = this.render(elements)
     const open = editing || !valid
     const opening = open && input.hidden
 
     input.hidden = !open
+    preview.hidden = open
     toggle.textContent = open ? 'Done' : 'Damage'
     if (opening) {
       input.focus()
@@ -123,8 +124,7 @@ export class DamageField {
     error.hidden = errors.length === 0
 
     preview.replaceChildren()
-    preview.hidden = errors.length > 0
-    if (preview.hidden) {
+    if (errors.length > 0) {
       return false
     }
 

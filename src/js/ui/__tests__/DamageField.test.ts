@@ -71,11 +71,16 @@ describe('DamageField', () => {
       expect(input().hidden).toBe(true)
     })
 
-    it('keeps chips live while editing', () => {
+    it('hides chips while editing and shows the new ones after Done', () => {
       toggle().click()
+      expect(preview().hidden).toBe(true)
+
       type('d8 | d10')
-      expect(chips()).toEqual(['d8', 'd10'])
+      expect(preview().hidden).toBe(true)
+
+      toggle().click()
       expect(preview().hidden).toBe(false)
+      expect(chips()).toEqual(['d8', 'd10'])
     })
   })
 
@@ -100,7 +105,7 @@ describe('DamageField', () => {
       type('d6[poison, save_or_die]')
       expect(error().hidden).toBe(true)
       expect(input().classList).not.toContain('damage-input--invalid')
-      expect(preview().hidden).toBe(false)
+      expect(preview().hidden).toBe(true)
     })
 
     it('opens the input when the value becomes invalid', () => {

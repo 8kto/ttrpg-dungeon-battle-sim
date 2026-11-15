@@ -283,8 +283,7 @@ abbr:hover {
 .damage-preview {
   @apply flex flex-wrap items-center gap-x-2 gap-y-1 min-h-7 cursor-pointer;
 }
-.damage-input + .damage-error,
-.damage-input:not([hidden]) ~ .damage-preview {
+.damage-input + .damage-error {
   @apply mt-1;
 }
 .damage-preview[hidden] {
