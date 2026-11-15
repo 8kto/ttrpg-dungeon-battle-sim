@@ -8,7 +8,7 @@ import { Participant } from '../Participant'
 import { getStrategy } from '../strategies/getStrategy'
 import type { ICombatStrategy } from '../strategies/ICombatStrategy'
 import type { ICharacter, IMonster, IPlayerCharacter } from '../types'
-import { Rounding, Strategy } from '../types'
+import { Rounding, Strategy, Targeting } from '../types'
 
 jest.mock('../Participant')
 jest.mock('../strategies/getStrategy')
@@ -74,7 +74,17 @@ describe('BattleSimulator', () => {
 
   describe('constructor', () => {
     it('creates participants for both sides', () => {
-      new BattleSimulator([mockPlayer], [mockMonster], Strategy.Average, Rounding.Down, 0, 0, 0, mockLogger)
+      new BattleSimulator(
+        [mockPlayer],
+        [mockMonster],
+        Strategy.Average,
+        Rounding.Down,
+        0,
+        0,
+        0,
+        Targeting.Random,
+        mockLogger,
+      )
 
       expect(getStrategy).toHaveBeenCalledWith(Strategy.Average, Rounding.Down)
       expect(Participant).toHaveBeenCalledWith(mockPlayer, Side.Players, mockStrategy, 0, 0, mockLogger, {})
@@ -92,6 +102,7 @@ describe('BattleSimulator', () => {
         0,
         0,
         0,
+        Targeting.Random,
         mockLogger,
       )
 
@@ -100,7 +111,17 @@ describe('BattleSimulator', () => {
     })
 
     it('returns false when side has no living participants [A]', () => {
-      const simulator = new BattleSimulator([mockPlayer], [], Strategy.Random, Rounding.Up, 0, 0, 0, mockLogger)
+      const simulator = new BattleSimulator(
+        [mockPlayer],
+        [],
+        Strategy.Random,
+        Rounding.Up,
+        0,
+        0,
+        0,
+        Targeting.Random,
+        mockLogger,
+      )
 
       expect(simulator.hasSurvivors(Side.Monsters)).toBe(false)
     })
@@ -117,6 +138,7 @@ describe('BattleSimulator', () => {
         0,
         0,
         0,
+        Targeting.Random,
         mockLogger,
       )
       expect(simulator.hasSurvivors(Side.Monsters)).toBe(false)
@@ -147,6 +169,7 @@ describe('BattleSimulator', () => {
         0,
         0,
         0,
+        Targeting.Random,
         mockLogger,
       )
       simulateRounds(simulator, 2)
@@ -163,6 +186,7 @@ describe('BattleSimulator', () => {
         0,
         0,
         0,
+        Targeting.Random,
         mockLogger,
       )
       const [player, monster] = created()
@@ -182,6 +206,7 @@ describe('BattleSimulator', () => {
         0,
         0,
         0,
+        Targeting.Random,
         mockLogger,
       )
       const [[, , , , , , playerCounters], [, , , , , , monsterCounters]] = (Participant as jest.Mock).mock.calls
@@ -200,6 +225,7 @@ describe('BattleSimulator', () => {
         0,
         0,
         0,
+        Targeting.Random,
         mockLogger,
       )
 
@@ -235,6 +261,7 @@ describe('BattleSimulator', () => {
         0,
         0,
         0,
+        Targeting.Random,
         mockLogger,
       )
 
@@ -258,6 +285,7 @@ describe('BattleSimulator', () => {
         0,
         0,
         3,
+        Targeting.Random,
         mockLogger,
       )
 
@@ -290,6 +318,7 @@ describe('BattleSimulator', () => {
         0,
         0,
         0,
+        Targeting.Random,
         mockLogger,
       )
 
@@ -308,6 +337,7 @@ describe('BattleSimulator', () => {
         0,
         0,
         0,
+        Targeting.Random,
         mockLogger,
       )
 

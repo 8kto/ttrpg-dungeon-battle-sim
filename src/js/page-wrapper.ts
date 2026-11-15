@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
     monstersTable.addRow({
       ...MonsterCharTemplate,
-      damage: addTraitAttacks(traits, traits.length? '' : 'd6[claws]'),
+      damage: addTraitAttacks(traits, traits.length ? '' : 'd6[claws]'),
       prefix: monsterNameProvider.getName('(M)'),
     })
   })

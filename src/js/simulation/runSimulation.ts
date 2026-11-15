@@ -45,6 +45,7 @@ export const runSimulation = (
       settings.biasPlayers,
       settings.biasMonsters,
       settings.maxAttacksPerTarget,
+      settings.targeting,
       battleLogger,
     )
     sim.renderDetails()

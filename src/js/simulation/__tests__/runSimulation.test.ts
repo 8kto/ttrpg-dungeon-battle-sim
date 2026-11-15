@@ -4,7 +4,7 @@ import { DEFAULT_SAVES } from '../../services/attacks/types'
 import { BufferLogger } from '../../services/logger/BufferLogger'
 import { LogLevel } from '../../services/logger/ILogger'
 import type { ICharacter } from '../../services/types'
-import { Rounding, Strategy } from '../../services/types'
+import { Rounding, Strategy, Targeting } from '../../services/types'
 import type { SimulationRequest } from '../runSimulation'
 import { MAX_LOGGED_BATTLES, runSimulation } from '../runSimulation'
 
@@ -37,6 +37,7 @@ const makeRequest = (overrides: Partial<SimulationRequest['settings']> = {}): Si
     maxAttacksPerTarget: 0,
     rounding: Rounding.Up,
     strategy: Strategy.Max,
+    targeting: Targeting.Random,
     ...overrides,
   },
 })

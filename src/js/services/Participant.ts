@@ -108,7 +108,7 @@ export class Participant {
         break
       }
 
-      this.performOneAttack(targetSelector.selectTarget(targets), attack)
+      this.performOneAttack(targetSelector.selectTarget(this, targets), attack)
     }
   }
 

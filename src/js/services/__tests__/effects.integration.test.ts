@@ -13,7 +13,7 @@ import type { ICombatStrategy } from '../strategies/ICombatStrategy'
 import { MaxStrategy } from '../strategies/MaxStrategy'
 import { RandomStrategy } from '../strategies/RandomStrategy'
 import type { ICharacter } from '../types'
-import { Rounding, Strategy } from '../types'
+import { Rounding, Strategy, Targeting } from '../types'
 
 const damageParser = new DamageParser()
 
@@ -251,6 +251,7 @@ describe('effects in battle', () => {
       0,
       0,
       0,
+      Targeting.Random,
       new NullLogger(),
     )
 

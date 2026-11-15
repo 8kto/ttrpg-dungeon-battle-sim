@@ -1,15 +1,16 @@
-import { Rounding, Strategy } from '../services/types'
+import { Rounding, Strategy, Targeting } from '../services/types'
 import type { BattleSimulationConfig, SimulationSettings } from '../types'
 
 type GlobalConfig = Omit<BattleSimulationConfig, 'monsters' | 'players'>
 
 const byId = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T
 
-// Global simulation settings: battle count, strategy, rounding, bias, attack limit, logs
+// Global simulation settings: battle count, strategy, rounding, targeting, bias, attack limit, logs
 export class SettingsForm {
   private readonly battleCount: HTMLInputElement = byId('battle-count')
   private readonly strategySelect: HTMLSelectElement = byId('strategy-select')
   private readonly roundingSelect: HTMLSelectElement = byId('rounding-select')
+  private readonly targetingSelect: HTMLSelectElement = byId('targeting-select')
   private readonly biasPlayersInput: HTMLInputElement = byId('bias-players')
   private readonly biasMonstersInput: HTMLInputElement = byId('bias-monsters')
   private readonly maxAttacksInput: HTMLInputElement = byId('max-attacks')
@@ -29,6 +30,7 @@ export class SettingsForm {
       maxAttacksPerTarget: parseInt(this.maxAttacksInput.value, 10),
       rounding: Rounding[this.roundingSelect.value as keyof typeof Rounding],
       strategy: Strategy[this.strategySelect.value as keyof typeof Strategy],
+      targeting: Targeting[this.targetingSelect.value as keyof typeof Targeting],
     }
   }
 
@@ -40,11 +42,11 @@ export class SettingsForm {
       : ['Max Attacks per Target must be 0 (unlimited) or more']
   }
 
-  // e.g. "Average (rounding Up)"
+  // e.g. "Average (rounding Up), targeting Focus"
   get strategyLabel(): string {
     const roundingInfo = this.roundingSelect.disabled ? '' : ` (rounding ${this.roundingSelect.value})`
 
-    return `${this.strategySelect.value}${roundingInfo}`
+    return `${this.strategySelect.value}${roundingInfo}, targeting ${this.targetingSelect.value}`
   }
 
   toConfig(): GlobalConfig {
@@ -55,6 +57,7 @@ export class SettingsForm {
       maxAttacks: parseInt(this.maxAttacksInput.value, 10),
       rounding: this.roundingSelect.value,
       strategy: this.strategySelect.value,
+      targeting: this.targetingSelect.value,
     }
   }
 
@@ -69,6 +72,9 @@ export class SettingsForm {
       this.roundingSelect.value = config.rounding
     }
     this.syncRoundingState()
+    if (config.targeting) {
+      this.targetingSelect.value = config.targeting
+    }
     // 0 is a valid bias and attack limit, so check for presence only
     // eslint-disable-next-line no-undefined
     if (config.biasPlayers !== undefined) {

@@ -21,6 +21,12 @@ export enum Strategy {
   Max,
 }
 
+// How attackers choose their targets
+export enum Targeting {
+  Random, // every attack picks a random target
+  Focus, // an attacker sticks to one target until one of them dies
+}
+
 // How fractional averages (e.g. d8 = 4.5) are turned into whole numbers
 export enum Rounding {
   Up,

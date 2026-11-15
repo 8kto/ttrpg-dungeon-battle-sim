@@ -7,8 +7,8 @@ import { Participant } from './Participant'
 import { getStrategy } from './strategies/getStrategy'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
 import type { ITargetSelector } from './TargetSelector'
-import { RandomTargetSelector } from './TargetSelector'
-import type { IMonster, IPlayerCharacter, Rounding, Strategy } from './types'
+import { getTargetSelector } from './TargetSelector'
+import type { IMonster, IPlayerCharacter, Rounding, Strategy, Targeting } from './types'
 
 // Guards against endless battles (nobody can hit, everybody skips turns, etc.)
 export const MAX_ROUNDS = 1000
@@ -36,9 +36,10 @@ export class BattleSimulator {
     biasPlayers: number,
     biasMonsters: number,
     maxAttacksPerTarget: number,
+    targeting: Targeting,
     private readonly logger: ILogger,
   ) {
-    this.targetSelector = new RandomTargetSelector()
+    this.targetSelector = getTargetSelector(targeting)
     this.strategy = getStrategy(strategyMode, rounding)
 
     this.sidePlayers = players.map(
@@ -122,7 +123,6 @@ export class BattleSimulator {
           continue
         }
 
-        // The target will be chosen randomly
         const enemies = combatant.side === Side.Players ? this.sideMonsters : this.sidePlayers
         combatant.attack(enemies, this.targetSelector)
       }

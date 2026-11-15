@@ -343,6 +343,20 @@
             </select>
           </div>
 
+          <!-- Targeting -->
+          <div class="flex flex-col">
+            <label for="targeting-select" class="mb-1">
+              <abbr
+                title="Random: every attack picks a random target. Focus: an attacker sticks to one target until one of them dies."
+                >Targeting</abbr
+              >
+            </label>
+            <select id="targeting-select" class="w-32 h-10 border rounded px-3 bg-white">
+              <option value="Random" title="Every attack picks a random target" selected>Random</option>
+              <option value="Focus" title="An attacker sticks to one target until one of them dies">Focus</option>
+            </select>
+          </div>
+
           <!-- Player Bias -->
           <div class="flex flex-col">
             <label for="bias-players" class="mb-1">

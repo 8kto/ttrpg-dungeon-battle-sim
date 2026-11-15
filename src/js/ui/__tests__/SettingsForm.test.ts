@@ -1,4 +1,4 @@
-import { Rounding, Strategy } from '../../services/types'
+import { Rounding, Strategy, Targeting } from '../../services/types'
 import { SettingsForm } from '../SettingsForm'
 
 describe('SettingsForm', () => {
@@ -22,6 +22,10 @@ describe('SettingsForm', () => {
         <option value="Up" selected>Up</option>
         <option value="Down">Down</option>
       </select>
+      <select id="targeting-select">
+        <option value="Random" selected>Random</option>
+        <option value="Focus">Focus</option>
+      </select>
       <input id="bias-players" value="5" />
       <input id="bias-monsters" value="0" />
       <input id="max-attacks" value="5" />
@@ -38,6 +42,7 @@ describe('SettingsForm', () => {
       maxAttacksPerTarget: 5,
       rounding: Rounding.Up,
       strategy: Strategy.Random,
+      targeting: Targeting.Random,
     })
   })
 
@@ -48,11 +53,11 @@ describe('SettingsForm', () => {
 
   it('enables rounding for the Average strategy only', () => {
     expect(el<HTMLSelectElement>('rounding-select').disabled).toBe(true)
-    expect(form.strategyLabel).toBe('Random')
+    expect(form.strategyLabel).toBe('Random, targeting Random')
 
     changeStrategy('Average')
     expect(el<HTMLSelectElement>('rounding-select').disabled).toBe(false)
-    expect(form.strategyLabel).toBe('Average (rounding Up)')
+    expect(form.strategyLabel).toBe('Average (rounding Up), targeting Random')
   })
 
   it.each<[string, string[]]>([
@@ -73,6 +78,7 @@ describe('SettingsForm', () => {
       maxAttacks: 0,
       rounding: 'Down',
       strategy: 'Average',
+      targeting: 'Focus',
     })
 
     expect(form.toConfig()).toEqual({
@@ -82,7 +88,9 @@ describe('SettingsForm', () => {
       maxAttacks: 0,
       rounding: 'Down',
       strategy: 'Average',
+      targeting: 'Focus',
     })
+    expect(form.read().targeting).toBe(Targeting.Focus)
     expect(el<HTMLSelectElement>('rounding-select').disabled).toBe(false)
   })
 
@@ -95,6 +103,7 @@ describe('SettingsForm', () => {
       maxAttacks: 5,
       rounding: 'Up',
       strategy: 'Max',
+      targeting: 'Random',
     })
   })
 })
