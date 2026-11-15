@@ -99,7 +99,7 @@
               <tr class="attacks-row">
                 <td colspan="5">
                   <div class="flex items-start gap-2">
-                    <span class="row-label">Damage</span>
+                    <button class="damage-toggle row-label row-toggle" type="button" title="Edit damage">Damage</button>
                     <div class="flex-1">
                       <input
                         type="text"
@@ -111,16 +111,16 @@
                       <div class="damage-error" hidden></div>
                       <div class="damage-preview" title="Click to edit" hidden></div>
                     </div>
-                    <button class="damage-edit-btn row-toggle" type="button">Edit</button>
-                    <button class="saves-toggle row-toggle" type="button" aria-expanded="false">Saves ▸</button>
                   </div>
                 </td>
               </tr>
-              <tr class="saves-row" hidden>
+              <tr class="saves-row">
                 <td colspan="5">
                   <div class="flex items-start gap-2">
-                    <span class="row-label">Saves</span>
-                    <div class="flex flex-1 flex-wrap items-center gap-x-3 gap-y-1">
+                    <button class="saves-toggle row-label row-toggle" type="button" aria-expanded="false">
+                      Saves ▸
+                    </button>
+                    <div class="saves-fields flex flex-1 flex-wrap items-center gap-x-3 gap-y-1" hidden>
                       <label class="save-label">
                         Paralyze
                         <input
@@ -242,7 +242,7 @@
               <tr class="attacks-row">
                 <td colspan="5">
                   <div class="flex items-start gap-2">
-                    <span class="row-label">Damage</span>
+                    <button class="damage-toggle row-label row-toggle" type="button" title="Edit damage">Damage</button>
                     <div class="flex-1">
                       <input
                         type="text"
@@ -254,16 +254,16 @@
                       <div class="damage-error" hidden></div>
                       <div class="damage-preview" title="Click to edit" hidden></div>
                     </div>
-                    <button class="damage-edit-btn row-toggle" type="button">Edit</button>
-                    <button class="saves-toggle row-toggle" type="button" aria-expanded="false">Saves ▸</button>
                   </div>
                 </td>
               </tr>
-              <tr class="saves-row" hidden>
+              <tr class="saves-row">
                 <td colspan="5">
                   <div class="flex items-start gap-2">
-                    <span class="row-label">Saves</span>
-                    <div class="flex flex-1 flex-wrap items-center gap-x-3 gap-y-1">
+                    <button class="saves-toggle row-label row-toggle" type="button" aria-expanded="false">
+                      Saves ▸
+                    </button>
+                    <div class="saves-fields flex flex-1 flex-wrap items-center gap-x-3 gap-y-1" hidden>
                       <label class="save-label">
                         Paralyze
                         <input

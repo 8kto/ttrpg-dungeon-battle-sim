@@ -29,12 +29,14 @@ const charTemplate = `
         <input class="damage-input" hidden />
         <div class="damage-error" hidden></div>
         <div class="damage-preview" hidden></div>
-        <button class="damage-edit-btn">Edit</button>
-        <button class="saves-toggle" aria-expanded="false">Saves ▸</button>
+        <button class="damage-toggle">Damage</button>
       </td>
     </tr>
-    <tr class="saves-row" hidden>
-      <td colspan="5">${['paralyze', 'poison', 'breath', 'device', 'magic'].map(saveInput).join('')}</td>
+    <tr class="saves-row">
+      <td colspan="5">
+        <button class="saves-toggle" aria-expanded="false">Saves ▸</button>
+        <div class="saves-fields" hidden>${['paralyze', 'poison', 'breath', 'device', 'magic'].map(saveInput).join('')}</div>
+      </td>
     </tr>
   </tbody>`
 
@@ -95,26 +97,26 @@ describe('CharTable', () => {
   })
 
   describe('saves', () => {
-    const savesRow = (index: number): HTMLElement => element.querySelectorAll<HTMLElement>('.saves-row')[index]
+    const savesFields = (index: number): HTMLElement => element.querySelectorAll<HTMLElement>('.saves-fields')[index]
     const toggle = (index: number): HTMLButtonElement =>
       element.querySelectorAll<HTMLButtonElement>('.saves-toggle')[index]
 
     it('are collapsed by default', () => {
       table.init([goblin])
-      expect(savesRow(0).hidden).toBe(true)
+      expect(savesFields(0).hidden).toBe(true)
       expect(toggle(0).getAttribute('aria-expanded')).toBe('false')
     })
 
     it('are expanded and collapsed by their own toggle', () => {
       table.init([goblin, goblin])
       click('.saves-toggle', 1)
-      expect(savesRow(0).hidden).toBe(true)
-      expect(savesRow(1).hidden).toBe(false)
+      expect(savesFields(0).hidden).toBe(true)
+      expect(savesFields(1).hidden).toBe(false)
       expect(toggle(1).getAttribute('aria-expanded')).toBe('true')
       expect(toggle(1).textContent).toBe('Saves ▾')
 
       click('.saves-toggle', 1)
-      expect(savesRow(1).hidden).toBe(true)
+      expect(savesFields(1).hidden).toBe(true)
       expect(toggle(1).textContent).toBe('Saves ▸')
     })
 
@@ -122,11 +124,11 @@ describe('CharTable', () => {
       table.init([goblin])
       click('.saves-toggle')
       click('.duplicate-row')
-      expect(savesRow(1).hidden).toBe(false)
+      expect(savesFields(1).hidden).toBe(false)
 
       click('.saves-toggle', 1)
-      expect(savesRow(0).hidden).toBe(false)
-      expect(savesRow(1).hidden).toBe(true)
+      expect(savesFields(0).hidden).toBe(false)
+      expect(savesFields(1).hidden).toBe(true)
     })
   })
 
@@ -172,7 +174,7 @@ describe('CharTable', () => {
     it('keeps the damage field of a duplicate live', () => {
       table.init([{ ...goblin, damage: 'd8' }])
       click('.duplicate-row')
-      click('.damage-edit-btn', 1)
+      click('.damage-toggle', 1)
       input('.damage-input', 1).value = 'd6, d6'
       input('.damage-input', 1).dispatchEvent(new Event('input'))
 

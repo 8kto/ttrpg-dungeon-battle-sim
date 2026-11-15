@@ -181,8 +181,7 @@ abbr:hover {
   tbody.char tr:first-child td {
     @apply pt-2;
   }
-  tbody.char tr:last-child td,
-  tr.attacks-row:has(+ tr[hidden]) td {
+  tbody.char tr:last-child td {
     @apply pb-2;
   }
 }
@@ -211,8 +210,19 @@ abbr:hover {
 }
 
 .row-toggle {
-  @apply text-xs leading-7 whitespace-nowrap hover:underline;
+  @apply text-left whitespace-nowrap underline-offset-4;
   color: var(--3rd-color);
+
+  &:hover {
+    color: var(--3rd-color-focus);
+  }
+}
+
+.saves-fields {
+  @apply min-h-7;
+}
+.saves-fields[hidden] {
+  display: none;
 }
 
 #result-log p:empty {
@@ -372,4 +382,8 @@ abbr:hover {
   td:first-child {
     @apply whitespace-nowrap;
   }
+}
+
+.char-table tbody.char .attacks-row td {
+  padding-bottom: 0;
 }

@@ -6,7 +6,7 @@ const fieldTemplate = `
       <input class="damage-input" hidden />
       <div class="damage-error" hidden></div>
       <div class="damage-preview" hidden></div>
-      <button class="damage-edit-btn">Edit</button>
+      <button class="damage-toggle">Damage</button>
     </td></tr>
   </tbody>`
 
@@ -23,7 +23,7 @@ describe('DamageField', () => {
   const input = (): HTMLInputElement => group.querySelector('.damage-input') as HTMLInputElement
   const error = (): HTMLElement => group.querySelector('.damage-error') as HTMLElement
   const preview = (): HTMLElement => group.querySelector('.damage-preview') as HTMLElement
-  const editBtn = (): HTMLButtonElement => group.querySelector('.damage-edit-btn') as HTMLButtonElement
+  const toggle = (): HTMLButtonElement => group.querySelector('.damage-toggle') as HTMLButtonElement
   const type = (value: string): void => {
     input().value = value
     input().dispatchEvent(new Event('input'))
@@ -46,18 +46,18 @@ describe('DamageField', () => {
       expect(error().hidden).toBe(true)
       expect(preview().hidden).toBe(false)
       expect(chips()).toEqual(['d6', 'd4'])
-      expect(editBtn().textContent).toBe('Edit')
+      expect(toggle().textContent).toBe('Damage')
     })
 
-    it('opens the input with the Edit button', () => {
-      editBtn().click()
+    it('opens the input with the Damage label and applies it with Done', () => {
+      toggle().click()
       expect(input().hidden).toBe(false)
       expect(document.activeElement).toBe(input())
-      expect(editBtn().textContent).toBe('Done')
+      expect(toggle().textContent).toBe('Done')
 
-      editBtn().click()
+      toggle().click()
       expect(input().hidden).toBe(true)
-      expect(editBtn().textContent).toBe('Edit')
+      expect(toggle().textContent).toBe('Damage')
     })
 
     it('opens the input with a click on the chips', () => {
@@ -66,13 +66,13 @@ describe('DamageField', () => {
     })
 
     it.each(['Enter', 'Escape'])('closes the input with %s', (key) => {
-      editBtn().click()
+      toggle().click()
       press(key)
       expect(input().hidden).toBe(true)
     })
 
     it('keeps chips live while editing', () => {
-      editBtn().click()
+      toggle().click()
       type('d8 | d10')
       expect(chips()).toEqual(['d8', 'd10'])
       expect(preview().hidden).toBe(false)
@@ -85,12 +85,12 @@ describe('DamageField', () => {
       expect(input().hidden).toBe(false)
       expect(error().hidden).toBe(false)
       expect(preview().hidden).toBe(true)
-      expect(editBtn().textContent).toBe('Done')
+      expect(toggle().textContent).toBe('Done')
     })
 
     it('shows parser errors as they are typed', () => {
       setUp('d6')
-      editBtn().click()
+      toggle().click()
       type('d6[poison]')
       expect(error().hidden).toBe(false)
       expect(error().textContent).toBe('save tag without modifiers: "poison" does nothing in "d6[poison]"')
@@ -116,9 +116,9 @@ describe('DamageField', () => {
 
     it('cannot be closed until fixed', () => {
       setUp('d6')
-      editBtn().click()
+      toggle().click()
       type('')
-      editBtn().click()
+      toggle().click()
       press('Enter')
       expect(input().hidden).toBe(false)
       expect(error().textContent).toBe('no damage formula')
@@ -151,12 +151,12 @@ describe('DamageField', () => {
       )
       expect(chips()).toEqual([
         'd6 | claws',
-        'd4 | poison save(-2) | save or die',
-        'd8 | paralyze save | paralyze d4',
-        'd6 | breath save | 2d6, half on save',
+        'd4 | Save vs Poison (-2) | save or die',
+        'd8 | Save vs Paralyze | paralyze d4',
+        'd6 | Save vs Breath | 2d6, half on save',
         'd4 | fire | d4/round ×3 | +d6',
-        'd4 | magic save(+1) | 1/round',
-        'd4 | device save | paralyze ∞',
+        'd4 | Save vs Magic (+1) | 1/round',
+        'd4 | Save vs Device | paralyze ∞',
       ])
     })
 

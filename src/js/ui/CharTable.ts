@@ -21,7 +21,7 @@ const getSaveInput = (group: HTMLElement, save: SaveType): HTMLInputElement =>
 
 const setSavesExpanded = (group: HTMLElement, expanded: boolean): void => {
   const toggle = group.querySelector('.saves-toggle') as HTMLButtonElement
-  ;(group.querySelector('.saves-row') as HTMLTableRowElement).hidden = !expanded
+  ;(group.querySelector('.saves-fields') as HTMLElement).hidden = !expanded
   toggle.setAttribute('aria-expanded', String(expanded))
   toggle.textContent = expanded ? 'Saves ▾' : 'Saves ▸'
 }

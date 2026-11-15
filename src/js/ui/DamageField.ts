@@ -9,7 +9,7 @@ type FieldElements = {
   input: HTMLInputElement
   error: HTMLElement
   preview: HTMLElement
-  editBtn: HTMLButtonElement
+  toggle: HTMLButtonElement
 }
 
 const el = (tag: string, className: string, text: string = ''): HTMLElement => {
@@ -19,6 +19,8 @@ const el = (tag: string, className: string, text: string = ''): HTMLElement => {
 
   return node
 }
+
+const capitalize = (text: string): string => `${text[0].toUpperCase()}${text.slice(1)}`
 
 const signed = (n: number): string => (n > 0 ? `+${n}` : String(n))
 
@@ -46,7 +48,7 @@ const renderChip = ({ damage, effect }: Attack): HTMLElement => {
   if (effect) {
     chip.classList.add(effect.save ? `damage-chip--${effect.save}` : 'damage-chip--tag')
     const tag = effect.save
-      ? `${effect.label} save${effect.saveMod ? `(${signed(effect.saveMod)})` : ''}`
+      ? `Save vs ${capitalize(effect.save)}${effect.saveMod ? ` (${signed(effect.saveMod)})` : ''}`
       : effect.label
     chip.appendChild(el('span', 'damage-chip__tag', tag))
     effect.modifiers.forEach((m) => chip.appendChild(el('span', 'damage-chip__modifier', describeModifier(m))))
@@ -55,8 +57,8 @@ const renderChip = ({ damage, effect }: Attack): HTMLElement => {
   return chip
 }
 
-// Damage of a character shown as chips of the parsed attacks; the input opens with the Edit button
-// or a click on the chips, and stays open while the damage is invalid
+// Damage of a character shown as chips of the parsed attacks; the input opens with the Damage label
+// or a click on the chips, closes with the same label (now "Done"), and stays open while the damage is invalid
 export class DamageField {
   constructor(private readonly damageParser: IDamageParser = new DamageParser()) {}
 
@@ -67,7 +69,7 @@ export class DamageField {
       return
     }
 
-    const { editBtn, input, preview } = elements
+    const { input, preview, toggle } = elements
     input.addEventListener('input', (): void => this.setEditing(elements, !input.hidden))
     input.addEventListener('keydown', (e): void => {
       if (e.key === 'Enter' || e.key === 'Escape') {
@@ -75,7 +77,7 @@ export class DamageField {
         this.setEditing(elements, false)
       }
     })
-    editBtn.addEventListener('click', (e): void => {
+    toggle.addEventListener('click', (e): void => {
       e.preventDefault()
       this.setEditing(elements, input.hidden)
     })
@@ -88,23 +90,23 @@ export class DamageField {
     const input = group.querySelector<HTMLInputElement>('.damage-input')
     const error = group.querySelector<HTMLElement>('.damage-error')
     const preview = group.querySelector<HTMLElement>('.damage-preview')
-    const editBtn = group.querySelector<HTMLButtonElement>('.damage-edit-btn')
-    if (!input || !error || !preview || !editBtn) {
+    const toggle = group.querySelector<HTMLButtonElement>('.damage-toggle')
+    if (!input || !error || !preview || !toggle) {
       return null
     }
 
-    return { editBtn, error, input, preview }
+    return { error, input, preview, toggle }
   }
 
   // invalid damage keeps the input open
   private setEditing(elements: FieldElements, editing: boolean): void {
-    const { editBtn, input } = elements
+    const { input, toggle } = elements
     const valid = this.render(elements)
     const open = editing || !valid
     const opening = open && input.hidden
 
     input.hidden = !open
-    editBtn.textContent = open ? 'Done' : 'Edit'
+    toggle.textContent = open ? 'Done' : 'Damage'
     if (opening) {
       input.focus()
     }
