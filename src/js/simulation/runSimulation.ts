@@ -37,17 +37,7 @@ export const runSimulation = (
     battleLogger.log(`[Battle ${i + 1}]`)
     battleLogger.delimiter()
 
-    const sim = new BattleSimulator(
-      players,
-      monsters,
-      settings.strategy,
-      settings.rounding,
-      settings.biasPlayers,
-      settings.biasMonsters,
-      settings.maxAttacksPerTarget,
-      settings.targeting,
-      battleLogger,
-    )
+    const sim = new BattleSimulator(players, monsters, battleLogger, settings)
     sim.renderDetails()
     battleLogger.lineBreak()
 

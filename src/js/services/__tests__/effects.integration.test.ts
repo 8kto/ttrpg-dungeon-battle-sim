@@ -243,17 +243,14 @@ describe('effects in battle', () => {
   it('ends in a draw when paralyzed targets take no damage', () => {
     jest.restoreAllMocks()
     const paralyzer: ICharacter = { ...makeChar('Statue'), armorClass: 0, damage: '0[🧊,paralyze]', toHit: 100 }
-    const sim = new BattleSimulator(
-      [paralyzer],
-      [{ ...paralyzer, name: 'Gargoyle' }],
-      Strategy.Max,
-      Rounding.Up,
-      0,
-      0,
-      0,
-      Targeting.Random,
-      new NullLogger(),
-    )
+    const sim = new BattleSimulator([paralyzer], [{ ...paralyzer, name: 'Gargoyle' }], new NullLogger(), {
+      biasMonsters: 0,
+      biasPlayers: 0,
+      maxAttacksPerTarget: 0,
+      rounding: Rounding.Up,
+      strategy: Strategy.Max,
+      targeting: Targeting.Random,
+    })
 
     const result = sim.simulate()
     expect(result.winner).toBeNull()

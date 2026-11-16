@@ -1,5 +1,6 @@
 import { shuffleArray } from 'ttrpg-lib-dice'
 
+import type { SimulationSettings } from '../types'
 import { Side } from '../types'
 import type { EffectCounters } from './attacks/types'
 import type { ILogger } from './logger/ILogger'
@@ -8,7 +9,7 @@ import { getStrategy } from './strategies/getStrategy'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
 import type { ITargetSelector } from './TargetSelector'
 import { getTargetSelector } from './TargetSelector'
-import type { IMonster, IPlayerCharacter, Rounding, Strategy, Targeting } from './types'
+import type { IMonster, IPlayerCharacter } from './types'
 
 // Guards against endless battles (nobody can hit, everybody skips turns, etc.)
 export const MAX_ROUNDS = 1000
@@ -19,6 +20,12 @@ export type BattleResult = {
   survivors: Array<Participant>
   effects: EffectCounters
 }
+
+// Subset of simulation settings that affects a single battle
+export type BattleSettings = Pick<
+  SimulationSettings,
+  'strategy' | 'rounding' | 'targeting' | 'biasPlayers' | 'biasMonsters' | 'maxAttacksPerTarget'
+>
 
 export class BattleSimulator {
   private readonly targetSelector: ITargetSelector
@@ -31,16 +38,11 @@ export class BattleSimulator {
   constructor(
     players: IPlayerCharacter[],
     monsters: IMonster[],
-    strategyMode: Strategy,
-    rounding: Rounding,
-    biasPlayers: number,
-    biasMonsters: number,
-    maxAttacksPerTarget: number,
-    targeting: Targeting,
     private readonly logger: ILogger,
+    { biasMonsters, biasPlayers, maxAttacksPerTarget, rounding, strategy, targeting }: BattleSettings,
   ) {
     this.targetSelector = getTargetSelector(targeting)
-    this.strategy = getStrategy(strategyMode, rounding)
+    this.strategy = getStrategy(strategy, rounding)
 
     this.sidePlayers = players.map(
       (c) =>

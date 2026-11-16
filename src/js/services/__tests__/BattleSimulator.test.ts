@@ -74,17 +74,14 @@ describe('BattleSimulator', () => {
 
   describe('constructor', () => {
     it('creates participants for both sides', () => {
-      new BattleSimulator(
-        [mockPlayer],
-        [mockMonster],
-        Strategy.Average,
-        Rounding.Down,
-        0,
-        0,
-        0,
-        Targeting.Random,
-        mockLogger,
-      )
+      new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        maxAttacksPerTarget: 0,
+        rounding: Rounding.Down,
+        strategy: Strategy.Average,
+        targeting: Targeting.Random,
+      })
 
       expect(getStrategy).toHaveBeenCalledWith(Strategy.Average, Rounding.Down)
       expect(Participant).toHaveBeenCalledWith(mockPlayer, Side.Players, mockStrategy, 0, 0, mockLogger, {})
@@ -94,34 +91,28 @@ describe('BattleSimulator', () => {
 
   describe('hasSurvivors', () => {
     it('returns true when side has living participants', () => {
-      const simulator = new BattleSimulator(
-        [mockPlayer],
-        [mockMonster],
-        Strategy.Random,
-        Rounding.Up,
-        0,
-        0,
-        0,
-        Targeting.Random,
-        mockLogger,
-      )
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        maxAttacksPerTarget: 0,
+        rounding: Rounding.Up,
+        strategy: Strategy.Random,
+        targeting: Targeting.Random,
+      })
 
       expect(simulator.hasSurvivors(Side.Players)).toBe(true)
       expect(simulator.hasSurvivors(Side.Monsters)).toBe(true)
     })
 
     it('returns false when side has no living participants [A]', () => {
-      const simulator = new BattleSimulator(
-        [mockPlayer],
-        [],
-        Strategy.Random,
-        Rounding.Up,
-        0,
-        0,
-        0,
-        Targeting.Random,
-        mockLogger,
-      )
+      const simulator = new BattleSimulator([mockPlayer], [], mockLogger, {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        maxAttacksPerTarget: 0,
+        rounding: Rounding.Up,
+        strategy: Strategy.Random,
+        targeting: Targeting.Random,
+      })
 
       expect(simulator.hasSurvivors(Side.Monsters)).toBe(false)
     })
@@ -130,17 +121,14 @@ describe('BattleSimulator', () => {
       mockStrategy.calculateDamage.mockReturnValue(1)
       mockStrategy.calculateHp.mockReturnValueOnce(6).mockReturnValueOnce(0)
 
-      const simulator = new BattleSimulator(
-        [mockPlayer],
-        [mockMonster],
-        Strategy.Random,
-        Rounding.Up,
-        0,
-        0,
-        0,
-        Targeting.Random,
-        mockLogger,
-      )
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        maxAttacksPerTarget: 0,
+        rounding: Rounding.Up,
+        strategy: Strategy.Random,
+        targeting: Targeting.Random,
+      })
       expect(simulator.hasSurvivors(Side.Monsters)).toBe(false)
     })
   })
@@ -161,34 +149,28 @@ describe('BattleSimulator', () => {
     }
 
     it('ends every round for all participants', () => {
-      const simulator = new BattleSimulator(
-        [mockPlayer],
-        [mockMonster],
-        Strategy.Random,
-        Rounding.Up,
-        0,
-        0,
-        0,
-        Targeting.Random,
-        mockLogger,
-      )
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        maxAttacksPerTarget: 0,
+        rounding: Rounding.Up,
+        strategy: Strategy.Random,
+        targeting: Targeting.Random,
+      })
       simulateRounds(simulator, 2)
 
       created().forEach((p) => expect(p.endRound).toHaveBeenCalledTimes(2))
     })
 
     it('skips combatants that cannot act', () => {
-      const simulator = new BattleSimulator(
-        [mockPlayer],
-        [mockMonster],
-        Strategy.Random,
-        Rounding.Up,
-        0,
-        0,
-        0,
-        Targeting.Random,
-        mockLogger,
-      )
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        maxAttacksPerTarget: 0,
+        rounding: Rounding.Up,
+        strategy: Strategy.Random,
+        targeting: Targeting.Random,
+      })
       const [player, monster] = created()
       player.startTurn.mockReturnValue(false)
       simulateRounds(simulator, 1)
@@ -198,17 +180,14 @@ describe('BattleSimulator', () => {
     })
 
     it('returns effect counters shared by all participants', () => {
-      const simulator = new BattleSimulator(
-        [mockPlayer],
-        [mockMonster],
-        Strategy.Random,
-        Rounding.Up,
-        0,
-        0,
-        0,
-        Targeting.Random,
-        mockLogger,
-      )
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        maxAttacksPerTarget: 0,
+        rounding: Rounding.Up,
+        strategy: Strategy.Random,
+        targeting: Targeting.Random,
+      })
       const [[, , , , , , playerCounters], [, , , , , , monsterCounters]] = (Participant as jest.Mock).mock.calls
       const result = simulateRounds(simulator, 1)
 
@@ -217,17 +196,14 @@ describe('BattleSimulator', () => {
     })
 
     it('ends when one side is defeated', () => {
-      const simulator = new BattleSimulator(
-        [mockPlayer],
-        [mockMonster],
-        Strategy.Random,
-        Rounding.Up,
-        0,
-        0,
-        0,
-        Targeting.Random,
-        mockLogger,
-      )
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        maxAttacksPerTarget: 0,
+        rounding: Rounding.Up,
+        strategy: Strategy.Random,
+        targeting: Targeting.Random,
+      })
 
       // Force end condition
       jest
@@ -253,17 +229,14 @@ describe('BattleSimulator', () => {
     })
 
     it('ends in a draw when the round limit is reached', () => {
-      const simulator = new BattleSimulator(
-        [mockPlayer],
-        [mockMonster],
-        Strategy.Random,
-        Rounding.Up,
-        0,
-        0,
-        0,
-        Targeting.Random,
-        mockLogger,
-      )
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        maxAttacksPerTarget: 0,
+        rounding: Rounding.Up,
+        strategy: Strategy.Random,
+        targeting: Targeting.Random,
+      })
 
       // nobody ever dies
       jest.spyOn(simulator, 'hasSurvivors').mockReturnValue(true)
@@ -277,17 +250,14 @@ describe('BattleSimulator', () => {
     it('resets attack limits each round', () => {
       mockStrategy.calculateDamage.mockReturnValue(3)
       mockStrategy.calculateHp.mockReturnValueOnce(5).mockReturnValueOnce(6)
-      const simulator = new BattleSimulator(
-        [mockPlayer],
-        [mockMonster],
-        Strategy.Random,
-        Rounding.Up,
-        0,
-        0,
-        3,
-        Targeting.Random,
-        mockLogger,
-      )
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        maxAttacksPerTarget: 3,
+        rounding: Rounding.Up,
+        strategy: Strategy.Random,
+        targeting: Targeting.Random,
+      })
 
       jest
         .spyOn(simulator, 'hasSurvivors')
@@ -310,17 +280,14 @@ describe('BattleSimulator', () => {
   describe('renderDetails', () => {
     it('logs participant statuses', () => {
       mockStrategy.calculateHp.mockReturnValueOnce(3).mockReturnValueOnce(4)
-      const simulator = new BattleSimulator(
-        [mockPlayer],
-        [mockMonster],
-        Strategy.Random,
-        Rounding.Up,
-        0,
-        0,
-        0,
-        Targeting.Random,
-        mockLogger,
-      )
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        maxAttacksPerTarget: 0,
+        rounding: Rounding.Up,
+        strategy: Strategy.Random,
+        targeting: Targeting.Random,
+      })
 
       simulator.renderDetails()
       expect(mockLogger.log).toHaveBeenCalledWith(expect.stringContaining('🥷Warrior HP: 3'))
@@ -329,17 +296,14 @@ describe('BattleSimulator', () => {
 
     it('logs nothing when logger is not verbose', () => {
       ;(mockLogger.isVerbose as jest.Mock).mockReturnValueOnce(false)
-      const simulator = new BattleSimulator(
-        [mockPlayer],
-        [mockMonster],
-        Strategy.Random,
-        Rounding.Up,
-        0,
-        0,
-        0,
-        Targeting.Random,
-        mockLogger,
-      )
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        maxAttacksPerTarget: 0,
+        rounding: Rounding.Up,
+        strategy: Strategy.Random,
+        targeting: Targeting.Random,
+      })
 
       simulator.renderDetails()
       expect(mockLogger.log).not.toHaveBeenCalled()
