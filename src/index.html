@@ -38,6 +38,15 @@
     />
   </head>
   <body class="text-gray-900 min-h-screen">
+    <!-- shared SVG filters, referenced from CSS -->
+    <svg class="absolute w-0 h-0" aria-hidden="true">
+      <!-- uneven paper edges for the sheets: a soft wobble, blurred a bit so the cut doesn't look jagged -->
+      <filter id="paper-edge">
+        <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="5" seed="3" />
+        <feDisplacementMap in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="G" />
+        <feGaussianBlur stdDeviation="0.75" />
+      </filter>
+    </svg>
     <div class="container mx-auto pt-6">
       <header class="flex items-center justify-between gap-4 mb-2">
         <h1 class="text-4xl font-bold flex items-center">
@@ -673,7 +682,7 @@
 
       <footer class="footer text-center p-4 no-print">
         <div class="align-center mx-auto content-center">
-          <span class="">&copy; 2025</span>
+          <span class="">&copy; 2025-2026</span>
           <a href="https://dungeon-battle.ivlev.blog/" target="_blank">Dungeon Battle Simulator</a> by
           <a href="https://ivlev.blog/" target="_blank">undefined</a> |
           <a href="https://github.com/8kto/ttrpg-dungeon-battle-sim" target="_blank">Source on GitHub</a>
