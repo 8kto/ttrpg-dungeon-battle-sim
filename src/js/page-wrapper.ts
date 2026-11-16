@@ -11,7 +11,7 @@ import { LogLevel } from './services/logger/ILogger'
 import { Logger } from './services/logger/Logger'
 import { NameProvider } from './services/NameProvider'
 import { getStrategy } from './services/strategies/getStrategy'
-import { validateCharacters } from './services/validateCharacters'
+import { getCharacterValidator } from './services/validation/CharacterValidator'
 import { SimulationRunner } from './simulation/SimulationRunner'
 import { formatSummary } from './simulation/stats'
 import type { BattleSimulationConfig } from './types'
@@ -129,12 +129,12 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
   const validateInput = (): string[] => {
     const { rounding, strategy } = settings.read()
-    const combatStrategy = getStrategy(strategy, rounding)
+    const validator = getCharacterValidator(getStrategy(strategy, rounding))
 
     return [
       ...settings.validate(),
-      ...validateCharacters(playersTable.read(), combatStrategy, 'Players'),
-      ...validateCharacters(monstersTable.read(), combatStrategy, 'Monsters'),
+      ...validator.validate(playersTable.read(), 'Players'),
+      ...validator.validate(monstersTable.read(), 'Monsters'),
     ]
   }
 

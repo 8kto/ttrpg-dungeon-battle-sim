@@ -3,7 +3,8 @@ import type { IDamageParser } from '../services/attacks/IDamageParser'
 import type { Attack, Modifier } from '../services/attacks/types'
 import { ModifierKind } from '../services/attacks/types'
 import { MaxStrategy } from '../services/strategies/MaxStrategy'
-import { validateDamage } from '../services/validateCharacters'
+import { DamageValidator } from '../services/validation/DamageValidator'
+import type { IDamageValidator } from '../services/validation/IDamageValidator'
 
 type FieldElements = {
   input: HTMLInputElement
@@ -60,7 +61,11 @@ const renderChip = ({ damage, effect }: Attack): HTMLElement => {
 // Damage of a character shown as chips of the parsed attacks; the input opens with the Damage label
 // or a click on the chips, closes with the same label (now "Done"), and stays open while the damage is invalid
 export class DamageField {
-  constructor(private readonly damageParser: IDamageParser = new DamageParser()) {}
+  constructor(
+    private readonly damageParser: IDamageParser = new DamageParser(),
+    // formula validity doesn't depend on the strategy
+    private readonly damageValidator: IDamageValidator = new DamageValidator(new MaxStrategy(), damageParser),
+  ) {}
 
   // binds the field of a character group; call it again for cloned groups, as listeners are not cloned
   attach(group: HTMLElement): void {
@@ -116,8 +121,7 @@ export class DamageField {
   // returns whether the damage is valid
   private render({ error, input, preview }: FieldElements): boolean {
     const damage = input.value
-    // formula validity doesn't depend on the strategy
-    const errors = validateDamage(damage, new MaxStrategy(), this.damageParser)
+    const errors = this.damageValidator.validate(damage)
 
     input.classList.toggle('damage-input--invalid', errors.length > 0)
     error.textContent = errors.join('; ')

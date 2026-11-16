@@ -1,12 +1,13 @@
 import { Dice } from 'ttrpg-lib-dice'
 
-import { DEFAULT_SAVES } from '../attacks/types'
-import { AverageStrategy } from '../strategies/AverageStrategy'
-import type { ICharacter } from '../types'
-import { validateCharacters } from '../validateCharacters'
+import { DEFAULT_SAVES } from '../../attacks/types'
+import { AverageStrategy } from '../../strategies/AverageStrategy'
+import type { ICharacter } from '../../types'
+import { CharacterValidator, getCharacterValidator } from '../CharacterValidator'
+import type { ICharacterRule } from '../ICharacterValidator'
 
-describe('validateCharacters', () => {
-  const strategy = new AverageStrategy()
+describe('CharacterValidator', () => {
+  const validator = getCharacterValidator(new AverageStrategy())
   const validChar: ICharacter = {
     armorClass: 13,
     damage: 'd6, 2d4+1',
@@ -17,36 +18,34 @@ describe('validateCharacters', () => {
   }
 
   it('returns no errors for valid characters', () => {
-    expect(validateCharacters([validChar], strategy, 'Monsters')).toEqual([])
+    expect(validator.validate([validChar], 'Monsters')).toEqual([])
   })
 
   it('accepts options and effects', () => {
-    expect(
-      validateCharacters([{ ...validChar, damage: 'd6, d6 | d10[poison(-2),save_or_die]' }], strategy, 'Monsters'),
-    ).toEqual([])
+    expect(validator.validate([{ ...validChar, damage: 'd6, d6 | d10[poison(-2),save_or_die]' }], 'Monsters')).toEqual(
+      [],
+    )
   })
 
   it.each([5, 21, 6.5, NaN])('reports invalid save value %d', (poison) => {
-    expect(validateCharacters([{ ...validChar, saves: { ...DEFAULT_SAVES, poison } }], strategy, 'Monsters')).toEqual([
+    expect(validator.validate([{ ...validChar, saves: { ...DEFAULT_SAVES, poison } }], 'Monsters')).toEqual([
       'Monsters #1 (Goblin): invalid Poison save (6..20)',
     ])
   })
 
   it.each([6, 20])('accepts save value %d', (poison) => {
-    expect(validateCharacters([{ ...validChar, saves: { ...DEFAULT_SAVES, poison } }], strategy, 'Monsters')).toEqual(
-      [],
-    )
+    expect(validator.validate([{ ...validChar, saves: { ...DEFAULT_SAVES, poison } }], 'Monsters')).toEqual([])
   })
 
   it.each<Partial<ICharacter>>([
     { armorClass: 6, hitDice: [1, Dice.d8], toHit: -5 },
     { armorClass: 20, hitDice: [50, Dice.d8], toHit: 10 },
   ])('accepts boundary values %j', (override) => {
-    expect(validateCharacters([{ ...validChar, ...override }], strategy, 'Monsters')).toEqual([])
+    expect(validator.validate([{ ...validChar, ...override }], 'Monsters')).toEqual([])
   })
 
   it('reports an empty side', () => {
-    expect(validateCharacters([], strategy, 'Monsters')).toEqual(['Monsters: no characters'])
+    expect(validator.validate([], 'Monsters')).toEqual(['Monsters: no characters'])
   })
 
   it.each<[Partial<ICharacter>, string]>([
@@ -66,8 +65,17 @@ describe('validateCharacters', () => {
     [{ damage: 'd6||d8' }, 'empty option in "d6||d8"'],
     [{ damage: 'd6[poison,damage_each_round(abc)]' }, 'invalid damage formula "abc"'],
   ])('reports %j', (override, error) => {
-    expect(validateCharacters([{ ...validChar, ...override }], strategy, 'Monsters')).toEqual([
-      `Monsters #1 (Goblin): ${error}`,
+    expect(validator.validate([{ ...validChar, ...override }], 'Monsters')).toEqual([`Monsters #1 (Goblin): ${error}`])
+  })
+
+  it('prefixes errors of every rule with the character label', () => {
+    const rules: ICharacterRule[] = [{ check: () => ['first'] }, { check: () => [] }, { check: () => ['second'] }]
+
+    expect(new CharacterValidator(rules).validate([validChar, { ...validChar, name: 'Orc' }], 'Players')).toEqual([
+      'Players #1 (Goblin): first',
+      'Players #1 (Goblin): second',
+      'Players #2 (Orc): first',
+      'Players #2 (Orc): second',
     ])
   })
 })
