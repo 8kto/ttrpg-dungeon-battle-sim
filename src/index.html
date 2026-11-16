@@ -87,11 +87,21 @@
             <tbody class="char border-t">
               <tr data-prefix="Player">
                 <td class="w-full"><input type="text" class="name-input w-full border rounded px-2" required /></td>
-                <td><input type="number" class="ac-input num-input border rounded px-2" required min="0" /></td>
-                <td><input type="number" class="tohit-input num-input border rounded px-2" required /></td>
+                <td>
+                  <input type="number" class="ac-input num-input border rounded px-2" required min="6" max="20" />
+                </td>
+                <td>
+                  <input type="number" class="tohit-input num-input border rounded px-2" required min="-5" max="10" />
+                </td>
                 <td>
                   <div class="flex items-center gap-1">
-                    <input type="number" class="hd-count-input num-input border rounded px-2" required min="1" />
+                    <input
+                      type="number"
+                      class="hd-count-input num-input border rounded px-2"
+                      required
+                      min="1"
+                      max="50"
+                    />
                     <select class="hd-type-select border rounded px-1">
                       <option value="4">d4</option>
                       <option value="6">d6</option>
@@ -137,7 +147,7 @@
                         Paralyze
                         <input
                           type="number"
-                          min="0"
+                          min="6"
                           max="20"
                           class="save-input border rounded px-1"
                           data-save="paralyze"
@@ -147,7 +157,7 @@
                         Poison
                         <input
                           type="number"
-                          min="0"
+                          min="6"
                           max="20"
                           class="save-input border rounded px-1"
                           data-save="poison"
@@ -157,7 +167,7 @@
                         Breath
                         <input
                           type="number"
-                          min="0"
+                          min="6"
                           max="20"
                           class="save-input border rounded px-1"
                           data-save="breath"
@@ -167,7 +177,7 @@
                         Device
                         <input
                           type="number"
-                          min="0"
+                          min="6"
                           max="20"
                           class="save-input border rounded px-1"
                           data-save="device"
@@ -177,7 +187,7 @@
                         Magic
                         <input
                           type="number"
-                          min="0"
+                          min="6"
                           max="20"
                           class="save-input border rounded px-1"
                           data-save="magic"
@@ -230,11 +240,21 @@
             <tbody class="char border-t">
               <tr data-prefix="Monster">
                 <td class="w-full"><input type="text" class="name-input w-full border rounded px-2" required /></td>
-                <td><input type="number" class="ac-input num-input border rounded px-2" required min="0" /></td>
-                <td><input type="number" class="tohit-input num-input border rounded px-2" required /></td>
+                <td>
+                  <input type="number" class="ac-input num-input border rounded px-2" required min="6" max="20" />
+                </td>
+                <td>
+                  <input type="number" class="tohit-input num-input border rounded px-2" required min="-5" max="10" />
+                </td>
                 <td>
                   <div class="flex items-center gap-1">
-                    <input type="number" class="hd-count-input num-input border rounded px-2" required min="1" />
+                    <input
+                      type="number"
+                      class="hd-count-input num-input border rounded px-2"
+                      required
+                      min="1"
+                      max="50"
+                    />
                     <select class="hd-type-select border rounded px-1">
                       <option value="4">d4</option>
                       <option value="6">d6</option>
@@ -280,7 +300,7 @@
                         Paralyze
                         <input
                           type="number"
-                          min="0"
+                          min="6"
                           max="20"
                           class="save-input border rounded px-1"
                           data-save="paralyze"
@@ -290,7 +310,7 @@
                         Poison
                         <input
                           type="number"
-                          min="0"
+                          min="6"
                           max="20"
                           class="save-input border rounded px-1"
                           data-save="poison"
@@ -300,7 +320,7 @@
                         Breath
                         <input
                           type="number"
-                          min="0"
+                          min="6"
                           max="20"
                           class="save-input border rounded px-1"
                           data-save="breath"
@@ -310,7 +330,7 @@
                         Device
                         <input
                           type="number"
-                          min="0"
+                          min="6"
                           max="20"
                           class="save-input border rounded px-1"
                           data-save="device"
@@ -320,7 +340,7 @@
                         Magic
                         <input
                           type="number"
-                          min="0"
+                          min="6"
                           max="20"
                           class="save-input border rounded px-1"
                           data-save="magic"

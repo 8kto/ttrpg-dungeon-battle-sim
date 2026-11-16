@@ -14,6 +14,17 @@ const isValidFormula = (formula: string, strategy: ICombatStrategy): boolean => 
   }
 }
 
+// Allowed ranges (inclusive) of numeric characteristics
+export const LIMITS = Object.freeze({
+  armorClass: { max: 20, min: 6 },
+  hitDice: { max: 50, min: 1 },
+  save: { max: 20, min: 6 },
+  toHit: { max: 10, min: -5 },
+})
+
+const isInRange = (value: number, { max, min }: { max: number; min: number }): boolean =>
+  Number.isInteger(value) && value >= min && value <= max
+
 const capitalize = (text: string): string => `${text[0].toUpperCase()}${text.slice(1)}`
 
 export const validateDamage = (
@@ -54,23 +65,21 @@ export const validateCharacters = (
     const label = `${sideName} #${i + 1} (${char.name})`
     const [hdCount, hdType] = char.hitDice
 
-    if (!Number.isFinite(char.armorClass)) {
-      errors.push(`${label}: invalid AC`)
+    if (!isInRange(char.armorClass, LIMITS.armorClass)) {
+      errors.push(`${label}: invalid AC (${LIMITS.armorClass.min}..${LIMITS.armorClass.max})`)
     }
-    if (!Number.isFinite(char.toHit)) {
-      errors.push(`${label}: invalid To-Hit`)
+    if (!isInRange(char.toHit, LIMITS.toHit)) {
+      errors.push(`${label}: invalid To-Hit (${LIMITS.toHit.min}..${LIMITS.toHit.max})`)
     }
-    if (!Number.isInteger(hdCount) || hdCount < 1 || !Number.isFinite(hdType)) {
-      errors.push(`${label}: invalid Hit Dice`)
+    if (!isInRange(hdCount, LIMITS.hitDice) || !Number.isFinite(hdType)) {
+      errors.push(`${label}: invalid Hit Dice (${LIMITS.hitDice.min}..${LIMITS.hitDice.max})`)
     }
     validateDamage(char.damage, strategy, damageParser).forEach((error) => errors.push(`${label}: ${error}`))
     Object.values(SaveType)
-      .filter((save) => {
-        const value = char.saves[save]
-
-        return !Number.isInteger(value) || value < 0 || value > 20
-      })
-      .forEach((save) => errors.push(`${label}: invalid ${capitalize(save)} save`))
+      .filter((save) => !isInRange(char.saves[save], LIMITS.save))
+      .forEach((save) =>
+        errors.push(`${label}: invalid ${capitalize(save)} save (${LIMITS.save.min}..${LIMITS.save.max})`),
+      )
   })
 
   return errors

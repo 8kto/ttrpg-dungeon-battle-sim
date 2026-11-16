@@ -26,16 +26,23 @@ describe('validateCharacters', () => {
     ).toEqual([])
   })
 
-  it.each([-1, 21, 1.5, NaN])('reports invalid save value %d', (poison) => {
+  it.each([5, 21, 6.5, NaN])('reports invalid save value %d', (poison) => {
     expect(validateCharacters([{ ...validChar, saves: { ...DEFAULT_SAVES, poison } }], strategy, 'Monsters')).toEqual([
-      'Monsters #1 (Goblin): invalid Poison save',
+      'Monsters #1 (Goblin): invalid Poison save (6..20)',
     ])
   })
 
-  it.each([0, 20])('accepts save value %d', (poison) => {
+  it.each([6, 20])('accepts save value %d', (poison) => {
     expect(validateCharacters([{ ...validChar, saves: { ...DEFAULT_SAVES, poison } }], strategy, 'Monsters')).toEqual(
       [],
     )
+  })
+
+  it.each<Partial<ICharacter>>([
+    { armorClass: 6, hitDice: [1, Dice.d8], toHit: -5 },
+    { armorClass: 20, hitDice: [50, Dice.d8], toHit: 10 },
+  ])('accepts boundary values %j', (override) => {
+    expect(validateCharacters([{ ...validChar, ...override }], strategy, 'Monsters')).toEqual([])
   })
 
   it('reports an empty side', () => {
@@ -43,10 +50,16 @@ describe('validateCharacters', () => {
   })
 
   it.each<[Partial<ICharacter>, string]>([
-    [{ armorClass: NaN }, 'invalid AC'],
-    [{ toHit: NaN }, 'invalid To-Hit'],
-    [{ hitDice: [0, Dice.d8] }, 'invalid Hit Dice'],
-    [{ hitDice: [NaN, Dice.d8] }, 'invalid Hit Dice'],
+    [{ armorClass: NaN }, 'invalid AC (6..20)'],
+    [{ armorClass: 5 }, 'invalid AC (6..20)'],
+    [{ armorClass: 21 }, 'invalid AC (6..20)'],
+    [{ armorClass: 12.5 }, 'invalid AC (6..20)'],
+    [{ toHit: NaN }, 'invalid To-Hit (-5..10)'],
+    [{ toHit: -6 }, 'invalid To-Hit (-5..10)'],
+    [{ toHit: 11 }, 'invalid To-Hit (-5..10)'],
+    [{ hitDice: [0, Dice.d8] }, 'invalid Hit Dice (1..50)'],
+    [{ hitDice: [51, Dice.d8] }, 'invalid Hit Dice (1..50)'],
+    [{ hitDice: [NaN, Dice.d8] }, 'invalid Hit Dice (1..50)'],
     [{ damage: '' }, 'no damage formula'],
     [{ damage: 'd6, abc' }, 'invalid damage formula "abc"'],
     [{ damage: 'd6[paralyze,paralize]' }, 'unknown modifier "paralize" in "d6[paralyze,paralize]"'],
