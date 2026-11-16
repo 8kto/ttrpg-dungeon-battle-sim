@@ -1,16 +1,19 @@
 import { shuffleArray } from 'ttrpg-lib-dice'
 
 import { Side } from '../types'
-import type { Logger } from './Logger'
+import type { ILogger } from './ILogger'
 import { Participant } from './Participant'
 import { getStrategy } from './strategies/getStrategy'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
 import type { ITargetSelector } from './TargetSelector'
 import { RandomTargetSelector } from './TargetSelector'
-import type { IMonster, IPlayerCharacter, Strategy } from './types'
+import type { IMonster, IPlayerCharacter, Rounding, Strategy } from './types'
 
-type BattleResult = {
-  winner: Side
+// Guards against endless battles (nobody can hit, everybody skips turns, etc.)
+export const MAX_ROUNDS = 1000
+
+export type BattleResult = {
+  winner: Side | null // null is a draw: round limit reached
   rounds: number
   survivors: Array<Participant>
 }
@@ -26,19 +29,20 @@ export class BattleSimulator {
     players: IPlayerCharacter[],
     monsters: IMonster[],
     strategyMode: Strategy,
+    rounding: Rounding,
     biasPlayers: number,
     biasMonsters: number,
-    maxAttacksPerChar: number,
-    private readonly logger: Logger,
+    maxAttacksPerTarget: number,
+    private readonly logger: ILogger,
   ) {
     this.targetSelector = new RandomTargetSelector()
-    this.strategy = getStrategy(strategyMode)
+    this.strategy = getStrategy(strategyMode, rounding)
 
     this.sidePlayers = players.map(
-      (c) => new Participant(c, Side.Players, this.strategy, biasPlayers, maxAttacksPerChar, this.logger),
+      (c) => new Participant(c, Side.Players, this.strategy, biasPlayers, maxAttacksPerTarget, this.logger),
     )
     this.sideMonsters = monsters.map(
-      (c) => new Participant(c, Side.Monsters, this.strategy, biasMonsters, maxAttacksPerChar, this.logger),
+      (c) => new Participant(c, Side.Monsters, this.strategy, biasMonsters, maxAttacksPerTarget, this.logger),
     )
   }
 
@@ -47,6 +51,10 @@ export class BattleSimulator {
   }
 
   renderDetails(): this {
+    if (!this.logger.isVerbose()) {
+      return this
+    }
+
     this.participants.forEach((p) => {
       this.logger.log(`${p.side === Side.Monsters ? '🧌' : '🥷'}${p.char.name} HP: ${p.currentHp}`)
     })
@@ -65,15 +73,26 @@ export class BattleSimulator {
   simulate(): BattleResult {
     // Round: goes while there are two sides
     while (this.hasSurvivors(Side.Players) && this.hasSurvivors(Side.Monsters)) {
+      if (this.roundsCount >= MAX_ROUNDS) {
+        this.logger.log(`⏸️ Round limit (${MAX_ROUNDS}) reached — draw`)
+
+        return {
+          rounds: this.roundsCount,
+          survivors: this.participants.filter((p) => p.currentHp > 0),
+          winner: null,
+        }
+      }
+
       this.roundsCount++
       this.participants.forEach((p) => p.resetAttackLimit())
 
-      let anyAction = false
       const sides = this.getSortedByInitiative()
       const combatants = shuffleArray(sides[0]).concat(shuffleArray(sides[1]))
-      const initiativeSfx = combatants[0].side === Side.Players ? 'players won initiative' : 'monsters won initiative'
 
-      this.logger.log(`>>> round ${this.roundsCount}, ${initiativeSfx}`)
+      if (this.logger.isVerbose()) {
+        const initiativeSfx = combatants[0].side === Side.Players ? 'players won initiative' : 'monsters won initiative'
+        this.logger.log(`>>> round ${this.roundsCount}, ${initiativeSfx}`)
+      }
 
       // Each combatant does its attacks
       for (const combatant of combatants) {
@@ -83,18 +102,7 @@ export class BattleSimulator {
 
         // The target will be chosen randomly
         const enemies = combatant.side === Side.Players ? this.sideMonsters : this.sidePlayers
-        if (!enemies.length) {
-          continue
-        }
-
-        anyAction = true
         combatant.attack(enemies, this.targetSelector)
-      }
-
-      // if nobody attacked or was attacked this round, end battle
-      if (!anyAction) {
-        this.logger.warn('⏸️ No more valid attacks — ending simulation')
-        break
       }
     }
 

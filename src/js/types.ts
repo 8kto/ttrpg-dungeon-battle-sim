@@ -1,6 +1,6 @@
 import type { Dice } from 'ttrpg-lib-dice'
 
-import type { ICharacter } from './services/types'
+import type { ICharacter, Rounding, Strategy } from './services/types'
 
 export type CharStats = {
   prefix: string
@@ -21,7 +21,19 @@ export type BattleSimulationConfig = {
   monsters: ICharacter[]
   battleCount: number
   strategy: string
+  rounding?: string // optional: configs exported before the setting existed don't have it
   biasPlayers: number
   biasMonsters: number
   maxAttacks: number
+}
+
+// Global simulation settings as read from the form
+export type SimulationSettings = {
+  battleCount: number
+  strategy: Strategy
+  rounding: Rounding
+  biasPlayers: number
+  biasMonsters: number
+  maxAttacksPerTarget: number // 0 = unlimited
+  logsEnabled: boolean
 }

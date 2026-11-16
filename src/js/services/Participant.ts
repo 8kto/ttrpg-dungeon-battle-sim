@@ -1,7 +1,7 @@
 import { Dice, roll } from 'ttrpg-lib-dice'
 
 import type { Side } from '../types'
-import type { Logger } from './Logger'
+import type { ILogger } from './ILogger'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
 import type { ITargetSelector } from './TargetSelector'
 import type { ICharacter } from './types'
@@ -9,19 +9,24 @@ import type { ICharacter } from './types'
 export class Participant {
   public currentHp: number
   public readonly hasAttackLimit: boolean
-  private maxAttacksRemaining: number
+  // how many more times this participant can be attacked in the current round
+  private attacksRemaining: number
 
   constructor(
     public readonly char: ICharacter,
     public readonly side: Side,
     private readonly strategy: ICombatStrategy,
     private readonly bias: number,
-    private readonly maxAttacksPerChar: number,
-    private readonly logger: Logger,
+    private readonly maxAttacksPerTarget: number, // 0 = unlimited
+    private readonly logger: ILogger,
   ) {
+    if (!Number.isInteger(maxAttacksPerTarget) || maxAttacksPerTarget < 0) {
+      throw new Error(`Invalid max attacks per target: ${maxAttacksPerTarget}`)
+    }
+
     this.currentHp = strategy.calculateHp(char.hitDice)
-    this.hasAttackLimit = maxAttacksPerChar > 0
-    this.maxAttacksRemaining = maxAttacksPerChar
+    this.hasAttackLimit = maxAttacksPerTarget > 0
+    this.attacksRemaining = maxAttacksPerTarget
   }
 
   shouldSkip(): boolean {
@@ -31,7 +36,9 @@ export class Participant {
 
   attack(enemies: Participant[], targetSelector: ITargetSelector): void {
     if (this.shouldSkip()) {
-      this.logger.log(`🫢 ${this.char.name} skips turn`)
+      if (this.logger.isVerbose()) {
+        this.logger.log(`🫢 ${this.char.name} skips turn`)
+      }
 
       return
     }
@@ -54,18 +61,23 @@ export class Participant {
   performOneAttack(target: Participant, dmgFormula: string): void {
     // consume one attack slot on the target
     if (target.hasAttackLimit) {
-      target.maxAttacksRemaining--
+      target.attacksRemaining--
     }
 
     if (this.rollToHit() >= target.char.armorClass) {
-      const dmg = this.strategy.calculateDamage(dmgFormula)
+      // negative modifiers must not heal the target
+      const dmg = Math.max(0, this.strategy.calculateDamage(dmgFormula))
       target.currentHp -= dmg
-      this.logger.log(`🗡️ ${this.char.name} attacks ${target.char.name}, damage: ${dmg}`)
 
-      if (target.currentHp <= 0) {
-        this.logger.log(`💀️ ${target.char.name} is dead`)
+      // log messages are built only when they will be shown: this is the hottest path
+      if (this.logger.isVerbose()) {
+        this.logger.log(`🗡️ ${this.char.name} attacks ${target.char.name}, damage: ${dmg}`)
+
+        if (target.currentHp <= 0) {
+          this.logger.log(`💀️ ${target.char.name} is dead`)
+        }
       }
-    } else {
+    } else if (this.logger.isVerbose()) {
       this.logger.log(`🛡️ ${this.char.name} misses ${target.char.name}`)
     }
   }
@@ -75,10 +87,10 @@ export class Participant {
   }
 
   isValidTarget(): boolean {
-    return this.currentHp > 0 && (!this.hasAttackLimit || this.maxAttacksRemaining > 0)
+    return this.currentHp > 0 && (!this.hasAttackLimit || this.attacksRemaining > 0)
   }
 
   resetAttackLimit(): void {
-    this.maxAttacksRemaining = this.maxAttacksPerChar
+    this.attacksRemaining = this.maxAttacksPerTarget
   }
 }
