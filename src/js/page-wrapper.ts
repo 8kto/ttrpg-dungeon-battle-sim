@@ -38,6 +38,7 @@ const onClick = (id: string, handler: () => void): void => {
 
 document.addEventListener('DOMContentLoaded', (): void => {
   applyFeatureFlagClasses(window.location.search, document.body)
+  byId('app-version').textContent = `v${import.meta.env.WMR_APP_VERSION}`
 
   const runSimBtn = byId<HTMLButtonElement>('run-sim')
   const stopSimBtn = byId<HTMLButtonElement>('stop-sim')
