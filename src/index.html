@@ -555,6 +555,10 @@
               <b>Poisonous</b>, <b>Paralysis</b> and <b>Fiery</b> give an extra special attack to the monsters added
               afterwards; existing monsters are not changed
             </li>
+            <li>
+              Allowed values: AC and saves 6–20, To Hit −5…+10, HD count 1–50. Invalid values are listed in the log and
+              the run does not start
+            </li>
           </ul>
 
           <h3>Simulation settings</h3>
@@ -568,7 +572,8 @@
                 <td>Strategy</td>
                 <td>
                   How hit points and damage are calculated: <b>Maximum</b> takes max values, <b>Average</b> the average
-                  ones, <b>Random</b> rolls the dice. Attack rolls and saves are always rolled
+                  ones, <b>Random</b> rolls the dice. The same applies to effect damage and durations. Attack rolls and
+                  saves are always rolled
                 </td>
               </tr>
               <tr>
@@ -586,8 +591,8 @@
               <tr>
                 <td>Player / Monster Bias</td>
                 <td>
-                  Chance (%) that a combatant of the side wastes its turn: hesitation, a bad position, morale. Use it to
-                  tilt the balance without changing the stats
+                  Chance (%, 0–99) that a combatant of the side wastes its turn: hesitation, a bad position, morale. Use
+                  it to tilt the balance without changing the stats
                 </td>
               </tr>
               <tr>
@@ -608,14 +613,15 @@
           <ul>
             <li><b>Players win / Monsters win</b>: share of battles won by each side</li>
             <li><b>Draws</b>: battles stopped by the round limit</li>
-            <li>
-              <b>Avg Players survivors</b>: how many of the players are still alive at the end of the battles they won
-            </li>
+            <li><b>Avg Players survivors</b>: share of the players still alive at the end of the battles they won</li>
             <li>
               Effect lines: how many times each special effect was applied and how many times it was saved against
             </li>
+            <li><b>Strategy</b>: the strategy used and how many battles were completed</li>
             <li><b>Avg Rounds</b>: battle length</li>
+            <li><b>Execution time</b>: how long the run took</li>
             <li><b>Stop</b> interrupts the run; the summary covers the battles finished so far</li>
+            <li><b>Clear</b> empties the log</li>
           </ul>
 
           <h3>Config</h3>
