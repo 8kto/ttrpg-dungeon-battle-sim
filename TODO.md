@@ -3,4 +3,4 @@
 - Иммунитеты (нежить к яду и т.п.)
 - Все монстры из 0e
 - use Dice lib (ttrpg-lib-dice) where possible
-- message storage, to keep all the message templates in one place
+- mobiles support
