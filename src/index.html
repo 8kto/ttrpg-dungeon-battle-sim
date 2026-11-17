@@ -457,6 +457,19 @@
               <option value="Down">Down</option>
             </select>
           </div>
+
+          <!-- Initiative -->
+          <div class="flex items-center space-x-2 mt-2 mb-4 ml-6">
+            <label for="initiative-select" class="text-amber-900 font-medium">
+              <abbr title="Random: the side acting first is rolled every round. Fixed: rolled once per battle."
+                >Initiative</abbr
+              >
+            </label>
+            <select id="initiative-select" class="w-32 h-8 border rounded px-2 bg-white">
+              <option value="Random" title="The side acting first is rolled every round" selected>Random</option>
+              <option value="Fixed" title="The side acting first is rolled once per battle">Fixed</option>
+            </select>
+          </div>
         </div>
 
         <!-- Progress -->
@@ -562,6 +575,13 @@
                 <td>
                   <b>Random</b>: every attack picks a random enemy. <b>Focus</b>: an attacker sticks to one enemy until
                   it dies
+                </td>
+              </tr>
+              <tr>
+                <td>Initiative</td>
+                <td>
+                  Which side acts first: <b>Random</b> rolls it every round, <b>Fixed</b> once per battle, so the same
+                  side always goes first in that battle
                 </td>
               </tr>
               <tr>

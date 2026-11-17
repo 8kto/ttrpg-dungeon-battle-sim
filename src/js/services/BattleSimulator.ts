@@ -11,6 +11,7 @@ import type { ICombatStrategy } from './strategies/ICombatStrategy'
 import type { ITargetSelector } from './TargetSelector'
 import { getTargetSelector } from './TargetSelector'
 import type { IMonster, IPlayerCharacter } from './types'
+import { Initiative } from './types'
 
 // Guards against endless battles (nobody can hit, everybody skips turns, etc.)
 export const MAX_ROUNDS = 1000
@@ -25,7 +26,7 @@ export type BattleResult = {
 // Subset of simulation settings that affects a single battle
 export type BattleSettings = Pick<
   SimulationSettings,
-  'strategy' | 'rounding' | 'targeting' | 'biasPlayers' | 'biasMonsters' | 'maxAttacksPerTarget'
+  'strategy' | 'rounding' | 'targeting' | 'initiative' | 'biasPlayers' | 'biasMonsters' | 'maxAttacksPerTarget'
 >
 
 export class BattleSimulator implements IBattleSimulator {
@@ -35,13 +36,16 @@ export class BattleSimulator implements IBattleSimulator {
   private readonly sidePlayers: Participant[]
   private readonly sideMonsters: Participant[]
   private readonly effectCounters: EffectCounters = {}
+  private readonly initiative: Initiative
+  private fixedOrder: Participant[][] | null = null
 
   constructor(
     players: IPlayerCharacter[],
     monsters: IMonster[],
     private readonly logger: ILogger,
-    { biasMonsters, biasPlayers, maxAttacksPerTarget, rounding, strategy, targeting }: BattleSettings,
+    { biasMonsters, biasPlayers, initiative, maxAttacksPerTarget, rounding, strategy, targeting }: BattleSettings,
   ) {
+    this.initiative = initiative
     this.targetSelector = getTargetSelector(targeting)
     this.strategy = getStrategy(strategy, rounding)
 
@@ -88,7 +92,14 @@ export class BattleSimulator implements IBattleSimulator {
   }
 
   getSortedByInitiative(): Participant[][] {
-    return shuffleArray([this.sidePlayers, this.sideMonsters])
+    if (this.initiative === Initiative.Random) {
+      return shuffleArray([this.sidePlayers, this.sideMonsters])
+    }
+
+    // Fixed: rolled in the first round, kept until the end of the battle
+    this.fixedOrder ??= shuffleArray([this.sidePlayers, this.sideMonsters])
+
+    return this.fixedOrder
   }
 
   hasSurvivors(side: Side): boolean {

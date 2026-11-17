@@ -27,6 +27,12 @@ export enum Targeting {
   Focus, // an attacker sticks to one target until one of them dies
 }
 
+// When the order of the sides is decided
+export enum Initiative {
+  Random, // rolled every round
+  Fixed, // rolled once per battle
+}
+
 // How fractional averages (e.g. d8 = 4.5) are turned into whole numbers
 export enum Rounding {
   Up,

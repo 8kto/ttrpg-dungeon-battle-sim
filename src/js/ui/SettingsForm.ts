@@ -1,4 +1,4 @@
-import { Rounding, Strategy, Targeting } from '../services/types'
+import { Initiative, Rounding, Strategy, Targeting } from '../services/types'
 import type { BattleSimulationConfig, SimulationSettings } from '../types'
 import { parseNumber } from '../utils/number'
 
@@ -6,12 +6,13 @@ type GlobalConfig = Omit<BattleSimulationConfig, 'monsters' | 'players'>
 
 const byId = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T
 
-// Global simulation settings: battle count, strategy, rounding, targeting, bias, attack limit, logs
+// Global simulation settings: battle count, strategy, rounding, targeting, initiative, bias, attack limit, logs
 export class SettingsForm {
   private readonly battleCount: HTMLInputElement = byId('battle-count')
   private readonly strategySelect: HTMLSelectElement = byId('strategy-select')
   private readonly roundingSelect: HTMLSelectElement = byId('rounding-select')
   private readonly targetingSelect: HTMLSelectElement = byId('targeting-select')
+  private readonly initiativeSelect: HTMLSelectElement = byId('initiative-select')
   private readonly biasPlayersInput: HTMLInputElement = byId('bias-players')
   private readonly biasMonstersInput: HTMLInputElement = byId('bias-monsters')
   private readonly maxAttacksInput: HTMLInputElement = byId('max-attacks')
@@ -27,6 +28,7 @@ export class SettingsForm {
       battleCount: Math.max(1, parseInt(this.battleCount.value, 10) || 1),
       biasMonsters: parseNumber(this.biasMonstersInput.value),
       biasPlayers: parseNumber(this.biasPlayersInput.value),
+      initiative: Initiative[this.initiativeSelect.value as keyof typeof Initiative],
       logsEnabled: this.logsCheckbox.checked,
       maxAttacksPerTarget: parseNumber(this.maxAttacksInput.value),
       rounding: Rounding[this.roundingSelect.value as keyof typeof Rounding],
@@ -35,11 +37,11 @@ export class SettingsForm {
     }
   }
 
-  // e.g. "Average (rounding Up), targeting Focus"
+  // e.g. "Average (rounding Up), targeting Focus, initiative Fixed"
   get strategyLabel(): string {
     const roundingInfo = this.roundingSelect.disabled ? '' : ` (rounding ${this.roundingSelect.value})`
 
-    return `${this.strategySelect.value}${roundingInfo}, targeting ${this.targetingSelect.value}`
+    return `${this.strategySelect.value}${roundingInfo}, targeting ${this.targetingSelect.value}, initiative ${this.initiativeSelect.value}`
   }
 
   toConfig(): GlobalConfig {
@@ -47,6 +49,7 @@ export class SettingsForm {
       battleCount: parseInt(this.battleCount.value, 10),
       biasMonsters: parseInt(this.biasMonstersInput.value, 10),
       biasPlayers: parseInt(this.biasPlayersInput.value, 10),
+      initiative: this.initiativeSelect.value,
       maxAttacks: parseInt(this.maxAttacksInput.value, 10),
       rounding: this.roundingSelect.value,
       strategy: this.strategySelect.value,
@@ -67,6 +70,9 @@ export class SettingsForm {
     this.syncRoundingState()
     if (config.targeting) {
       this.targetingSelect.value = config.targeting
+    }
+    if (config.initiative) {
+      this.initiativeSelect.value = config.initiative
     }
     // 0 is a valid bias and attack limit, so check for presence only
     // eslint-disable-next-line no-undefined

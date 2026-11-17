@@ -1,7 +1,7 @@
 import type { Saves } from '../attacks/types'
 import { DEFAULT_SAVES, SaveType } from '../attacks/types'
 import type { ICharacter } from '../types'
-import { Rounding, Strategy, Targeting } from '../types'
+import { Initiative, Rounding, Strategy, Targeting } from '../types'
 import type { IConfigParser, ImportedConfig, ParseResult } from './IConfigParser'
 
 type JsonObject = Record<string, unknown>
@@ -22,6 +22,7 @@ export class ConfigParser implements IConfigParser {
     'maxAttacks',
   ]
   private static readonly ENUM_SETTINGS: Readonly<Record<string, string[]>> = {
+    initiative: enumNames(Initiative),
     rounding: enumNames(Rounding),
     strategy: enumNames(Strategy),
     targeting: enumNames(Targeting),
