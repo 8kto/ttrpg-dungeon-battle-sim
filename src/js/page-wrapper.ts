@@ -7,6 +7,7 @@ import {
   PlayerCharTemplate,
   PlayerTemplates,
 } from './consts'
+import { ConfigParser } from './services/config/ConfigParser'
 import { LogLevel } from './services/logger/ILogger'
 import { Logger } from './services/logger/Logger'
 import { NameProvider } from './services/NameProvider'
@@ -53,6 +54,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const runner = new SimulationRunner()
   const summaryFormatter = new SummaryFormatter()
   const settingsValidator = new SettingsValidator()
+  const configParser = new ConfigParser()
 
   // initial setup
   playersTable.init(PlayerTemplates)
@@ -104,16 +106,16 @@ document.addEventListener('DOMContentLoaded', (): void => {
   })
 
   onClick('import-config', () => {
-    try {
-      const config = JSON.parse(configArea.value) as BattleSimulationConfig
+    const result = configParser.parse(configArea.value)
+    if (!result.ok) {
+      alert(`Invalid config:\n${result.errors.join('\n')}`)
 
-      settings.applyConfig(config)
-      playersTable.load(config.players)
-      monstersTable.load(config.monsters)
-    } catch (err) {
-      console.error(err)
-      alert('Invalid JSON config')
+      return
     }
+
+    settings.applyConfig(result.config)
+    playersTable.load(result.config.players)
+    monstersTable.load(result.config.monsters)
   })
 
   const startProgressDisplay = (logsEnabled: boolean): void => {
