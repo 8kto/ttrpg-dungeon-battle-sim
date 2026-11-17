@@ -3,6 +3,7 @@ import { shuffleArray } from 'ttrpg-lib-dice'
 import type { SimulationSettings } from '../types'
 import { Side } from '../types'
 import type { EffectCounters } from './attacks/types'
+import type { IBattleSimulator } from './IBattleSimulator'
 import type { ILogger } from './logger/ILogger'
 import { Participant } from './Participant'
 import { getStrategy } from './strategies/getStrategy'
@@ -27,7 +28,7 @@ export type BattleSettings = Pick<
   'strategy' | 'rounding' | 'targeting' | 'biasPlayers' | 'biasMonsters' | 'maxAttacksPerTarget'
 >
 
-export class BattleSimulator {
+export class BattleSimulator implements IBattleSimulator {
   private readonly targetSelector: ITargetSelector
   private readonly strategy: ICombatStrategy
   private roundsCount: number = 0
