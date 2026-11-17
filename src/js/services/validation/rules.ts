@@ -1,3 +1,5 @@
+import { Dice } from 'ttrpg-lib-dice'
+
 import { capitalize } from '../../utils/text'
 import { SaveType } from '../attacks/types'
 import type { ICharacter } from '../types'
@@ -19,14 +21,23 @@ export class RangeRule implements ICharacterRule {
   }
 }
 
-// The count of hit dice is limited, the die type must be a number
+// The count of hit dice is limited, the die type must be one of the supported dice
 export class HitDiceRule implements ICharacterRule {
-  constructor(private readonly range: Range) {}
+  constructor(
+    private readonly range: Range,
+    private readonly dice: readonly Dice[] = Object.values(Dice).filter((d): d is Dice => typeof d === 'number'),
+  ) {}
 
   check({ hitDice: [count, type] }: ICharacter): string[] {
-    return isInRange(count, this.range) && Number.isFinite(type)
-      ? []
-      : [`invalid Hit Dice (${formatRange(this.range)})`]
+    const errors: string[] = []
+    if (!isInRange(count, this.range)) {
+      errors.push(`invalid Hit Dice (${formatRange(this.range)})`)
+    }
+    if (!this.dice.includes(type)) {
+      errors.push(`invalid Hit Dice type (${this.dice.map((d) => `d${d}`).join(', ')})`)
+    }
+
+    return errors
   }
 }
 

@@ -44,6 +44,13 @@ describe('CharacterValidator', () => {
     expect(validator.validate([{ ...validChar, ...override }], 'Monsters')).toEqual([])
   })
 
+  it('reports the count and the type of hit dice separately', () => {
+    expect(validator.validate([{ ...validChar, hitDice: [0, 7 as Dice] }], 'Monsters')).toEqual([
+      'Monsters #1 (Goblin): invalid Hit Dice (1..50)',
+      'Monsters #1 (Goblin): invalid Hit Dice type (d4, d6, d8, d10, d12, d20, d100)',
+    ])
+  })
+
   it('reports an empty side', () => {
     expect(validator.validate([], 'Monsters')).toEqual(['Monsters: no characters'])
   })
@@ -59,6 +66,10 @@ describe('CharacterValidator', () => {
     [{ hitDice: [0, Dice.d8] }, 'invalid Hit Dice (1..50)'],
     [{ hitDice: [51, Dice.d8] }, 'invalid Hit Dice (1..50)'],
     [{ hitDice: [NaN, Dice.d8] }, 'invalid Hit Dice (1..50)'],
+    [{ hitDice: [2.5, Dice.d8] }, 'invalid Hit Dice (1..50)'],
+    [{ hitDice: [2, 7 as Dice] }, 'invalid Hit Dice type (d4, d6, d8, d10, d12, d20, d100)'],
+    [{ hitDice: [2, NaN as Dice] }, 'invalid Hit Dice type (d4, d6, d8, d10, d12, d20, d100)'],
+    [{ toHit: 1.5 }, 'invalid To-Hit (-5..10)'],
     [{ damage: '' }, 'no damage formula'],
     [{ damage: 'd6, abc' }, 'invalid damage formula "abc"'],
     [{ damage: 'd6[paralyze,paralize]' }, 'unknown modifier "paralize" in "d6[paralyze,paralize]"'],
