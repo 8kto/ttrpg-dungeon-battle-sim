@@ -10,6 +10,7 @@ import {
 import { ConfigParser } from './services/config/ConfigParser'
 import { LogLevel } from './services/logger/ILogger'
 import { Logger } from './services/logger/Logger'
+import { messages } from './services/messages/MessageService'
 import { NameProvider } from './services/NameProvider'
 import { getStrategy } from './services/strategies/getStrategy'
 import { getCharacterValidator } from './services/validation/CharacterValidator'
@@ -108,7 +109,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
   onClick('import-config', () => {
     const result = configParser.parse(configArea.value)
     if (!result.ok) {
-      alert(`Invalid config:\n${result.errors.join('\n')}`)
+      alert(messages.t('config.importFailed', { errors: result.errors.join('\n') }))
 
       return
     }
@@ -140,8 +141,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
     return [
       ...settingsValidator.validate(current),
-      ...validator.validate(playersTable.read(), 'Players'),
-      ...validator.validate(monstersTable.read(), 'Monsters'),
+      ...validator.validate(playersTable.read(), messages.t('sides.players')),
+      ...validator.validate(monstersTable.read(), messages.t('sides.monsters')),
     ]
   }
 
@@ -159,8 +160,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
     const errors = validateInput()
     if (errors.length > 0) {
-      logger.warn('Invalid configuration:')
-      errors.forEach((err) => logger.warn(`>> ${err}`))
+      logger.warn(messages.t('simulation.invalidInput'))
+      errors.forEach((error) => logger.warn(messages.t('simulation.invalidInputItem', { error })))
 
       return
     }
@@ -173,7 +174,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
     lockUiForSimulation()
 
     try {
-      logger.warn('Starting simulation...')
+      logger.warn(messages.t('simulation.starting'))
       const startTime = performance.now()
       const { aborted, stats } = await runner.run(request, (current, lines) => {
         logger.write(lines)
@@ -181,7 +182,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
       })
 
       if (aborted) {
-        logger.warn('⏹️ Simulation aborted')
+        logger.warn(messages.t('simulation.aborted'))
       }
       logger.lineBreak(LogLevel.NO_SKIP)
       summaryFormatter
@@ -194,7 +195,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
         .forEach((line) => logger.warn(line))
     } catch (err) {
       console.error(err)
-      logger.warn(`Simulation failed: ${err instanceof Error ? err.message : String(err)}`)
+      logger.warn(messages.t('simulation.failed', { error: err instanceof Error ? err.message : String(err) }))
     } finally {
       stopProgressDisplay()
       releaseUiAfterSimulation()

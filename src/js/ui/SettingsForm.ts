@@ -1,3 +1,4 @@
+import { messages } from '../services/messages/MessageService'
 import { Initiative, Rounding, Strategy, Targeting } from '../services/types'
 import type { BattleSimulationConfig, SimulationSettings } from '../types'
 import { parseNumber } from '../utils/number'
@@ -39,9 +40,15 @@ export class SettingsForm {
 
   // e.g. "Average (rounding Up), targeting Focus, initiative Fixed"
   get strategyLabel(): string {
-    const roundingInfo = this.roundingSelect.disabled ? '' : ` (rounding ${this.roundingSelect.value})`
+    const params = {
+      initiative: this.initiativeSelect.value,
+      strategy: this.strategySelect.value,
+      targeting: this.targetingSelect.value,
+    }
 
-    return `${this.strategySelect.value}${roundingInfo}, targeting ${this.targetingSelect.value}, initiative ${this.initiativeSelect.value}`
+    return this.roundingSelect.disabled
+      ? messages.t('ui.strategyLabel', params)
+      : messages.t('ui.strategyLabelWithRounding', { ...params, rounding: this.roundingSelect.value })
   }
 
   toConfig(): GlobalConfig {

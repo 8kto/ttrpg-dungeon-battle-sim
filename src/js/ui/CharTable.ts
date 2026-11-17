@@ -2,6 +2,7 @@ import type { Dice } from 'ttrpg-lib-dice'
 
 import type { Saves } from '../services/attacks/types'
 import { DEFAULT_SAVES, SaveType } from '../services/attacks/types'
+import { messages } from '../services/messages/MessageService'
 import type { ICharacter } from '../services/types'
 import type { CharStats } from '../types'
 import { parseNumber } from '../utils/number'
@@ -24,7 +25,7 @@ const setSavesExpanded = (group: HTMLElement, expanded: boolean): void => {
   const toggle = group.querySelector('.saves-toggle') as HTMLButtonElement
   ;(group.querySelector('.saves-fields') as HTMLElement).hidden = !expanded
   toggle.setAttribute('aria-expanded', String(expanded))
-  toggle.textContent = expanded ? 'Saves ▾' : 'Saves ▸'
+  toggle.textContent = messages.t(expanded ? 'ui.savesToggle.expanded' : 'ui.savesToggle.collapsed')
 }
 
 // Editable table of characters (one side of the battle); every character is a <tbody class="char">

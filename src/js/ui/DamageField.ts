@@ -2,6 +2,7 @@ import { DamageParser } from '../services/attacks/DamageParser'
 import type { IDamageParser } from '../services/attacks/IDamageParser'
 import type { Attack, Modifier } from '../services/attacks/types'
 import { ModifierKind } from '../services/attacks/types'
+import { messages } from '../services/messages/MessageService'
 import { MaxStrategy } from '../services/strategies/MaxStrategy'
 import { DamageValidator } from '../services/validation/DamageValidator'
 import type { IDamageValidator } from '../services/validation/IDamageValidator'
@@ -27,15 +28,19 @@ const signed = (n: number): string => (n > 0 ? `+${n}` : String(n))
 const describeModifier = (modifier: Modifier): string => {
   switch (modifier.kind) {
     case ModifierKind.Paralyze:
-      return modifier.duration === null ? 'paralyze ∞' : `paralyze ${modifier.duration}`
+      return modifier.duration === null
+        ? messages.t('ui.damageChip.paralyzeForever')
+        : messages.t('ui.damageChip.paralyze', { duration: modifier.duration })
     case ModifierKind.SaveOrDie:
-      return 'save or die'
+      return messages.t('ui.damageChip.saveOrDie')
     case ModifierKind.SaveForHalf:
-      return `${modifier.damage}, half on save`
+      return messages.t('ui.damageChip.saveForHalf', { damage: modifier.damage })
     case ModifierKind.ExtraDamage:
-      return `+${modifier.damage}`
+      return messages.t('ui.damageChip.extraDamage', { damage: modifier.damage })
     case ModifierKind.DamageEachRound:
-      return `${modifier.damage}/round${modifier.duration === null ? '' : ` ×${modifier.duration}`}`
+      return modifier.duration === null
+        ? messages.t('ui.damageChip.damageEachRound', { damage: modifier.damage })
+        : messages.t('ui.damageChip.damageEachRoundFor', { damage: modifier.damage, duration: modifier.duration })
     default:
       throw new Error(`Unknown modifier: ${JSON.stringify(modifier)}`)
   }
@@ -47,9 +52,12 @@ const renderChip = ({ damage, effect }: Attack): HTMLElement => {
 
   if (effect) {
     chip.classList.add(effect.save ? `damage-chip--${effect.save}` : 'damage-chip--tag')
-    const tag = effect.save
-      ? `Save vs ${capitalize(effect.save)}${effect.saveMod ? ` (${signed(effect.saveMod)})` : ''}`
-      : effect.label
+    const save = effect.save && capitalize(effect.save)
+    const tag = !save
+      ? effect.label
+      : effect.saveMod
+        ? messages.t('ui.damageChip.saveVsWithMod', { mod: signed(effect.saveMod), save })
+        : messages.t('ui.damageChip.saveVs', { save })
     chip.appendChild(el('span', 'damage-chip__tag', tag))
     effect.modifiers.forEach((m) => chip.appendChild(el('span', 'damage-chip__modifier', describeModifier(m))))
   }
@@ -111,7 +119,7 @@ export class DamageField {
 
     input.hidden = !open
     preview.hidden = open
-    toggle.textContent = open ? 'Done' : 'Damage'
+    toggle.textContent = messages.t(open ? 'ui.damageToggle.open' : 'ui.damageToggle.closed')
     if (opening) {
       input.focus()
     }
@@ -133,7 +141,7 @@ export class DamageField {
 
     this.damageParser.parseDamage(damage).forEach((attacks, i) => {
       if (i > 0) {
-        preview.appendChild(el('span', 'damage-preview__or', 'or'))
+        preview.appendChild(el('span', 'damage-preview__or', messages.t('ui.damageChip.or')))
       }
       const option = el('span', 'damage-preview__option')
       attacks.forEach((attack) => option.appendChild(renderChip(attack)))
