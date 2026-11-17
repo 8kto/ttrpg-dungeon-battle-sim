@@ -60,6 +60,17 @@ describe('SettingsForm', () => {
     expect(form.strategyLabel).toBe('Average (rounding Up), targeting Random')
   })
 
+  it('keeps fractional and empty bias and attack limit for the validator', () => {
+    el<HTMLInputElement>('bias-players').value = '2.5'
+    el<HTMLInputElement>('bias-monsters').value = ''
+    el<HTMLInputElement>('max-attacks').value = '1.5'
+
+    const { biasMonsters, biasPlayers, maxAttacksPerTarget } = form.read()
+    expect(biasPlayers).toBe(2.5)
+    expect(biasMonsters).toBeNaN()
+    expect(maxAttacksPerTarget).toBe(1.5)
+  })
+
   it('round-trips config, including zero values', () => {
     form.applyConfig({
       battleCount: 50,

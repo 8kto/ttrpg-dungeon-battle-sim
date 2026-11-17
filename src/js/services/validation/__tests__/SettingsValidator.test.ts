@@ -27,6 +27,8 @@ describe('SettingsValidator', () => {
     [{ biasPlayers: -1 }, ['invalid Players Bias (0..99)']],
     [{ biasPlayers: NaN }, ['invalid Players Bias (0..99)']],
     [{ biasMonsters: 100 }, ['invalid Monsters Bias (0..99)']],
+    [{ biasMonsters: 2.5 }, ['invalid Monsters Bias (0..99)']],
+    [{ maxAttacksPerTarget: 1.5 }, ['Max Attacks per Target must be 0 (unlimited) or more']],
   ])('validates %j', (override, errors) => {
     expect(validator.validate({ ...settings, ...override })).toEqual(errors)
   })

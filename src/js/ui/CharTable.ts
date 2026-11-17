@@ -4,6 +4,7 @@ import type { Saves } from '../services/attacks/types'
 import { DEFAULT_SAVES, SaveType } from '../services/attacks/types'
 import type { ICharacter } from '../services/types'
 import type { CharStats } from '../types'
+import { parseNumber } from '../utils/number'
 import type { DamageField } from './DamageField'
 
 const toCharStats = (char: ICharacter): CharStats => ({
@@ -63,16 +64,17 @@ export class CharTable {
     this.reindexNames()
   }
 
+  // fractional and empty values are kept as is (NaN for empty), so the validator can report them
   read(): ICharacter[] {
     return this.getGroups().map((group) => {
       const ni = group.querySelector('.name-input') as HTMLInputElement
-      const ac = parseInt((group.querySelector('.ac-input') as HTMLInputElement).value, 10)
-      const th = parseInt((group.querySelector('.tohit-input') as HTMLInputElement).value, 10)
-      const hc = parseInt((group.querySelector('.hd-count-input') as HTMLInputElement).value, 10)
-      const ht = parseInt((group.querySelector('.hd-type-select') as HTMLSelectElement).value, 10) as Dice
+      const ac = parseNumber((group.querySelector('.ac-input') as HTMLInputElement).value)
+      const th = parseNumber((group.querySelector('.tohit-input') as HTMLInputElement).value)
+      const hc = parseNumber((group.querySelector('.hd-count-input') as HTMLInputElement).value)
+      const ht = parseNumber((group.querySelector('.hd-type-select') as HTMLSelectElement).value) as Dice
       const dmg = (group.querySelector('.damage-input') as HTMLInputElement).value.trim()
       const saves = Object.fromEntries(
-        Object.values(SaveType).map((save) => [save, parseInt(getSaveInput(group, save).value, 10)]),
+        Object.values(SaveType).map((save) => [save, parseNumber(getSaveInput(group, save).value)]),
       ) as Saves
 
       return { armorClass: ac, damage: dmg, hitDice: [hc, ht], name: ni.value, saves, toHit: th }

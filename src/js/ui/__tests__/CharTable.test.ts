@@ -73,6 +73,24 @@ describe('CharTable', () => {
     expect(table.read()[0].saves).toEqual({ ...DEFAULT_SAVES, poison: 9 })
   })
 
+  it('keeps fractional and empty numbers for the validator', () => {
+    table.init([goblin])
+    input('.ac-input').value = '12.5'
+    input('.tohit-input').value = ''
+    input('.save-input', 1).value = '9.5'
+
+    const [char] = table.read()
+    expect(char.armorClass).toBe(12.5)
+    expect(char.toHit).toBeNaN()
+    expect(char.saves.poison).toBe(9.5)
+  })
+
+  it('reads an unsupported die type as NaN', () => {
+    table.init([{ ...goblin, hdType: 7 as Dice }])
+
+    expect(table.read()[0].hitDice[1]).toBeNaN()
+  })
+
   it('reads damage as typed', () => {
     table.init([{ ...goblin, damage: '  d8, d6[poison,damage_each_round(d4,3)] | 2d6 ' }])
     expect(table.read()[0].damage).toBe('d8, d6[poison,damage_each_round(d4,3)] | 2d6')

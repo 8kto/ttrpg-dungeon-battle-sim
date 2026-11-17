@@ -1,5 +1,6 @@
 import { Rounding, Strategy, Targeting } from '../services/types'
 import type { BattleSimulationConfig, SimulationSettings } from '../types'
+import { parseNumber } from '../utils/number'
 
 type GlobalConfig = Omit<BattleSimulationConfig, 'monsters' | 'players'>
 
@@ -24,10 +25,10 @@ export class SettingsForm {
   read(): SimulationSettings {
     return {
       battleCount: Math.max(1, parseInt(this.battleCount.value, 10) || 1),
-      biasMonsters: parseInt(this.biasMonstersInput.value, 10),
-      biasPlayers: parseInt(this.biasPlayersInput.value, 10),
+      biasMonsters: parseNumber(this.biasMonstersInput.value),
+      biasPlayers: parseNumber(this.biasPlayersInput.value),
       logsEnabled: this.logsCheckbox.checked,
-      maxAttacksPerTarget: parseInt(this.maxAttacksInput.value, 10),
+      maxAttacksPerTarget: parseNumber(this.maxAttacksInput.value),
       rounding: Rounding[this.roundingSelect.value as keyof typeof Rounding],
       strategy: Strategy[this.strategySelect.value as keyof typeof Strategy],
       targeting: Targeting[this.targetingSelect.value as keyof typeof Targeting],
