@@ -389,6 +389,8 @@ abbr:hover {
 /* stays in place while a long help text scrolls */
 .help-modal__header {
   @apply sticky top-0 -mx-4 -mt-4 px-4 pt-4 sm:-mx-6 sm:-mt-6 sm:px-6 sm:pt-6 mb-2 pb-2 flex justify-between items-start;
+  /* above the content with its own stacking context, like translucent disabled buttons */
+  z-index: 1;
   background: var(--block-bg);
 }
 
@@ -416,6 +418,149 @@ abbr:hover {
   td:first-child {
     @apply whitespace-nowrap;
   }
+}
+
+/* attack wizard: options are fieldsets, attacks are cards inside them */
+.damage-wizard-btn {
+  @apply leading-7;
+}
+
+.attack-wizard__notice {
+  @apply mb-2 text-sm;
+  color: var(--alt-color);
+}
+
+.attack-wizard__option {
+  @apply border rounded px-3 pb-3 mb-3;
+  border-color: var(--table-border);
+}
+.attack-wizard__legend {
+  @apply px-1 text-sm font-semibold;
+  color: var(--3rd-color);
+}
+
+.attack-wizard__attack {
+  @apply rounded p-2 mt-2 space-y-2;
+  background: var(--row-alt-bg);
+}
+/* attacks are the only divs of an option */
+.attack-wizard__attack:nth-of-type(even) {
+  background: rgb(227 222 237 / 60%);
+}
+.attack-wizard__attack-header {
+  @apply flex justify-between items-center text-xs uppercase tracking-wide;
+  color: var(--muted-color);
+}
+
+.attack-wizard__row {
+  @apply flex flex-wrap sm:flex-nowrap items-start gap-x-2 gap-y-1;
+}
+.attack-wizard__row-label {
+  @apply w-full sm:w-28 shrink-0 text-xs uppercase tracking-wide leading-7;
+  color: var(--muted-color);
+}
+.attack-wizard__row-body {
+  @apply flex flex-wrap items-start gap-2 flex-1 min-w-0;
+}
+.attack-wizard__label {
+  @apply flex-1 min-w-0;
+}
+.attack-wizard__save-mod {
+  @apply flex items-center gap-1 text-xs leading-7;
+}
+.attack-wizard__for {
+  @apply text-xs leading-7;
+  color: var(--muted-color);
+}
+
+.attack-wizard__modifiers {
+  @apply border-t pt-2 space-y-2;
+  border-color: var(--table-border);
+}
+.attack-wizard__subtitle {
+  @apply text-xs uppercase tracking-wide font-semibold;
+  color: var(--3rd-color);
+}
+.attack-wizard__hint {
+  @apply text-xs;
+  color: var(--muted-color);
+}
+.attack-wizard__add-modifiers {
+  @apply flex flex-wrap gap-x-3 gap-y-1;
+}
+
+.attack-wizard__add {
+  @apply mt-2 text-sm underline-offset-4;
+  color: var(--3rd-color);
+
+  &:hover:not([disabled]) {
+    @apply underline;
+    color: var(--3rd-color-focus);
+  }
+  &[disabled],
+  &[disabled]:hover {
+    @apply no-underline;
+    background: none;
+    color: var(--muted-color);
+    opacity: 0.6;
+  }
+}
+.attack-wizard__add-modifiers .attack-wizard__add {
+  @apply mt-0;
+}
+.attack-wizard__remove {
+  @apply ml-1 px-1 text-lg leading-none;
+  color: var(--alt-color);
+}
+
+.attack-wizard__result {
+  @apply mt-2;
+
+  code {
+    @apply block w-fit my-1 whitespace-normal break-all;
+  }
+}
+.attack-wizard__errors {
+  @apply mt-2;
+  color: var(--alt-color);
+
+  h3 {
+    color: var(--alt-color);
+  }
+}
+.attack-wizard__preview {
+  @apply cursor-default;
+}
+.attack-wizard__actions {
+  @apply flex justify-end gap-2 mt-4;
+}
+
+/* a formula input with dice buttons that add to it */
+.formula-field {
+  @apply flex flex-col gap-1 max-w-full;
+  width: max-content;
+}
+.formula-field__input {
+  @apply w-full;
+
+  &.damage-input--invalid {
+    @apply border-2;
+  }
+}
+.formula-field__dice {
+  @apply flex flex-wrap gap-1;
+}
+.formula-field__die {
+  @apply px-1.5 rounded border text-xs font-mono leading-5 bg-white;
+  border-color: var(--table-border);
+  color: var(--3rd-color-focus);
+
+  &:hover {
+    background: var(--table-head-bg);
+  }
+}
+.formula-field__clear {
+  color: var(--alt-color);
 }
 
 .char-table tbody.char .attacks-row td {

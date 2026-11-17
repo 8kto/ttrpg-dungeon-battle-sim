@@ -1,26 +1,21 @@
 import { DamageParser } from '../services/attacks/DamageParser'
 import type { IDamageParser } from '../services/attacks/IDamageParser'
-import type { Attack, Modifier } from '../services/attacks/types'
+import type { Attack, AttackOption, Modifier } from '../services/attacks/types'
 import { ModifierKind } from '../services/attacks/types'
 import { messages } from '../services/messages/MessageService'
 import { MaxStrategy } from '../services/strategies/MaxStrategy'
 import { DamageValidator } from '../services/validation/DamageValidator'
 import type { IDamageValidator } from '../services/validation/IDamageValidator'
+import { el, onClick } from '../utils/dom'
 import { capitalize } from '../utils/text'
+import type { IAttackWizard } from './IAttackWizard'
 
 type FieldElements = {
   input: HTMLInputElement
   error: HTMLElement
   preview: HTMLElement
   toggle: HTMLButtonElement
-}
-
-const el = (tag: string, className: string, text: string = ''): HTMLElement => {
-  const node = document.createElement(tag)
-  node.className = className
-  node.textContent = text
-
-  return node
+  wizardButton: HTMLButtonElement | null
 }
 
 const signed = (n: number): string => (n > 0 ? `+${n}` : String(n))
@@ -66,13 +61,28 @@ const renderChip = ({ damage, effect }: Attack): HTMLElement => {
 }
 
 // Damage of a character shown as chips of the parsed attacks; the input opens with the Damage label
-// or a click on the chips, closes with the same label (now "Done"), and stays open while the damage is invalid
+// or a click on the chips, closes with the same label (now "Done"), and stays open while the damage is invalid;
+// the wizard button edits the damage in the attack wizard
 export class DamageField {
   constructor(
+    private readonly wizard: IAttackWizard | null = null,
     private readonly damageParser: IDamageParser = new DamageParser(),
     // formula validity doesn't depend on the strategy
     private readonly damageValidator: IDamageValidator = new DamageValidator(new MaxStrategy(), damageParser),
   ) {}
+
+  // chips of every attack, options separated by "or"
+  static renderAttackOptions(container: HTMLElement, options: AttackOption[]): void {
+    container.replaceChildren()
+    options.forEach((attacks, i) => {
+      if (i > 0) {
+        container.appendChild(el('span', 'damage-preview__or', messages.t('ui.damageChip.or')))
+      }
+      const option = el('span', 'damage-preview__option')
+      attacks.forEach((attack) => option.appendChild(renderChip(attack)))
+      container.appendChild(option)
+    })
+  }
 
   // binds the field of a character group; call it again for cloned groups, as listeners are not cloned
   attach(group: HTMLElement): void {
@@ -81,7 +91,7 @@ export class DamageField {
       return
     }
 
-    const { input, preview, toggle } = elements
+    const { input, preview, toggle, wizardButton } = elements
     input.addEventListener('input', (): void => this.setEditing(elements, !input.hidden))
     input.addEventListener('keydown', (e): void => {
       if (e.key === 'Enter' || e.key === 'Escape') {
@@ -89,11 +99,18 @@ export class DamageField {
         this.setEditing(elements, false)
       }
     })
-    toggle.addEventListener('click', (e): void => {
-      e.preventDefault()
-      this.setEditing(elements, input.hidden)
-    })
+    onClick(toggle, () => this.setEditing(elements, input.hidden))
     preview.addEventListener('click', (): void => this.setEditing(elements, true))
+    // without the wizard the button would do nothing
+    if (wizardButton) {
+      wizardButton.hidden = !this.wizard
+      onClick(wizardButton, () =>
+        this.wizard?.open(input.value, (damage) => {
+          input.value = damage
+          this.setEditing(elements, false)
+        }),
+      )
+    }
 
     this.setEditing(elements, false)
   }
@@ -106,8 +123,9 @@ export class DamageField {
     if (!input || !error || !preview || !toggle) {
       return null
     }
+    const wizardButton = group.querySelector<HTMLButtonElement>('.damage-wizard-btn')
 
-    return { error, input, preview, toggle }
+    return { error, input, preview, toggle, wizardButton }
   }
 
   // invalid damage keeps the input open; chips are shown only while it's closed
@@ -134,19 +152,12 @@ export class DamageField {
     error.textContent = errors.join('; ')
     error.hidden = errors.length === 0
 
-    preview.replaceChildren()
     if (errors.length > 0) {
+      preview.replaceChildren()
+
       return false
     }
-
-    this.damageParser.parseDamage(damage).forEach((attacks, i) => {
-      if (i > 0) {
-        preview.appendChild(el('span', 'damage-preview__or', messages.t('ui.damageChip.or')))
-      }
-      const option = el('span', 'damage-preview__option')
-      attacks.forEach((attack) => option.appendChild(renderChip(attack)))
-      preview.appendChild(option)
-    })
+    DamageField.renderAttackOptions(preview, this.damageParser.parseDamage(damage))
 
     return true
   }

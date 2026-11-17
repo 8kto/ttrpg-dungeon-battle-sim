@@ -139,6 +139,7 @@
                         <div class="damage-error" hidden></div>
                         <div class="damage-preview" title="Click to edit" hidden></div>
                       </div>
+                      <button class="damage-wizard-btn row-action" type="button" title="Attack wizard">🧙‍♂️</button>
                     </div>
                   </td>
                 </tr>
@@ -296,6 +297,7 @@
                         <div class="damage-error" hidden></div>
                         <div class="damage-preview" title="Click to edit" hidden></div>
                       </div>
+                      <button class="damage-wizard-btn row-action" type="button" title="Attack wizard">🧙‍♂️</button>
                     </div>
                   </td>
                 </tr>
@@ -668,7 +670,11 @@
 
           <h3>Attacks and options</h3>
           <ul>
-            <li><code>d6</code>, <code>2d4+1</code>, <code>d6+d4</code>, <code>5</code> — damage formula</li>
+            <li>
+              <code>d6</code>, <code>2d4+1</code>, <code>d8-1</code>, <code>5</code> — damage formula: dice of one type
+              with an optional bonus or penalty, or a number. Different dice can't be mixed: <code>d6+d4</code> is
+              invalid
+            </li>
             <li><code>,</code> separates attacks made in one turn: <code>d6, d6, d8</code> attacks three times</li>
             <li>
               <code>|</code> separates alternative options, one option is used per turn:
@@ -726,6 +732,41 @@
             <li><code>d6[breath, save_for_half(2d6)]</code></li>
             <li><code>d4, d4 | d10[fire, damage_each_round(d4, 3)]</code></li>
           </ul>
+        </div>
+      </dialog>
+
+      <!-- Attack wizard: the editor is rendered by AttackWizard -->
+      <dialog
+        id="attack-wizard"
+        class="help-modal help-modal--wide attack-wizard"
+        aria-labelledby="attack-wizard-title"
+      >
+        <div class="help-modal__content">
+          <div class="help-modal__header">
+            <h2 id="attack-wizard-title">Attack wizard</h2>
+            <div class="flex items-center gap-2">
+              <button class="damage-help-btn" type="button" title="Damage syntax help" data-open-damage-help>?</button>
+              <button class="help-modal__close" type="button" title="Close" data-close-modal>×</button>
+            </div>
+          </div>
+          <p class="attack-wizard__notice" hidden>The current damage has errors, so the wizard starts over.</p>
+          <div class="attack-wizard__options"></div>
+
+          <div class="attack-wizard__result">
+            <h3>Result</h3>
+            <code class="attack-wizard__code"></code>
+            <div class="damage-preview attack-wizard__preview"></div>
+          </div>
+
+          <div class="attack-wizard__errors" hidden>
+            <h3>Errors</h3>
+            <ul class="attack-wizard__error-list"></ul>
+          </div>
+
+          <div class="attack-wizard__actions">
+            <button type="button" class="secondary-button mid-button" data-close-modal>Cancel</button>
+            <button type="button" class="primary-button mid-button attack-wizard__apply">Apply</button>
+          </div>
         </div>
       </dialog>
 

@@ -18,6 +18,7 @@ import { SettingsValidator } from './services/validation/SettingsValidator'
 import { SimulationRunner } from './simulation/SimulationRunner'
 import { SummaryFormatter } from './simulation/SummaryFormatter'
 import type { BattleSimulationConfig } from './types'
+import { AttackWizard } from './ui/AttackWizard'
 import { CharTable } from './ui/CharTable'
 import { DamageField } from './ui/DamageField'
 import { bindLogoSpin } from './ui/logo'
@@ -25,16 +26,8 @@ import { bindModal } from './ui/modal'
 import { SettingsForm } from './ui/SettingsForm'
 import { bindTabs } from './ui/tabs'
 import { addTraitAttacks } from './utils/addTraitAttacks'
+import { byId, onClick } from './utils/dom'
 import { applyFeatureFlagClasses } from './utils/featureFlags'
-
-const byId = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T
-
-const onClick = (id: string, handler: () => void): void => {
-  byId(id).addEventListener('click', (e): void => {
-    e.preventDefault()
-    handler()
-  })
-}
 
 document.addEventListener('DOMContentLoaded', (): void => {
   applyFeatureFlagClasses(window.location.search, document.body)
@@ -46,7 +39,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const configArea = byId<HTMLTextAreaElement>('config-area')
 
   const settings = new SettingsForm()
-  const damageField = new DamageField()
+  const damageField = new DamageField(new AttackWizard(byId('attack-wizard')))
   const playersTable = new CharTable(byId('players-table'), damageField)
   const monstersTable = new CharTable(byId('monsters-table'), damageField)
   const playersNameProvider = new NameProvider(PlayerNamesChunks)
@@ -62,17 +55,19 @@ document.addEventListener('DOMContentLoaded', (): void => {
   playersTable.init(PlayerTemplates)
   monstersTable.init(MonsterTemplates)
 
-  onClick('add-player', () => playersTable.addRow({ ...PlayerCharTemplate, prefix: playersNameProvider.getName() }))
-  onClick('add-henchman', () =>
+  onClick(byId('add-player'), () =>
+    playersTable.addRow({ ...PlayerCharTemplate, prefix: playersNameProvider.getName() }),
+  )
+  onClick(byId('add-henchman'), () =>
     playersTable.addRow({ ...HenchmanCharTemplate, prefix: playersNameProvider.getName('(H)') }),
   )
-  onClick('clear-players', () => playersTable.init(PlayerTemplates))
+  onClick(byId('clear-players'), () => playersTable.init(PlayerTemplates))
   const readMonsterTraits = (): MonsterTrait[] =>
     Array.from(document.querySelectorAll<HTMLInputElement>('.monster-trait:checked')).map(
       (cb) => cb.dataset.trait as MonsterTrait,
     )
 
-  onClick('add-monster', () => {
+  onClick(byId('add-monster'), () => {
     const traits = readMonsterTraits()
 
     monstersTable.addRow({
@@ -81,9 +76,9 @@ document.addEventListener('DOMContentLoaded', (): void => {
       prefix: monsterNameProvider.getName('(M)'),
     })
   })
-  onClick('clear-monsters', () => monstersTable.init(MonsterTemplates))
+  onClick(byId('clear-monsters'), () => monstersTable.init(MonsterTemplates))
 
-  onClick('clear-log', () => {
+  onClick(byId('clear-log'), () => {
     logger.clear()
     progressBar.value = 0
   })
@@ -95,10 +90,12 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
   bindModal(byId('damage-help'), document.querySelectorAll<HTMLElement>('.damage-help-btn, [data-open-damage-help]'))
   bindModal(byId('app-help'), document.querySelectorAll<HTMLElement>('[data-open-app-help]'))
+  // opened by the wizard buttons of every character, through DamageField
+  bindModal(byId('attack-wizard'), [])
   bindLogoSpin(document.querySelector<HTMLElement>('.logo-img')!)
 
   // Import/Export
-  onClick('export-config', () => {
+  onClick(byId('export-config'), () => {
     const cfg: BattleSimulationConfig = {
       ...settings.toConfig(),
       monsters: monstersTable.read(),
@@ -107,7 +104,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
     configArea.value = JSON.stringify(cfg, null, 2)
   })
 
-  onClick('import-config', () => {
+  onClick(byId('import-config'), () => {
     const result = configParser.parse(configArea.value)
     if (!result.ok) {
       alert(messages.t('config.importFailed', { errors: result.errors.join('\n') }))
@@ -156,7 +153,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
     stopSimBtn.setAttribute('disabled', 'disabled')
   }
 
-  onClick('run-sim', async (): Promise<void> => {
+  onClick(byId('run-sim'), async (): Promise<void> => {
     logger.clear()
 
     const errors = validateInput()
@@ -204,5 +201,5 @@ document.addEventListener('DOMContentLoaded', (): void => {
   })
 
   // stops the worker immediately; the run handler then reports stats of the finished battles
-  onClick('stop-sim', () => runner.stop())
+  onClick(byId('stop-sim'), () => runner.stop())
 })
