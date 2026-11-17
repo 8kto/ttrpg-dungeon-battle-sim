@@ -3,6 +3,7 @@ import { BattleSimulator } from '../services/BattleSimulator'
 import type { IBattleSimulator } from '../services/IBattleSimulator'
 import type { ILogger } from '../services/logger/ILogger'
 import { NullLogger } from '../services/logger/NullLogger'
+import { messages } from '../services/messages/MessageService'
 import type { ICharacter } from '../services/types'
 import type { ISimulationService, SimulationRequest } from './ISimulationService'
 import type { IStatsAccumulator } from './IStatsAccumulator'
@@ -37,13 +38,13 @@ export class SimulationService implements ISimulationService {
     for (let i = 0; i < settings.battleCount; i++) {
       if (i === this.maxLoggedBattles && logger.isVerbose()) {
         logger.lineBreak()
-        logger.log(`... details of further battles are not logged (limit: ${this.maxLoggedBattles} battles)`)
+        logger.log(messages.t('simulation.logLimit', { limit: this.maxLoggedBattles }))
       }
       // thousands of logged battles would only bloat the page
       const battleLogger = i < this.maxLoggedBattles ? logger : silentLogger
 
       battleLogger.delimiter()
-      battleLogger.log(`[Battle ${i + 1}]`)
+      battleLogger.log(messages.t('battle.header', { number: i + 1 }))
       battleLogger.delimiter()
 
       const sim = this.createBattle(players, monsters, battleLogger, settings)
@@ -53,7 +54,7 @@ export class SimulationService implements ISimulationService {
       const res = sim.simulate()
       accumulator.add(res)
 
-      battleLogger.log(`>>> total rounds: ${res.rounds}`)
+      battleLogger.log(messages.t('battle.totalRounds', { rounds: res.rounds }))
       onBattle(accumulator.stats)
     }
 

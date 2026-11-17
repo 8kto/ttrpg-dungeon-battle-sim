@@ -5,6 +5,7 @@ import { Side } from '../types'
 import type { EffectCounters } from './attacks/types'
 import type { IBattleSimulator } from './IBattleSimulator'
 import type { ILogger } from './logger/ILogger'
+import { messages } from './messages/MessageService'
 import { Participant } from './Participant'
 import { getStrategy } from './strategies/getStrategy'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
@@ -85,7 +86,8 @@ export class BattleSimulator implements IBattleSimulator {
     }
 
     this.participants.forEach((p) => {
-      this.logger.log(`${p.side === Side.Monsters ? '🧌' : '🥷'}${p.char.name} HP: ${p.currentHp}`)
+      const key = p.side === Side.Monsters ? 'battle.hp.monster' : 'battle.hp.player'
+      this.logger.log(messages.t(key, { hp: p.currentHp, name: p.char.name }))
     })
 
     return this
@@ -107,18 +109,20 @@ export class BattleSimulator implements IBattleSimulator {
   }
 
   private initiativeMessage(sides: Participant[][]): string {
-    return sides[0] === this.sidePlayers ? 'players won initiative' : 'monsters won initiative'
+    return messages.t(sides[0] === this.sidePlayers ? 'battle.initiative.players' : 'battle.initiative.monsters')
   }
 
   simulate(): BattleResult {
     if (this.initiative === Initiative.Fixed && this.logger.isVerbose()) {
-      this.logger.log(`>>> ${this.initiativeMessage(this.getSortedByInitiative())} for the battle`)
+      this.logger.log(
+        messages.t('battle.initiative.fixed', { initiative: this.initiativeMessage(this.getSortedByInitiative()) }),
+      )
     }
 
     // Round: goes while there are two sides
     while (this.hasSurvivors(Side.Players) && this.hasSurvivors(Side.Monsters)) {
       if (this.roundsCount >= MAX_ROUNDS) {
-        this.logger.log(`⏸️ Round limit (${MAX_ROUNDS}) reached — draw`)
+        this.logger.log(messages.t('battle.roundLimit', { max: MAX_ROUNDS }))
 
         return {
           effects: this.effectCounters,
@@ -136,8 +140,14 @@ export class BattleSimulator implements IBattleSimulator {
 
       if (this.logger.isVerbose()) {
         // Fixed initiative is logged once before the battle
-        const initiativeSfx = this.initiative === Initiative.Random ? `, ${this.initiativeMessage(sides)}` : ''
-        this.logger.log(`>>> round ${this.roundsCount}${initiativeSfx}`)
+        this.logger.log(
+          this.initiative === Initiative.Random
+            ? messages.t('battle.roundWithInitiative', {
+                initiative: this.initiativeMessage(sides),
+                round: this.roundsCount,
+              })
+            : messages.t('battle.round', { round: this.roundsCount }),
+        )
       }
 
       // Each combatant does its attacks

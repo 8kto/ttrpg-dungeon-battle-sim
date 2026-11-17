@@ -8,6 +8,7 @@ import type { IDamageParser } from './attacks/IDamageParser'
 import type { Attack, AttackEffect, AttackOption, EffectCounters, Modifier } from './attacks/types'
 import { ModifierKind } from './attacks/types'
 import type { ILogger } from './logger/ILogger'
+import { messages } from './messages/MessageService'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
 import type { ITargetSelector } from './TargetSelector'
 import type { ICharacter } from './types'
@@ -16,7 +17,9 @@ import type { ICharacter } from './types'
 type LastingModifier = Extract<Modifier, { kind: ActiveEffect['kind'] }>
 
 const formatDuration = (remaining: number | null): string =>
-  remaining === null ? 'until the end of battle' : `for ${remaining} turns`
+  remaining === null
+    ? messages.t('battle.effects.untilEnd')
+    : messages.t('battle.effects.forTurns', { turns: remaining })
 
 export class Participant {
   public currentHp: number
@@ -57,12 +60,14 @@ export class Participant {
       const dmg = this.getEffectValue(effect.damage as string)
       this.currentHp -= dmg
       if (this.logger.isVerbose()) {
-        this.logger.log(`🔥 ${this.char.name} takes ${dmg} damage (${effect.label} ${effect.kind})`)
+        this.logger.log(
+          messages.t('battle.effects.damage', { dmg, name: this.char.name, source: `${effect.label} ${effect.kind}` }),
+        )
       }
     }
     if (this.currentHp <= 0) {
       if (this.logger.isVerbose()) {
-        this.logger.log(`💀️ ${this.char.name} is dead`)
+        this.logger.log(messages.t('battle.death', { name: this.char.name }))
       }
 
       return false
@@ -70,7 +75,7 @@ export class Participant {
 
     const paralyzed = this.effects.isParalyzed
     if (paralyzed && this.logger.isVerbose()) {
-      this.logger.log(`😵‍ ${this.char.name} is paralyzed, skips turn`)
+      this.logger.log(messages.t('battle.effects.paralyzed', { name: this.char.name }))
     }
     this.effects.tick()
 
@@ -90,7 +95,7 @@ export class Participant {
   attack(enemies: Participant[], targetSelector: ITargetSelector): void {
     if (this.shouldSkip()) {
       if (this.logger.isVerbose()) {
-        this.logger.log(`🫢 ${this.char.name} skips turn`)
+        this.logger.log(messages.t('battle.action.skip', { name: this.char.name }))
       }
 
       return
@@ -98,7 +103,9 @@ export class Participant {
 
     const option = this.options.length > 1 ? this.strategy.pickOption(this.options) : this.options[0]
     if (this.options.length > 1 && this.logger.isVerbose()) {
-      this.logger.log(`🎲 ${this.char.name} uses: ${option.map((a) => a.source).join(', ')}`)
+      this.logger.log(
+        messages.t('battle.action.uses', { name: this.char.name, sources: option.map((a) => a.source).join(', ') }),
+      )
     }
 
     for (const attack of option) {
@@ -129,10 +136,17 @@ export class Participant {
 
       // log messages are built only when they will be shown: this is the hottest path
       if (this.logger.isVerbose()) {
-        this.logger.log(`🗡️ ${this.char.name} attacks ${target.char.name}${this.getWeaponInfo(attack)}, damage: ${dmg}`)
+        this.logger.log(
+          messages.t('battle.action.hit', {
+            dmg,
+            name: this.char.name,
+            target: target.char.name,
+            weapon: this.getWeaponInfo(attack),
+          }),
+        )
 
         if (target.currentHp <= 0) {
-          this.logger.log(`💀️ ${target.char.name} is dead`)
+          this.logger.log(messages.t('battle.death', { name: target.char.name }))
         }
       }
 
@@ -140,7 +154,13 @@ export class Participant {
         this.applyEffect(target, attack.effect)
       }
     } else if (this.logger.isVerbose()) {
-      this.logger.log(`🛡️ ${this.char.name} misses ${target.char.name}${this.getWeaponInfo(attack)}`)
+      this.logger.log(
+        messages.t('battle.action.miss', {
+          name: this.char.name,
+          target: target.char.name,
+          weapon: this.getWeaponInfo(attack),
+        }),
+      )
     }
   }
 
@@ -173,7 +193,7 @@ export class Participant {
           if (!saved) {
             target.currentHp = Math.min(target.currentHp, 0)
             if (this.logger.isVerbose()) {
-              this.logger.log(`💀 ${target.char.name} dies (${modifier.kind})`)
+              this.logger.log(messages.t('battle.deathByEffect', { kind: modifier.kind, name: target.char.name }))
             }
           }
           break
@@ -201,7 +221,12 @@ export class Participant {
         // paralysis is immediate
         const added = target.effects.add({ damage: null, key, kind: modifier.kind, label, pending: false, remaining })
         if (added && this.logger.isVerbose()) {
-          this.logger.log(`🧊 ${target.char.name} paralyzed ${formatDuration(remaining)}`)
+          this.logger.log(
+            messages.t('battle.effects.paralyzedApplied', {
+              duration: formatDuration(remaining),
+              name: target.char.name,
+            }),
+          )
         }
         break
       }
@@ -216,7 +241,14 @@ export class Participant {
           remaining,
         })
         if (added && this.logger.isVerbose()) {
-          this.logger.log(`🔥 ${target.char.name} affected by ${label} ${modifier.kind} ${formatDuration(remaining)}`)
+          this.logger.log(
+            messages.t('battle.effects.applied', {
+              duration: formatDuration(remaining),
+              kind: modifier.kind,
+              label,
+              name: target.char.name,
+            }),
+          )
         }
         break
       }
@@ -234,7 +266,7 @@ export class Participant {
     const saveText = saveMod === 0 ? save : `${save}(${saveMod > 0 ? '+' : ''}${saveMod})`
     if (target.isParalyzed) {
       if (this.logger.isVerbose()) {
-        this.logger.log(`🧪 ${target.char.name} is paralyzed, fails save vs ${saveText}`)
+        this.logger.log(messages.t('battle.saves.autoFail', { name: target.char.name, save: saveText }))
       }
 
       return false
@@ -246,8 +278,8 @@ export class Participant {
     const saved = total >= value
     if (this.logger.isVerbose()) {
       const calc = saveMod === 0 ? String(rolled) : `${rolled}${saveMod > 0 ? '+' : ''}${saveMod}=${total}`
-      const outcome = saved ? 'saves vs' : 'fails save vs'
-      this.logger.log(`🧪 ${target.char.name} ${outcome} ${saveText} (${calc} ${saved ? '≥' : '<'} ${value})`)
+      const params = { name: target.char.name, roll: calc, save: saveText, value }
+      this.logger.log(messages.t(saved ? 'battle.saves.success' : 'battle.saves.failure', params))
     }
 
     return saved
@@ -256,9 +288,9 @@ export class Participant {
   private dealEffectDamage(target: Participant, dmg: number, source: string): void {
     target.currentHp -= dmg
     if (this.logger.isVerbose()) {
-      this.logger.log(`🔥 ${target.char.name} takes ${dmg} damage (${source})`)
+      this.logger.log(messages.t('battle.effects.damage', { dmg, name: target.char.name, source }))
       if (target.currentHp <= 0) {
-        this.logger.log(`💀️ ${target.char.name} is dead`)
+        this.logger.log(messages.t('battle.death', { name: target.char.name }))
       }
     }
   }
@@ -270,7 +302,7 @@ export class Participant {
 
   // " with knife (d6)" for tagged attacks, nothing for plain ones
   private getWeaponInfo({ damage, effect }: Attack): string {
-    return effect ? ` with ${effect.label} (${damage})` : ''
+    return effect ? messages.t('battle.action.weapon', { damage, label: effect.label }) : ''
   }
 
   rollToHit(): number {
