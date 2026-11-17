@@ -12,6 +12,7 @@ import { Logger } from './services/logger/Logger'
 import { NameProvider } from './services/NameProvider'
 import { getStrategy } from './services/strategies/getStrategy'
 import { getCharacterValidator } from './services/validation/CharacterValidator'
+import { SettingsValidator } from './services/validation/SettingsValidator'
 import { SimulationRunner } from './simulation/SimulationRunner'
 import { SummaryFormatter } from './simulation/SummaryFormatter'
 import type { BattleSimulationConfig } from './types'
@@ -51,6 +52,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const logger = new Logger('result-log')
   const runner = new SimulationRunner()
   const summaryFormatter = new SummaryFormatter()
+  const settingsValidator = new SettingsValidator()
 
   // initial setup
   playersTable.init(PlayerTemplates)
@@ -131,11 +133,11 @@ document.addEventListener('DOMContentLoaded', (): void => {
   }
 
   const validateInput = (): string[] => {
-    const { rounding, strategy } = settings.read()
-    const validator = getCharacterValidator(getStrategy(strategy, rounding))
+    const current = settings.read()
+    const validator = getCharacterValidator(getStrategy(current.strategy, current.rounding))
 
     return [
-      ...settings.validate(),
+      ...settingsValidator.validate(current),
       ...validator.validate(playersTable.read(), 'Players'),
       ...validator.validate(monstersTable.read(), 'Monsters'),
     ]

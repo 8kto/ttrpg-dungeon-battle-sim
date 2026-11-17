@@ -15,6 +15,14 @@ export const DEFAULT_LIMITS: CharacterLimits = Object.freeze({
   toHit: { max: 10, min: -5 },
 })
 
+export type SettingsLimits = Readonly<{
+  bias: Range
+}>
+
+export const DEFAULT_SETTINGS_LIMITS: SettingsLimits = Object.freeze({
+  bias: { max: 99, min: 0 },
+})
+
 export const isInRange = (value: number, { max, min }: Range): boolean =>
   Number.isInteger(value) && value >= min && value <= max
 

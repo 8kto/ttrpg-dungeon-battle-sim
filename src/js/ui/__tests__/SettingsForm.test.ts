@@ -60,16 +60,6 @@ describe('SettingsForm', () => {
     expect(form.strategyLabel).toBe('Average (rounding Up), targeting Random')
   })
 
-  it.each<[string, string[]]>([
-    ['0', []],
-    ['3', []],
-    ['-1', ['Max Attacks per Target must be 0 (unlimited) or more']],
-    ['', ['Max Attacks per Target must be 0 (unlimited) or more']],
-  ])('validates max attacks "%s"', (value, errors) => {
-    el<HTMLInputElement>('max-attacks').value = value
-    expect(form.validate()).toEqual(errors)
-  })
-
   it('round-trips config, including zero values', () => {
     form.applyConfig({
       battleCount: 50,

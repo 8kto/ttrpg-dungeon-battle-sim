@@ -34,14 +34,6 @@ export class SettingsForm {
     }
   }
 
-  validate(): string[] {
-    const { maxAttacksPerTarget } = this.read()
-
-    return Number.isInteger(maxAttacksPerTarget) && maxAttacksPerTarget >= 0
-      ? []
-      : ['Max Attacks per Target must be 0 (unlimited) or more']
-  }
-
   // e.g. "Average (rounding Up), targeting Focus"
   get strategyLabel(): string {
     const roundingInfo = this.roundingSelect.disabled ? '' : ` (rounding ${this.roundingSelect.value})`
