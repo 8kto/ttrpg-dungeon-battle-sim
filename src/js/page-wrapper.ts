@@ -17,6 +17,7 @@ import { formatSummary } from './simulation/stats'
 import type { BattleSimulationConfig } from './types'
 import { CharTable } from './ui/CharTable'
 import { DamageField } from './ui/DamageField'
+import { bindLogoSpin } from './ui/logo'
 import { bindModal } from './ui/modal'
 import { SettingsForm } from './ui/SettingsForm'
 import { bindTabs } from './ui/tabs'
@@ -87,6 +88,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
   bindModal(byId('damage-help'), document.querySelectorAll<HTMLElement>('.damage-help-btn, [data-open-damage-help]'))
   bindModal(byId('app-help'), [byId('app-help-btn')])
+  bindLogoSpin(document.querySelector<HTMLElement>('.logo-img')!)
 
   // Import/Export
   onClick('export-config', () => {

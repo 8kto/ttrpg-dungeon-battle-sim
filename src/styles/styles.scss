@@ -238,12 +238,28 @@ abbr:hover {
   }
 }
 
+/* Separate name so the browser restarts it on every spin */
+@keyframes rotate360-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .logo-img {
   display: inline-block;
   transform-origin: center;
 
-  &:hover {
-    animation: rotate360 1s ease-in-out forwards;
+  animation: rotate360 1s ease-in-out 1.5s forwards;
+
+  /* Set from JS on hover so the spin always completes; the load animation
+     stays in the list so it doesn't replay when the class is removed */
+  &.spinning {
+    animation:
+      rotate360 1s ease-in-out 1.5s forwards,
+      rotate360-spin 1s ease-in-out;
   }
 }
 
