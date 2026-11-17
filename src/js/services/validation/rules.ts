@@ -1,11 +1,10 @@
+import { capitalize } from '../../utils/text'
 import { SaveType } from '../attacks/types'
 import type { ICharacter } from '../types'
 import type { ICharacterRule } from './ICharacterValidator'
 import type { IDamageValidator } from './IDamageValidator'
 import type { Range } from './limits'
 import { formatRange, isInRange } from './limits'
-
-const capitalize = (text: string): string => `${text[0].toUpperCase()}${text.slice(1)}`
 
 // A numeric characteristic must be an integer within the range
 export class RangeRule implements ICharacterRule {

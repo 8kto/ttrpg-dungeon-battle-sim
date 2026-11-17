@@ -5,6 +5,7 @@ import { ModifierKind } from '../services/attacks/types'
 import { MaxStrategy } from '../services/strategies/MaxStrategy'
 import { DamageValidator } from '../services/validation/DamageValidator'
 import type { IDamageValidator } from '../services/validation/IDamageValidator'
+import { capitalize } from '../utils/text'
 
 type FieldElements = {
   input: HTMLInputElement
@@ -20,8 +21,6 @@ const el = (tag: string, className: string, text: string = ''): HTMLElement => {
 
   return node
 }
-
-const capitalize = (text: string): string => `${text[0].toUpperCase()}${text.slice(1)}`
 
 const signed = (n: number): string => (n > 0 ? `+${n}` : String(n))
 
