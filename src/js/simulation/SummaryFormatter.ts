@@ -1,3 +1,4 @@
+import { messages } from '../services/messages/MessageService'
 import type { ISummaryFormatter } from './ISummaryFormatter'
 import type { BattleStats, SummaryContext } from './stats'
 
@@ -6,28 +7,36 @@ export class SummaryFormatter implements ISummaryFormatter {
   format(stats: BattleStats, context: SummaryContext): string[] {
     const { completed, draws, roundsTotal, survivingPlayers, winsMonsters, winsPlayers } = stats
     if (completed === 0) {
-      return ['No battles completed']
+      return [messages.t('stats.noneCompleted')]
     }
 
     const lines = [
-      `Players win: ${this.percent(winsPlayers, completed)}%, Monsters win: ${this.percent(winsMonsters, completed)}%`,
+      messages.t('stats.winRate', {
+        monsters: this.percent(winsMonsters, completed),
+        players: this.percent(winsPlayers, completed),
+      }),
     ]
     if (draws > 0) {
-      lines.push(`>> Draws (round limit reached): ${this.percent(draws, completed)}%`)
+      lines.push(messages.t('stats.draws', { percent: this.percent(draws, completed) }))
     }
     if (winsPlayers > 0) {
-      lines.push(`>> Avg Players survivors: ${this.percent(survivingPlayers, winsPlayers * context.playersCount)}%`)
+      const percent = this.percent(survivingPlayers, winsPlayers * context.playersCount)
+      lines.push(messages.t('stats.survivors', { percent }))
     }
     Object.keys(stats.effects)
       .sort()
       .forEach((label) => {
         const { applied, hasSave, saved } = stats.effects[label]
-        lines.push(`>> ${label}: ${applied} applied${hasSave ? `, ${saved} saved` : ''}`)
+        lines.push(
+          hasSave
+            ? messages.t('stats.effectWithSave', { applied, label, saved })
+            : messages.t('stats.effect', { applied, label }),
+        )
       })
     lines.push(
-      `>> Strategy ${context.strategyLabel}, ${completed} of ${context.runs} battles`,
-      `>> Avg Rounds: ${parseFloat((roundsTotal / completed).toFixed(1))}`,
-      `>> Execution time: ${(context.elapsedMs / 1000).toFixed(1)} s`,
+      messages.t('stats.strategy', { completed, runs: context.runs, strategy: context.strategyLabel }),
+      messages.t('stats.avgRounds', { rounds: parseFloat((roundsTotal / completed).toFixed(1)) }),
+      messages.t('stats.elapsed', { seconds: (context.elapsedMs / 1000).toFixed(1) }),
     )
 
     return lines
