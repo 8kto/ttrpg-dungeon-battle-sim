@@ -1,16 +1,16 @@
+import { DamageFormula } from '../services/attacks/DamageFormula'
 import { DamageParser } from '../services/attacks/DamageParser'
 import { DamageSerializer } from '../services/attacks/DamageSerializer'
+import type { IDamageFormula } from '../services/attacks/IDamageFormula'
 import type { IDamageParser } from '../services/attacks/IDamageParser'
 import type { IDamageSerializer, SerializableAttack } from '../services/attacks/IDamageSerializer'
 import type { Attack, Modifier } from '../services/attacks/types'
 import { ModifierKind, SaveType } from '../services/attacks/types'
 import { messages } from '../services/messages/MessageService'
-import type { ICombatStrategy } from '../services/strategies/ICombatStrategy'
 import { MaxStrategy } from '../services/strategies/MaxStrategy'
 import { DamageValidator } from '../services/validation/DamageValidator'
 import type { IDamageValidator } from '../services/validation/IDamageValidator'
 import { button, el, onClick, query } from '../utils/dom'
-import { addConstant, addDie } from '../utils/formula'
 import { capitalize } from '../utils/text'
 import { DamageField } from './DamageField'
 import type { DraftAttack, IAttackWizard } from './IAttackWizard'
@@ -91,9 +91,12 @@ export class AttackWizard implements IAttackWizard {
     private readonly dialog: HTMLDialogElement,
     private readonly damageParser: IDamageParser = new DamageParser(),
     // formula validity doesn't depend on the strategy
-    private readonly strategy: ICombatStrategy = new MaxStrategy(damageParser),
-    private readonly damageValidator: IDamageValidator = new DamageValidator(strategy, damageParser),
+    private readonly damageValidator: IDamageValidator = new DamageValidator(
+      new MaxStrategy(damageParser),
+      damageParser,
+    ),
     private readonly damageSerializer: IDamageSerializer = new DamageSerializer(),
+    private readonly damageFormula: IDamageFormula = new DamageFormula(),
   ) {
     this.options = query(dialog, '.attack-wizard__options')
     this.notice = query(dialog, '.attack-wizard__notice')
@@ -378,10 +381,12 @@ export class AttackWizard implements IAttackWizard {
 
     const dice = el('div', 'formula-field__dice')
     AttackWizard.DICE.forEach((sides) =>
-      dice.appendChild(button('formula-field__die', `d${sides}`, () => set(addDie(input.value, sides)))),
+      dice.appendChild(
+        button('formula-field__die', `d${sides}`, () => set(this.damageFormula.addDie(input.value, sides))),
+      ),
     )
-    dice.appendChild(button('formula-field__die', '+1', () => set(addConstant(input.value, 1))))
-    dice.appendChild(button('formula-field__die', '−1', () => set(addConstant(input.value, -1))))
+    dice.appendChild(button('formula-field__die', '+1', () => set(this.damageFormula.addConstant(input.value, 1))))
+    dice.appendChild(button('formula-field__die', '−1', () => set(this.damageFormula.addConstant(input.value, -1))))
     const clear = button('formula-field__die formula-field__clear', '⌫', () => set(''))
     clear.title = messages.t('ui.attackWizard.clearFormula')
     dice.appendChild(clear)
@@ -393,7 +398,7 @@ export class AttackWizard implements IAttackWizard {
 
   private isValidFormula(formula: string): boolean {
     try {
-      this.strategy.calculateDamage(formula.trim())
+      this.damageFormula.parse(formula)
 
       return true
     } catch {
