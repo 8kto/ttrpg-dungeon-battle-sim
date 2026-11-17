@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
   ])
 
   bindModal(byId('damage-help'), document.querySelectorAll<HTMLElement>('.damage-help-btn, [data-open-damage-help]'))
-  bindModal(byId('app-help'), [byId('app-help-btn')])
+  bindModal(byId('app-help'), document.querySelectorAll<HTMLElement>('[data-open-app-help]'))
   bindLogoSpin(document.querySelector<HTMLElement>('.logo-img')!)
 
   // Import/Export
