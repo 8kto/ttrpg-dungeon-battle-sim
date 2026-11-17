@@ -106,7 +106,15 @@ export class BattleSimulator implements IBattleSimulator {
     return this.participants.some((p) => p.side === side && p.currentHp > 0)
   }
 
+  private initiativeMessage(sides: Participant[][]): string {
+    return sides[0] === this.sidePlayers ? 'players won initiative' : 'monsters won initiative'
+  }
+
   simulate(): BattleResult {
+    if (this.initiative === Initiative.Fixed && this.logger.isVerbose()) {
+      this.logger.log(`>>> ${this.initiativeMessage(this.getSortedByInitiative())} for the battle`)
+    }
+
     // Round: goes while there are two sides
     while (this.hasSurvivors(Side.Players) && this.hasSurvivors(Side.Monsters)) {
       if (this.roundsCount >= MAX_ROUNDS) {
@@ -127,8 +135,9 @@ export class BattleSimulator implements IBattleSimulator {
       const combatants = shuffleArray(sides[0]).concat(shuffleArray(sides[1]))
 
       if (this.logger.isVerbose()) {
-        const initiativeSfx = combatants[0].side === Side.Players ? 'players won initiative' : 'monsters won initiative'
-        this.logger.log(`>>> round ${this.roundsCount}, ${initiativeSfx}`)
+        // Fixed initiative is logged once before the battle
+        const initiativeSfx = this.initiative === Initiative.Random ? `, ${this.initiativeMessage(sides)}` : ''
+        this.logger.log(`>>> round ${this.roundsCount}${initiativeSfx}`)
       }
 
       // Each combatant does its attacks

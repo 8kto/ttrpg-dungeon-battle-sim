@@ -319,6 +319,53 @@ describe('BattleSimulator', () => {
     })
   })
 
+  describe('initiative log', () => {
+    const settings = {
+      biasMonsters: 0,
+      biasPlayers: 0,
+      maxAttacksPerTarget: 0,
+      rounding: Rounding.Up,
+      strategy: Strategy.Random,
+      targeting: Targeting.Random,
+    }
+    const logged = (): string[] => (mockLogger.log as jest.Mock).mock.calls.map(([msg]) => msg)
+    const runRounds = (simulator: BattleSimulator, rounds: number): void => {
+      const spy = jest.spyOn(simulator, 'hasSurvivors')
+      for (let i = 0; i < rounds; i++) {
+        spy.mockReturnValueOnce(true).mockReturnValueOnce(true)
+      }
+      spy.mockReturnValue(false)
+      simulator.simulate()
+    }
+
+    it('logs the initiative winner every round when Random', () => {
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        ...settings,
+        initiative: Initiative.Random,
+      })
+      runRounds(simulator, 2)
+
+      expect(logged()).toEqual([
+        expect.stringMatching(/^>>> round 1, (players|monsters) won initiative$/),
+        expect.stringMatching(/^>>> round 2, (players|monsters) won initiative$/),
+      ])
+    })
+
+    it('logs the initiative winner once before the battle when Fixed', () => {
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        ...settings,
+        initiative: Initiative.Fixed,
+      })
+      runRounds(simulator, 2)
+
+      expect(logged()).toEqual([
+        expect.stringMatching(/^>>> (players|monsters) won initiative for the battle$/),
+        '>>> round 1',
+        '>>> round 2',
+      ])
+    })
+  })
+
   describe('renderDetails', () => {
     it('logs participant statuses', () => {
       mockStrategy.calculateHp.mockReturnValueOnce(3).mockReturnValueOnce(4)

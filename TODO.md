@@ -4,4 +4,3 @@
 - Все монстры из 0e
 - use Dice lib (ttrpg-lib-dice) where possible
 - message storage, to keep all the message templates in one place
-- random vs fixed initiative + upd help docs
