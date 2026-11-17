@@ -494,24 +494,15 @@
           </div>
 
           <p>
-            Set up both sides, choose the simulation settings and press <b>Run</b>. The simulator plays the battle many
-            times and shows how often each side wins.
+            Set up both sides, choose the settings and press <b>Run</b>. The simulator plays the battle many times and
+            shows how often each side wins.
           </p>
 
           <h3>A battle</h3>
           <ul>
-            <li>
-              Each round both sides roll initiative: the winning side acts first, its members act in random order, then
-              the other side does the same
-            </li>
-            <li>
-              On its turn a combatant makes all attacks of one damage option. An attack hits when
-              <code>d20 + To Hit ≥ AC</code> of the target (ascending AC)
-            </li>
-            <li>A combatant at 0 HP or less is dead and takes no further part in the battle</li>
-            <li>
-              The battle ends when one side is wiped out; after 1000 rounds it is a draw (e.g. nobody can hit anybody)
-            </li>
+            <li>Each round a random side acts first, then the other</li>
+            <li>An attack hits when <code>d20 + To Hit ≥ AC</code> of the target</li>
+            <li>The battle ends when one side is wiped out, or in a draw if it never ends</li>
           </ul>
 
           <h3>Characters</h3>
@@ -532,41 +523,27 @@
               <tr>
                 <td>Damage</td>
                 <td>
-                  Attacks, alternative options and their effects (poison, paralysis, fire...); click the chips to edit.
-                  See <button type="button" class="help-link" data-open-damage-help>damage syntax</button>
+                  Attacks and their effects; click to edit. See
+                  <button type="button" class="help-link" data-open-damage-help>damage syntax</button>
                 </td>
               </tr>
               <tr>
                 <td>Saves</td>
-                <td>
-                  Saving throws vs paralysis, poison, breath, device and magic. A save succeeds when
-                  <code>d20 + modifier ≥ save value</code>; the modifier comes from the attack, e.g.
-                  <code>poison(-2)</code>
-                </td>
+                <td>Saving throws against special attacks: the save succeeds on <code>d20 ≥ save value</code></td>
               </tr>
             </tbody>
           </table>
           <ul>
-            <li>
-              <b>Add Player</b>, <b>Add Henchman</b> and <b>Add Monster</b> add a character from a template;
-              <b>⎘</b> duplicates a row, <b>×</b> removes it, <b>Clear</b> restores the default party or monsters
-            </li>
-            <li>
-              <b>Poisonous</b>, <b>Paralysis</b> and <b>Fiery</b> give an extra special attack to the monsters added
-              afterwards; existing monsters are not changed
-            </li>
-            <li>
-              Allowed values: AC and saves 6–20, To Hit −5…+10, HD count 1–50. Invalid values are listed in the log and
-              the run does not start
-            </li>
+            <li><b>⎘</b> duplicates a row, <b>×</b> removes it, <b>Clear</b> restores the defaults</li>
+            <li><b>Poisonous</b>, <b>Paralysis</b> and <b>Fiery</b> give an extra attack to newly added monsters</li>
           </ul>
 
-          <h3>Simulation settings</h3>
+          <h3>Settings</h3>
           <table class="help-modal__table">
             <tbody>
               <tr>
                 <td>Battles</td>
-                <td>How many battles to play; more battles give more stable percentages</td>
+                <td>More battles give more stable results</td>
               </tr>
               <tr>
                 <td>Strategy</td>
@@ -578,33 +555,28 @@
               </tr>
               <tr>
                 <td>Rounding</td>
-                <td>How the Average strategy rounds fractions, e.g. d8 = 4.5 becomes 5 (Up) or 4 (Down)</td>
+                <td>Whether Average rounds fractions up or down</td>
               </tr>
               <tr>
                 <td>Targeting</td>
                 <td>
                   <b>Random</b>: every attack picks a random enemy. <b>Focus</b>: an attacker sticks to one enemy until
-                  one of them dies; if that enemy is out of attack slots this round (see below), the attack goes to
-                  someone else, but the focus stays
+                  it dies
                 </td>
               </tr>
               <tr>
-                <td>Player / Monster Bias</td>
+                <td>Bias</td>
                 <td>
-                  Chance (%, 0–99) that a combatant of the side wastes its turn: hesitation, a bad position, morale. Use
-                  it to tilt the balance without changing the stats
+                  Chance (%) that a combatant of the side wastes its turn: tilts the balance without changing stats
                 </td>
               </tr>
               <tr>
                 <td>Max Attacks per Target</td>
-                <td>
-                  How many attacks a single combatant can receive per round, as when only a few enemies can reach it in
-                  a corridor; 0 means unlimited
-                </td>
+                <td>How many attacks one combatant can receive per round, as in a narrow corridor; 0 = unlimited</td>
               </tr>
               <tr>
                 <td>Print logs</td>
-                <td>Log every roll of the first 500 battles; turn it off to run thousands of battles faster</td>
+                <td>Show every roll; turn off for faster large runs</td>
               </tr>
             </tbody>
           </table>
@@ -612,23 +584,12 @@
           <h3>Results</h3>
           <ul>
             <li><b>Players win / Monsters win</b>: share of battles won by each side</li>
-            <li><b>Draws</b>: battles stopped by the round limit</li>
-            <li><b>Avg Players survivors</b>: share of the players still alive at the end of the battles they won</li>
-            <li>
-              Effect lines: how many times each special effect was applied and how many times it was saved against
-            </li>
-            <li><b>Strategy</b>: the strategy used and how many battles were completed</li>
-            <li><b>Avg Rounds</b>: battle length</li>
-            <li><b>Execution time</b>: how long the run took</li>
-            <li><b>Stop</b> interrupts the run; the summary covers the battles finished so far</li>
-            <li><b>Clear</b> empties the log</li>
+            <li><b>Avg Players survivors</b>: share of players alive after a won battle</li>
+            <li>Effect lines: how often each special effect hit or was saved against</li>
           </ul>
 
           <h3>Config</h3>
-          <p>
-            The <b>Config</b> tab exports both sides and the settings as JSON and imports them back: keep your setups in
-            a file or share them.
-          </p>
+          <p>Export both sides and the settings as JSON to save or share a setup, and import it back.</p>
         </div>
       </dialog>
 
@@ -657,8 +618,8 @@
             <li>A tag without modifiers just labels the attack in the log: <code>d6[knife] | d4[dagger]</code></li>
             <li>
               A save name as the tag (<code>paralyze</code>, <code>poison</code>, <code>breath</code>,
-              <code>device</code>, <code>magic</code>) makes the target roll that save once per attack; a bonus or
-              penalty goes in parentheses with a sign: <code>poison(-2)</code>, <code>paralyze(+2)</code>
+              <code>device</code>, <code>magic</code>) gives the target a save; add a bonus or penalty like
+              <code>poison(-2)</code>
             </li>
             <li>Any other tag (<code>fire</code>, <code>🧊</code>) has no save: modifiers always apply</li>
           </ul>
@@ -670,8 +631,8 @@
               <tr>
                 <td><code>paralyze</code><br /><code>paralyze(d4)</code></td>
                 <td>
-                  The target skips its turns until the end of battle / for d4 turns; attacks against it hit
-                  automatically for max weapon damage, and it fails all saves
+                  The target skips its turns for the whole battle / for d4 turns; attacks against it always hit for max
+                  damage
                 </td>
               </tr>
               <tr>
@@ -680,7 +641,7 @@
               </tr>
               <tr>
                 <td><code>save_for_half(d8)</code></td>
-                <td>d8 damage, half (rounded down) on a successful save; requires a save tag</td>
+                <td>d8 damage, half on a successful save; requires a save tag</td>
               </tr>
               <tr>
                 <td><code>d8</code></td>
@@ -688,10 +649,7 @@
               </tr>
               <tr>
                 <td><code>damage_each_round(d4)</code><br /><code>damage_each_round(d4, 3)</code></td>
-                <td>
-                  d4 damage at the start of each of the target's turns from the next round, until the end of battle /
-                  for 3 turns; identical effects don't stack
-                </td>
+                <td>d4 damage every turn for the whole battle / for 3 turns</td>
               </tr>
             </tbody>
           </table>
