@@ -1,3 +1,4 @@
+import { messages } from '../messages/MessageService'
 import type { ICombatStrategy } from '../strategies/ICombatStrategy'
 import type { ICharacter } from '../types'
 import { DamageValidator } from './DamageValidator'
@@ -12,13 +13,15 @@ export class CharacterValidator implements ICharacterValidator {
 
   validate(chars: ICharacter[], sideName: string): string[] {
     if (chars.length === 0) {
-      return [`${sideName}: no characters`]
+      return [messages.t('validation.character.noCharacters', { side: sideName })]
     }
 
     return chars.flatMap((char, i) => {
-      const label = `${sideName} #${i + 1} (${char.name})`
+      const character = messages.t('validation.character.label', { index: i + 1, name: char.name, side: sideName })
 
-      return this.rules.flatMap((rule) => rule.check(char)).map((error) => `${label}: ${error}`)
+      return this.rules
+        .flatMap((rule) => rule.check(char))
+        .map((error) => messages.t('validation.character.error', { character, error }))
     })
   }
 }
@@ -28,8 +31,8 @@ export const getCharacterValidator = (
   limits: CharacterLimits = DEFAULT_LIMITS,
 ): ICharacterValidator =>
   new CharacterValidator([
-    new RangeRule('AC', (c) => c.armorClass, limits.armorClass),
-    new RangeRule('To-Hit', (c) => c.toHit, limits.toHit),
+    new RangeRule(messages.t('validation.fields.armorClass'), (c) => c.armorClass, limits.armorClass),
+    new RangeRule(messages.t('validation.fields.toHit'), (c) => c.toHit, limits.toHit),
     new HitDiceRule(limits.hitDice),
     new DamageRule(new DamageValidator(strategy)),
     new SavesRule(limits.save),

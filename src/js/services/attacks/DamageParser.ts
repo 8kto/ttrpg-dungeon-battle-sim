@@ -1,3 +1,4 @@
+import { messages } from '../messages/MessageService'
 import type { IDamageParser } from './IDamageParser'
 import type { Attack, AttackEffect, AttackOption, Modifier } from './types'
 import { ModifierKind, SaveType } from './types'
@@ -20,7 +21,7 @@ export class DamageParser implements IDamageParser {
   parseDamage(input: string): AttackOption[] {
     const text = input.trim()
     if (text === '') {
-      throw new Error('empty damage')
+      throw new Error(messages.t('damage.errors.empty'))
     }
 
     let options: string[]
@@ -32,12 +33,12 @@ export class DamageParser implements IDamageParser {
 
     return options.map((option) => {
       if (option === '') {
-        throw DamageParser.withContext('empty option', text)
+        throw DamageParser.withContext(messages.t('damage.errors.emptyOption'), text)
       }
 
       const attacks = this.splitTopLevel(option, ',')
       if (attacks.some((a) => a === '')) {
-        throw DamageParser.withContext('empty attack', text)
+        throw DamageParser.withContext(messages.t('damage.errors.emptyAttack'), text)
       }
 
       return attacks.map((attack) => this.parseAttack(attack))
@@ -55,12 +56,12 @@ export class DamageParser implements IDamageParser {
         return { damage: DamageParser.normalizeFormula(text), effect: null, source: text }
       }
       if (!text.endsWith(']')) {
-        throw new Error('unexpected text after "]"')
+        throw new Error(messages.t('damage.errors.textAfterBracket'))
       }
 
       const damage = DamageParser.normalizeFormula(text.slice(0, open))
       if (damage === '') {
-        throw new Error('missing damage formula')
+        throw new Error(messages.t('damage.errors.missingFormula'))
       }
 
       return { damage, effect: this.parseEffect(text.slice(open + 1, -1)), source: text }
@@ -121,10 +122,10 @@ export class DamageParser implements IDamageParser {
         stack.push(DamageParser.OPENING[char])
       } else if (DamageParser.CLOSING.has(char)) {
         if (stack.pop() !== char) {
-          throw new Error('unbalanced brackets')
+          throw new Error(messages.t('damage.errors.unbalancedBrackets'))
         }
       } else if (char === '|' && stack.length > 0) {
-        throw new Error('"|" inside brackets')
+        throw new Error(messages.t('damage.errors.pipeInBrackets'))
       } else if (char === separator && stack.length === 0) {
         parts.push(current.trim())
         current = ''
@@ -133,7 +134,7 @@ export class DamageParser implements IDamageParser {
       current += char
     }
     if (stack.length > 0) {
-      throw new Error('unbalanced brackets')
+      throw new Error(messages.t('damage.errors.unbalancedBrackets'))
     }
     parts.push(current.trim())
 
@@ -142,20 +143,20 @@ export class DamageParser implements IDamageParser {
 
   private parseEffect(inner: string): AttackEffect {
     if (inner.trim() === '') {
-      throw new Error('missing tag')
+      throw new Error(messages.t('damage.errors.missingTag'))
     }
 
     const [tag, ...modifierTexts] = this.splitTopLevel(inner, ',')
     if (tag === '') {
-      throw new Error('missing tag')
+      throw new Error(messages.t('damage.errors.missingTag'))
     }
     if (modifierTexts.some((m) => m === '')) {
-      throw new Error('empty modifier')
+      throw new Error(messages.t('damage.errors.emptyModifier'))
     }
 
     const { label, save, saveMod } = this.parseTag(tag)
     if (save !== null && modifierTexts.length === 0) {
-      throw new Error(`save tag without modifiers: "${tag}" does nothing`)
+      throw new Error(messages.t('damage.errors.saveTagWithoutModifiers', { tag }))
     }
 
     return { label, modifiers: modifierTexts.map((m) => this.parseModifier(m, save !== null)), save, saveMod }
@@ -176,10 +177,10 @@ export class DamageParser implements IDamageParser {
 
     const bonus = rest.match(DamageParser.SAVE_BONUS_RE)
     if (!bonus) {
-      throw new Error(`invalid save tag "${tag}", use ${save}(+N) or ${save}(-N)`)
+      throw new Error(messages.t('damage.errors.invalidSaveTag', { save, tag }))
     }
     if (!bonus[1]) {
-      throw new Error(`save bonus needs a sign: ${save}(+${bonus[2]}) or ${save}(-${bonus[2]})`)
+      throw new Error(messages.t('damage.errors.saveBonusSign', { bonus: bonus[2], save }))
     }
 
     return { label: save, save, saveMod: parseInt(`${bonus[1]}${bonus[2]}`, 10) }
@@ -192,27 +193,27 @@ export class DamageParser implements IDamageParser {
 
     const match = text.match(DamageParser.NAMED_MODIFIER_RE)
     if (!match) {
-      throw new Error(`unknown modifier "${text}"`)
+      throw new Error(messages.t('damage.errors.unknownModifier', { modifier: text }))
     }
 
     const name = match[1].toLowerCase()
     // eslint-disable-next-line no-undefined
     const args = match[2] === undefined ? [] : this.splitTopLevel(match[2], ',').map(DamageParser.normalizeFormula)
     if (args.some((a) => a === '')) {
-      throw new Error(`empty argument in ${name}`)
+      throw new Error(messages.t('damage.errors.emptyArgument', { modifier: name }))
     }
 
     switch (name) {
       case ModifierKind.Paralyze:
         if (args.length > 1) {
-          throw new Error('paralyze takes at most one argument')
+          throw new Error(messages.t('damage.errors.atMostOneArgument', { modifier: name }))
         }
 
         return { duration: args[0] ?? null, kind: ModifierKind.Paralyze }
 
       case ModifierKind.SaveOrDie:
         if (args.length > 0) {
-          throw new Error('save_or_die takes no arguments')
+          throw new Error(messages.t('damage.errors.noArguments', { modifier: name }))
         }
         DamageParser.requireSave(name, hasSave)
 
@@ -220,10 +221,10 @@ export class DamageParser implements IDamageParser {
 
       case ModifierKind.SaveForHalf:
         if (args.length === 0) {
-          throw new Error('save_for_half requires a damage formula')
+          throw new Error(messages.t('damage.errors.modifierNeedsFormula', { modifier: name }))
         }
         if (args.length > 1) {
-          throw new Error('save_for_half takes one argument')
+          throw new Error(messages.t('damage.errors.oneArgument', { modifier: name }))
         }
         DamageParser.requireSave(name, hasSave)
 
@@ -231,22 +232,22 @@ export class DamageParser implements IDamageParser {
 
       case ModifierKind.DamageEachRound:
         if (args.length === 0) {
-          throw new Error('damage_each_round requires a damage formula')
+          throw new Error(messages.t('damage.errors.modifierNeedsFormula', { modifier: name }))
         }
         if (args.length > 2) {
-          throw new Error('damage_each_round takes at most two arguments')
+          throw new Error(messages.t('damage.errors.atMostTwoArguments', { modifier: name }))
         }
 
         return { damage: args[0], duration: args[1] ?? null, kind: ModifierKind.DamageEachRound }
 
       default:
-        throw new Error(`unknown modifier "${match[1]}"`)
+        throw new Error(messages.t('damage.errors.unknownModifier', { modifier: match[1] }))
     }
   }
 
   private static requireSave(name: string, hasSave: boolean): void {
     if (!hasSave) {
-      throw new Error(`${name} requires a save tag`)
+      throw new Error(messages.t('damage.errors.modifierNeedsSave', { modifier: name }))
     }
   }
 
@@ -255,6 +256,6 @@ export class DamageParser implements IDamageParser {
   }
 
   private static withContext(message: string, text: string): Error {
-    return new Error(`${message} in "${text}"`)
+    return new Error(messages.t('damage.errors.context', { error: message, text }))
   }
 }

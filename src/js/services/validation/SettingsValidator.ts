@@ -1,4 +1,5 @@
 import type { SimulationSettings } from '../../types'
+import { messages } from '../messages/MessageService'
 import type { ISettingsValidator } from './ISettingsValidator'
 import type { SettingsLimits } from './limits'
 import { DEFAULT_SETTINGS_LIMITS, formatRange, isInRange } from './limits'
@@ -12,13 +13,13 @@ export class SettingsValidator implements ISettingsValidator {
     const { bias } = this.limits
 
     if (!isInRange(biasPlayers, bias)) {
-      errors.push(`invalid Players Bias (${formatRange(bias)})`)
+      errors.push(messages.t('validation.settings.biasPlayers', { range: formatRange(bias) }))
     }
     if (!isInRange(biasMonsters, bias)) {
-      errors.push(`invalid Monsters Bias (${formatRange(bias)})`)
+      errors.push(messages.t('validation.settings.biasMonsters', { range: formatRange(bias) }))
     }
     if (!Number.isInteger(maxAttacksPerTarget) || maxAttacksPerTarget < 0) {
-      errors.push('Max Attacks per Target must be 0 (unlimited) or more')
+      errors.push(messages.t('validation.settings.maxAttacks'))
     }
 
     return errors

@@ -1,5 +1,6 @@
 import { DamageParser } from '../attacks/DamageParser'
 import type { IDamageParser } from '../attacks/IDamageParser'
+import { messages } from '../messages/MessageService'
 import type { ICombatStrategy } from '../strategies/ICombatStrategy'
 import type { IDamageValidator } from './IDamageValidator'
 
@@ -12,7 +13,7 @@ export class DamageValidator implements IDamageValidator {
 
   validate(damage: string): string[] {
     if (damage.trim() === '') {
-      return ['no damage formula']
+      return [messages.t('damage.errors.noFormula')]
     }
 
     try {
@@ -21,7 +22,7 @@ export class DamageValidator implements IDamageValidator {
         .flat()
         .flatMap((attack) => this.damageParser.getFormulasOf(attack))
         .filter((formula) => !this.isValidFormula(formula))
-        .map((formula) => `invalid damage formula "${formula}"`)
+        .map((formula) => messages.t('damage.errors.invalidFormula', { formula }))
     } catch (err) {
       return [(err as Error).message]
     }
