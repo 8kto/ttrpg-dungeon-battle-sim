@@ -1,13 +1,18 @@
 import { shuffleArray } from 'ttrpg-lib-dice'
 
+import type { SimulationSettings } from '../types'
 import { Side } from '../types'
-import type { ILogger } from './ILogger'
+import type { EffectCounters } from './attacks/types'
+import type { IBattleSimulator } from './IBattleSimulator'
+import type { ILogger } from './logger/ILogger'
+import { messages } from './messages/MessageService'
 import { Participant } from './Participant'
 import { getStrategy } from './strategies/getStrategy'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
 import type { ITargetSelector } from './TargetSelector'
-import { RandomTargetSelector } from './TargetSelector'
-import type { IMonster, IPlayerCharacter, Rounding, Strategy } from './types'
+import { getTargetSelector } from './TargetSelector'
+import type { IMonster, IPlayerCharacter } from './types'
+import { Initiative } from './types'
 
 // Guards against endless battles (nobody can hit, everybody skips turns, etc.)
 export const MAX_ROUNDS = 1000
@@ -16,33 +21,58 @@ export type BattleResult = {
   winner: Side | null // null is a draw: round limit reached
   rounds: number
   survivors: Array<Participant>
+  effects: EffectCounters
 }
 
-export class BattleSimulator {
+// Subset of simulation settings that affects a single battle
+export type BattleSettings = Pick<
+  SimulationSettings,
+  'strategy' | 'rounding' | 'targeting' | 'initiative' | 'biasPlayers' | 'biasMonsters' | 'maxAttacksPerTarget'
+>
+
+export class BattleSimulator implements IBattleSimulator {
   private readonly targetSelector: ITargetSelector
   private readonly strategy: ICombatStrategy
   private roundsCount: number = 0
   private readonly sidePlayers: Participant[]
   private readonly sideMonsters: Participant[]
+  private readonly effectCounters: EffectCounters = {}
+  private readonly initiative: Initiative
+  private fixedOrder: Participant[][] | null = null
 
   constructor(
     players: IPlayerCharacter[],
     monsters: IMonster[],
-    strategyMode: Strategy,
-    rounding: Rounding,
-    biasPlayers: number,
-    biasMonsters: number,
-    maxAttacksPerTarget: number,
     private readonly logger: ILogger,
+    { biasMonsters, biasPlayers, initiative, maxAttacksPerTarget, rounding, strategy, targeting }: BattleSettings,
   ) {
-    this.targetSelector = new RandomTargetSelector()
-    this.strategy = getStrategy(strategyMode, rounding)
+    this.initiative = initiative
+    this.targetSelector = getTargetSelector(targeting)
+    this.strategy = getStrategy(strategy, rounding)
 
     this.sidePlayers = players.map(
-      (c) => new Participant(c, Side.Players, this.strategy, biasPlayers, maxAttacksPerTarget, this.logger),
+      (c) =>
+        new Participant(
+          c,
+          Side.Players,
+          this.strategy,
+          biasPlayers,
+          maxAttacksPerTarget,
+          this.logger,
+          this.effectCounters,
+        ),
     )
     this.sideMonsters = monsters.map(
-      (c) => new Participant(c, Side.Monsters, this.strategy, biasMonsters, maxAttacksPerTarget, this.logger),
+      (c) =>
+        new Participant(
+          c,
+          Side.Monsters,
+          this.strategy,
+          biasMonsters,
+          maxAttacksPerTarget,
+          this.logger,
+          this.effectCounters,
+        ),
     )
   }
 
@@ -56,27 +86,46 @@ export class BattleSimulator {
     }
 
     this.participants.forEach((p) => {
-      this.logger.log(`${p.side === Side.Monsters ? '🧌' : '🥷'}${p.char.name} HP: ${p.currentHp}`)
+      const key = p.side === Side.Monsters ? 'battle.hp.monster' : 'battle.hp.player'
+      this.logger.log(messages.t(key, { hp: p.currentHp, name: p.char.name }))
     })
 
     return this
   }
 
   getSortedByInitiative(): Participant[][] {
-    return shuffleArray([this.sidePlayers, this.sideMonsters])
+    if (this.initiative === Initiative.Random) {
+      return shuffleArray([this.sidePlayers, this.sideMonsters])
+    }
+
+    // Fixed: rolled in the first round, kept until the end of the battle
+    this.fixedOrder ??= shuffleArray([this.sidePlayers, this.sideMonsters])
+
+    return this.fixedOrder
   }
 
   hasSurvivors(side: Side): boolean {
     return this.participants.some((p) => p.side === side && p.currentHp > 0)
   }
 
+  private initiativeMessage(sides: Participant[][]): string {
+    return messages.t(sides[0] === this.sidePlayers ? 'battle.initiative.players' : 'battle.initiative.monsters')
+  }
+
   simulate(): BattleResult {
+    if (this.initiative === Initiative.Fixed && this.logger.isVerbose()) {
+      this.logger.log(
+        messages.t('battle.initiative.fixed', { initiative: this.initiativeMessage(this.getSortedByInitiative()) }),
+      )
+    }
+
     // Round: goes while there are two sides
     while (this.hasSurvivors(Side.Players) && this.hasSurvivors(Side.Monsters)) {
       if (this.roundsCount >= MAX_ROUNDS) {
-        this.logger.log(`⏸️ Round limit (${MAX_ROUNDS}) reached — draw`)
+        this.logger.log(messages.t('battle.roundLimit', { max: MAX_ROUNDS }))
 
         return {
+          effects: this.effectCounters,
           rounds: this.roundsCount,
           survivors: this.participants.filter((p) => p.currentHp > 0),
           winner: null,
@@ -90,26 +139,35 @@ export class BattleSimulator {
       const combatants = shuffleArray(sides[0]).concat(shuffleArray(sides[1]))
 
       if (this.logger.isVerbose()) {
-        const initiativeSfx = combatants[0].side === Side.Players ? 'players won initiative' : 'monsters won initiative'
-        this.logger.log(`>>> round ${this.roundsCount}, ${initiativeSfx}`)
+        // Fixed initiative is logged once before the battle
+        this.logger.log(
+          this.initiative === Initiative.Random
+            ? messages.t('battle.roundWithInitiative', {
+                initiative: this.initiativeMessage(sides),
+                round: this.roundsCount,
+              })
+            : messages.t('battle.round', { round: this.roundsCount }),
+        )
       }
 
       // Each combatant does its attacks
       for (const combatant of combatants) {
-        if (combatant.currentHp <= 0) {
+        if (combatant.currentHp <= 0 || !combatant.startTurn()) {
           continue
         }
 
-        // The target will be chosen randomly
         const enemies = combatant.side === Side.Players ? this.sideMonsters : this.sidePlayers
         combatant.attack(enemies, this.targetSelector)
       }
+
+      this.participants.forEach((p) => p.endRound())
     }
 
     const winner: Side = this.hasSurvivors(Side.Players) ? Side.Players : Side.Monsters
     const survivors = this.participants.filter((p) => p.currentHp > 0)
 
     return {
+      effects: this.effectCounters,
       rounds: this.roundsCount,
       survivors,
       winner,

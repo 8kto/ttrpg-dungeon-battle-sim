@@ -1,4 +1,4 @@
-import type { SimulationRequest } from './runSimulation'
+import type { SimulationRequest } from './ISimulationService'
 import type { BattleStats } from './stats'
 import { createStats } from './stats'
 import type { WorkerMessage } from './workerHandler'

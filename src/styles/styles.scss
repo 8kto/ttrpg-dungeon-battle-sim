@@ -11,9 +11,12 @@
   --3rd-color: #6a5a8a;
   --3rd-color-focus: #382f4c;
   --muted-color: #6b7280;
-  --page-bg: #fff;
+  --page-bg: #14110f;
   --input-bg: #f9f8f5;
   --block-bg: #fdfcf8;
+  --row-alt-bg: #f2f2f2;
+  --table-head-bg: #e3deed;
+  --table-border: #e2ddeb;
   --primary-font: sans-serif;
   --cursive-font: 'Uncial Antiqua', cursive;
 
@@ -52,6 +55,12 @@ h2 {
   font-size: 24px;
   color: var(--sub-color);
   margin: 0 0 10px;
+}
+
+input,
+select,
+textarea {
+  @apply font-mono;
 }
 
 input[disabled],
@@ -151,6 +160,71 @@ abbr:hover {
   min-width: 100px;
 }
 
+/* every character is a tbody: the main row, the damage row and the (collapsible) saves row */
+.char-table {
+  th {
+    @apply px-2 py-1.5 text-left text-sm font-semibold whitespace-nowrap;
+    color: var(--3rd-color-focus);
+  }
+
+  tbody.char {
+    border-top: 1px solid var(--table-border);
+  }
+  /* stripes separate characters rather than their rows */
+  tbody.char:nth-of-type(even) {
+    background: var(--row-alt-bg);
+  }
+
+  tbody.char td {
+    @apply px-2 pb-1.5;
+  }
+  tbody.char tr:first-child td {
+    @apply pt-2;
+  }
+  tbody.char tr:last-child td {
+    @apply pb-2;
+  }
+}
+.char-table__head {
+  background: var(--table-head-bg);
+}
+
+.num-input {
+  width: 3.75rem;
+}
+.save-input {
+  width: 3rem;
+}
+
+.row-label {
+  @apply w-16 shrink-0 text-xs uppercase tracking-wide leading-7;
+  color: var(--muted-color);
+}
+
+.save-label {
+  @apply flex items-center gap-1 text-xs;
+}
+
+.row-action {
+  @apply px-1 text-lg leading-none;
+}
+
+.row-toggle {
+  @apply text-left whitespace-nowrap underline-offset-4;
+  color: var(--3rd-color);
+
+  &:hover {
+    color: var(--3rd-color-focus);
+  }
+}
+
+.saves-fields {
+  @apply min-h-7;
+}
+.saves-fields[hidden] {
+  display: none;
+}
+
 #result-log p:empty {
   height: 1rem;
 }
@@ -164,12 +238,28 @@ abbr:hover {
   }
 }
 
+/* Separate name so the browser restarts it on every spin */
+@keyframes rotate360-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .logo-img {
   display: inline-block;
   transform-origin: center;
 
-  &:hover {
-    animation: rotate360 1s ease-in-out forwards;
+  animation: rotate360 1s ease-in-out 1.5s forwards;
+
+  /* Set from JS on hover so the spin always completes; the load animation
+     stays in the list so it doesn't replay when the class is removed */
+  &.spinning {
+    animation:
+      rotate360 1s ease-in-out 1.5s forwards,
+      rotate360-spin 1s ease-in-out;
   }
 }
 
@@ -194,4 +284,233 @@ abbr:hover {
 
 #result-log {
   transition: background-color 0.2s ease;
+}
+
+.damage-input--invalid {
+  border-color: var(--alt-color);
+  outline-color: var(--alt-color);
+}
+
+.damage-error {
+  @apply mt-1 text-xs;
+  color: var(--alt-color);
+}
+
+.damage-preview {
+  @apply flex flex-wrap items-center gap-x-2 gap-y-1 min-h-7 cursor-pointer;
+}
+.damage-input + .damage-error {
+  @apply mt-1;
+}
+.damage-preview[hidden] {
+  display: none;
+}
+.damage-preview__option {
+  @apply inline-flex flex-wrap gap-1;
+}
+.damage-preview__or {
+  @apply text-xs uppercase;
+  color: var(--muted-color);
+}
+
+/* attack chip; save effects are colored by the save type */
+.damage-chip {
+  @apply inline-flex items-center rounded border text-xs font-mono overflow-hidden bg-gray-100 border-gray-300;
+
+  > span {
+    @apply px-1.5 py-0.5;
+  }
+  > span + span {
+    border-left: 1px solid rgb(0 0 0 / 10%);
+  }
+}
+.damage-chip__formula {
+  @apply font-semibold;
+}
+.damage-chip--tag {
+  @apply bg-gray-100 border-gray-400 text-gray-800;
+}
+.damage-chip--poison {
+  @apply bg-green-50 border-green-400 text-green-900;
+}
+.damage-chip--paralyze {
+  @apply bg-sky-50 border-sky-400 text-sky-900;
+}
+.damage-chip--breath {
+  @apply bg-orange-50 border-orange-400 text-orange-900;
+}
+.damage-chip--device {
+  @apply bg-amber-50 border-amber-400 text-amber-900;
+}
+.damage-chip--magic {
+  @apply bg-violet-50 border-violet-400 text-violet-900;
+}
+
+.damage-help-btn {
+  @apply ml-1 w-5 h-5 rounded-full text-xs text-white leading-5 align-middle;
+  background: var(--3rd-color);
+
+  &:hover {
+    background: var(--3rd-color-focus);
+  }
+}
+
+.help-modal {
+  @apply rounded shadow-lg p-0 w-full max-w-2xl;
+  background: var(--block-bg);
+  color: var(--primary-color);
+
+  &::backdrop {
+    background: rgb(0 0 0 / 40%);
+  }
+
+  h3 {
+    @apply font-semibold mt-4 mb-1;
+    color: var(--3rd-color);
+  }
+
+  ul {
+    @apply list-disc pl-5 space-y-1;
+  }
+
+  code {
+    @apply px-1 rounded bg-gray-200 text-sm whitespace-nowrap;
+  }
+}
+
+.help-modal--wide {
+  @apply max-w-3xl;
+}
+
+.help-modal__content {
+  @apply p-6;
+}
+
+/* stays in place while a long help text scrolls */
+.help-modal__header {
+  @apply sticky top-0 -mx-6 -mt-6 mb-2 px-6 pt-6 pb-2 flex justify-between items-start;
+  background: var(--block-bg);
+}
+
+.help-link {
+  @apply underline underline-offset-2;
+  color: var(--3rd-color);
+
+  &:hover {
+    color: var(--3rd-color-focus);
+  }
+}
+
+.help-modal__close {
+  @apply text-2xl leading-none px-2;
+  color: var(--alt-color);
+}
+
+.help-modal__table {
+  @apply w-full text-sm;
+
+  td {
+    @apply py-1 pr-3 align-top border-t;
+  }
+
+  td:first-child {
+    @apply whitespace-nowrap;
+  }
+}
+
+.char-table tbody.char .attacks-row td {
+  padding-bottom: 0;
+}
+
+/* the page is a rough dungeon wall, lit by a torch in the middle, with the sections laid on it as sheets of paper */
+body {
+  background-image: radial-gradient(ellipse at 50% 30%, rgb(255 170 80 / 10%), transparent 45%, rgb(0 0 0 / 65%) 100%),
+    url('/images/dungeon-stone.svg');
+  background-size:
+    100% 100%,
+    960px auto;
+  background-attachment: fixed, scroll;
+
+  h1 {
+    text-shadow: 0 2px 6px rgb(0 0 0 / 60%);
+  }
+  header + p,
+  .footer {
+    color: #d9c7b0;
+  }
+  .footer a {
+    color: #f19a95;
+  }
+}
+
+/* a sheet with torn edges; the sheet is drawn by ::before, so the edge filter doesn't distort the content */
+#players-section,
+#monsters-section,
+#simulation-section {
+  @apply p-5;
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--block-bg);
+    filter: url('#paper-edge') drop-shadow(0 1px 1px rgb(0 0 0 / 35%)) drop-shadow(0 10px 16px rgb(0 0 0 / 45%));
+  }
+}
+#simulation-section > h2:first-child {
+  margin-top: 0;
+}
+
+/* hand-drawn underline under every heading */
+h1.off,
+h2,
+h3 {
+  position: relative;
+}
+h2,
+h3 {
+  display: inline-block;
+}
+h2 {
+  padding-bottom: 6px;
+  margin-bottom: 14px;
+}
+h1.off::after,
+h2::after,
+h3::after {
+  content: '';
+  position: absolute;
+  left: -6px;
+  right: -14px;
+  bottom: -6px;
+  height: 14px;
+  background-color: currentColor;
+  mask: url('/images/hand-underline.svg') center / 100% 100% no-repeat;
+  transform: rotate(-0.6deg);
+  opacity: 0.85;
+  pointer-events: none;
+}
+/* starts under the text, not under the logo (w-12 + mr-4) */
+h1.off::after {
+  left: calc(4rem - 6px);
+  bottom: -2px;
+  transform: scaleX(-1) rotate(0.4deg);
+}
+h3::after {
+  left: -3px;
+  right: -8px;
+  bottom: -3px;
+  height: 8px;
+  opacity: 0.6;
+}
+/* flipped differently, so neighbouring strokes don't look identical */
+#monsters-section > h2::after,
+h3:nth-of-type(even)::after {
+  transform: scaleX(-1) rotate(-0.8deg);
+}
+#simulation-section > h2::after {
+  transform: scaleY(-1) rotate(0.5deg);
 }

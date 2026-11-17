@@ -1,4 +1,4 @@
-import type { SimulationRequest } from './runSimulation'
+import type { SimulationRequest } from './ISimulationService'
 import { handleSimulationRequest } from './workerHandler'
 
 // Runs the simulation off the main thread, so the page stays responsive and can terminate it at any time

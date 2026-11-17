@@ -9,7 +9,7 @@ export default defineConfig({
   jsx: 'react',
   out: 'build',
   plugins: [],
-  port: 3000,
+  port: 3030,
   public: 'src',
   sourcemap: true,
   typescript: true,

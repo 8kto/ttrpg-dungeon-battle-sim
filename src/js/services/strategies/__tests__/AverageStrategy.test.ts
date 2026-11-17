@@ -1,5 +1,7 @@
+import * as dice from 'ttrpg-lib-dice'
 import { Dice } from 'ttrpg-lib-dice'
 
+import { DamageParser } from '../../attacks/DamageParser'
 import { Rounding } from '../../types'
 import { AverageStrategy } from '../AverageStrategy'
 
@@ -49,5 +51,18 @@ describe('AverageStrategy', () => {
     it.each<string>(['', 'd', '2d', 'xd6', '2d6++2', '2d6+-1', '2d6 2', 'hello', 'd-4'])('throws on "%s"', (input) => {
       expect(() => strategyUp.calculateDamage(input)).toThrowError(/Invalid damage formula/)
     })
+  })
+
+  it.each([Rounding.Up, Rounding.Down])('calculates a plain integer with rounding %s', (rounding) => {
+    expect(new AverageStrategy(rounding).calculateDamage('3')).toBe(3)
+  })
+
+  it('picks options at random', () => {
+    const options = new DamageParser().parseDamage('d6,d6|d8')
+    const spy = jest.spyOn(dice, 'getRandomArrayItem').mockReturnValueOnce(options[1])
+
+    expect(strategyUp.pickOption(options)).toBe(options[1])
+    expect(spy).toHaveBeenCalledWith(options)
+    spy.mockRestore()
   })
 })

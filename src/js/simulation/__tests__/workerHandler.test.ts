@@ -1,21 +1,24 @@
 import { Dice } from 'ttrpg-lib-dice'
 
-import { Rounding, Strategy } from '../../services/types'
-import type { SimulationRequest } from '../runSimulation'
+import { DEFAULT_SAVES } from '../../services/attacks/types'
+import { Initiative, Rounding, Strategy, Targeting } from '../../services/types'
+import type { SimulationRequest } from '../ISimulationService'
 import type { WorkerMessage } from '../workerHandler'
 import { handleSimulationRequest, PROGRESS_INTERVAL_MS } from '../workerHandler'
 
 const request: SimulationRequest = {
-  monsters: [{ armorClass: 1, damage: ['d4'], hitDice: [1, Dice.d6], name: 'Goblin', toHit: -100 }],
-  players: [{ armorClass: 30, damage: ['d6'], hitDice: [1, Dice.d8], name: 'Hero', toHit: 100 }],
+  monsters: [{ armorClass: 1, damage: 'd4', hitDice: [1, Dice.d6], name: 'Goblin', saves: DEFAULT_SAVES, toHit: -100 }],
+  players: [{ armorClass: 30, damage: 'd6', hitDice: [1, Dice.d8], name: 'Hero', saves: DEFAULT_SAVES, toHit: 100 }],
   settings: {
     battleCount: 4,
     biasMonsters: 0,
     biasPlayers: 0,
+    initiative: Initiative.Random,
     logsEnabled: false,
     maxAttacksPerTarget: 0,
     rounding: Rounding.Up,
     strategy: Strategy.Max,
+    targeting: Targeting.Random,
   },
 }
 

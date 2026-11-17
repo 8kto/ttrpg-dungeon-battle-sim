@@ -1,6 +1,7 @@
 import type { Dice } from 'ttrpg-lib-dice'
-import { roll, rollDiceFormula } from 'ttrpg-lib-dice'
+import { getRandomArrayItem, roll, rollDiceFormula } from 'ttrpg-lib-dice'
 
+import type { AttackOption } from '../attacks/types'
 import type { ICombatStrategy } from './ICombatStrategy'
 
 export class RandomStrategy implements ICombatStrategy {
@@ -15,5 +16,9 @@ export class RandomStrategy implements ICombatStrategy {
 
   calculateDamage(damage: string): number {
     return rollDiceFormula(damage)
+  }
+
+  pickOption(options: AttackOption[]): AttackOption {
+    return getRandomArrayItem(options)
   }
 }

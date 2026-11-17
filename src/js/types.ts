@@ -1,6 +1,7 @@
 import type { Dice } from 'ttrpg-lib-dice'
 
-import type { ICharacter, Rounding, Strategy } from './services/types'
+import type { Saves } from './services/attacks/types'
+import type { ICharacter, Initiative, Rounding, Strategy, Targeting } from './services/types'
 
 export type CharStats = {
   prefix: string
@@ -9,6 +10,7 @@ export type CharStats = {
   toHit: number
   armorClass: number
   damage: string
+  saves?: Saves // templates omit it: new characters get the default saves
 }
 
 export enum Side {
@@ -21,7 +23,9 @@ export type BattleSimulationConfig = {
   monsters: ICharacter[]
   battleCount: number
   strategy: string
-  rounding?: string // optional: configs exported before the setting existed don't have it
+  rounding: string
+  targeting: string
+  initiative: string
   biasPlayers: number
   biasMonsters: number
   maxAttacks: number
@@ -32,6 +36,8 @@ export type SimulationSettings = {
   battleCount: number
   strategy: Strategy
   rounding: Rounding
+  targeting: Targeting
+  initiative: Initiative
   biasPlayers: number
   biasMonsters: number
   maxAttacksPerTarget: number // 0 = unlimited

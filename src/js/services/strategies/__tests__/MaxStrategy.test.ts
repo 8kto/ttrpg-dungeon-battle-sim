@@ -1,5 +1,6 @@
 import { Dice } from 'ttrpg-lib-dice'
 
+import { DamageParser } from '../../attacks/DamageParser'
 import { MaxStrategy } from '../MaxStrategy'
 
 describe('MaxStrategy', () => {
@@ -41,5 +42,26 @@ describe('MaxStrategy', () => {
         expect(() => strategy.calculateDamage(input)).toThrowError(/Invalid damage formula/)
       },
     )
+  })
+
+  it('calculates a plain integer', () => {
+    expect(strategy.calculateDamage('3')).toBe(3)
+  })
+
+  describe('pickOption', () => {
+    const picked = (damage: string): string[] =>
+      strategy.pickOption(new DamageParser().parseDamage(damage)).map((a) => a.source)
+
+    it('picks the option with the highest max damage', () => {
+      expect(picked('d6,d6|d8')).toEqual(['d6', 'd6'])
+    })
+
+    it('picks the leftmost option on a tie', () => {
+      expect(picked('d8|2d4')).toEqual(['d8'])
+    })
+
+    it('ignores effects', () => {
+      expect(picked('d4|d10[breath,save_for_half(10d6)]|d6')).toEqual(['d10[breath,save_for_half(10d6)]'])
+    })
   })
 })

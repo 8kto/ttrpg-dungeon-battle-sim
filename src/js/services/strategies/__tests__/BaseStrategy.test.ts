@@ -19,4 +19,8 @@ describe('BaseStrategy', () => {
     expect(() => strategy.getTokens('oops')).toThrowError(/Invalid damage formula/)
     expect(() => strategy.getTokens('oops')).toThrowError(/Invalid damage formula/)
   })
+
+  it('parses a plain integer', () => {
+    expect(strategy.getTokens('3')).toEqual({ mod: 3, multiplier: 0, sides: 0 })
+  })
 })

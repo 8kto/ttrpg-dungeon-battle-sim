@@ -1,11 +1,14 @@
 import type { Dice } from 'ttrpg-lib-dice'
 
+import type { Saves } from './attacks/types'
+
 export interface ICharacter {
   name: string
   armorClass: number
-  damage: string[]
+  damage: string // as typed: options separated by "|", attacks by ",", effects in brackets
   hitDice: [number, Dice] // e.g. [2, Dice.d6] which means 2d6 for hit-points
   toHit: number
+  saves: Saves
 }
 
 export type IPlayerCharacter = ICharacter
@@ -16,6 +19,18 @@ export enum Strategy {
   Average,
   Random,
   Max,
+}
+
+// How attackers choose their targets
+export enum Targeting {
+  Random, // every attack picks a random target
+  Focus, // an attacker sticks to one target until one of them dies
+}
+
+// When the order of the sides is decided
+export enum Initiative {
+  Random, // rolled every round
+  Fixed, // rolled once per battle
 }
 
 // How fractional averages (e.g. d8 = 4.5) are turned into whole numbers

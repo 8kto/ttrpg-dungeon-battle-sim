@@ -1,15 +1,19 @@
-import { Rounding, Strategy } from '../services/types'
+import { messages } from '../services/messages/MessageService'
+import { Initiative, Rounding, Strategy, Targeting } from '../services/types'
 import type { BattleSimulationConfig, SimulationSettings } from '../types'
+import { parseNumber } from '../utils/number'
 
 type GlobalConfig = Omit<BattleSimulationConfig, 'monsters' | 'players'>
 
 const byId = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T
 
-// Global simulation settings: battle count, strategy, rounding, bias, attack limit, logs
+// Global simulation settings: battle count, strategy, rounding, targeting, initiative, bias, attack limit, logs
 export class SettingsForm {
   private readonly battleCount: HTMLInputElement = byId('battle-count')
   private readonly strategySelect: HTMLSelectElement = byId('strategy-select')
   private readonly roundingSelect: HTMLSelectElement = byId('rounding-select')
+  private readonly targetingSelect: HTMLSelectElement = byId('targeting-select')
+  private readonly initiativeSelect: HTMLSelectElement = byId('initiative-select')
   private readonly biasPlayersInput: HTMLInputElement = byId('bias-players')
   private readonly biasMonstersInput: HTMLInputElement = byId('bias-monsters')
   private readonly maxAttacksInput: HTMLInputElement = byId('max-attacks')
@@ -23,28 +27,28 @@ export class SettingsForm {
   read(): SimulationSettings {
     return {
       battleCount: Math.max(1, parseInt(this.battleCount.value, 10) || 1),
-      biasMonsters: parseInt(this.biasMonstersInput.value, 10),
-      biasPlayers: parseInt(this.biasPlayersInput.value, 10),
+      biasMonsters: parseNumber(this.biasMonstersInput.value),
+      biasPlayers: parseNumber(this.biasPlayersInput.value),
+      initiative: Initiative[this.initiativeSelect.value as keyof typeof Initiative],
       logsEnabled: this.logsCheckbox.checked,
-      maxAttacksPerTarget: parseInt(this.maxAttacksInput.value, 10),
+      maxAttacksPerTarget: parseNumber(this.maxAttacksInput.value),
       rounding: Rounding[this.roundingSelect.value as keyof typeof Rounding],
       strategy: Strategy[this.strategySelect.value as keyof typeof Strategy],
+      targeting: Targeting[this.targetingSelect.value as keyof typeof Targeting],
     }
   }
 
-  validate(): string[] {
-    const { maxAttacksPerTarget } = this.read()
-
-    return Number.isInteger(maxAttacksPerTarget) && maxAttacksPerTarget >= 0
-      ? []
-      : ['Max Attacks per Target must be 0 (unlimited) or more']
-  }
-
-  // e.g. "Average (rounding Up)"
+  // e.g. "Average (rounding Up), targeting Focus, initiative Fixed"
   get strategyLabel(): string {
-    const roundingInfo = this.roundingSelect.disabled ? '' : ` (rounding ${this.roundingSelect.value})`
+    const params = {
+      initiative: this.initiativeSelect.value,
+      strategy: this.strategySelect.value,
+      targeting: this.targetingSelect.value,
+    }
 
-    return `${this.strategySelect.value}${roundingInfo}`
+    return this.roundingSelect.disabled
+      ? messages.t('ui.strategyLabel', params)
+      : messages.t('ui.strategyLabelWithRounding', { ...params, rounding: this.roundingSelect.value })
   }
 
   toConfig(): GlobalConfig {
@@ -52,9 +56,11 @@ export class SettingsForm {
       battleCount: parseInt(this.battleCount.value, 10),
       biasMonsters: parseInt(this.biasMonstersInput.value, 10),
       biasPlayers: parseInt(this.biasPlayersInput.value, 10),
+      initiative: this.initiativeSelect.value,
       maxAttacks: parseInt(this.maxAttacksInput.value, 10),
       rounding: this.roundingSelect.value,
       strategy: this.strategySelect.value,
+      targeting: this.targetingSelect.value,
     }
   }
 
@@ -69,6 +75,12 @@ export class SettingsForm {
       this.roundingSelect.value = config.rounding
     }
     this.syncRoundingState()
+    if (config.targeting) {
+      this.targetingSelect.value = config.targeting
+    }
+    if (config.initiative) {
+      this.initiativeSelect.value = config.initiative
+    }
     // 0 is a valid bias and attack limit, so check for presence only
     // eslint-disable-next-line no-undefined
     if (config.biasPlayers !== undefined) {

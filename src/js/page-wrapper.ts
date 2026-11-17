@@ -1,4 +1,5 @@
 import { MonsterNamesChunks, PlayerNamesChunks } from './config/names'
+import type { MonsterTrait } from './consts'
 import {
   HenchmanCharTemplate,
   MonsterCharTemplate,
@@ -6,17 +7,25 @@ import {
   PlayerCharTemplate,
   PlayerTemplates,
 } from './consts'
-import { LogLevel } from './services/ILogger'
-import { Logger } from './services/Logger'
+import { ConfigParser } from './services/config/ConfigParser'
+import { LogLevel } from './services/logger/ILogger'
+import { Logger } from './services/logger/Logger'
+import { messages } from './services/messages/MessageService'
 import { NameProvider } from './services/NameProvider'
 import { getStrategy } from './services/strategies/getStrategy'
-import { validateCharacters } from './services/validateCharacters'
+import { getCharacterValidator } from './services/validation/CharacterValidator'
+import { SettingsValidator } from './services/validation/SettingsValidator'
 import { SimulationRunner } from './simulation/SimulationRunner'
-import { formatSummary } from './simulation/stats'
+import { SummaryFormatter } from './simulation/SummaryFormatter'
 import type { BattleSimulationConfig } from './types'
 import { CharTable } from './ui/CharTable'
+import { DamageField } from './ui/DamageField'
+import { bindLogoSpin } from './ui/logo'
+import { bindModal } from './ui/modal'
 import { SettingsForm } from './ui/SettingsForm'
 import { bindTabs } from './ui/tabs'
+import { addTraitAttacks } from './utils/addTraitAttacks'
+import { applyFeatureFlagClasses } from './utils/featureFlags'
 
 const byId = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T
 
@@ -28,19 +37,25 @@ const onClick = (id: string, handler: () => void): void => {
 }
 
 document.addEventListener('DOMContentLoaded', (): void => {
+  applyFeatureFlagClasses(window.location.search, document.body)
+
   const runSimBtn = byId<HTMLButtonElement>('run-sim')
   const stopSimBtn = byId<HTMLButtonElement>('stop-sim')
   const progressBar = byId<HTMLProgressElement>('progress-bar')
   const configArea = byId<HTMLTextAreaElement>('config-area')
 
   const settings = new SettingsForm()
-  const playersTable = new CharTable(byId('players-table'))
-  const monstersTable = new CharTable(byId('monsters-table'))
+  const damageField = new DamageField()
+  const playersTable = new CharTable(byId('players-table'), damageField)
+  const monstersTable = new CharTable(byId('monsters-table'), damageField)
   const playersNameProvider = new NameProvider(PlayerNamesChunks)
   const monsterNameProvider = new NameProvider(MonsterNamesChunks)
 
   const logger = new Logger('result-log')
   const runner = new SimulationRunner()
+  const summaryFormatter = new SummaryFormatter()
+  const settingsValidator = new SettingsValidator()
+  const configParser = new ConfigParser()
 
   // initial setup
   playersTable.init(PlayerTemplates)
@@ -51,9 +66,20 @@ document.addEventListener('DOMContentLoaded', (): void => {
     playersTable.addRow({ ...HenchmanCharTemplate, prefix: playersNameProvider.getName('(H)') }),
   )
   onClick('clear-players', () => playersTable.init(PlayerTemplates))
-  onClick('add-monster', () =>
-    monstersTable.addRow({ ...MonsterCharTemplate, prefix: monsterNameProvider.getName('(M)') }),
-  )
+  const readMonsterTraits = (): MonsterTrait[] =>
+    Array.from(document.querySelectorAll<HTMLInputElement>('.monster-trait:checked')).map(
+      (cb) => cb.dataset.trait as MonsterTrait,
+    )
+
+  onClick('add-monster', () => {
+    const traits = readMonsterTraits()
+
+    monstersTable.addRow({
+      ...MonsterCharTemplate,
+      damage: addTraitAttacks(traits, traits.length ? '' : 'd6[claws]'),
+      prefix: monsterNameProvider.getName('(M)'),
+    })
+  })
   onClick('clear-monsters', () => monstersTable.init(MonsterTemplates))
 
   onClick('clear-log', () => {
@@ -66,6 +92,10 @@ document.addEventListener('DOMContentLoaded', (): void => {
     { button: byId('tab-config-btn'), panel: byId('tab-config') },
   ])
 
+  bindModal(byId('damage-help'), document.querySelectorAll<HTMLElement>('.damage-help-btn, [data-open-damage-help]'))
+  bindModal(byId('app-help'), document.querySelectorAll<HTMLElement>('[data-open-app-help]'))
+  bindLogoSpin(document.querySelector<HTMLElement>('.logo-img')!)
+
   // Import/Export
   onClick('export-config', () => {
     const cfg: BattleSimulationConfig = {
@@ -77,16 +107,16 @@ document.addEventListener('DOMContentLoaded', (): void => {
   })
 
   onClick('import-config', () => {
-    try {
-      const config = JSON.parse(configArea.value) as BattleSimulationConfig
+    const result = configParser.parse(configArea.value)
+    if (!result.ok) {
+      alert(messages.t('config.importFailed', { errors: result.errors.join('\n') }))
 
-      settings.applyConfig(config)
-      playersTable.load(config.players)
-      monstersTable.load(config.monsters)
-    } catch (err) {
-      console.error(err)
-      alert('Invalid JSON config')
+      return
     }
+
+    settings.applyConfig(result.config)
+    playersTable.load(result.config.players)
+    monstersTable.load(result.config.monsters)
   })
 
   const startProgressDisplay = (logsEnabled: boolean): void => {
@@ -106,13 +136,13 @@ document.addEventListener('DOMContentLoaded', (): void => {
   }
 
   const validateInput = (): string[] => {
-    const { rounding, strategy } = settings.read()
-    const combatStrategy = getStrategy(strategy, rounding)
+    const current = settings.read()
+    const validator = getCharacterValidator(getStrategy(current.strategy, current.rounding))
 
     return [
-      ...settings.validate(),
-      ...validateCharacters(playersTable.read(), combatStrategy, 'Players'),
-      ...validateCharacters(monstersTable.read(), combatStrategy, 'Monsters'),
+      ...settingsValidator.validate(current),
+      ...validator.validate(playersTable.read(), messages.t('sides.players')),
+      ...validator.validate(monstersTable.read(), messages.t('sides.monsters')),
     ]
   }
 
@@ -130,8 +160,8 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
     const errors = validateInput()
     if (errors.length > 0) {
-      logger.warn('Invalid configuration:')
-      errors.forEach((err) => logger.warn(`>> ${err}`))
+      logger.warn(messages.t('simulation.invalidInput'))
+      errors.forEach((error) => logger.warn(messages.t('simulation.invalidInputItem', { error })))
 
       return
     }
@@ -144,7 +174,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
     lockUiForSimulation()
 
     try {
-      logger.warn('Starting simulation...')
+      logger.warn(messages.t('simulation.starting'))
       const startTime = performance.now()
       const { aborted, stats } = await runner.run(request, (current, lines) => {
         logger.write(lines)
@@ -152,18 +182,20 @@ document.addEventListener('DOMContentLoaded', (): void => {
       })
 
       if (aborted) {
-        logger.warn('⏹️ Simulation aborted')
+        logger.warn(messages.t('simulation.aborted'))
       }
       logger.lineBreak(LogLevel.NO_SKIP)
-      formatSummary(stats, {
-        elapsedMs: performance.now() - startTime,
-        playersCount: request.players.length,
-        runs,
-        strategyLabel: settings.strategyLabel,
-      }).forEach((line) => logger.warn(line))
+      summaryFormatter
+        .format(stats, {
+          elapsedMs: performance.now() - startTime,
+          playersCount: request.players.length,
+          runs,
+          strategyLabel: settings.strategyLabel,
+        })
+        .forEach((line) => logger.warn(line))
     } catch (err) {
       console.error(err)
-      logger.warn(`Simulation failed: ${err instanceof Error ? err.message : String(err)}`)
+      logger.warn(messages.t('simulation.failed', { error: err instanceof Error ? err.message : String(err) }))
     } finally {
       stopProgressDisplay()
       releaseUiAfterSimulation()

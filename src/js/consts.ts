@@ -5,7 +5,7 @@ import type { CharStats } from './types'
 export const PlayerTemplates: CharStats[] = [
   {
     armorClass: 15,
-    damage: 'd8',
+    damage: 'd8[sword]',
     hdCount: 1,
     hdType: Dice.d8,
     prefix: 'Fighter',
@@ -13,7 +13,7 @@ export const PlayerTemplates: CharStats[] = [
   },
   {
     armorClass: 13,
-    damage: 'd6',
+    damage: 'd6[mace]',
     hdCount: 1,
     hdType: Dice.d6,
     prefix: 'Cleric',
@@ -21,7 +21,7 @@ export const PlayerTemplates: CharStats[] = [
   },
   {
     armorClass: 10,
-    damage: 'd4',
+    damage: 'd4[dagger]',
     hdCount: 1,
     hdType: Dice.d4,
     prefix: 'Magic User',
@@ -29,7 +29,7 @@ export const PlayerTemplates: CharStats[] = [
   },
   {
     armorClass: 12,
-    damage: 'd6',
+    damage: 'd6[sword]',
     hdCount: 1,
     hdType: Dice.d4,
     prefix: 'Thief',
@@ -41,7 +41,7 @@ export const PlayerCharTemplate: CharStats = PlayerTemplates[0]
 
 export const HenchmanCharTemplate: CharStats = {
   armorClass: 12,
-  damage: 'd6',
+  damage: 'd6[sword]',
   hdCount: 1,
   hdType: Dice.d8,
   prefix: 'Henchman',
@@ -51,7 +51,7 @@ export const HenchmanCharTemplate: CharStats = {
 export const MonsterTemplates: CharStats[] = [
   {
     armorClass: 13,
-    damage: 'd6,d6',
+    damage: 'd6[claws],d6[horns]',
     hdCount: 4,
     hdType: Dice.d8,
     prefix: 'Monster',
@@ -60,3 +60,16 @@ export const MonsterTemplates: CharStats[] = [
 ]
 
 export const MonsterCharTemplate: CharStats = MonsterTemplates[0]
+
+export enum MonsterTrait {
+  Poisonous = 'poisonous',
+  Paralyzing = 'paralyzing',
+  Fiery = 'fiery',
+}
+
+// Extra attack a new monster gets for every trait checked next to the Add Monster button
+export const MonsterTraitAttacks: Record<MonsterTrait, string> = {
+  [MonsterTrait.Poisonous]: 'd4[poison, save_or_die]',
+  [MonsterTrait.Paralyzing]: 'd4[paralyze, paralyze(d4)]',
+  [MonsterTrait.Fiery]: 'd4[fire, damage_each_round(d4, 3)]',
+}
