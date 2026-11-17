@@ -92,7 +92,7 @@ button[disabled] {
 }
 
 .mid-button {
-  @apply px-4 py-1.5;
+  @apply px-3 sm:px-4 py-1.5 whitespace-nowrap;
 }
 
 .secondary-button {
@@ -383,12 +383,12 @@ abbr:hover {
 }
 
 .help-modal__content {
-  @apply p-6;
+  @apply p-4 sm:p-6;
 }
 
 /* stays in place while a long help text scrolls */
 .help-modal__header {
-  @apply sticky top-0 -mx-6 -mt-6 mb-2 px-6 pt-6 pb-2 flex justify-between items-start;
+  @apply sticky top-0 -mx-4 -mt-4 px-4 pt-4 sm:-mx-6 sm:-mt-6 sm:px-6 sm:pt-6 mb-2 pb-2 flex justify-between items-start;
   background: var(--block-bg);
 }
 
@@ -513,4 +513,81 @@ h3:nth-of-type(even)::after {
 }
 #simulation-section > h2::after {
   transform: scaleY(-1) rotate(0.5deg);
+}
+
+/* a table that still doesn't fit scrolls by itself instead of the whole page */
+.char-table-wrap {
+  @apply overflow-x-auto;
+  container-type: inline-size;
+}
+
+/* narrow table (phones, two columns on a small laptop): tighter cells, so a character row fits */
+@container (max-width: 480px) {
+  .char-table {
+    th {
+      @apply px-1 whitespace-normal leading-tight;
+    }
+    tbody.char td {
+      @apply px-1;
+    }
+    tbody.char td:first-child,
+    th:first-child {
+      @apply pl-2;
+    }
+  }
+  .table-header--name {
+    min-width: 4rem;
+  }
+  .num-input {
+    @apply px-1;
+    width: 2.5rem;
+  }
+  .name-input {
+    @apply px-1;
+  }
+  .hd-type-select {
+    @apply px-0.5;
+    width: 3.25rem;
+  }
+  .row-label {
+    @apply w-14;
+  }
+}
+
+/* phones: tighter sheets, help tables in one column */
+@media (max-width: 639.98px) {
+  #players-section,
+  #monsters-section,
+  #simulation-section {
+    @apply p-3;
+  }
+
+  /* label and value one under another, the two columns don't fit */
+  .help-modal__table {
+    tr {
+      @apply block border-t py-1;
+    }
+    td {
+      @apply block border-0 py-0;
+    }
+    td:first-child {
+      @apply font-semibold whitespace-normal;
+    }
+  }
+  .help-modal code {
+    @apply whitespace-normal break-words;
+  }
+}
+
+@media (pointer: coarse) {
+  /* iOS zooms into inputs with a font smaller than 16px */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  .row-action {
+    @apply py-1;
+  }
 }
