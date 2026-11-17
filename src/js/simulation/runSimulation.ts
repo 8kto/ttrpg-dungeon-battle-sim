@@ -4,7 +4,7 @@ import { NullLogger } from '../services/logger/NullLogger'
 import type { ICharacter } from '../services/types'
 import type { SimulationSettings } from '../types'
 import type { BattleStats } from './stats'
-import { addBattleResult, createStats } from './stats'
+import { StatsAccumulator } from './StatsAccumulator'
 
 // battle details are logged for this many battles only, statistics cover all of them
 export const MAX_LOGGED_BATTLES = 500
@@ -22,7 +22,7 @@ export const runSimulation = (
   logger: ILogger,
   onBattle: (stats: BattleStats) => void = (): void => {},
 ): BattleStats => {
-  const stats = createStats()
+  const accumulator = new StatsAccumulator()
   const silentLogger = new NullLogger()
 
   for (let i = 0; i < settings.battleCount; i++) {
@@ -42,11 +42,11 @@ export const runSimulation = (
     battleLogger.lineBreak()
 
     const res = sim.simulate()
-    addBattleResult(stats, res)
+    accumulator.add(res)
 
     battleLogger.log(`>>> total rounds: ${res.rounds}`)
-    onBattle(stats)
+    onBattle(accumulator.stats)
   }
 
-  return stats
+  return accumulator.stats
 }

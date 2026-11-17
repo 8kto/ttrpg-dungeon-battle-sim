@@ -13,7 +13,7 @@ import { NameProvider } from './services/NameProvider'
 import { getStrategy } from './services/strategies/getStrategy'
 import { getCharacterValidator } from './services/validation/CharacterValidator'
 import { SimulationRunner } from './simulation/SimulationRunner'
-import { formatSummary } from './simulation/stats'
+import { SummaryFormatter } from './simulation/SummaryFormatter'
 import type { BattleSimulationConfig } from './types'
 import { CharTable } from './ui/CharTable'
 import { DamageField } from './ui/DamageField'
@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
 
   const logger = new Logger('result-log')
   const runner = new SimulationRunner()
+  const summaryFormatter = new SummaryFormatter()
 
   // initial setup
   playersTable.init(PlayerTemplates)
@@ -179,12 +180,14 @@ document.addEventListener('DOMContentLoaded', (): void => {
         logger.warn('⏹️ Simulation aborted')
       }
       logger.lineBreak(LogLevel.NO_SKIP)
-      formatSummary(stats, {
-        elapsedMs: performance.now() - startTime,
-        playersCount: request.players.length,
-        runs,
-        strategyLabel: settings.strategyLabel,
-      }).forEach((line) => logger.warn(line))
+      summaryFormatter
+        .format(stats, {
+          elapsedMs: performance.now() - startTime,
+          playersCount: request.players.length,
+          runs,
+          strategyLabel: settings.strategyLabel,
+        })
+        .forEach((line) => logger.warn(line))
     } catch (err) {
       console.error(err)
       logger.warn(`Simulation failed: ${err instanceof Error ? err.message : String(err)}`)
