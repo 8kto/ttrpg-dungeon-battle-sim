@@ -8,6 +8,7 @@ describe('ConfigParser', () => {
     battleCount: 100,
     biasMonsters: 0,
     biasPlayers: 5,
+    initiative: 'Fixed',
     maxAttacks: 0,
     monsters: [char],
     players: [{ ...char, name: 'Hero' }],
@@ -66,6 +67,7 @@ describe('ConfigParser', () => {
     [{ strategy: 'Best' }, ['"strategy" must be one of: Average, Random, Max']],
     [{ rounding: 0 }, ['"rounding" must be one of: Up, Down']],
     [{ targeting: 'focus' }, ['"targeting" must be one of: Random, Focus']],
+    [{ initiative: 'Once' }, ['"initiative" must be one of: Random, Fixed']],
     [{ monsters: [42] }, ['Monsters #1: must be an object']],
   ])('reports %j', (override, errors) => {
     expect(errorsOf({ ...config, ...override })).toEqual(errors)

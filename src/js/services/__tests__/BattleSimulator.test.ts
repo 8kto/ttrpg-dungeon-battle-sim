@@ -8,7 +8,7 @@ import { Participant } from '../Participant'
 import { getStrategy } from '../strategies/getStrategy'
 import type { ICombatStrategy } from '../strategies/ICombatStrategy'
 import type { ICharacter, IMonster, IPlayerCharacter } from '../types'
-import { Rounding, Strategy, Targeting } from '../types'
+import { Initiative, Rounding, Strategy, Targeting } from '../types'
 
 jest.mock('../Participant')
 jest.mock('../strategies/getStrategy')
@@ -77,6 +77,7 @@ describe('BattleSimulator', () => {
       new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
         biasMonsters: 0,
         biasPlayers: 0,
+        initiative: Initiative.Random,
         maxAttacksPerTarget: 0,
         rounding: Rounding.Down,
         strategy: Strategy.Average,
@@ -94,6 +95,7 @@ describe('BattleSimulator', () => {
       const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
         biasMonsters: 0,
         biasPlayers: 0,
+        initiative: Initiative.Random,
         maxAttacksPerTarget: 0,
         rounding: Rounding.Up,
         strategy: Strategy.Random,
@@ -108,6 +110,7 @@ describe('BattleSimulator', () => {
       const simulator = new BattleSimulator([mockPlayer], [], mockLogger, {
         biasMonsters: 0,
         biasPlayers: 0,
+        initiative: Initiative.Random,
         maxAttacksPerTarget: 0,
         rounding: Rounding.Up,
         strategy: Strategy.Random,
@@ -124,6 +127,7 @@ describe('BattleSimulator', () => {
       const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
         biasMonsters: 0,
         biasPlayers: 0,
+        initiative: Initiative.Random,
         maxAttacksPerTarget: 0,
         rounding: Rounding.Up,
         strategy: Strategy.Random,
@@ -152,6 +156,7 @@ describe('BattleSimulator', () => {
       const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
         biasMonsters: 0,
         biasPlayers: 0,
+        initiative: Initiative.Random,
         maxAttacksPerTarget: 0,
         rounding: Rounding.Up,
         strategy: Strategy.Random,
@@ -166,6 +171,7 @@ describe('BattleSimulator', () => {
       const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
         biasMonsters: 0,
         biasPlayers: 0,
+        initiative: Initiative.Random,
         maxAttacksPerTarget: 0,
         rounding: Rounding.Up,
         strategy: Strategy.Random,
@@ -183,6 +189,7 @@ describe('BattleSimulator', () => {
       const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
         biasMonsters: 0,
         biasPlayers: 0,
+        initiative: Initiative.Random,
         maxAttacksPerTarget: 0,
         rounding: Rounding.Up,
         strategy: Strategy.Random,
@@ -199,6 +206,7 @@ describe('BattleSimulator', () => {
       const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
         biasMonsters: 0,
         biasPlayers: 0,
+        initiative: Initiative.Random,
         maxAttacksPerTarget: 0,
         rounding: Rounding.Up,
         strategy: Strategy.Random,
@@ -232,6 +240,7 @@ describe('BattleSimulator', () => {
       const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
         biasMonsters: 0,
         biasPlayers: 0,
+        initiative: Initiative.Random,
         maxAttacksPerTarget: 0,
         rounding: Rounding.Up,
         strategy: Strategy.Random,
@@ -253,6 +262,7 @@ describe('BattleSimulator', () => {
       const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
         biasMonsters: 0,
         biasPlayers: 0,
+        initiative: Initiative.Random,
         maxAttacksPerTarget: 3,
         rounding: Rounding.Up,
         strategy: Strategy.Random,
@@ -277,12 +287,45 @@ describe('BattleSimulator', () => {
     })
   })
 
+  describe('getSortedByInitiative', () => {
+    const settings = {
+      biasMonsters: 0,
+      biasPlayers: 0,
+      maxAttacksPerTarget: 0,
+      rounding: Rounding.Up,
+      strategy: Strategy.Random,
+      targeting: Targeting.Random,
+    }
+    // which side acts first in each of the rounds
+    const firstSides = (simulator: BattleSimulator, rounds: number): Side[] =>
+      Array.from({ length: rounds }, () => simulator.getSortedByInitiative()[0][0].side)
+
+    it('rolls initiative every round when Random', () => {
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        ...settings,
+        initiative: Initiative.Random,
+      })
+
+      expect(new Set(firstSides(simulator, 100))).toEqual(new Set([Side.Players, Side.Monsters]))
+    })
+
+    it('keeps the order of the first round when Fixed', () => {
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        ...settings,
+        initiative: Initiative.Fixed,
+      })
+
+      expect(new Set(firstSides(simulator, 100)).size).toBe(1)
+    })
+  })
+
   describe('renderDetails', () => {
     it('logs participant statuses', () => {
       mockStrategy.calculateHp.mockReturnValueOnce(3).mockReturnValueOnce(4)
       const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
         biasMonsters: 0,
         biasPlayers: 0,
+        initiative: Initiative.Random,
         maxAttacksPerTarget: 0,
         rounding: Rounding.Up,
         strategy: Strategy.Random,
@@ -299,6 +342,7 @@ describe('BattleSimulator', () => {
       const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
         biasMonsters: 0,
         biasPlayers: 0,
+        initiative: Initiative.Random,
         maxAttacksPerTarget: 0,
         rounding: Rounding.Up,
         strategy: Strategy.Random,

@@ -1,4 +1,4 @@
-import { Rounding, Strategy, Targeting } from '../../services/types'
+import { Initiative, Rounding, Strategy, Targeting } from '../../services/types'
 import { SettingsForm } from '../SettingsForm'
 
 describe('SettingsForm', () => {
@@ -26,6 +26,10 @@ describe('SettingsForm', () => {
         <option value="Random" selected>Random</option>
         <option value="Focus">Focus</option>
       </select>
+      <select id="initiative-select">
+        <option value="Random" selected>Random</option>
+        <option value="Fixed">Fixed</option>
+      </select>
       <input id="bias-players" value="5" />
       <input id="bias-monsters" value="0" />
       <input id="max-attacks" value="5" />
@@ -38,6 +42,7 @@ describe('SettingsForm', () => {
       battleCount: 1000,
       biasMonsters: 0,
       biasPlayers: 5,
+      initiative: Initiative.Random,
       logsEnabled: true,
       maxAttacksPerTarget: 5,
       rounding: Rounding.Up,
@@ -53,11 +58,11 @@ describe('SettingsForm', () => {
 
   it('enables rounding for the Average strategy only', () => {
     expect(el<HTMLSelectElement>('rounding-select').disabled).toBe(true)
-    expect(form.strategyLabel).toBe('Random, targeting Random')
+    expect(form.strategyLabel).toBe('Random, targeting Random, initiative Random')
 
     changeStrategy('Average')
     expect(el<HTMLSelectElement>('rounding-select').disabled).toBe(false)
-    expect(form.strategyLabel).toBe('Average (rounding Up), targeting Random')
+    expect(form.strategyLabel).toBe('Average (rounding Up), targeting Random, initiative Random')
   })
 
   it('keeps fractional and empty bias and attack limit for the validator', () => {
@@ -76,6 +81,7 @@ describe('SettingsForm', () => {
       battleCount: 50,
       biasMonsters: 0,
       biasPlayers: 0,
+      initiative: 'Fixed',
       maxAttacks: 0,
       rounding: 'Down',
       strategy: 'Average',
@@ -86,12 +92,14 @@ describe('SettingsForm', () => {
       battleCount: 50,
       biasMonsters: 0,
       biasPlayers: 0,
+      initiative: 'Fixed',
       maxAttacks: 0,
       rounding: 'Down',
       strategy: 'Average',
       targeting: 'Focus',
     })
     expect(form.read().targeting).toBe(Targeting.Focus)
+    expect(form.read().initiative).toBe(Initiative.Fixed)
     expect(el<HTMLSelectElement>('rounding-select').disabled).toBe(false)
   })
 
@@ -101,6 +109,7 @@ describe('SettingsForm', () => {
       battleCount: 1000,
       biasMonsters: 0,
       biasPlayers: 5,
+      initiative: 'Random',
       maxAttacks: 5,
       rounding: 'Up',
       strategy: 'Max',

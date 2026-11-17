@@ -13,7 +13,7 @@ import type { ICombatStrategy } from '../strategies/ICombatStrategy'
 import { MaxStrategy } from '../strategies/MaxStrategy'
 import { RandomStrategy } from '../strategies/RandomStrategy'
 import type { ICharacter } from '../types'
-import { Rounding, Strategy, Targeting } from '../types'
+import { Initiative, Rounding, Strategy, Targeting } from '../types'
 
 const damageParser = new DamageParser()
 
@@ -246,6 +246,7 @@ describe('effects in battle', () => {
     const sim = new BattleSimulator([paralyzer], [{ ...paralyzer, name: 'Gargoyle' }], new NullLogger(), {
       biasMonsters: 0,
       biasPlayers: 0,
+      initiative: Initiative.Random,
       maxAttacksPerTarget: 0,
       rounding: Rounding.Up,
       strategy: Strategy.Max,

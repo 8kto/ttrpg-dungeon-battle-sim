@@ -1,5 +1,5 @@
 import type { SimulationSettings } from '../../../types'
-import { Rounding, Strategy, Targeting } from '../../types'
+import { Initiative, Rounding, Strategy, Targeting } from '../../types'
 import { SettingsValidator } from '../SettingsValidator'
 
 describe('SettingsValidator', () => {
@@ -8,6 +8,7 @@ describe('SettingsValidator', () => {
     battleCount: 10,
     biasMonsters: 0,
     biasPlayers: 5,
+    initiative: Initiative.Random,
     logsEnabled: false,
     maxAttacksPerTarget: 0,
     rounding: Rounding.Up,

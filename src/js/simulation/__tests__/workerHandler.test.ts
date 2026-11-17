@@ -1,7 +1,7 @@
 import { Dice } from 'ttrpg-lib-dice'
 
 import { DEFAULT_SAVES } from '../../services/attacks/types'
-import { Rounding, Strategy, Targeting } from '../../services/types'
+import { Initiative, Rounding, Strategy, Targeting } from '../../services/types'
 import type { SimulationRequest } from '../ISimulationService'
 import type { WorkerMessage } from '../workerHandler'
 import { handleSimulationRequest, PROGRESS_INTERVAL_MS } from '../workerHandler'
@@ -13,6 +13,7 @@ const request: SimulationRequest = {
     battleCount: 4,
     biasMonsters: 0,
     biasPlayers: 0,
+    initiative: Initiative.Random,
     logsEnabled: false,
     maxAttacksPerTarget: 0,
     rounding: Rounding.Up,

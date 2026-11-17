@@ -6,7 +6,7 @@ import type { IBattleSimulator } from '../../services/IBattleSimulator'
 import { BufferLogger } from '../../services/logger/BufferLogger'
 import { LogLevel } from '../../services/logger/ILogger'
 import type { ICharacter } from '../../services/types'
-import { Rounding, Strategy, Targeting } from '../../services/types'
+import { Initiative, Rounding, Strategy, Targeting } from '../../services/types'
 import type { SimulationRequest } from '../ISimulationService'
 import type { IStatsAccumulator } from '../IStatsAccumulator'
 import { MAX_LOGGED_BATTLES, SimulationService } from '../SimulationService'
@@ -37,6 +37,7 @@ const makeRequest = (overrides: Partial<SimulationRequest['settings']> = {}): Si
     battleCount: 3,
     biasMonsters: 0,
     biasPlayers: 0,
+    initiative: Initiative.Random,
     logsEnabled: true,
     maxAttacksPerTarget: 0,
     rounding: Rounding.Up,
