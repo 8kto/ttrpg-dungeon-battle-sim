@@ -13,7 +13,7 @@ describe('MaxStrategy', () => {
       [2, Dice.d6, 12],
       [3, Dice.d8, 24],
       [5, Dice.d10, 50],
-    ])('with %i×d%i returns %i', (count, dice, expected) => {
+    ])('with %i✕d%i returns %i', (count, dice, expected) => {
       expect(strategy.calculateHp([count, dice])).toBe(expected)
     })
   })

@@ -159,7 +159,7 @@ describe('DamageField', () => {
         'd4 | Save vs Poison (-2) | save or die',
         'd8 | Save vs Paralyze | paralyze d4',
         'd6 | Save vs Breath | 2d6, half on save',
-        'd4 | fire | d4/round ×3 | +d6',
+        'd4 | fire | d4/round ✕3 | +d6',
         'd4 | Save vs Magic (+1) | 1/round',
         'd4 | Save vs Device | paralyze ∞',
       ])

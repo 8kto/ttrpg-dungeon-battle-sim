@@ -17,6 +17,12 @@ browser, on desktop and phone widths.
 
 - Commit only when explicitly asked in that request. Otherwise leave the changes in the working tree for review.
 - Commits are atomic: one logical change per commit (feature, fix, rename, refactor), each passing tests and lint.
+- To commit a batch of work, group the changes by logical change, not by file, and commit the groups in dependency
+  order (refactors and services before the UI that uses them). A change goes together with its tests, messages and
+  styles. When a file holds parts of several groups, split it: commit intermediate versions of the file, so every
+  commit builds and passes tests, type check and lint on its own. The last commit must leave the tree exactly as the
+  finished work.
+- Leave unrelated changes you didn't make (e.g. the user's edits) out of your commits, or commit them separately.
 - No attribution lines in commit messages (no `Co-Authored-By`, no "Generated with").
 
 ## Code structure

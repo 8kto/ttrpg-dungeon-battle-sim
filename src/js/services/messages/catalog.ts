@@ -148,7 +148,7 @@ export const catalog = {
     },
     damageChip: {
       damageEachRound: '{damage}/round',
-      damageEachRoundFor: '{damage}/round ×{duration}',
+      damageEachRoundFor: '{damage}/round ✕{duration}',
       extraDamage: '+{damage}',
       or: 'or',
       paralyze: 'paralyze {duration}',

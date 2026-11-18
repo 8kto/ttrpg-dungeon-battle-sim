@@ -21,7 +21,7 @@ describe('AverageStrategy', () => {
       [2, Dice.d6, 7, 7], // 7
       [3, Dice.d8, 14, 13], // 13.5
       [5, Dice.d10, 28, 27], // 27.5
-    ])('with %i×d%i returns %i (up) / %i (down)', (count, dice, up, down) => {
+    ])('with %i✕d%i returns %i (up) / %i (down)', (count, dice, up, down) => {
       expect(strategyUp.calculateHp([count, dice])).toBe(up)
       expect(strategyDown.calculateHp([count, dice])).toBe(down)
     })

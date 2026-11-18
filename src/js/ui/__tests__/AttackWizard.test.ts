@@ -139,10 +139,10 @@ describe('AttackWizard', () => {
     it('removes attacks and options', () => {
       clickText('+ Attack this turn')
       clickText('+ Alternative option')
-      clickText('×', attacks()[0])
+      clickText('✕', attacks()[0])
       expect(code()).toBe('d6 | d6')
 
-      clickText('×', $$('.attack-wizard__option')[1])
+      clickText('✕', $$('.attack-wizard__option')[1])
       expect(code()).toBe('d6')
       expect($$('.attack-wizard__remove')).toHaveLength(0)
     })
@@ -245,7 +245,7 @@ describe('AttackWizard', () => {
       clickText('+1', modifiers[3].querySelectorAll('.formula-field')[1])
       expect(code()).toBe('d6[breath, paralyze(d4), save_for_half(d6), d6, damage_each_round(d4, 2)]')
 
-      clickText('×', modifiers[1])
+      clickText('✕', modifiers[1])
       expect(code()).toBe('d6[breath, paralyze(d4), d6, damage_each_round(d4, 2)]')
     })
 

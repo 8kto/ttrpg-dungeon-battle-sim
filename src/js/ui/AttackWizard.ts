@@ -197,7 +197,7 @@ export class AttackWizard implements IAttackWizard {
 
     if (this.draft.length > 1) {
       legend.appendChild(
-        button('attack-wizard__remove', '×', () => {
+        button('attack-wizard__remove', '✕', () => {
           this.draft.splice(index, 1)
           this.render()
         }),
@@ -223,7 +223,7 @@ export class AttackWizard implements IAttackWizard {
     header.appendChild(el('span', '', messages.t('ui.attackWizard.attack', { number: index + 1 })))
     if (attacks.length > 1) {
       header.appendChild(
-        button('attack-wizard__remove', '×', () => {
+        button('attack-wizard__remove', '✕', () => {
           attacks.splice(index, 1)
           this.render()
         }),
@@ -318,7 +318,7 @@ export class AttackWizard implements IAttackWizard {
     section.appendChild(el('p', 'attack-wizard__hint', messages.t('ui.attackWizard.modifiersHint')))
 
     attack.modifiers.forEach((modifier, i) => {
-      const remove = button('attack-wizard__remove', '×', () => {
+      const remove = button('attack-wizard__remove', '✕', () => {
         attack.modifiers.splice(i, 1)
         this.render()
       })
