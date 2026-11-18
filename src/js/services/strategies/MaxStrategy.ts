@@ -1,14 +1,19 @@
 import type { Dice } from 'ttrpg-lib-dice'
 
+import { DamageFormula } from '../attacks/DamageFormula'
 import { DamageParser } from '../attacks/DamageParser'
+import type { IDamageFormula } from '../attacks/IDamageFormula'
 import type { IDamageParser } from '../attacks/IDamageParser'
 import type { AttackOption } from '../attacks/types'
 import { BaseStrategy } from './BaseStrategy'
 import type { ICombatStrategy } from './ICombatStrategy'
 
 export class MaxStrategy extends BaseStrategy implements ICombatStrategy {
-  constructor(private readonly damageParser: IDamageParser = new DamageParser()) {
-    super()
+  constructor(
+    private readonly damageParser: IDamageParser = new DamageParser(),
+    damageFormula: IDamageFormula = new DamageFormula(),
+  ) {
+    super(damageFormula)
   }
 
   calculateHp([count, dice]: [number, Dice]): number {

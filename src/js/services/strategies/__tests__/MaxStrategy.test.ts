@@ -1,5 +1,6 @@
 import { Dice } from 'ttrpg-lib-dice'
 
+import { DamageFormula } from '../../attacks/DamageFormula'
 import { DamageParser } from '../../attacks/DamageParser'
 import { MaxStrategy } from '../MaxStrategy'
 
@@ -63,5 +64,13 @@ describe('MaxStrategy', () => {
     it('ignores effects', () => {
       expect(picked('d4|d10[breath,save_for_half(10d6)]|d6')).toEqual(['d10[breath,save_for_half(10d6)]'])
     })
+  })
+
+  it('uses the injected formula parser', () => {
+    const damageFormula = new DamageFormula()
+    const parse = jest.spyOn(damageFormula, 'parse')
+    new MaxStrategy(new DamageParser(), damageFormula).calculateDamage('d6')
+
+    expect(parse).toHaveBeenCalledWith('d6')
   })
 })

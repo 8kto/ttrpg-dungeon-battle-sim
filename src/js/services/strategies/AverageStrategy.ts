@@ -1,6 +1,8 @@
 import type { Dice } from 'ttrpg-lib-dice'
 import { getRandomArrayItem } from 'ttrpg-lib-dice'
 
+import { DamageFormula } from '../attacks/DamageFormula'
+import type { IDamageFormula } from '../attacks/IDamageFormula'
 import type { AttackOption } from '../attacks/types'
 import { Rounding } from '../types'
 import { BaseStrategy } from './BaseStrategy'
@@ -8,8 +10,11 @@ import type { ICombatStrategy } from './ICombatStrategy'
 
 // Average of NdS is N * (S + 1) / 2; fractions are rounded according to the Rounding setting
 export class AverageStrategy extends BaseStrategy implements ICombatStrategy {
-  constructor(private readonly rounding: Rounding = Rounding.Up) {
-    super()
+  constructor(
+    private readonly rounding: Rounding = Rounding.Up,
+    damageFormula: IDamageFormula = new DamageFormula(),
+  ) {
+    super(damageFormula)
   }
 
   calculateHp([count, dice]: [number, Dice]): number {
