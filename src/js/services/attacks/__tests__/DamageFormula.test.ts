@@ -22,6 +22,16 @@ describe('DamageFormula', () => {
       expect(formula.parse('3d4+1')).toBe(new DamageFormula().parse('3d4+1'))
     })
 
+    it('starts the cache over when it is full', () => {
+      const first = formula.parse('7d4+1')
+      for (let mod = 1; mod <= 200; mod++) {
+        formula.parse(`d6+${mod}`)
+      }
+
+      expect(formula.parse('7d4+1')).not.toBe(first)
+      expect(formula.parse('7d4+1')).toEqual(first)
+    })
+
     it('does not cache invalid formulas', () => {
       expect(() => formula.parse('oops')).toThrowError(/Invalid damage formula/)
       expect(() => formula.parse('oops')).toThrowError(/Invalid damage formula/)

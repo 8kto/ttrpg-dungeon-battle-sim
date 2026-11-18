@@ -6,7 +6,9 @@ export class DamageFormula implements IDamageFormula {
   private static readonly DICE_RE: RegExp = /^(\d*)d(\d+)\s*([+-]\s*\d+)?$/i
   private static readonly NUMBER_RE: RegExp = /^\d+$/
 
-  // formulas are parsed on every attack, but there are only a few distinct ones per simulation
+  // formulas are parsed on every attack, but there are only a few distinct ones per simulation;
+  // the limit keeps formulas typed in the UI from piling up
+  private static readonly CACHE_LIMIT: number = 200
   private static readonly cache: Map<string, Readonly<FormulaTokens>> = new Map()
 
   private static readonly EMPTY: Readonly<FormulaTokens> = Object.freeze({ mod: 0, multiplier: 0, sides: 0 })
@@ -18,6 +20,9 @@ export class DamageFormula implements IDamageFormula {
     }
 
     const tokens = Object.freeze(DamageFormula.tokenize(formula))
+    if (DamageFormula.cache.size >= DamageFormula.CACHE_LIMIT) {
+      DamageFormula.cache.clear()
+    }
     DamageFormula.cache.set(formula, tokens)
 
     return tokens
