@@ -1,3 +1,5 @@
+import { Dice } from 'ttrpg-lib-dice'
+
 import { DamageFormula } from '../services/attacks/DamageFormula'
 import { DamageParser } from '../services/attacks/DamageParser'
 import { DamageSerializer } from '../services/attacks/DamageSerializer'
@@ -18,7 +20,7 @@ import type { DraftAttack, IAttackWizard } from './IAttackWizard'
 // Builds the damage of a character by clicks: alternative options, attacks of a turn, their effects and modifiers.
 // The dialog markup (#attack-wizard) holds the static parts, the editor is rendered into .attack-wizard__options
 export class AttackWizard implements IAttackWizard {
-  private static readonly DICE: readonly number[] = [4, 6, 8, 10, 12, 20]
+  private static readonly DICE: readonly number[] = [Dice.d4, Dice.d6, Dice.d8, Dice.d10, Dice.d12, Dice.d20]
   private static readonly SAVE_ONLY: ReadonlySet<ModifierKind> = new Set([
     ModifierKind.SaveOrDie,
     ModifierKind.SaveForHalf,
