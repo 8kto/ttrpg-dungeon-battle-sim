@@ -31,4 +31,24 @@ describe('DamageValidator', () => {
 
     expect(new DamageValidator(strategy).validate('d6, d4')).toEqual(['invalid damage formula "d4"'])
   })
+
+  describe('check', () => {
+    it('returns the parsed damage of a valid field', () => {
+      const { errors, options } = validator.check('d6, d4 | d8')
+
+      expect(errors).toEqual([])
+      expect(options.map((attacks) => attacks.map((a) => a.damage))).toEqual([['d6', 'd4'], ['d8']])
+    })
+
+    it('returns no options when the damage does not parse', () => {
+      expect(validator.check('d6||d8')).toEqual({ errors: ['empty option in "d6||d8"'], options: [] })
+    })
+
+    it('returns the options along with formula errors', () => {
+      const { errors, options } = validator.check('d6, abc')
+
+      expect(errors).toEqual(['invalid damage formula "abc"'])
+      expect(options).toHaveLength(1)
+    })
+  })
 })

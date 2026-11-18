@@ -145,8 +145,7 @@ export class DamageField {
 
   // returns whether the damage is valid
   private render({ error, input, preview }: FieldElements): boolean {
-    const damage = input.value
-    const errors = this.damageValidator.validate(damage)
+    const { errors, options } = this.damageValidator.check(input.value)
 
     input.classList.toggle('damage-input--invalid', errors.length > 0)
     error.textContent = errors.join('; ')
@@ -157,7 +156,7 @@ export class DamageField {
 
       return false
     }
-    DamageField.renderAttackOptions(preview, this.damageParser.parseDamage(damage))
+    DamageField.renderAttackOptions(preview, options)
 
     return true
   }

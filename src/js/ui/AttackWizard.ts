@@ -113,10 +113,9 @@ export class AttackWizard implements IAttackWizard {
 
   open(damage: string, onApply: (damage: string) => void): void {
     this.onApply = onApply
-    const valid = this.damageValidator.validate(damage).length === 0
-    this.draft = valid
-      ? this.damageParser.parseDamage(damage).map((attacks) => attacks.map(AttackWizard.toDraft))
-      : [[AttackWizard.newAttack()]]
+    const { errors, options } = this.damageValidator.check(damage)
+    const valid = errors.length === 0
+    this.draft = valid ? options.map((attacks) => attacks.map(AttackWizard.toDraft)) : [[AttackWizard.newAttack()]]
     // damage that doesn't parse can't be edited here, the wizard starts over
     this.notice.hidden = valid || damage.trim() === ''
 
@@ -151,7 +150,7 @@ export class AttackWizard implements IAttackWizard {
 
   private update(): void {
     const damage = this.damage
-    const errors = this.damageValidator.validate(damage)
+    const { errors, options } = this.damageValidator.check(damage)
 
     this.code.textContent = damage
     this.errorList.replaceChildren(...errors.map((error) => el('li', '', error)))
@@ -162,7 +161,7 @@ export class AttackWizard implements IAttackWizard {
     if (errors.length > 0) {
       this.preview.replaceChildren()
     } else {
-      DamageField.renderAttackOptions(this.preview, this.damageParser.parseDamage(damage))
+      DamageField.renderAttackOptions(this.preview, options)
     }
   }
 
