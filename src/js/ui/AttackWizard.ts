@@ -379,8 +379,8 @@ export class AttackWizard implements IAttackWizard {
     }
   }
 
-  // a formula input with dice buttons: d6 adds a d6 ("d6" → "2d6"), ±1 changes the constant;
-  // an invalid formula is outlined, an optional one may be empty
+  // a formula built by clicks, the input is read-only: d6 adds a d6 ("d6" → "2d6"), ±1 changes the constant,
+  // ⌫ clears it; a required formula is outlined while empty, an optional one shows the placeholder
   private formulaField(
     value: string,
     placeholder: string,
@@ -390,34 +390,29 @@ export class AttackWizard implements IAttackWizard {
     const field = el('div', 'formula-field')
     const input = el('input', 'formula-field__input border rounded px-2')
     input.type = 'text'
-    input.value = value
+    input.readOnly = true
+    input.tabIndex = -1
     input.placeholder = placeholder
+    let formula = value
 
-    const mark = (): void => {
-      const valid = (optional && input.value.trim() === '') || this.isValidFormula(input.value)
-      input.classList.toggle('damage-input--invalid', !valid)
-    }
-    const set = (formula: string): void => {
+    const show = (): void => {
       input.value = formula
+      input.classList.toggle('damage-input--invalid', !optional && formula === '')
+    }
+    const set = (next: string): void => {
+      formula = next
       onChange(formula)
-      mark()
+      show()
       this.update()
     }
-    input.addEventListener('input', (): void => {
-      onChange(input.value)
-      mark()
-      this.update()
-    })
-    mark()
+    show()
 
     const dice = el('div', 'formula-field__dice')
     AttackWizard.DICE.forEach((sides) =>
-      dice.appendChild(
-        button('formula-field__die', `d${sides}`, () => set(this.damageFormula.addDie(input.value, sides))),
-      ),
+      dice.appendChild(button('formula-field__die', `d${sides}`, () => set(this.damageFormula.addDie(formula, sides)))),
     )
-    dice.appendChild(button('formula-field__die', '+1', () => set(this.damageFormula.addConstant(input.value, 1))))
-    dice.appendChild(button('formula-field__die', '−1', () => set(this.damageFormula.addConstant(input.value, -1))))
+    dice.appendChild(button('formula-field__die', '+1', () => set(this.damageFormula.addConstant(formula, 1))))
+    dice.appendChild(button('formula-field__die', '−1', () => set(this.damageFormula.addConstant(formula, -1))))
     const clear = button('formula-field__die formula-field__clear', '⌫', () => set(''))
     clear.title = messages.t('ui.attackWizard.clearFormula')
     dice.appendChild(clear)
@@ -425,16 +420,6 @@ export class AttackWizard implements IAttackWizard {
     field.append(input, dice)
 
     return field
-  }
-
-  private isValidFormula(formula: string): boolean {
-    try {
-      this.damageFormula.parse(formula)
-
-      return true
-    } catch {
-      return false
-    }
   }
 
   private row(label: string, ...content: HTMLElement[]): HTMLElement {

@@ -542,7 +542,7 @@ abbr:hover {
   width: max-content;
 }
 .formula-field__input {
-  @apply w-full;
+  @apply w-full cursor-default;
 
   &.damage-input--invalid {
     @apply border-2;

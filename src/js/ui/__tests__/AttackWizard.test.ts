@@ -1,3 +1,4 @@
+import { query } from '../../utils/dom'
 import { AttackWizard } from '../AttackWizard'
 import { DamageField } from '../DamageField'
 
@@ -92,38 +93,37 @@ describe('AttackWizard', () => {
       expect(code()).toBe('d20-1')
     })
 
-    it('outline invalid formulas', () => {
+    it('are read-only', () => {
       const input = $<HTMLInputElement>('.formula-field__input')
-      expect(input.classList).not.toContain('damage-input--invalid')
+      expect(input.readOnly).toBe(true)
+      expect(input.value).toBe('d6')
+    })
 
-      type(input, 'd6+d4')
+    it('outline an empty damage', () => {
+      const input = $<HTMLInputElement>('.formula-field__input')
+      clickText('⌫', $('.formula-field'))
+      expect(input.value).toBe('')
       expect(input.classList).toContain('damage-input--invalid')
-
-      type(input, '')
-      expect(input.classList).toContain('damage-input--invalid')
+      expect($<HTMLButtonElement>('.attack-wizard__apply').disabled).toBe(true)
 
       clickText('d8', $('.formula-field'))
       expect(input.classList).not.toContain('damage-input--invalid')
+      expect(input.value).toBe('d8')
     })
 
     it('allow an empty duration', () => {
       selectTag('label')
       type($('.attack-wizard__label'), 'fire')
       clickText('+ Damage each round')
-      const [damage, duration] = $$<HTMLInputElement>('.attack-wizard__modifier .formula-field__input')
-      expect(duration.value).toBe('')
-      expect(duration.classList).not.toContain('damage-input--invalid')
+      const [, duration] = $$('.attack-wizard__modifier .formula-field')
+      const input = query<HTMLInputElement>(duration, '.formula-field__input')
+      expect(input.value).toBe('')
+      expect(input.placeholder).toBe('whole battle')
+      expect(input.classList).not.toContain('damage-input--invalid')
 
-      type(duration, 'x')
-      expect(duration.classList).toContain('damage-input--invalid')
-
-      type(damage, '')
-      expect(damage.classList).toContain('damage-input--invalid')
-    })
-
-    it('can be typed', () => {
-      type($('.formula-field__input'), '3d8+2')
-      expect(code()).toBe('3d8+2')
+      clickText('+1', duration)
+      expect(input.value).toBe('1')
+      expect(code()).toBe('d6[fire, damage_each_round(d4, 1)]')
     })
   })
 
@@ -290,7 +290,7 @@ describe('AttackWizard', () => {
 
     it('does nothing while the damage is invalid', () => {
       open('d6')
-      type($('.formula-field__input'), '')
+      clickText('⌫', $('.formula-field'))
       $('.attack-wizard__apply').click()
       expect(onApply).not.toHaveBeenCalled()
       expect(dialog.close).not.toHaveBeenCalled()
