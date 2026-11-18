@@ -15,6 +15,7 @@
   --input-bg: #f9f8f5;
   --block-bg: #fdfcf8;
   --row-alt-bg: #f2f2f2;
+  --row-alt-bg-2: rgb(227 222 237 / 60%);
   --table-head-bg: #e3deed;
   --table-border: #e2ddeb;
   --primary-font: sans-serif;
@@ -445,7 +446,7 @@ abbr:hover {
 }
 /* attacks are the only divs of an option */
 .attack-wizard__attack:nth-of-type(even) {
-  background: rgb(227 222 237 / 60%);
+  background: var(--row-alt-bg-2);
 }
 .attack-wizard__attack-header {
   @apply flex justify-between items-center text-xs uppercase tracking-wide;
