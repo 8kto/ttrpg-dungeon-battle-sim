@@ -19,46 +19,6 @@ type FieldElements = {
   wizardButton: HTMLButtonElement | null
 }
 
-const describeModifier = (modifier: Modifier): string => {
-  switch (modifier.kind) {
-    case ModifierKind.Paralyze:
-      return modifier.duration === null
-        ? messages.t('ui.damageChip.paralyzeForever')
-        : messages.t('ui.damageChip.paralyze', { duration: modifier.duration })
-    case ModifierKind.SaveOrDie:
-      return messages.t('ui.damageChip.saveOrDie')
-    case ModifierKind.SaveForHalf:
-      return messages.t('ui.damageChip.saveForHalf', { damage: modifier.damage })
-    case ModifierKind.ExtraDamage:
-      return messages.t('ui.damageChip.extraDamage', { damage: modifier.damage })
-    case ModifierKind.DamageEachRound:
-      return modifier.duration === null
-        ? messages.t('ui.damageChip.damageEachRound', { damage: modifier.damage })
-        : messages.t('ui.damageChip.damageEachRoundFor', { damage: modifier.damage, duration: modifier.duration })
-    default:
-      throw new Error(`Unknown modifier: ${JSON.stringify(modifier)}`)
-  }
-}
-
-const renderChip = ({ damage, effect }: Attack): HTMLElement => {
-  const chip = el('span', 'damage-chip')
-  chip.appendChild(el('span', 'damage-chip__formula', damage))
-
-  if (effect) {
-    chip.classList.add(effect.save ? `damage-chip--${effect.save}` : 'damage-chip--tag')
-    const save = effect.save && capitalize(effect.save)
-    const tag = !save
-      ? effect.label
-      : effect.saveMod
-        ? messages.t('ui.damageChip.saveVsWithMod', { mod: signed(effect.saveMod), save })
-        : messages.t('ui.damageChip.saveVs', { save })
-    chip.appendChild(el('span', 'damage-chip__tag', tag))
-    effect.modifiers.forEach((m) => chip.appendChild(el('span', 'damage-chip__modifier', describeModifier(m))))
-  }
-
-  return chip
-}
-
 // Damage of a character shown as chips of the parsed attacks; the input opens with the Damage label
 // or a click on the chips, closes with the same label (now "Done"), and stays open while the damage is invalid;
 // the wizard button edits the damage in the attack wizard
@@ -78,9 +38,51 @@ export class DamageField {
         container.appendChild(el('span', 'damage-preview__or', messages.t('ui.damageChip.or')))
       }
       const option = el('span', 'damage-preview__option')
-      attacks.forEach((attack) => option.appendChild(renderChip(attack)))
+      attacks.forEach((attack) => option.appendChild(DamageField.renderChip(attack)))
       container.appendChild(option)
     })
+  }
+
+  private static renderChip({ damage, effect }: Attack): HTMLElement {
+    const chip = el('span', 'damage-chip')
+    chip.appendChild(el('span', 'damage-chip__formula', damage))
+
+    if (effect) {
+      chip.classList.add(effect.save ? `damage-chip--${effect.save}` : 'damage-chip--tag')
+      const save = effect.save && capitalize(effect.save)
+      const tag = !save
+        ? effect.label
+        : effect.saveMod
+          ? messages.t('ui.damageChip.saveVsWithMod', { mod: signed(effect.saveMod), save })
+          : messages.t('ui.damageChip.saveVs', { save })
+      chip.appendChild(el('span', 'damage-chip__tag', tag))
+      effect.modifiers.forEach((m) =>
+        chip.appendChild(el('span', 'damage-chip__modifier', DamageField.describeModifier(m))),
+      )
+    }
+
+    return chip
+  }
+
+  private static describeModifier(modifier: Modifier): string {
+    switch (modifier.kind) {
+      case ModifierKind.Paralyze:
+        return modifier.duration === null
+          ? messages.t('ui.damageChip.paralyzeForever')
+          : messages.t('ui.damageChip.paralyze', { duration: modifier.duration })
+      case ModifierKind.SaveOrDie:
+        return messages.t('ui.damageChip.saveOrDie')
+      case ModifierKind.SaveForHalf:
+        return messages.t('ui.damageChip.saveForHalf', { damage: modifier.damage })
+      case ModifierKind.ExtraDamage:
+        return messages.t('ui.damageChip.extraDamage', { damage: modifier.damage })
+      case ModifierKind.DamageEachRound:
+        return modifier.duration === null
+          ? messages.t('ui.damageChip.damageEachRound', { damage: modifier.damage })
+          : messages.t('ui.damageChip.damageEachRoundFor', { damage: modifier.damage, duration: modifier.duration })
+      default:
+        throw new Error(`Unknown modifier: ${JSON.stringify(modifier)}`)
+    }
   }
 
   // binds the field of a character group; call it again for cloned groups, as listeners are not cloned

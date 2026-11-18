@@ -9,29 +9,32 @@ import { onClick, query } from '../utils/dom'
 import { parseNumber } from '../utils/number'
 import type { DamageField } from './DamageField'
 
-const toCharStats = (char: ICharacter): CharStats => ({
-  armorClass: char.armorClass,
-  damage: char.damage,
-  hdCount: char.hitDice[0],
-  hdType: char.hitDice[1],
-  prefix: char.name,
-  saves: char.saves,
-  toHit: char.toHit,
-})
-
-const getSaveInput = (group: HTMLElement, save: SaveType): HTMLInputElement =>
-  query<HTMLInputElement>(group, `.save-input[data-save="${save}"]`)
-
-const setSavesExpanded = (group: HTMLElement, expanded: boolean): void => {
-  const toggle = query<HTMLButtonElement>(group, '.saves-toggle')
-  query<HTMLElement>(group, '.saves-fields').hidden = !expanded
-  toggle.setAttribute('aria-expanded', String(expanded))
-  toggle.textContent = messages.t(expanded ? 'ui.savesToggle.expanded' : 'ui.savesToggle.collapsed')
-}
-
 // Editable table of characters (one side of the battle); every character is a <tbody class="char">
 // with the main row, the attacks row and the saves row
 export class CharTable {
+  private static toCharStats(char: ICharacter): CharStats {
+    return {
+      armorClass: char.armorClass,
+      damage: char.damage,
+      hdCount: char.hitDice[0],
+      hdType: char.hitDice[1],
+      prefix: char.name,
+      saves: char.saves,
+      toHit: char.toHit,
+    }
+  }
+
+  private static getSaveInput(group: HTMLElement, save: SaveType): HTMLInputElement {
+    return query<HTMLInputElement>(group, `.save-input[data-save="${save}"]`)
+  }
+
+  private static setSavesExpanded(group: HTMLElement, expanded: boolean): void {
+    const toggle = query<HTMLButtonElement>(group, '.saves-toggle')
+    query<HTMLElement>(group, '.saves-fields').hidden = !expanded
+    toggle.setAttribute('aria-expanded', String(expanded))
+    toggle.textContent = messages.t(expanded ? 'ui.savesToggle.expanded' : 'ui.savesToggle.collapsed')
+  }
+
   private readonly template: HTMLTableSectionElement
 
   constructor(
@@ -51,7 +54,7 @@ export class CharTable {
   }
 
   load(chars: ICharacter[]): void {
-    this.init(chars.map(toCharStats))
+    this.init(chars.map(CharTable.toCharStats))
   }
 
   addRow(defs: CharStats): void {
@@ -76,7 +79,7 @@ export class CharTable {
       const ht = parseNumber(query<HTMLSelectElement>(group, '.hd-type-select').value) as Dice
       const dmg = query<HTMLInputElement>(group, '.damage-input').value.trim()
       const saves = Object.fromEntries(
-        Object.values(SaveType).map((save) => [save, parseNumber(getSaveInput(group, save).value)]),
+        Object.values(SaveType).map((save) => [save, parseNumber(CharTable.getSaveInput(group, save).value)]),
       ) as Saves
 
       return { armorClass: ac, damage: dmg, hitDice: [hc, ht], name: ni.value, saves, toHit: th }
@@ -100,7 +103,7 @@ export class CharTable {
     query<HTMLInputElement>(group, '.damage-input').value = defs.damage
 
     const saves = defs.saves ?? DEFAULT_SAVES
-    Object.values(SaveType).forEach((save) => (getSaveInput(group, save).value = saves[save].toString()))
+    Object.values(SaveType).forEach((save) => (CharTable.getSaveInput(group, save).value = saves[save].toString()))
 
     group.dataset.prefix = defs.prefix
   }
@@ -111,7 +114,7 @@ export class CharTable {
     const savesToggle = query<HTMLButtonElement>(group, '.saves-toggle')
 
     onClick(savesToggle, (): void => {
-      setSavesExpanded(group, savesToggle.getAttribute('aria-expanded') !== 'true')
+      CharTable.setSavesExpanded(group, savesToggle.getAttribute('aria-expanded') !== 'true')
     })
 
     onClick(dupBtn, (): void => {
