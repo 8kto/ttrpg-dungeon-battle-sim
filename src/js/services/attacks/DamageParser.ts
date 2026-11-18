@@ -4,6 +4,9 @@ import type { Attack, AttackEffect, AttackOption, Modifier } from './types'
 import { ModifierKind, SaveType } from './types'
 
 type SaveTag = Pick<AttackEffect, 'label' | 'save' | 'saveMod'>
+type SaveTagParts = { rest: string; save: SaveType }
+type SaveBonus = { sign: string | null; value: string }
+type NamedModifier = { args: string | null; name: string }
 
 export class DamageParser implements IDamageParser {
   private static readonly OPENING: Readonly<Record<string, string>> = { '(': ')', '[': ']' }
@@ -13,6 +16,7 @@ export class DamageParser implements IDamageParser {
   private static readonly NAMED_MODIFIER_RE: RegExp = /^([a-z_]+)\s*(?:\((.*)\))?$/is
   private static readonly SAVE_TAG_RE: RegExp = new RegExp(`^(${Object.values(SaveType).join('|')})(.*)$`, 'is')
   private static readonly SAVE_BONUS_RE: RegExp = /^\(\s*([+-])?\s*(\d+)\s*\)$/
+  private static readonly LABEL_CONTINUATION_RE: RegExp = /^\s*[^\s(+\-\d]/
 
   // sums and differences of dice and integers: "d6+d4", "2d6 - 1", "5"
   private static readonly FORMULA_RE: RegExp = /^(\d*d\d+|\d+)(\s*[+-]\s*(\d*d\d+|\d+))*$/i
@@ -98,17 +102,11 @@ export class DamageParser implements IDamageParser {
   // TODO migrate to dice lib
   getMaxDamage(formula: string): number {
     const text = formula.trim()
-    if (!DamageParser.FORMULA_RE.test(text)) {
+    if (!DamageParser.isFormula(text)) {
       throw new Error(`Invalid damage formula: "${formula}"`)
     }
 
-    let total = 0
-    for (const [, sign, count, sides, constant] of text.matchAll(DamageParser.TERM_RE)) {
-      const value = sides ? (count ? parseInt(count, 10) : 1) * parseInt(sides, 10) : parseInt(constant, 10)
-      total += sign === '-' ? -value : value
-    }
-
-    return total
+    return DamageParser.sumOfMaxTerms(text)
   }
 
   // Splits on a separator outside of [] and (); `|` inside brackets is an error
@@ -163,42 +161,39 @@ export class DamageParser implements IDamageParser {
   }
 
   private parseTag(tag: string): SaveTag {
-    const match = tag.match(DamageParser.SAVE_TAG_RE)
-    // a save name followed by a letter or a space and a letter is just a label: "poisonous", "poison ivy"
-    if (!match || /^\s*[^\s(+\-\d]/.test(match[2])) {
+    const parts = DamageParser.splitSaveTag(tag)
+    if (parts === null) {
       return { label: tag, save: null, saveMod: 0 }
     }
 
-    const save = match[1].toLowerCase() as SaveType
-    const rest = match[2].trim()
+    const { rest, save } = parts
     if (rest === '') {
       return { label: save, save, saveMod: 0 }
     }
 
-    const bonus = rest.match(DamageParser.SAVE_BONUS_RE)
-    if (!bonus) {
+    const bonus = DamageParser.parseSaveBonus(rest)
+    if (bonus === null) {
       throw new Error(messages.t('damage.errors.invalidSaveTag', { save, tag }))
     }
-    if (!bonus[1]) {
-      throw new Error(messages.t('damage.errors.saveBonusSign', { bonus: bonus[2], save }))
+    if (bonus.sign === null) {
+      throw new Error(messages.t('damage.errors.saveBonusSign', { bonus: bonus.value, save }))
     }
 
-    return { label: save, save, saveMod: parseInt(`${bonus[1]}${bonus[2]}`, 10) }
+    return { label: save, save, saveMod: parseInt(`${bonus.sign}${bonus.value}`, 10) }
   }
 
   private parseModifier(text: string, hasSave: boolean): Modifier {
-    if (DamageParser.FORMULA_START_RE.test(text)) {
+    if (DamageParser.startsWithFormula(text)) {
       return { damage: DamageParser.normalizeFormula(text), kind: ModifierKind.ExtraDamage }
     }
 
-    const match = text.match(DamageParser.NAMED_MODIFIER_RE)
-    if (!match) {
+    const modifier = DamageParser.parseNamedModifier(text)
+    if (modifier === null) {
       throw new Error(messages.t('damage.errors.unknownModifier', { modifier: text }))
     }
 
-    const name = match[1].toLowerCase()
-    // eslint-disable-next-line no-undefined
-    const args = match[2] === undefined ? [] : this.splitTopLevel(match[2], ',').map(DamageParser.normalizeFormula)
+    const name = modifier.name.toLowerCase()
+    const args = modifier.args === null ? [] : this.splitTopLevel(modifier.args, ',').map(DamageParser.normalizeFormula)
     if (args.some((a) => a === '')) {
       throw new Error(messages.t('damage.errors.emptyArgument', { modifier: name }))
     }
@@ -241,8 +236,52 @@ export class DamageParser implements IDamageParser {
         return { damage: args[0], duration: args[1] ?? null, kind: ModifierKind.DamageEachRound }
 
       default:
-        throw new Error(messages.t('damage.errors.unknownModifier', { modifier: match[1] }))
+        throw new Error(messages.t('damage.errors.unknownModifier', { modifier: modifier.name }))
     }
+  }
+
+  private static isFormula(text: string): boolean {
+    return DamageParser.FORMULA_RE.test(text)
+  }
+
+  private static startsWithFormula(text: string): boolean {
+    return DamageParser.FORMULA_START_RE.test(text)
+  }
+
+  // every die counts with its maximum roll: "2d6+1" gives 13
+  private static sumOfMaxTerms(formula: string): number {
+    let total = 0
+    for (const [, sign, count, sides, constant] of formula.matchAll(DamageParser.TERM_RE)) {
+      const value = sides ? (count ? parseInt(count, 10) : 1) * parseInt(sides, 10) : parseInt(constant, 10)
+      total += sign === '-' ? -value : value
+    }
+
+    return total
+  }
+
+  // "wis (+2)" gives the save and the rest after it; null when the tag is not a save
+  private static splitSaveTag(tag: string): SaveTagParts | null {
+    const match = tag.match(DamageParser.SAVE_TAG_RE)
+    // a save name followed by a letter or a space and a letter is just a label: "poisonous", "poison ivy"
+    if (!match || DamageParser.LABEL_CONTINUATION_RE.test(match[2])) {
+      return null
+    }
+
+    return { rest: match[2].trim(), save: match[1].toLowerCase() as SaveType }
+  }
+
+  // "(+2)" or "(2)"; the sign is null when missing
+  private static parseSaveBonus(text: string): SaveBonus | null {
+    const match = text.match(DamageParser.SAVE_BONUS_RE)
+
+    return match ? { sign: match[1] ?? null, value: match[2] } : null
+  }
+
+  // "paralyze(1d4)" gives the name and the raw argument list, null without parentheses
+  private static parseNamedModifier(text: string): NamedModifier | null {
+    const match = text.match(DamageParser.NAMED_MODIFIER_RE)
+
+    return match ? { args: match[2] ?? null, name: match[1] } : null
   }
 
   private static requireSave(name: string, hasSave: boolean): void {
