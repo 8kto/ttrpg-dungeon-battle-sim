@@ -202,6 +202,20 @@ describe('AttackWizard', () => {
       expect($<HTMLButtonElement>('.attack-wizard__apply').disabled).toBe(true)
     })
 
+    it('drops save-only modifiers without a save', () => {
+      selectTag('poison')
+      clickText('+ Save or die')
+      clickText('+ Paralyze')
+      selectTag('label')
+      type($('.attack-wizard__label'), 'fire')
+      expect(code()).toBe('d6[fire, paralyze]')
+      expect($('.attack-wizard__errors').hidden).toBe(true)
+
+      selectTag('none')
+      selectTag('poison')
+      expect(code()).toBe('d6[poison, paralyze]')
+    })
+
     it('adds a save with a bonus and modifiers', () => {
       selectTag('poison')
       expect($('.attack-wizard__errors').hidden).toBe(false)

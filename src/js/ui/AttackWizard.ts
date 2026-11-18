@@ -267,6 +267,10 @@ export class AttackWizard implements IAttackWizard {
         attack.tag = 'save'
         attack.save = select.value as SaveType
       }
+      // without a save these modifiers make the damage invalid
+      if (attack.tag !== 'save') {
+        attack.modifiers = attack.modifiers.filter((m) => !AttackWizard.SAVE_ONLY.has(m.kind))
+      }
       this.render()
     })
 
