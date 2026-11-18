@@ -11,7 +11,7 @@ import { ModifierKind, SaveType } from '../services/attacks/types'
 import { messages } from '../services/messages/MessageService'
 import { MaxStrategy } from '../services/strategies/MaxStrategy'
 import { DamageValidator } from '../services/validation/DamageValidator'
-import type { IDamageValidator } from '../services/validation/IDamageValidator'
+import type { DamageCheck, IDamageValidator } from '../services/validation/IDamageValidator'
 import { button, el, onClick, query } from '../utils/dom'
 import { capitalize } from '../utils/text'
 import { DamageField } from './DamageField'
@@ -25,6 +25,8 @@ export class AttackWizard implements IAttackWizard {
     ModifierKind.SaveOrDie,
     ModifierKind.SaveForHalf,
   ])
+  // no brackets, commas or pipes of the damage syntax; emojis may have skin tones and be joined: 🧊, 🧙🏽‍♂️
+  private static readonly LABEL_RE: RegExp = /^(?:[\w\p{Extended_Pictographic}\p{Emoji_Modifier} -]|\u200d|\ufe0f)+$/u
 
   private static newAttack(): DraftAttack {
     return {
@@ -129,7 +131,7 @@ export class AttackWizard implements IAttackWizard {
 
   private apply(): void {
     const damage = this.damage
-    if (this.damageValidator.validate(damage).length > 0) {
+    if (this.check(damage).errors.length > 0) {
       return
     }
     this.onApply?.(damage)
@@ -148,9 +150,32 @@ export class AttackWizard implements IAttackWizard {
     this.update()
   }
 
+  // label errors come first: a label with brackets or commas may still parse, as something else
+  private check(damage: string): DamageCheck {
+    const labelErrors = this.draft.flat().flatMap((attack) => this.labelErrors(attack))
+
+    return labelErrors.length > 0 ? { errors: labelErrors, options: [] } : this.damageValidator.check(damage)
+  }
+
+  // an empty label is reported by the validator, if it's required
+  private labelErrors({ label, tag }: DraftAttack): string[] {
+    const text = label.trim()
+    if (tag !== 'label' || text === '') {
+      return []
+    }
+    if (!AttackWizard.LABEL_RE.test(text)) {
+      return [messages.t('ui.attackWizard.errors.labelChars', { label: text })]
+    }
+    if (this.damageParser.readsAsSave(text)) {
+      return [messages.t('ui.attackWizard.errors.labelIsSave', { label: text })]
+    }
+
+    return []
+  }
+
   private update(): void {
     const damage = this.damage
-    const { errors, options } = this.damageValidator.check(damage)
+    const { errors, options } = this.check(damage)
 
     this.code.textContent = damage
     this.errorList.replaceChildren(...errors.map((error) => el('li', '', error)))
@@ -252,7 +277,8 @@ export class AttackWizard implements IAttackWizard {
       input.placeholder = messages.t('ui.attackWizard.labelPlaceholder')
       input.setAttribute('aria-label', messages.t('ui.attackWizard.label'))
       const mark = (): void => {
-        input.classList.toggle('damage-input--invalid', input.value.trim() === '' && attack.modifiers.length > 0)
+        const missing = input.value.trim() === '' && attack.modifiers.length > 0
+        input.classList.toggle('damage-input--invalid', missing || this.labelErrors(attack).length > 0)
       }
       input.addEventListener('input', (): void => {
         attack.label = input.value

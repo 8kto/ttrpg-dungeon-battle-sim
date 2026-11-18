@@ -118,9 +118,13 @@ export const catalog = {
       clearFormula: 'Clear',
       damage: 'Damage',
       effect: 'Effect',
+      errors: {
+        labelChars: 'label "{label}" may contain only letters, digits, emojis, "_", "-" and spaces',
+        labelIsSave: 'label "{label}" reads as a save, choose "Save vs …" instead',
+      },
       for: 'for',
       label: 'Label',
-      labelPlaceholder: 'claws, fire, 🧊…',
+      labelPlaceholder: 'e.g. claws',
       modifier: {
         damage_each_round: 'Damage each round',
         extra_damage: 'Extra damage',

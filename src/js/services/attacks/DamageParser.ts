@@ -104,6 +104,10 @@ export class DamageParser implements IDamageParser {
     return multiplier * sides + mod
   }
 
+  readsAsSave(tag: string): boolean {
+    return DamageParser.splitSaveTag(tag) !== null
+  }
+
   // Splits on a separator outside of [] and (); `|` inside brackets is an error
   private splitTopLevel(input: string, separator: ',' | '|'): string[] {
     const parts: string[] = []

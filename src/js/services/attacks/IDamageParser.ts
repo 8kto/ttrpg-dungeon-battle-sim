@@ -9,4 +9,6 @@ export interface IDamageParser {
   getFormulasOf(attack: Attack): string[]
   // Maximum value of a formula, e.g. "2d6+1" → 13
   getMaxDamage(formula: string): number
+  // Whether an effect tag is read as a save, e.g. "poison" or "magic (+2)", but not "poison ivy"
+  readsAsSave(tag: string): boolean
 }

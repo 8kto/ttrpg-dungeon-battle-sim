@@ -174,6 +174,34 @@ describe('AttackWizard', () => {
       expect(code()).toBe('d6[claws]')
     })
 
+    it.each(['claws!', 'fire, d6', 'a[b]', 'x | y', '🧊(2)'])('rejects the label "%s"', (label) => {
+      selectTag('label')
+      type($('.attack-wizard__label'), label)
+      expect($('.attack-wizard__label').classList).toContain('damage-input--invalid')
+      expect($$('.attack-wizard__error-list li').map((li) => li.textContent)).toEqual([
+        `label "${label}" may contain only letters, digits, emojis, "_", "-" and spaces`,
+      ])
+      expect($<HTMLButtonElement>('.attack-wizard__apply').disabled).toBe(true)
+    })
+
+    it.each(['fire_breath', 'Ice-2', 'poison ivy', '🧊', 'ice 🧊', '🧙🏽‍♂️', '❄️'])('accepts the label "%s"', (label) => {
+      selectTag('label')
+      type($('.attack-wizard__label'), label)
+      expect($('.attack-wizard__label').classList).not.toContain('damage-input--invalid')
+      expect($('.attack-wizard__errors').hidden).toBe(true)
+    })
+
+    it.each(['Poison', 'magic 2'])('rejects the label "%s" that reads as a save', (label) => {
+      selectTag('label')
+      type($('.attack-wizard__label'), label)
+      clickText('+ Paralyze')
+      expect($('.attack-wizard__label').classList).toContain('damage-input--invalid')
+      expect($$('.attack-wizard__error-list li').map((li) => li.textContent)).toEqual([
+        `label "${label}" reads as a save, choose "Save vs …" instead`,
+      ])
+      expect($<HTMLButtonElement>('.attack-wizard__apply').disabled).toBe(true)
+    })
+
     it('adds a save with a bonus and modifiers', () => {
       selectTag('poison')
       expect($('.attack-wizard__errors').hidden).toBe(false)

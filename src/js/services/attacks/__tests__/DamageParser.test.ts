@@ -183,4 +183,14 @@ describe('DamageParser', () => {
       expect(() => parser.getMaxDamage(formula)).toThrow(`Invalid damage formula: "${formula}"`)
     })
   })
+
+  describe('readsAsSave', () => {
+    it.each(['poison', 'Poison', 'magic (+2)', 'poison 2', 'magic-1'])('"%s" is a save', (tag) => {
+      expect(parser.readsAsSave(tag)).toBe(true)
+    })
+
+    it.each(['fire', 'poisonous', 'poison ivy', 'claws'])('"%s" is a label', (tag) => {
+      expect(parser.readsAsSave(tag)).toBe(false)
+    })
+  })
 })
