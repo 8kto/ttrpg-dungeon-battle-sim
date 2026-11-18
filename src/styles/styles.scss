@@ -20,6 +20,9 @@
   --table-border: #e2ddeb;
   --primary-font: sans-serif;
   --cursive-font: 'Uncial Antiqua', cursive;
+  --touch-target: 2.5rem;
+  --touch-target-narrow: 1.75rem;
+  --icon-color: #999;
 
   background-color: var(--page-bg);
 }
@@ -151,10 +154,26 @@ abbr:hover {
 }
 
 .remove-row {
-  color: var(--alt-color);
+  color: var(--icon-color);
+
+  &:hover {
+    color: var(--alt-color);
+  }
 }
 .duplicate-row {
-  color: var(--3rd-color);
+  color: var(--icon-color);
+
+  &:hover {
+    color: var(--3rd-color);
+  }
+}
+.damage-wizard-btn {
+  color: var(--icon-color);
+  filter: grayscale(1);
+
+  &:hover {
+    filter: none
+  }
 }
 
 .table-header--name {
@@ -184,6 +203,10 @@ abbr:hover {
   }
   tbody.char tr:last-child td {
     @apply pb-2;
+  }
+
+  .text-right {
+    text-align: right;
   }
 }
 .char-table__head {
@@ -532,6 +555,7 @@ abbr:hover {
 .attack-wizard__preview {
   @apply cursor-default;
 }
+.help-modal__actions,
 .attack-wizard__actions {
   @apply flex justify-end gap-2 mt-4;
 }
@@ -733,7 +757,21 @@ h3:nth-of-type(even)::after {
     font-size: 16px;
   }
 
+  /* icon buttons: a square finger-sized target with the icon centered, highlighted on tap */
+  .row-action,
+  .help-modal__close,
+  .attack-wizard__remove {
+    @apply inline-flex items-center justify-center p-0 rounded-full align-middle;
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
+
+    &:active {
+      background: var(--table-head-bg);
+    }
+  }
+  /* the table rows have no room for two full-size squares */
   .row-action {
-    @apply py-1;
+    @apply rounded-md;
+    min-width: var(--touch-target-narrow);
   }
 }
