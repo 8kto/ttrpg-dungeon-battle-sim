@@ -1,13 +1,10 @@
+import { signed } from '../../utils/number'
 import type { IDamageSerializer, SerializableAttack } from './IDamageSerializer'
 import type { AttackEffect, Modifier } from './types'
 import { ModifierKind } from './types'
 
 // Writes parsed attacks back in the damage field syntax; the opposite of DamageParser.parseDamage
 export class DamageSerializer implements IDamageSerializer {
-  private static signed(n: number): string {
-    return n > 0 ? `+${n}` : String(n)
-  }
-
   private static withArgs(name: string, ...args: (string | null)[]): string {
     const present = args.filter((a): a is string => a !== null)
 
@@ -23,7 +20,7 @@ export class DamageSerializer implements IDamageSerializer {
   }
 
   private serializeEffect({ label, modifiers, save, saveMod }: AttackEffect): string {
-    const tag = save === null ? label : saveMod ? `${save}(${DamageSerializer.signed(saveMod)})` : save
+    const tag = save === null ? label : saveMod ? `${save}(${signed(saveMod)})` : save
 
     return [tag, ...modifiers.map((m) => this.serializeModifier(m))].join(', ')
   }

@@ -7,6 +7,7 @@ import { MaxStrategy } from '../services/strategies/MaxStrategy'
 import { DamageValidator } from '../services/validation/DamageValidator'
 import type { IDamageValidator } from '../services/validation/IDamageValidator'
 import { el, onClick } from '../utils/dom'
+import { signed } from '../utils/number'
 import { capitalize } from '../utils/text'
 import type { IAttackWizard } from './IAttackWizard'
 
@@ -17,8 +18,6 @@ type FieldElements = {
   toggle: HTMLButtonElement
   wizardButton: HTMLButtonElement | null
 }
-
-const signed = (n: number): string => (n > 0 ? `+${n}` : String(n))
 
 const describeModifier = (modifier: Modifier): string => {
   switch (modifier.kind) {
