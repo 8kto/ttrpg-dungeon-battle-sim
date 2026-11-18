@@ -1,4 +1,6 @@
 import { messages } from '../messages/MessageService'
+import { DamageFormula } from './DamageFormula'
+import type { IDamageFormula } from './IDamageFormula'
 import type { IDamageParser } from './IDamageParser'
 import type { Attack, AttackEffect, AttackOption, Modifier } from './types'
 import { ModifierKind, SaveType } from './types'
@@ -12,15 +14,12 @@ export class DamageParser implements IDamageParser {
   private static readonly OPENING: Readonly<Record<string, string>> = { '(': ')', '[': ']' }
   private static readonly CLOSING: ReadonlySet<string> = new Set(Object.values(DamageParser.OPENING))
 
-  private static readonly FORMULA_START_RE: RegExp = /^\d*d\d+|^\d+/i
   private static readonly NAMED_MODIFIER_RE: RegExp = /^([a-z_]+)\s*(?:\((.*)\))?$/is
   private static readonly SAVE_TAG_RE: RegExp = new RegExp(`^(${Object.values(SaveType).join('|')})(.*)$`, 'is')
   private static readonly SAVE_BONUS_RE: RegExp = /^\(\s*([+-])?\s*(\d+)\s*\)$/
   private static readonly LABEL_CONTINUATION_RE: RegExp = /^\s*[^\s(+\-\d]/
 
-  // sums and differences of dice and integers: "d6+d4", "2d6 - 1", "5"
-  private static readonly FORMULA_RE: RegExp = /^(\d*d\d+|\d+)(\s*[+-]\s*(\d*d\d+|\d+))*$/i
-  private static readonly TERM_RE: RegExp = /([+-]?)\s*(?:(\d*)d(\d+)|(\d+))/gi
+  constructor(private readonly damageFormula: IDamageFormula = new DamageFormula()) {}
 
   parseDamage(input: string): AttackOption[] {
     const text = input.trim()
@@ -99,14 +98,10 @@ export class DamageParser implements IDamageParser {
     return formulas
   }
 
-  // TODO migrate to dice lib
   getMaxDamage(formula: string): number {
-    const text = formula.trim()
-    if (!DamageParser.isFormula(text)) {
-      throw new Error(`Invalid damage formula: "${formula}"`)
-    }
+    const { mod, multiplier, sides } = this.damageFormula.parse(formula)
 
-    return DamageParser.sumOfMaxTerms(text)
+    return multiplier * sides + mod
   }
 
   // Splits on a separator outside of [] and (); `|` inside brackets is an error
@@ -183,13 +178,10 @@ export class DamageParser implements IDamageParser {
   }
 
   private parseModifier(text: string, hasSave: boolean): Modifier {
-    if (DamageParser.startsWithFormula(text)) {
-      return { damage: DamageParser.normalizeFormula(text), kind: ModifierKind.ExtraDamage }
-    }
-
+    // anything but a named modifier is extra damage; the validator checks its formula
     const modifier = DamageParser.parseNamedModifier(text)
     if (modifier === null) {
-      throw new Error(messages.t('damage.errors.unknownModifier', { modifier: text }))
+      return { damage: DamageParser.normalizeFormula(text), kind: ModifierKind.ExtraDamage }
     }
 
     const name = modifier.name.toLowerCase()
@@ -238,25 +230,6 @@ export class DamageParser implements IDamageParser {
       default:
         throw new Error(messages.t('damage.errors.unknownModifier', { modifier: modifier.name }))
     }
-  }
-
-  private static isFormula(text: string): boolean {
-    return DamageParser.FORMULA_RE.test(text)
-  }
-
-  private static startsWithFormula(text: string): boolean {
-    return DamageParser.FORMULA_START_RE.test(text)
-  }
-
-  // every die counts with its maximum roll: "2d6+1" gives 13
-  private static sumOfMaxTerms(formula: string): number {
-    let total = 0
-    for (const [, sign, count, sides, constant] of formula.matchAll(DamageParser.TERM_RE)) {
-      const value = sides ? (count ? parseInt(count, 10) : 1) * parseInt(sides, 10) : parseInt(constant, 10)
-      total += sign === '-' ? -value : value
-    }
-
-    return total
   }
 
   // "wis (+2)" gives the save and the rest after it; null when the tag is not a save

@@ -7,6 +7,6 @@ export interface IDamageParser {
   parseAttack(source: string): Attack
   // The weapon formula and every formula used by modifiers, for validation
   getFormulasOf(attack: Attack): string[]
-  // Maximum value of a formula, e.g. "d6+d4" → 10
+  // Maximum value of a formula, e.g. "2d6+1" → 13
   getMaxDamage(formula: string): number
 }

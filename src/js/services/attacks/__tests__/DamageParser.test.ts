@@ -172,7 +172,6 @@ describe('DamageParser', () => {
     it.each<[string, number]>([
       ['d6', 6],
       ['d6+1', 7],
-      ['d6+d4', 10],
       ['2d6-1', 11],
       ['5', 5],
       ['2d4 + 1', 9],
@@ -180,7 +179,7 @@ describe('DamageParser', () => {
       expect(parser.getMaxDamage(formula)).toBe(expected)
     })
 
-    it.each(['', 'd', 'hello', 'd6+'])('throws on "%s"', (formula) => {
+    it.each(['', 'd', 'hello', 'd6+', 'd6+d4'])('throws on "%s"', (formula) => {
       expect(() => parser.getMaxDamage(formula)).toThrow(`Invalid damage formula: "${formula}"`)
     })
   })
