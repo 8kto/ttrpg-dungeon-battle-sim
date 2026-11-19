@@ -1,17 +1,17 @@
-import type { FormulaTokens, IDamageFormula } from './IDamageFormula'
+import type { DiceGroup, FormulaTokens, IDamageFormula } from './IDamageFormula'
 
-// The one place that knows the formula format the strategies support: "d6", "2d6", "3d10+2", "4d8 - 3" or "5".
-// Dice of different types can't be mixed
+// The one place that knows the formula format the strategies support: dice and numbers joined by "+" and "-",
+// e.g. "d6", "2d6", "3d10+2", "d6 + d10 - 1" or "5"
 export class DamageFormula implements IDamageFormula {
-  private static readonly DICE_RE: RegExp = /^(\d*)d(\d+)\s*([+-]\s*\d+)?$/i
-  private static readonly NUMBER_RE: RegExp = /^\d+$/
+  private static readonly FORMULA_RE: RegExp = /^(?:\d*d\d+|\d+)(?:\s*[+-]\s*(?:\d*d\d+|\d+))*$/i
+  private static readonly TERM_RE: RegExp = /([+-]?)\s*(?:(\d*)d(\d+)|(\d+))/gi
 
   // formulas are parsed on every attack, but there are only a few distinct ones per simulation;
   // the limit keeps formulas typed in the UI from piling up
   private static readonly CACHE_LIMIT: number = 200
   private static readonly cache: Map<string, Readonly<FormulaTokens>> = new Map()
 
-  private static readonly EMPTY: Readonly<FormulaTokens> = Object.freeze({ mod: 0, multiplier: 0, sides: 0 })
+  private static readonly EMPTY: Readonly<FormulaTokens> = Object.freeze({ dice: [], mod: 0 })
 
   parse(formula: string): Readonly<FormulaTokens> {
     const cached = DamageFormula.cache.get(formula)
@@ -28,23 +28,41 @@ export class DamageFormula implements IDamageFormula {
     return tokens
   }
 
-  format({ mod, multiplier, sides }: FormulaTokens): string {
-    if (multiplier === 0) {
-      return mod > 0 ? String(mod) : ''
+  format({ dice, mod }: FormulaTokens): string {
+    const terms = dice
+      .filter(({ count }) => count !== 0)
+      .map(({ count, sides }) => `${count < 0 ? '-' : ''}${Math.abs(count) === 1 ? '' : Math.abs(count)}d${sides}`)
+    if (mod !== 0) {
+      terms.push(String(mod))
     }
-    const dice = `${multiplier === 1 ? '' : multiplier}d${sides}`
+    // the formula can't start with "-": "-d4+3" is written "3-d4"
+    const first = terms.findIndex((term) => !term.startsWith('-'))
+    if (first === -1) {
+      return ''
+    }
 
-    return mod === 0 ? dice : `${dice}${mod > 0 ? '+' : ''}${mod}`
+    return [terms[first], ...terms.filter((_, i) => i !== first)]
+      .map((term, i) => (i === 0 || term.startsWith('-') ? term : `+${term}`))
+      .join('')
+  }
+
+  max(formula: string): number {
+    const { dice, mod } = this.parse(formula)
+
+    return dice.reduce((sum, { count, sides }) => sum + (count > 0 ? count * sides : count), mod)
   }
 
   addDie(formula: string, sides: number): string {
-    const current = this.parseOrEmpty(formula)
+    const { dice, mod } = this.parseOrEmpty(formula)
+    const same = dice.findIndex((group) => group.count > 0 && group.sides === sides)
 
-    return this.format(
-      current.multiplier > 0 && current.sides === sides
-        ? { ...current, multiplier: current.multiplier + 1 }
-        : { mod: current.mod, multiplier: 1, sides },
-    )
+    return this.format({
+      dice:
+        same === -1
+          ? [...dice, { count: 1, sides }]
+          : dice.map((group, i) => (i === same ? { ...group, count: group.count + 1 } : group)),
+      mod,
+    })
   }
 
   addConstant(formula: string, delta: number): string {
@@ -62,22 +80,31 @@ export class DamageFormula implements IDamageFormula {
     }
   }
 
+  // dice of the same type and sign are added up: "d6+d6" is "2d6"
   private static tokenize(formula: string): FormulaTokens {
     const text = formula.trim()
-    // plain integers are used for effect durations, e.g. damage_each_round(d4,3)
-    if (DamageFormula.NUMBER_RE.test(text)) {
-      return { mod: parseInt(text, 10), multiplier: 0, sides: 0 }
-    }
-
-    const match = text.match(DamageFormula.DICE_RE)
-    if (!match) {
+    if (!DamageFormula.FORMULA_RE.test(text)) {
       throw new Error(`Invalid damage formula: "${formula}"`)
     }
 
-    return {
-      mod: match[3] ? parseInt(match[3].replace(/\s+/g, ''), 10) : 0,
-      multiplier: match[1] ? parseInt(match[1], 10) : 1,
-      sides: parseInt(match[2], 10),
+    const dice: DiceGroup[] = []
+    let mod = 0
+    for (const [, sign, count, sides, number] of text.matchAll(DamageFormula.TERM_RE)) {
+      const factor = sign === '-' ? -1 : 1
+      if (number) {
+        mod += factor * parseInt(number, 10)
+        continue
+      }
+
+      const group = { count: factor * (count ? parseInt(count, 10) : 1), sides: parseInt(sides, 10) }
+      const same = dice.find((g) => g.sides === group.sides && Math.sign(g.count) === Math.sign(group.count))
+      if (same) {
+        same.count += group.count
+      } else {
+        dice.push(group)
+      }
     }
+
+    return { dice, mod }
   }
 }

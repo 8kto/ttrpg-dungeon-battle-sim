@@ -1,6 +1,6 @@
 import { signed } from '../../utils/number'
-import type { IDamageSerializer, SerializableAttack } from './IDamageSerializer'
-import type { AttackEffect, Modifier } from './types'
+import type { IDamageSerializer, SerializableAttack, SerializableEffect } from './IDamageSerializer'
+import type { Modifier } from './types'
 import { ModifierKind } from './types'
 
 // Writes parsed attacks back in the damage field syntax; the opposite of DamageParser.parseDamage
@@ -15,14 +15,14 @@ export class DamageSerializer implements IDamageSerializer {
     return options.map((attacks) => attacks.map((attack) => this.serializeAttack(attack)).join(', ')).join(' | ')
   }
 
-  serializeAttack({ damage, effect }: SerializableAttack): string {
-    return effect ? `${damage}[${this.serializeEffect(effect)}]` : damage
+  serializeAttack({ damage, effect, name }: SerializableAttack): string {
+    return `${damage}${name === null ? '' : `<${name}>`}${effect ? `[${this.serializeEffect(effect)}]` : ''}`
   }
 
-  private serializeEffect({ label, modifiers, save, saveMod }: AttackEffect): string {
-    const tag = save === null ? label : saveMod ? `${save}(${signed(saveMod)})` : save
+  private serializeEffect({ modifiers, save, saveMod }: SerializableEffect): string {
+    const tag = save === null ? [] : [saveMod ? `${save}(${signed(saveMod)})` : save]
 
-    return [tag, ...modifiers.map((m) => this.serializeModifier(m))].join(', ')
+    return [...tag, ...modifiers.map((m) => this.serializeModifier(m))].join(', ')
   }
 
   private serializeModifier(modifier: Modifier): string {

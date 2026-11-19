@@ -21,10 +21,7 @@ export class MaxStrategy extends BaseStrategy implements ICombatStrategy {
   }
 
   calculateDamage(damage: string): number {
-    const { mod, multiplier, sides } = this.getTokens(damage)
-
-    // Return max damage
-    return multiplier * sides + mod
+    return this.damageFormula.max(damage)
   }
 
   // the option with the highest max weapon damage (effects ignored); the leftmost one on a tie

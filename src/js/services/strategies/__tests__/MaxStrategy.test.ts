@@ -31,6 +31,9 @@ describe('MaxStrategy', () => {
       ['4d8 -3', 29],
       ['5d4+0', 20],
       ['6d12-5', 67],
+      ['d6+d10', 16],
+      ['2d6+d4-1', 15],
+      ['d8-d4', 7],
     ])('"%s" → %d', (input, expected) => {
       expect(strategy.calculateDamage(input)).toBe(expected)
     })

@@ -24,18 +24,16 @@ export class AttackWizard implements IAttackWizard {
   private static readonly SAVE_ONLY: ReadonlySet<ModifierKind> = new Set([
     ModifierKind.SaveOrDie,
     ModifierKind.SaveForHalf,
+    ModifierKind.ExtraDamage,
   ])
-  // no brackets, commas or pipes of the damage syntax; emojis may have skin tones and be joined: 🧊, 🧙🏽‍♂️
-  private static readonly LABEL_RE: RegExp = /^(?:[\w\p{Extended_Pictographic}\p{Emoji_Modifier} -]|\u200d|\ufe0f)+$/u
 
   private static newAttack(): DraftAttack {
     return {
       damage: 'd6',
-      label: '',
       modifiers: [],
-      save: SaveType.Poison,
+      name: '',
+      save: null,
       saveMod: 0,
-      tag: 'none',
     }
   }
 
@@ -55,28 +53,23 @@ export class AttackWizard implements IAttackWizard {
     }
   }
 
-  private static toDraft({ damage, effect }: Attack): DraftAttack {
+  private static toDraft({ damage, effect, name }: Attack): DraftAttack {
     return {
       damage,
-      label: effect && effect.save === null ? effect.label : '',
       modifiers: effect ? effect.modifiers.map((m) => ({ ...m })) : [],
-      save: effect?.save ?? SaveType.Poison,
+      name: name ?? '',
+      save: effect?.save ?? null,
       saveMod: effect?.saveMod ?? 0,
-      tag: !effect ? 'none' : effect.save ? 'save' : 'label',
     }
   }
 
-  private static toAttack({ damage, label, modifiers, save, saveMod, tag }: DraftAttack): SerializableAttack {
-    switch (tag) {
-      case 'none':
-        return { damage: damage.trim(), effect: null }
-      case 'label':
-        // an empty label labels nothing; with modifiers it's still required by the syntax
-        return label.trim() === '' && modifiers.length === 0
-          ? { damage: damage.trim(), effect: null }
-          : { damage: damage.trim(), effect: { label: label.trim(), modifiers, save: null, saveMod: 0 } }
-      case 'save':
-        return { damage: damage.trim(), effect: { label: save, modifiers, save, saveMod } }
+  private static toAttack({ damage, modifiers, name, save, saveMod }: DraftAttack): SerializableAttack {
+    return {
+      damage: damage.trim(),
+      // a save without modifiers stays, the validator reports it
+      effect:
+        save === null && modifiers.length === 0 ? null : { modifiers, save, saveMod: save === null ? 0 : saveMod },
+      name: name.trim() === '' ? null : name.trim(),
     }
   }
 
@@ -150,27 +143,17 @@ export class AttackWizard implements IAttackWizard {
     this.update()
   }
 
-  // label errors come first: a label with brackets or commas may still parse, as something else
+  // name errors come first: a name with brackets or commas may still parse, as something else
   private check(damage: string): DamageCheck {
-    const labelErrors = this.draft.flat().flatMap((attack) => this.labelErrors(attack))
+    const nameErrors = this.draft.flat().flatMap((attack) => this.nameErrors(attack))
 
-    return labelErrors.length > 0 ? { errors: labelErrors, options: [] } : this.damageValidator.check(damage)
+    return nameErrors.length > 0 ? { errors: nameErrors, options: [] } : this.damageValidator.check(damage)
   }
 
-  // an empty label is reported by the validator, if it's required
-  private labelErrors({ label, tag }: DraftAttack): string[] {
-    const text = label.trim()
-    if (tag !== 'label' || text === '') {
-      return []
-    }
-    if (!AttackWizard.LABEL_RE.test(text)) {
-      return [messages.t('ui.attackWizard.errors.labelChars', { label: text })]
-    }
-    if (this.damageParser.readsAsSave(text)) {
-      return [messages.t('ui.attackWizard.errors.labelIsSave', { label: text })]
-    }
+  private nameErrors({ name }: DraftAttack): string[] {
+    const error = name.trim() === '' ? null : this.damageParser.checkName(name.trim())
 
-    return []
+    return error === null ? [] : [error]
   }
 
   private update(): void {
@@ -237,79 +220,70 @@ export class AttackWizard implements IAttackWizard {
         this.formulaField(attack.damage, '', (value) => (attack.damage = value)),
       ),
     )
-    card.appendChild(this.row(messages.t('ui.attackWizard.effect'), ...this.renderTag(attack)))
-
-    if (attack.tag !== 'none') {
-      card.appendChild(this.renderModifiers(attack))
-    }
+    card.appendChild(this.row(messages.t('ui.attackWizard.name'), this.renderName(attack)))
+    card.appendChild(this.row(messages.t('ui.attackWizard.save'), ...this.renderSave(attack)))
+    card.appendChild(this.renderModifiers(attack))
 
     return card
   }
 
-  // one select for the tag kind and the save type: "None", "Label, no save", "Save vs Poison"...
-  private renderTag(attack: DraftAttack): HTMLElement[] {
-    const select = el('select', 'attack-wizard__tag border rounded px-1')
+  private renderName(attack: DraftAttack): HTMLElement {
+    const input = el('input', 'attack-wizard__name border rounded px-2')
+    input.type = 'text'
+    input.value = attack.name
+    input.placeholder = messages.t('ui.attackWizard.namePlaceholder')
+    input.setAttribute('aria-label', messages.t('ui.attackWizard.name'))
+    const mark = (): void => {
+      input.classList.toggle('damage-input--invalid', this.nameErrors(attack).length > 0)
+    }
+    input.addEventListener('input', (): void => {
+      attack.name = input.value
+      mark()
+      this.update()
+    })
+    mark()
+
+    return input
+  }
+
+  // "No save" or "Save vs Poison"..., with the bonus of the save
+  private renderSave(attack: DraftAttack): HTMLElement[] {
+    const select = el('select', 'attack-wizard__save border rounded px-1')
     const addOption = (value: string, text: string): void => {
       const option = el('option', '', text)
       option.value = value
       select.appendChild(option)
     }
-    addOption('none', messages.t('ui.attackWizard.tag.none'))
-    addOption('label', messages.t('ui.attackWizard.tag.label'))
+    addOption('', messages.t('ui.attackWizard.saveSelect.none'))
     Object.values(SaveType).forEach((save) =>
-      addOption(save, messages.t('ui.attackWizard.tag.save', { save: capitalize(save) })),
+      addOption(save, messages.t('ui.attackWizard.saveSelect.save', { save: capitalize(save) })),
     )
-    select.value = attack.tag === 'save' ? attack.save : attack.tag
+    select.value = attack.save ?? ''
     select.addEventListener('change', (): void => {
-      if (select.value === 'none' || select.value === 'label') {
-        attack.tag = select.value
-      } else {
-        attack.tag = 'save'
-        attack.save = select.value as SaveType
-      }
+      attack.save = select.value === '' ? null : (select.value as SaveType)
       // without a save these modifiers make the damage invalid
-      if (attack.tag !== 'save') {
+      if (attack.save === null) {
         attack.modifiers = attack.modifiers.filter((m) => !AttackWizard.SAVE_ONLY.has(m.kind))
       }
       this.render()
     })
 
-    if (attack.tag === 'label') {
-      const input = el('input', 'attack-wizard__label border rounded px-2')
-      input.type = 'text'
-      input.value = attack.label
-      input.placeholder = messages.t('ui.attackWizard.labelPlaceholder')
-      input.setAttribute('aria-label', messages.t('ui.attackWizard.label'))
-      const mark = (): void => {
-        const missing = input.value.trim() === '' && attack.modifiers.length > 0
-        input.classList.toggle('damage-input--invalid', missing || this.labelErrors(attack).length > 0)
-      }
-      input.addEventListener('input', (): void => {
-        attack.label = input.value
-        mark()
-        this.update()
-      })
-      mark()
-
-      return [select, input]
+    if (attack.save === null) {
+      return [select]
     }
 
-    if (attack.tag === 'save') {
-      const label = el('label', 'attack-wizard__save-mod', messages.t('ui.attackWizard.saveBonus'))
-      const input = el('input', 'num-input border rounded px-2')
-      input.type = 'number'
-      input.step = '1'
-      input.value = String(attack.saveMod)
-      input.addEventListener('input', (): void => {
-        attack.saveMod = Math.trunc(Number(input.value)) || 0
-        this.update()
-      })
-      label.appendChild(input)
+    const label = el('label', 'attack-wizard__save-mod', messages.t('ui.attackWizard.saveBonus'))
+    const input = el('input', 'num-input border rounded px-2')
+    input.type = 'number'
+    input.step = '1'
+    input.value = String(attack.saveMod)
+    input.addEventListener('input', (): void => {
+      attack.saveMod = Math.trunc(Number(input.value)) || 0
+      this.update()
+    })
+    label.appendChild(input)
 
-      return [select, label]
-    }
-
-    return [select]
+    return [select, label]
   }
 
   private renderModifiers(attack: DraftAttack): HTMLElement {
@@ -338,7 +312,7 @@ export class AttackWizard implements IAttackWizard {
         attack.modifiers.push(AttackWizard.newModifier(kind))
         this.render()
       })
-      if (AttackWizard.SAVE_ONLY.has(kind) && attack.tag !== 'save') {
+      if (AttackWizard.SAVE_ONLY.has(kind) && attack.save === null) {
         addButton.disabled = true
         addButton.title = messages.t('ui.attackWizard.needsSave')
       }
@@ -379,7 +353,7 @@ export class AttackWizard implements IAttackWizard {
     }
   }
 
-  // a formula built by clicks, the input is read-only: d6 adds a d6 ("d6" → "2d6"), ±1 changes the constant,
+  // a formula built by clicks, the input is read-only: a die is added ("d6" → "2d6" → "2d6+d4"), ±1 changes the constant,
   // ⌫ clears it; a required formula is outlined while empty, an optional one shows the placeholder
   private formulaField(
     value: string,

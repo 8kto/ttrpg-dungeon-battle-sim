@@ -5,14 +5,11 @@ export interface IAttackWizard {
   open(damage: string, onApply: (damage: string) => void): void
 }
 
-export type TagKind = 'none' | 'label' | 'save'
-
-// an attack as edited in the wizard; the label and the save are kept while switching the tag kind
+// an attack as edited in the wizard; an empty name is no name, the save bonus is kept while there's no save
 export type DraftAttack = {
   damage: string
-  tag: TagKind
-  label: string
-  save: SaveType
+  name: string
+  save: SaveType | null
   saveMod: number
   modifiers: Modifier[]
 }

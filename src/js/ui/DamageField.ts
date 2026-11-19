@@ -43,23 +43,31 @@ export class DamageField {
     })
   }
 
-  private static renderChip({ damage, effect }: Attack): HTMLElement {
+  private static renderChip({ damage, effect, name }: Attack): HTMLElement {
     const chip = el('span', 'damage-chip')
     chip.appendChild(el('span', 'damage-chip__formula', damage))
-
-    if (effect) {
-      chip.classList.add(effect.save ? `damage-chip--${effect.save}` : 'damage-chip--tag')
-      const save = effect.save && capitalize(effect.save)
-      const tag = !save
-        ? effect.label
-        : effect.saveMod
-          ? messages.t('ui.damageChip.saveVsWithMod', { mod: signed(effect.saveMod), save })
-          : messages.t('ui.damageChip.saveVs', { save })
-      chip.appendChild(el('span', 'damage-chip__tag', tag))
-      effect.modifiers.forEach((m) =>
-        chip.appendChild(el('span', 'damage-chip__modifier', DamageField.describeModifier(m))),
-      )
+    if (name !== null) {
+      chip.appendChild(el('span', 'damage-chip__name', name))
     }
+
+    if (effect?.save) {
+      chip.classList.add(`damage-chip--${effect.save}`)
+      const save = capitalize(effect.save)
+      chip.appendChild(
+        el(
+          'span',
+          'damage-chip__tag',
+          effect.saveMod
+            ? messages.t('ui.damageChip.saveVsWithMod', { mod: signed(effect.saveMod), save })
+            : messages.t('ui.damageChip.saveVs', { save }),
+        ),
+      )
+    } else if (name !== null || effect) {
+      chip.classList.add('damage-chip--tag')
+    }
+    effect?.modifiers.forEach((m) =>
+      chip.appendChild(el('span', 'damage-chip__modifier', DamageField.describeModifier(m))),
+    )
 
     return chip
   }

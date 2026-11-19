@@ -34,7 +34,7 @@ export type Modifier =
   | { kind: ModifierKind.DamageEachRound; damage: string; duration: string | null }
 
 export type AttackEffect = {
-  label: string // save name for save tags (without bonus), otherwise the tag text as written
+  label: string
   save: SaveType | null
   saveMod: number // 0 when absent or for non-save tags
   modifiers: Modifier[]
@@ -43,6 +43,7 @@ export type AttackEffect = {
 export type Attack = {
   source: string
   damage: string
+  name: string | null
   effect: AttackEffect | null
 }
 

@@ -4,12 +4,12 @@ import { addTraitAttacks } from '../addTraitAttacks'
 
 describe('addTraitAttacks', () => {
   it('should keep the damage without traits', () => {
-    expect(addTraitAttacks([], 'd6[claws],d6[horns]')).toBe('d6[claws],d6[horns]')
+    expect(addTraitAttacks([], 'd6<Claws>,d6<Horns>')).toBe('d6<Claws>,d6<Horns>')
   })
 
   it('should append an attack per trait', () => {
     expect(addTraitAttacks([MonsterTrait.Poisonous, MonsterTrait.Fiery], 'd6')).toBe(
-      'd6,d4[poison, save_or_die],d4[fire, damage_each_round(d4, 3)]',
+      'd6,d4[poison, save_or_die],d4<Fire>[damage_each_round(d4, 3)]',
     )
   })
 

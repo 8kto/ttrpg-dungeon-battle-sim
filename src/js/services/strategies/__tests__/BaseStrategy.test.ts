@@ -3,7 +3,7 @@ import { BaseStrategy } from '../BaseStrategy'
 
 describe('BaseStrategy', () => {
   it('parses formulas with DamageFormula', () => {
-    expect(new BaseStrategy().getTokens('2d8+3')).toEqual({ mod: 3, multiplier: 2, sides: 8 })
+    expect(new BaseStrategy().getTokens('2d8+3')).toEqual({ dice: [{ count: 2, sides: 8 }], mod: 3 })
   })
 
   it('uses the injected formula parser', () => {

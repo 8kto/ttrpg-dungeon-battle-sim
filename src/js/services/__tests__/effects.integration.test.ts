@@ -78,7 +78,7 @@ describe('effects in battle', () => {
 
   it('paralysis is immediate', () => {
     const { hit, target } = setup()
-    hit('d6[🧊,paralyze(1)]')
+    hit('d6<🧊>[paralyze(1)]')
 
     expect(target.isParalyzed).toBe(true)
     expect(target.startTurn()).toBe(false)
@@ -87,7 +87,7 @@ describe('effects in battle', () => {
 
   it('paralyzed target is hit automatically for max weapon damage', () => {
     const { attacker, hit, target } = setup({}, new RandomStrategy())
-    hit('0[🧊,paralyze]')
+    hit('0<🧊>[paralyze]')
     const hp = target.currentHp
     ;(attacker.rollToHit as jest.Mock).mockReturnValue(-100) // would miss
 
@@ -97,7 +97,7 @@ describe('effects in battle', () => {
 
   it('paralyzed target fails saves', () => {
     const { hit, target } = setup({ poison: 0 })
-    hit('0[🧊,paralyze]')
+    hit('0<🧊>[paralyze]')
     saveRoll.mockClear()
 
     hit('d6[poison,save_or_die]')
@@ -172,7 +172,7 @@ describe('effects in battle', () => {
 
   it('damage over time starts next round', () => {
     const { hit, target } = setup()
-    hit('d6[fire,damage_each_round(2,3)]')
+    hit('d6<fire>[damage_each_round(2,3)]')
     const hp = target.currentHp
 
     expect(target.startTurn()).toBe(true)
@@ -194,7 +194,7 @@ describe('effects in battle', () => {
     nextRound(target)
     expect(hp - target.currentHp).toBe(3)
 
-    hit('d6[fire,damage_each_round(2)]')
+    hit('d6<fire>[damage_each_round(2)]')
     hp = target.currentHp
     nextRound(target)
     expect(hp - target.currentHp).toBe(5)
@@ -203,7 +203,7 @@ describe('effects in battle', () => {
 
   it('does not act when killed by damage over time', () => {
     const { hit, target } = setup()
-    hit('d6[fire,damage_each_round(3)]')
+    hit('d6<fire>[damage_each_round(3)]')
     target.currentHp = 2
 
     expect(nextRound(target)).toBe(false)
@@ -222,7 +222,7 @@ describe('effects in battle', () => {
 
   it('duration of 0 adds no effect', () => {
     const { hit, target } = setup()
-    hit('d6[🧊,paralyze(0)]')
+    hit('d6<🧊>[paralyze(0)]')
 
     expect(target.isParalyzed).toBe(false)
     expect(target.startTurn()).toBe(true)
@@ -235,14 +235,28 @@ describe('effects in battle', () => {
     hit('d6[poison(-2),damage_each_round(1)]')
     hit('d6[poison(-2),damage_each_round(1)]')
     hit('d6[poison(-2),damage_each_round(1)]')
-    hit('d6[knife]')
+    hit('d6<knife>')
 
     expect(counters).toEqual({ poison: { applied: 2, hasSave: true, saved: 1 } })
   })
 
+  it('counts effects by attack name, or by the modifiers without a name and a save', () => {
+    const { hit } = setup()
+    saveRoll.mockReturnValueOnce(1)
+
+    hit('d6<Bite>[poison,damage_each_round(1)]')
+    hit('d6<Bite>[damage_each_round(2)]')
+    hit('d6[damage_each_round(1, 2)]')
+
+    expect(counters).toEqual({
+      Bite: { applied: 2, hasSave: true, saved: 0 },
+      'damage_each_round(1, 2)': { applied: 1, hasSave: false, saved: 0 },
+    })
+  })
+
   it('ends in a draw when paralyzed targets take no damage', () => {
     jest.restoreAllMocks()
-    const paralyzer: ICharacter = { ...makeChar('Statue'), armorClass: 0, damage: '0[🧊,paralyze]', toHit: 100 }
+    const paralyzer: ICharacter = { ...makeChar('Statue'), armorClass: 0, damage: '0<🧊>[paralyze]', toHit: 100 }
     const sim = new BattleSimulator([paralyzer], [{ ...paralyzer, name: 'Gargoyle' }], new NullLogger(), {
       biasMonsters: 0,
       biasPlayers: 0,

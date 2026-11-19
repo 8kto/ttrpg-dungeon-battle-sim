@@ -8,7 +8,7 @@ import { Rounding } from '../types'
 import { BaseStrategy } from './BaseStrategy'
 import type { ICombatStrategy } from './ICombatStrategy'
 
-// Average of NdS is N * (S + 1) / 2; fractions are rounded according to the Rounding setting
+// Average of NdS is N * (S + 1) / 2, subtracted dice count negative; fractions are rounded according to the Rounding setting
 export class AverageStrategy extends BaseStrategy implements ICombatStrategy {
   constructor(
     private readonly rounding: Rounding = Rounding.Up,
@@ -22,9 +22,9 @@ export class AverageStrategy extends BaseStrategy implements ICombatStrategy {
   }
 
   calculateDamage(damage: string): number {
-    const { mod, multiplier, sides } = this.getTokens(damage)
+    const { dice, mod } = this.getTokens(damage)
 
-    return this.round((multiplier * (sides + 1)) / 2 + mod)
+    return this.round(dice.reduce((sum, { count, sides }) => sum + (count * (sides + 1)) / 2, mod))
   }
 
   pickOption(options: AttackOption[]): AttackOption {

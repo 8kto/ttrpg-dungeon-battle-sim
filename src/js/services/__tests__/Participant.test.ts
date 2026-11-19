@@ -179,6 +179,23 @@ describe('Participant', () => {
       expect(mockLogger.log).not.toHaveBeenCalledWith(expect.stringContaining('🎲'))
     })
 
+    it('logs named attacks of the picked option by name', () => {
+      const strategy: ICombatStrategy = { ...mockStrategy, pickOption: jest.fn((options) => options[0]) }
+      const participant = new Participant(
+        { ...mockChar, damage: 'd6<Sword>[poison, save_or_die], d4 | d8<Axe>' },
+        Side.Players,
+        strategy,
+        0,
+        0,
+        mockLogger,
+      )
+      const enemies = makeEnemies()
+      jest.spyOn(participant, 'rollToHit').mockReturnValue(1)
+      participant.attack(enemies, { selectTarget: jest.fn().mockReturnValue(enemies[0]) })
+
+      expect(mockLogger.log).toHaveBeenCalledWith('🎲 Players uses: Sword (d6), d4')
+    })
+
     it('does not pick an option when skipping the turn', () => {
       ;(roll as jest.Mock).mockReturnValue(10) // <= 10 bias
       const participant = new Participant(
@@ -209,12 +226,24 @@ describe('Participant', () => {
       const target = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
       const rollToHit = jest.spyOn(attacker, 'rollToHit').mockReturnValueOnce(20).mockReturnValueOnce(1)
 
-      attacker.performOneAttack(target, damageParser.parseAttack('d6[knife]'))
-      attacker.performOneAttack(target, damageParser.parseAttack('d6[knife]'))
+      attacker.performOneAttack(target, damageParser.parseAttack('d6<knife>'))
+      attacker.performOneAttack(target, damageParser.parseAttack('d6<knife>'))
 
       expect(rollToHit).toHaveBeenCalledTimes(2)
       expect(mockLogger.log).toHaveBeenCalledWith('🗡️ Players attacks Monsters with knife (d6), damage: 5')
       expect(mockLogger.log).toHaveBeenCalledWith('🛡️ Players misses Monsters with knife (d6)')
+    })
+
+    it('labels attacks with a save by the save name', () => {
+      const attacker = new Participant(mockChar, Side.Players, mockStrategy, 0, 0, mockLogger)
+      const target = new Participant(mockEnemyChar, Side.Monsters, mockStrategy, 0, 0, mockLogger)
+      jest.spyOn(attacker, 'rollToHit').mockReturnValue(1)
+
+      attacker.performOneAttack(target, damageParser.parseAttack('d6[poison, save_or_die]'))
+      attacker.performOneAttack(target, damageParser.parseAttack('d6<Bite>[poison, save_or_die]'))
+
+      expect(mockLogger.log).toHaveBeenCalledWith('🛡️ Players misses Monsters with poison (d6)')
+      expect(mockLogger.log).toHaveBeenCalledWith('🛡️ Players misses Monsters with Bite (d6)')
     })
 
     it('deals damage and logs hit on successful attack', () => {

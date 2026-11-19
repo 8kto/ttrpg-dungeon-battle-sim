@@ -180,7 +180,7 @@ abbr:hover {
   filter: grayscale(1);
 
   &:hover {
-    filter: none
+    filter: none;
   }
 }
 
@@ -359,6 +359,9 @@ abbr:hover {
 .damage-chip__formula {
   @apply font-semibold;
 }
+.damage-chip__name {
+  @apply font-sans italic;
+}
 .damage-chip--tag {
   @apply bg-gray-100 border-gray-400 text-gray-800;
 }
@@ -494,7 +497,7 @@ abbr:hover {
 .attack-wizard__row-body {
   @apply flex flex-wrap items-start gap-2 flex-1 min-w-0;
 }
-.attack-wizard__label {
+.attack-wizard__name {
   @apply flex-1 min-w-0;
 }
 .attack-wizard__save-mod {

@@ -5,19 +5,24 @@ import type { IDamageParser } from './IDamageParser'
 import type { Attack, AttackEffect, AttackOption, Modifier } from './types'
 import { ModifierKind, SaveType } from './types'
 
-type SaveTag = Pick<AttackEffect, 'label' | 'save' | 'saveMod'>
-type SaveTagParts = { rest: string; save: SaveType }
+type SaveTag = { bonus: boolean; save: SaveType; saveMod: number }
 type SaveBonus = { sign: string | null; value: string }
 type NamedModifier = { args: string | null; name: string }
+type AttackParts = { formula: string; inner: string | null; name: string | null }
 
 export class DamageParser implements IDamageParser {
-  private static readonly OPENING: Readonly<Record<string, string>> = { '(': ')', '[': ']' }
+  private static readonly OPENING: Readonly<Record<string, string>> = { '(': ')', '<': '>', '[': ']' }
   private static readonly CLOSING: ReadonlySet<string> = new Set(Object.values(DamageParser.OPENING))
 
   private static readonly NAMED_MODIFIER_RE: RegExp = /^([a-z_]+)\s*(?:\((.*)\))?$/is
-  private static readonly SAVE_TAG_RE: RegExp = new RegExp(`^(${Object.values(SaveType).join('|')})(.*)$`, 'is')
+  private static readonly SAVE_TAG_RE: RegExp = new RegExp(`^(${Object.values(SaveType).join('|')})\\s*(.*)$`, 'is')
+  // a save with a bonus written wrong: "poison+2", "poison 2"
+  private static readonly BROKEN_BONUS_RE: RegExp = /^[+\-\d]/
   private static readonly SAVE_BONUS_RE: RegExp = /^\(\s*([+-])?\s*(\d+)\s*\)$/
-  private static readonly LABEL_CONTINUATION_RE: RegExp = /^\s*[^\s(+\-\d]/
+  // formula, optional <name>, optional [effect]; the brackets are balanced by splitTopLevel
+  private static readonly ATTACK_RE: RegExp = /^([^<[]*?)\s*(?:<([^>]*)>)?\s*(?:\[(.*)\])?$/s
+  private static readonly NAME_FORBIDDEN_RE: RegExp = /[<>[\],|]/
+  private static readonly NAME_MAX_LENGTH: number = 30
 
   constructor(private readonly damageFormula: IDamageFormula = new DamageFormula()) {}
 
@@ -54,23 +59,36 @@ export class DamageParser implements IDamageParser {
     try {
       this.splitTopLevel(text, ',')
 
-      const open = text.indexOf('[')
-      if (open === -1) {
-        return { damage: DamageParser.normalizeFormula(text), effect: null, source: text }
-      }
-      if (!text.endsWith(']')) {
-        throw new Error(messages.t('damage.errors.textAfterBracket'))
-      }
-
-      const damage = DamageParser.normalizeFormula(text.slice(0, open))
+      const { formula, inner, name } = DamageParser.splitAttack(text)
+      const damage = DamageParser.normalizeFormula(formula)
       if (damage === '') {
         throw new Error(messages.t('damage.errors.missingFormula'))
       }
+      if (name !== null) {
+        const error = this.checkName(name)
+        if (error !== null) {
+          throw new Error(error)
+        }
+      }
 
-      return { damage, effect: this.parseEffect(text.slice(open + 1, -1)), source: text }
+      return { damage, effect: inner === null ? null : this.parseEffect(inner, name), name, source: text }
     } catch (err) {
       throw DamageParser.withContext((err as Error).message, text)
     }
+  }
+
+  checkName(name: string): string | null {
+    if (name === '') {
+      return messages.t('damage.errors.emptyName')
+    }
+    if (DamageParser.NAME_FORBIDDEN_RE.test(name)) {
+      return messages.t('damage.errors.nameChars', { name })
+    }
+    if ([...name].length > DamageParser.NAME_MAX_LENGTH) {
+      return messages.t('damage.errors.nameTooLong', { max: DamageParser.NAME_MAX_LENGTH, name })
+    }
+
+    return null
   }
 
   getFormulasOf({ damage, effect }: Attack): string[] {
@@ -99,16 +117,10 @@ export class DamageParser implements IDamageParser {
   }
 
   getMaxDamage(formula: string): number {
-    const { mod, multiplier, sides } = this.damageFormula.parse(formula)
-
-    return multiplier * sides + mod
+    return this.damageFormula.max(formula)
   }
 
-  readsAsSave(tag: string): boolean {
-    return DamageParser.splitSaveTag(tag) !== null
-  }
-
-  // Splits on a separator outside of [] and (); `|` inside brackets is an error
+  // Splits on a separator outside of [], () and <>; `|` inside brackets is an error
   private splitTopLevel(input: string, separator: ',' | '|'): string[] {
     const parts: string[] = []
     const stack: string[] = []
@@ -138,54 +150,48 @@ export class DamageParser implements IDamageParser {
     return parts
   }
 
-  private parseEffect(inner: string): AttackEffect {
+  // a save with its bonus goes first, followed by modifiers: "poison(-2), save_or_die"; without a save, modifiers only
+  private parseEffect(inner: string, name: string | null): AttackEffect {
     if (inner.trim() === '') {
-      throw new Error(messages.t('damage.errors.missingTag'))
+      throw new Error(messages.t('damage.errors.emptyEffect'))
     }
 
-    const [tag, ...modifierTexts] = this.splitTopLevel(inner, ',')
-    if (tag === '') {
-      throw new Error(messages.t('damage.errors.missingTag'))
-    }
-    if (modifierTexts.some((m) => m === '')) {
+    const items = this.splitTopLevel(inner, ',')
+    if (items.some((m) => m === '')) {
       throw new Error(messages.t('damage.errors.emptyModifier'))
     }
 
-    const { label, save, saveMod } = this.parseTag(tag)
-    if (save !== null && modifierTexts.length === 0) {
-      throw new Error(messages.t('damage.errors.saveTagWithoutModifiers', { tag }))
+    const [first, ...rest] = items
+    const tag = DamageParser.parseSaveTag(first)
+    // "paralyze" alone is the modifier: a save without modifiers would do nothing
+    if (tag === null || (rest.length === 0 && !tag.bonus && DamageParser.isModifierName(first))) {
+      return {
+        label: name ?? items.join(', '),
+        modifiers: items.map((m, i) => this.parseModifier(m, false, i === 0)),
+        save: null,
+        saveMod: 0,
+      }
+    }
+    if (rest.length === 0) {
+      throw new Error(messages.t('damage.errors.saveTagWithoutModifiers', { tag: first }))
     }
 
-    return { label, modifiers: modifierTexts.map((m) => this.parseModifier(m, save !== null)), save, saveMod }
+    const { save, saveMod } = tag
+
+    return { label: name ?? save, modifiers: rest.map((m) => this.parseModifier(m, true)), save, saveMod }
   }
 
-  private parseTag(tag: string): SaveTag {
-    const parts = DamageParser.splitSaveTag(tag)
-    if (parts === null) {
-      return { label: tag, save: null, saveMod: 0 }
-    }
-
-    const { rest, save } = parts
-    if (rest === '') {
-      return { label: save, save, saveMod: 0 }
-    }
-
-    const bonus = DamageParser.parseSaveBonus(rest)
-    if (bonus === null) {
-      throw new Error(messages.t('damage.errors.invalidSaveTag', { save, tag }))
-    }
-    if (bonus.sign === null) {
-      throw new Error(messages.t('damage.errors.saveBonusSign', { bonus: bonus.value, save }))
-    }
-
-    return { label: save, save, saveMod: parseInt(`${bonus.sign}${bonus.value}`, 10) }
-  }
-
-  private parseModifier(text: string, hasSave: boolean): Modifier {
+  // the first item without a save may be a name written the old way, inside the brackets: "d6[knife]"
+  private parseModifier(text: string, hasSave: boolean, mayBeName: boolean = false): Modifier {
     // anything but a named modifier is extra damage; the validator checks its formula
     const modifier = DamageParser.parseNamedModifier(text)
     if (modifier === null) {
-      return { damage: DamageParser.normalizeFormula(text), kind: ModifierKind.ExtraDamage }
+      const damage = DamageParser.normalizeFormula(text)
+      if (!hasSave) {
+        throw new Error(messages.t('damage.errors.extraDamageNeedsSave', { damage }))
+      }
+
+      return { damage, kind: ModifierKind.ExtraDamage }
     }
 
     const name = modifier.name.toLowerCase()
@@ -232,19 +238,65 @@ export class DamageParser implements IDamageParser {
         return { damage: args[0], duration: args[1] ?? null, kind: ModifierKind.DamageEachRound }
 
       default:
-        throw new Error(messages.t('damage.errors.unknownModifier', { modifier: modifier.name }))
+        throw new Error(
+          messages.t(
+            mayBeName && modifier.args === null
+              ? 'damage.errors.unknownModifierOrName'
+              : 'damage.errors.unknownModifier',
+            { modifier: modifier.name },
+          ),
+        )
     }
   }
 
-  // "wis (+2)" gives the save and the rest after it; null when the tag is not a save
-  private static splitSaveTag(tag: string): SaveTagParts | null {
-    const match = tag.match(DamageParser.SAVE_TAG_RE)
-    // a save name followed by a letter or a space and a letter is just a label: "poisonous", "poison ivy"
-    if (!match || DamageParser.LABEL_CONTINUATION_RE.test(match[2])) {
+  // "d6 <Sword> [poison, save_or_die]" gives the formula, the name and the text inside the square brackets
+  private static splitAttack(text: string): AttackParts {
+    const match = text.match(DamageParser.ATTACK_RE)
+    if (!match) {
+      throw new Error(messages.t('damage.errors.invalidAttack'))
+    }
+
+    return { formula: match[1], inner: match[3] ?? null, name: match[2]?.trim() ?? null }
+  }
+
+  // "poison" or "magic (+2)"; null when the text is not a save, like "paralyze(d4)"; throws on a broken bonus
+  private static parseSaveTag(text: string): SaveTag | null {
+    const match = text.match(DamageParser.SAVE_TAG_RE)
+    if (!match) {
       return null
     }
 
-    return { rest: match[2].trim(), save: match[1].toLowerCase() as SaveType }
+    const save = match[1].toLowerCase() as SaveType
+    if (!match[2]) {
+      return { bonus: false, save, saveMod: 0 }
+    }
+    if (DamageParser.BROKEN_BONUS_RE.test(match[2])) {
+      throw new Error(messages.t('damage.errors.invalidSaveTag', { save, tag: text }))
+    }
+    // "poisonous" is not a save
+    if (!match[2].startsWith('(')) {
+      return null
+    }
+
+    const bonus = DamageParser.parseSaveBonus(match[2])
+    // "paralyze(d4)" and "paralyze(3)" are the modifier
+    if (DamageParser.isModifierName(save) && (bonus === null || bonus.sign === null)) {
+      return null
+    }
+    if (bonus === null) {
+      throw new Error(messages.t('damage.errors.invalidSaveTag', { save, tag: text }))
+    }
+    if (bonus.sign === null) {
+      throw new Error(messages.t('damage.errors.saveBonusSign', { bonus: bonus.value, save }))
+    }
+
+    return { bonus: true, save, saveMod: parseInt(`${bonus.sign}${bonus.value}`, 10) }
+  }
+
+  private static isModifierName(text: string): boolean {
+    const name = DamageParser.parseNamedModifier(text)?.name.toLowerCase()
+
+    return Object.values(ModifierKind).some((kind) => kind === name)
   }
 
   // "(+2)" or "(2)"; the sign is null when missing

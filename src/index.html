@@ -134,7 +134,7 @@
                           class="damage-input w-full border rounded px-2"
                           required
                           hidden
-                          title="Formulas like d6, 2d4+1. Comma = attacks in one turn, | = alternative options. Tags in brackets: d6[knife]|d4[dagger], d6[poison,save_or_die], d6[paralyze(+2),paralyze(d4)], d6[breath,save_for_half(d8)], d6[🧊,damage_each_round(d4,3)]"
+                          title="Dice formulas and extended damage syntax"
                         />
                         <div class="damage-error" hidden></div>
                         <div class="damage-preview" title="Click to edit" hidden></div>
@@ -229,7 +229,7 @@
               </label>
               <label class="flex items-center gap-1 text-amber-900 font-medium">
                 <input type="checkbox" class="monster-trait" data-trait="fiery" />
-                <abbr title="New monsters get an extra attack: d4[fire, damage_each_round(d4, 3)]">Fiery</abbr>
+                <abbr title="New monsters get an extra attack: d4&lt;Fire&gt;[damage_each_round(d4, 3)]">Fiery</abbr>
               </label>
             </div>
           </div>
@@ -292,7 +292,7 @@
                           class="damage-input w-full border rounded px-2"
                           required
                           hidden
-                          title="Formulas like d6, 2d4+1. Comma = attacks in one turn, | = alternative options. Tags in brackets: d6[knife]|d4[dagger], d6[poison,save_or_die], d6[paralyze(+2),paralyze(d4)], d6[breath,save_for_half(d8)], d6[🧊,damage_each_round(d4,3)]"
+                          title="Dice formulas and extended damage syntax"
                         />
                         <div class="damage-error" hidden></div>
                         <div class="damage-preview" title="Click to edit" hidden></div>
@@ -674,9 +674,8 @@
           <h3>Attacks and options</h3>
           <ul>
             <li>
-              <code>d6</code>, <code>2d4+1</code>, <code>d8-1</code>, <code>5</code> — damage formula: dice of one type
-              with an optional bonus or penalty, or a number. Different dice can't be mixed: <code>d6+d4</code> is
-              invalid
+              <code>d6</code>, <code>2d4+1</code>, <code>d6+d10</code>, <code>d8-d4</code>, <code>5</code> — damage
+              formula: dice and numbers joined by <code>+</code> and <code>-</code>
             </li>
             <li><code>,</code> separates attacks made in one turn: <code>d6, d6, d8</code> attacks three times</li>
             <li>
@@ -686,40 +685,51 @@
             </li>
           </ul>
 
-          <h3>Tags</h3>
-          <p>Tags in brackets after a formula apply on hit: <code>d6[tag, modifier, ...]</code></p>
+          <h3>Names</h3>
           <ul>
-            <li>A tag without modifiers just labels the attack in the log: <code>d6[knife] | d4[dagger]</code></li>
             <li>
-              A save name as the tag (<code>paralyze</code>, <code>poison</code>, <code>breath</code>,
-              <code>device</code>, <code>magic</code>) gives the target a save; add a bonus or penalty like
-              <code>poison(-2)</code>
+              A name in angle brackets after the formula labels the attack in the log:
+              <code>d6&lt;Sword&gt; | d4&lt;Fire Breath&gt;</code>
             </li>
-            <li>Any other tag (<code>fire</code>, <code>🧊</code>) has no save: modifiers always apply</li>
+            <li>Optional, up to 30 characters, without <code>&lt; &gt; [ ] , |</code></li>
+          </ul>
+
+          <h3>Effects</h3>
+          <p>
+            An effect in square brackets after the formula and the name applies on hit:
+            <code>d6&lt;Bite&gt;[save, modifier, ...]</code> or <code>d6[modifier, ...]</code>
+          </p>
+          <ul>
+            <li>
+              A save (<code>paralyze</code>, <code>poison</code>, <code>breath</code>, <code>device</code>,
+              <code>magic</code>) goes first and gives the target a save; add a bonus or penalty like
+              <code>poison(-2)</code>. A save needs modifiers
+            </li>
+            <li>Without a save, modifiers always apply</li>
           </ul>
 
           <h3>Modifiers</h3>
-          <p>Applied on a failed save or when the tag has no save.</p>
+          <p>Applied on a failed save or always without a save.</p>
           <table class="help-modal__table">
             <tbody>
               <tr>
                 <td><code>paralyze</code><br /><code>paralyze(d4)</code></td>
                 <td>
                   The target skips its turns for the whole battle / for d4 turns; attacks against it always hit for max
-                  damage
+                  damage. A lone <code>d6[paralyze]</code> paralyzes without a save
                 </td>
               </tr>
               <tr>
                 <td><code>save_or_die</code></td>
-                <td>The target dies; requires a save tag</td>
+                <td>The target dies; requires a save</td>
               </tr>
               <tr>
                 <td><code>save_for_half(d8)</code></td>
-                <td>d8 damage, half on a successful save; requires a save tag</td>
+                <td>d8 damage, half on a successful save; requires a save</td>
               </tr>
               <tr>
                 <td><code>d8</code></td>
-                <td>Extra d8 damage</td>
+                <td>Extra d8 damage; requires a save (without a save, add it to the formula: <code>d6+d8</code>)</td>
               </tr>
               <tr>
                 <td><code>damage_each_round(d4)</code><br /><code>damage_each_round(d4, 3)</code></td>
@@ -730,10 +740,10 @@
 
           <h3>Examples</h3>
           <ul>
-            <li><code>d6[poison, save_or_die]</code></li>
+            <li><code>d6&lt;Sword&gt;[poison, save_or_die]</code></li>
             <li><code>d6[paralyze(+2), paralyze(d4)]</code></li>
-            <li><code>d6[breath, save_for_half(2d6)]</code></li>
-            <li><code>d4, d4 | d10[fire, damage_each_round(d4, 3)]</code></li>
+            <li><code>d4&lt;Fire Breath&gt;[breath, save_for_half(2d6)]</code></li>
+            <li><code>d4, d4 | d10&lt;Fire&gt;[damage_each_round(d4, 3)]</code></li>
           </ul>
           <div class="help-modal__actions">
             <button type="button" class="secondary-button mid-button" data-close-modal>Close</button>

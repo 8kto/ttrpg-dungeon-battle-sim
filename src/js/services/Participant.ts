@@ -104,7 +104,10 @@ export class Participant {
     const option = this.options.length > 1 ? this.strategy.pickOption(this.options) : this.options[0]
     if (this.options.length > 1 && this.logger.isVerbose()) {
       this.logger.log(
-        messages.t('battle.action.uses', { name: this.char.name, sources: option.map((a) => a.source).join(', ') }),
+        messages.t('battle.action.uses', {
+          name: this.char.name,
+          sources: option.map((a) => (a.name === null ? a.source : `${a.name} (${a.damage})`)).join(', '),
+        }),
       )
     }
 
@@ -300,9 +303,11 @@ export class Participant {
     return Math.max(0, this.strategy.calculateDamage(formula))
   }
 
-  // " with knife (d6)" for tagged attacks, nothing for plain ones
-  private getWeaponInfo({ damage, effect }: Attack): string {
-    return effect ? messages.t('battle.action.weapon', { damage, label: effect.label }) : ''
+  // " with Sword (d6)" for named attacks and attacks with effects, nothing for plain ones
+  private getWeaponInfo({ damage, effect, name }: Attack): string {
+    const label = name ?? effect?.label ?? null
+
+    return label === null ? '' : messages.t('battle.action.weapon', { damage, label })
   }
 
   rollToHit(): number {

@@ -1,20 +1,53 @@
 import { DamageFormula } from '../DamageFormula'
+import type { FormulaTokens } from '../IDamageFormula'
 
 describe('DamageFormula', () => {
   const formula = new DamageFormula()
 
   describe('parse', () => {
     it.each([
-      ['d6', { mod: 0, multiplier: 1, sides: 6 }],
-      ['2d8+3', { mod: 3, multiplier: 2, sides: 8 }],
-      ['4d8 - 3', { mod: -3, multiplier: 4, sides: 8 }],
-      [' 2D6 + 1 ', { mod: 1, multiplier: 2, sides: 6 }],
-      ['3', { mod: 3, multiplier: 0, sides: 0 }],
+      ['d6', { dice: [{ count: 1, sides: 6 }], mod: 0 }],
+      ['2d8+3', { dice: [{ count: 2, sides: 8 }], mod: 3 }],
+      ['4d8 - 3', { dice: [{ count: 4, sides: 8 }], mod: -3 }],
+      [' 2D6 + 1 ', { dice: [{ count: 2, sides: 6 }], mod: 1 }],
+      ['3', { dice: [], mod: 3 }],
+      [
+        'd6+d10',
+        {
+          dice: [
+            { count: 1, sides: 6 },
+            { count: 1, sides: 10 },
+          ],
+          mod: 0,
+        },
+      ],
+      [
+        '2d6 + d4 - 1',
+        {
+          dice: [
+            { count: 2, sides: 6 },
+            { count: 1, sides: 4 },
+          ],
+          mod: -1,
+        },
+      ],
+      [
+        'd8-d4',
+        {
+          dice: [
+            { count: 1, sides: 8 },
+            { count: -1, sides: 4 },
+          ],
+          mod: 0,
+        },
+      ],
+      ['d6+1+d6+2', { dice: [{ count: 2, sides: 6 }], mod: 3 }],
+      ['2+d4', { dice: [{ count: 1, sides: 4 }], mod: 2 }],
     ])('parses "%s"', (text, expected) => {
       expect(formula.parse(text)).toEqual(expected)
     })
 
-    it.each(['', 'oops', 'd6+d4', 'd6x', '-1'])('rejects "%s"', (text) => {
+    it.each(['', 'oops', 'd6x', '-1', '-d4', 'd6+', 'd6++d4', 'd6 d4', 'd6*2'])('rejects "%s"', (text) => {
       expect(() => formula.parse(text)).toThrowError(/Invalid damage formula/)
     })
 
@@ -39,14 +72,54 @@ describe('DamageFormula', () => {
   })
 
   describe('format', () => {
-    it.each([
-      [{ mod: 0, multiplier: 1, sides: 6 }, 'd6'],
-      [{ mod: 3, multiplier: 2, sides: 8 }, '2d8+3'],
-      [{ mod: -3, multiplier: 4, sides: 8 }, '4d8-3'],
-      [{ mod: 5, multiplier: 0, sides: 0 }, '5'],
-      [{ mod: 0, multiplier: 0, sides: 0 }, ''],
+    it.each<[FormulaTokens, string]>([
+      [{ dice: [{ count: 1, sides: 6 }], mod: 0 }, 'd6'],
+      [{ dice: [{ count: 2, sides: 8 }], mod: 3 }, '2d8+3'],
+      [{ dice: [{ count: 4, sides: 8 }], mod: -3 }, '4d8-3'],
+      [{ dice: [], mod: 5 }, '5'],
+      [{ dice: [], mod: 0 }, ''],
+      [{ dice: [], mod: -2 }, ''],
+      [
+        {
+          dice: [
+            { count: 1, sides: 6 },
+            { count: 2, sides: 10 },
+          ],
+          mod: 1,
+        },
+        'd6+2d10+1',
+      ],
+      [
+        {
+          dice: [
+            { count: 1, sides: 8 },
+            { count: -1, sides: 4 },
+          ],
+          mod: 0,
+        },
+        'd8-d4',
+      ],
+      [{ dice: [{ count: -1, sides: 4 }], mod: 3 }, '3-d4'],
+      [{ dice: [{ count: 0, sides: 4 }], mod: 0 }, ''],
     ])('formats %o as "%s"', (tokens, expected) => {
       expect(formula.format(tokens)).toBe(expected)
+    })
+
+    it.each(['d6', '2d8+3', 'd6+d10-1', 'd8-2d4+1'])('formats parsed "%s" back', (text) => {
+      expect(formula.format(formula.parse(text))).toBe(text)
+    })
+  })
+
+  describe('max', () => {
+    it.each<[string, number]>([
+      ['d6', 6],
+      ['2d6+1', 13],
+      ['d6+d10', 16],
+      ['2d6-d4+1', 12],
+      ['d4-5', -1],
+      ['3', 3],
+    ])('"%s" → %i', (text, expected) => {
+      expect(formula.max(text)).toBe(expected)
     })
   })
 
@@ -55,8 +128,10 @@ describe('DamageFormula', () => {
       ['', 6, 'd6'],
       ['d6', 6, '2d6'],
       ['2d6', 6, '3d6'],
-      ['2d6', 4, 'd4'],
-      ['2d6+1', 8, 'd8+1'],
+      ['2d6', 4, '2d6+d4'],
+      ['2d6+1', 8, '2d6+d8+1'],
+      ['d6+d8', 8, 'd6+2d8'],
+      ['d8-d4', 4, 'd8-d4+d4'],
       ['d6-1', 6, '2d6-1'],
       ['3', 8, 'd8+3'],
       [' 2D6 + 1 ', 6, '3d6+1'],
@@ -77,6 +152,7 @@ describe('DamageFormula', () => {
       ['d6+1', -1, 'd6'],
       ['d6', -1, 'd6-1'],
       ['2d6-1', -1, '2d6-2'],
+      ['d6+d4', 1, 'd6+d4+1'],
       ['d6x', 1, '1'],
     ])('"%s" %i = "%s"', (text, delta, expected) => {
       expect(formula.addConstant(text, delta)).toBe(expected)

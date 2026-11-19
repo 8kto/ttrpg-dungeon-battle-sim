@@ -52,10 +52,10 @@ browser, on desktop and phone widths.
 
 ## Domain notes
 
-- Damage formulas the strategies accept: `NdS`, `NdS+M`, `NdS-M` or a plain number. Dice of different types can't be
-  mixed (`d6+d4` is invalid). The format is described once, in `DamageFormula` (`services/attacks/`): parsing,
-  formatting and click-editing; don't add another formula regex. Validate a damage field with `DamageValidator`.
-- Damage field syntax (options `|`, attacks `,`, tags and modifiers in brackets) is documented in `Readme.md` and the
+- Damage formulas the strategies accept: dice and numbers joined by `+` and `-` (`2d6+d4-1`, `5`). The format is
+  described once, in `DamageFormula` (`services/attacks/`): parsing, formatting and click-editing; don't add another
+  formula regex. Validate a damage field with `DamageValidator`.
+- Damage field syntax (options `|`, attacks `,`, names in `<>`, saves and modifiers in `[]`) is documented in `Readme.md` and the
   "Damage syntax" help modal in `src/index.html`; keep both in sync with `DamageParser` when the syntax changes.
 
 ## Tests

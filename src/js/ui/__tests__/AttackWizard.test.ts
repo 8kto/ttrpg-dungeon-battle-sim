@@ -32,8 +32,9 @@ describe('AttackWizard', () => {
     target.click()
   }
   const attacks = (): HTMLElement[] => $$('.attack-wizard__attack')
-  const selectTag = (value: string, attack: number = 0): void => {
-    const select = attacks()[attack].querySelector('.attack-wizard__tag') as HTMLSelectElement
+  // '' is "No save"
+  const selectSave = (value: string, attack: number = 0): void => {
+    const select = attacks()[attack].querySelector('.attack-wizard__save') as HTMLSelectElement
     select.value = value
     select.dispatchEvent(new Event('change'))
   }
@@ -85,7 +86,7 @@ describe('AttackWizard', () => {
       expect(code()).toBe('2d6+1')
 
       clickText('d4', field)
-      expect(code()).toBe('d4+1')
+      expect(code()).toBe('2d6+d4+1')
 
       clickText('⌫', field)
       clickText('d20', field)
@@ -112,8 +113,7 @@ describe('AttackWizard', () => {
     })
 
     it('allow an empty duration', () => {
-      selectTag('label')
-      type($('.attack-wizard__label'), 'fire')
+      type($('.attack-wizard__name'), 'fire')
       clickText('+ Damage each round')
       const [, duration] = $$('.attack-wizard__modifier .formula-field')
       const input = query<HTMLInputElement>(duration, '.formula-field__input')
@@ -123,7 +123,7 @@ describe('AttackWizard', () => {
 
       clickText('+1', duration)
       expect(input.value).toBe('1')
-      expect(code()).toBe('d6[fire, damage_each_round(d4, 1)]')
+      expect(code()).toBe('d6<fire>[damage_each_round(d4, 1)]')
     })
   })
 
@@ -148,79 +148,66 @@ describe('AttackWizard', () => {
     })
   })
 
-  describe('effects', () => {
+  describe('names', () => {
     beforeEach(() => open('d6'))
 
-    it('treats an empty label as no effect', () => {
-      selectTag('label')
+    it('names any attack', () => {
+      type($('.attack-wizard__name'), ' Long Sword ')
+      expect(code()).toBe('d6<Long Sword>')
+
+      selectSave('poison')
+      clickText('+ Save or die')
+      expect(code()).toBe('d6<Long Sword>[poison, save_or_die]')
+    })
+
+    it('treats an empty name as no name', () => {
+      type($('.attack-wizard__name'), '  ')
       expect(code()).toBe('d6')
       expect($('.attack-wizard__errors').hidden).toBe(true)
     })
 
-    it('requires a label for modifiers', () => {
-      selectTag('label')
-      clickText('+ Extra damage')
-      expect($('.attack-wizard__label').classList).toContain('damage-input--invalid')
-      expect($('.attack-wizard__errors').hidden).toBe(false)
-
-      type($('.attack-wizard__label'), 'fire')
-      expect($('.attack-wizard__label').classList).not.toContain('damage-input--invalid')
-      expect(code()).toBe('d6[fire, d6]')
-    })
-
-    it('adds a label', () => {
-      selectTag('label')
-      type($('.attack-wizard__label'), 'claws')
-      expect(code()).toBe('d6[claws]')
-    })
-
-    it.each(['claws!', 'fire, d6', 'a[b]', 'x | y', '🧊(2)'])('rejects the label "%s"', (label) => {
-      selectTag('label')
-      type($('.attack-wizard__label'), label)
-      expect($('.attack-wizard__label').classList).toContain('damage-input--invalid')
-      expect($$('.attack-wizard__error-list li').map((li) => li.textContent)).toEqual([
-        `label "${label}" may contain only letters, digits, emojis, "_", "-" and spaces`,
-      ])
+    it.each(['fire, d6', 'a[b]', 'x | y', 'a<b>', 'x'.repeat(31)])('rejects the name "%s"', (name) => {
+      type($('.attack-wizard__name'), name)
+      expect($('.attack-wizard__name').classList).toContain('damage-input--invalid')
+      expect($$('.attack-wizard__error-list li')).toHaveLength(1)
       expect($<HTMLButtonElement>('.attack-wizard__apply').disabled).toBe(true)
     })
 
-    it.each(['fire_breath', 'Ice-2', 'poison ivy', '🧊', 'ice 🧊', '🧙🏽‍♂️', '❄️'])('accepts the label "%s"', (label) => {
-      selectTag('label')
-      type($('.attack-wizard__label'), label)
-      expect($('.attack-wizard__label').classList).not.toContain('damage-input--invalid')
+    it.each(['fire_breath', 'Poison', 'poison ivy', 'claws!', '🧙🏽‍♂️', '❄️'])('accepts the name "%s"', (name) => {
+      type($('.attack-wizard__name'), name)
+      expect($('.attack-wizard__name').classList).not.toContain('damage-input--invalid')
       expect($('.attack-wizard__errors').hidden).toBe(true)
+      expect(code()).toBe(`d6<${name}>`)
     })
+  })
 
-    it.each(['Poison', 'magic 2'])('rejects the label "%s" that reads as a save', (label) => {
-      selectTag('label')
-      type($('.attack-wizard__label'), label)
+  describe('effects', () => {
+    beforeEach(() => open('d6'))
+
+    it('adds modifiers without a save', () => {
       clickText('+ Paralyze')
-      expect($('.attack-wizard__label').classList).toContain('damage-input--invalid')
-      expect($$('.attack-wizard__error-list li').map((li) => li.textContent)).toEqual([
-        `label "${label}" reads as a save, choose "Save vs …" instead`,
-      ])
-      expect($<HTMLButtonElement>('.attack-wizard__apply').disabled).toBe(true)
+      expect(code()).toBe('d6[paralyze]')
+      expect($('.attack-wizard__errors').hidden).toBe(true)
     })
 
     it('drops save-only modifiers without a save', () => {
-      selectTag('poison')
+      selectSave('poison')
       clickText('+ Save or die')
+      clickText('+ Extra damage')
       clickText('+ Paralyze')
-      selectTag('label')
-      type($('.attack-wizard__label'), 'fire')
-      expect(code()).toBe('d6[fire, paralyze]')
+      selectSave('')
+      expect(code()).toBe('d6[paralyze]')
       expect($('.attack-wizard__errors').hidden).toBe(true)
 
-      selectTag('none')
-      selectTag('poison')
+      selectSave('poison')
       expect(code()).toBe('d6[poison, paralyze]')
     })
 
     it('adds a save with a bonus and modifiers', () => {
-      selectTag('poison')
+      selectSave('poison')
       expect($('.attack-wizard__errors').hidden).toBe(false)
       expect($$('.attack-wizard__error-list li').map((li) => li.textContent)).toEqual([
-        'save tag without modifiers: "poison" does nothing in "d6[poison]"',
+        'save without modifiers: "poison" does nothing in "d6[poison]"',
       ])
       expect($<HTMLButtonElement>('.attack-wizard__apply').disabled).toBe(true)
 
@@ -231,8 +218,19 @@ describe('AttackWizard', () => {
       expect($<HTMLButtonElement>('.attack-wizard__apply').disabled).toBe(false)
     })
 
+    it('drops the save bonus without a save', () => {
+      selectSave('poison')
+      type($('.attack-wizard__save-mod input'), '2')
+      clickText('+ Damage each round')
+      selectSave('')
+      expect(code()).toBe('d6[damage_each_round(d4)]')
+
+      selectSave('magic')
+      expect(code()).toBe('d6[magic(+2), damage_each_round(d4)]')
+    })
+
     it('adds every modifier with editable formulas', () => {
-      selectTag('breath')
+      selectSave('breath')
       clickText('+ Paralyze')
       clickText('+ Save for half')
       clickText('+ Extra damage')
@@ -250,32 +248,23 @@ describe('AttackWizard', () => {
     })
 
     it('allows save-only modifiers with a save', () => {
-      selectTag('label')
-      const disabled = $$<HTMLButtonElement>('.attack-wizard__add-modifiers button')
-        .filter((b) => b.disabled)
-        .map((b) => b.textContent)
-      expect(disabled).toEqual(['+ Save or die', '+ Save for half'])
-    })
+      const disabled = (): (string | null)[] =>
+        $$<HTMLButtonElement>('.attack-wizard__add-modifiers button')
+          .filter((b) => b.disabled)
+          .map((b) => b.textContent)
+      expect(disabled()).toEqual(['+ Save or die', '+ Save for half', '+ Extra damage'])
 
-    it('keeps the label and modifiers while switching the effect', () => {
-      selectTag('label')
-      type($('.attack-wizard__label'), 'fire')
-      clickText('+ Extra damage')
-      selectTag('none')
-      expect(code()).toBe('d6')
-
-      selectTag('label')
-      expect(code()).toBe('d6[fire, d6]')
+      selectSave('device')
+      expect(disabled()).toEqual([])
     })
 
     it('edits parsed effects', () => {
-      open('d4[fire, damage_each_round(d4, 3)]')
-      const select = $<HTMLSelectElement>('.attack-wizard__tag')
-      expect(select.value).toBe('label')
-      expect($<HTMLInputElement>('.attack-wizard__label').value).toBe('fire')
+      open('d4<Fire>[damage_each_round(d4, 3)]')
+      expect($<HTMLSelectElement>('.attack-wizard__save').value).toBe('')
+      expect($<HTMLInputElement>('.attack-wizard__name').value).toBe('Fire')
 
-      selectTag('magic')
-      expect(code()).toBe('d4[magic, damage_each_round(d4, 3)]')
+      selectSave('magic')
+      expect(code()).toBe('d4<Fire>[magic, damage_each_round(d4, 3)]')
     })
   })
 
@@ -284,7 +273,7 @@ describe('AttackWizard', () => {
       open('d6')
       clickText('d8', $('.formula-field'))
       $('.attack-wizard__apply').click()
-      expect(onApply).toHaveBeenCalledWith('d8')
+      expect(onApply).toHaveBeenCalledWith('d6+d8')
       expect(dialog.close).toHaveBeenCalled()
     })
 

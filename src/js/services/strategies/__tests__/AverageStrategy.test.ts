@@ -42,6 +42,11 @@ describe('AverageStrategy', () => {
       ['5d4+0', 13, 12], // 12.5
       ['6d12-5', 34, 34], // 39-5
       ['d4-5', -2, -3], // 2.5-5, clamped to 0 by Participant
+      ['d6+d10', 9, 9], // 3.5+5.5
+      ['d6+d4+1', 7, 7], // 3.5+2.5+1
+      ['d8-d4', 2, 2], // 4.5-2.5
+      ['d6+d8', 8, 8], // 3.5+4.5
+      ['d4+d6+d8', 11, 10], // 2.5+3.5+4.5
     ])('"%s" → %d (up) / %d (down)', (input, up, down) => {
       expect(strategyUp.calculateDamage(input)).toBe(up)
       expect(strategyDown.calculateDamage(input)).toBe(down)
