@@ -5,7 +5,7 @@ import type { IDamageParser } from './IDamageParser'
 import type { Attack, AttackEffect, AttackOption, Modifier } from './types'
 import { ModifierKind, SaveType } from './types'
 
-type SaveTag = { bonus: boolean; save: SaveType; saveMod: number }
+type SaveTag = { save: SaveType; saveMod: number }
 type SaveBonus = { sign: string | null; value: string }
 type NamedModifier = { args: string | null; name: string }
 type AttackParts = { formula: string; inner: string | null; name: string | null }
@@ -96,7 +96,7 @@ export class DamageParser implements IDamageParser {
 
     effect?.modifiers.forEach((modifier) => {
       switch (modifier.kind) {
-        case ModifierKind.Paralyze:
+        case ModifierKind.Paralyzed:
           formulas.push(...(modifier.duration === null ? [] : [modifier.duration]))
           break
         case ModifierKind.SaveOrDie:
@@ -163,8 +163,7 @@ export class DamageParser implements IDamageParser {
 
     const [first, ...rest] = items
     const tag = DamageParser.parseSaveTag(first)
-    // "paralyze" alone is the modifier: a save without modifiers would do nothing
-    if (tag === null || (rest.length === 0 && !tag.bonus && DamageParser.isModifierName(first))) {
+    if (tag === null) {
       return {
         label: name ?? items.join(', '),
         modifiers: items.map((m, i) => this.parseModifier(m, false, i === 0)),
@@ -201,12 +200,12 @@ export class DamageParser implements IDamageParser {
     }
 
     switch (name) {
-      case ModifierKind.Paralyze:
+      case ModifierKind.Paralyzed:
         if (args.length > 1) {
           throw new Error(messages.t('damage.errors.atMostOneArgument', { modifier: name }))
         }
 
-        return { duration: args[0] ?? null, kind: ModifierKind.Paralyze }
+        return { duration: args[0] ?? null, kind: ModifierKind.Paralyzed }
 
       case ModifierKind.SaveOrDie:
         if (args.length > 0) {
@@ -237,6 +236,9 @@ export class DamageParser implements IDamageParser {
 
         return { damage: args[0], duration: args[1] ?? null, kind: ModifierKind.DamageEachRound }
 
+      case SaveType.Paralyze:
+        throw new Error(messages.t('damage.errors.paralyzeIsSave'))
+
       default:
         throw new Error(
           messages.t(
@@ -259,7 +261,7 @@ export class DamageParser implements IDamageParser {
     return { formula: match[1], inner: match[3] ?? null, name: match[2]?.trim() ?? null }
   }
 
-  // "poison" or "magic (+2)"; null when the text is not a save, like "paralyze(d4)"; throws on a broken bonus
+  // "poison" or "magic (+2)"; null when the text is not a save, like "paralyzed(d4)"; throws on a broken bonus
   private static parseSaveTag(text: string): SaveTag | null {
     const match = text.match(DamageParser.SAVE_TAG_RE)
     if (!match) {
@@ -268,20 +270,20 @@ export class DamageParser implements IDamageParser {
 
     const save = match[1].toLowerCase() as SaveType
     if (!match[2]) {
-      return { bonus: false, save, saveMod: 0 }
+      return { save, saveMod: 0 }
     }
     if (DamageParser.BROKEN_BONUS_RE.test(match[2])) {
       throw new Error(messages.t('damage.errors.invalidSaveTag', { save, tag: text }))
     }
-    // "poisonous" is not a save
+    // "poisonous" and "paralyzed" are not saves
     if (!match[2].startsWith('(')) {
       return null
     }
 
     const bonus = DamageParser.parseSaveBonus(match[2])
-    // "paralyze(d4)" and "paralyze(3)" are the modifier
-    if (DamageParser.isModifierName(save) && (bonus === null || bonus.sign === null)) {
-      return null
+    // "paralyze(d4)" is the paralyzed modifier spelled as the save
+    if (bonus === null && save === SaveType.Paralyze) {
+      throw new Error(messages.t('damage.errors.paralyzeIsSave'))
     }
     if (bonus === null) {
       throw new Error(messages.t('damage.errors.invalidSaveTag', { save, tag: text }))
@@ -290,13 +292,7 @@ export class DamageParser implements IDamageParser {
       throw new Error(messages.t('damage.errors.saveBonusSign', { bonus: bonus.value, save }))
     }
 
-    return { bonus: true, save, saveMod: parseInt(`${bonus.sign}${bonus.value}`, 10) }
-  }
-
-  private static isModifierName(text: string): boolean {
-    const name = DamageParser.parseNamedModifier(text)?.name.toLowerCase()
-
-    return Object.values(ModifierKind).some((kind) => kind === name)
+    return { save, saveMod: parseInt(`${bonus.sign}${bonus.value}`, 10) }
   }
 
   // "(+2)" or "(2)"; the sign is null when missing

@@ -200,7 +200,7 @@ export class Participant {
             }
           }
           break
-        case ModifierKind.Paralyze:
+        case ModifierKind.Paralyzed:
         case ModifierKind.DamageEachRound:
           if (!saved) {
             this.addLastingEffect(target, effect.label, modifier)
@@ -220,7 +220,7 @@ export class Participant {
 
     const key = getEffectKey(label, modifier)
     switch (modifier.kind) {
-      case ModifierKind.Paralyze: {
+      case ModifierKind.Paralyzed: {
         // paralysis is immediate
         const added = target.effects.add({ damage: null, key, kind: modifier.kind, label, pending: false, remaining })
         if (added && this.logger.isVerbose()) {

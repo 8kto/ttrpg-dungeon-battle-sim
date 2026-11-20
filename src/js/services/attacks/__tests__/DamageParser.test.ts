@@ -30,19 +30,19 @@ describe('DamageParser', () => {
 
   it.each<[string, AttackEffect | null]>([
     [
-      'd6[paralyze,paralyze(d4)]',
+      'd6[paralyze,paralyzed(d4)]',
       {
         label: 'paralyze',
-        modifiers: [{ duration: 'd4', kind: ModifierKind.Paralyze }],
+        modifiers: [{ duration: 'd4', kind: ModifierKind.Paralyzed }],
         save: SaveType.Paralyze,
         saveMod: 0,
       },
     ],
     [
-      'd6[paralyze(+2),paralyze(d4)]',
+      'd6[paralyze(+2),paralyzed(d4)]',
       {
         label: 'paralyze',
-        modifiers: [{ duration: 'd4', kind: ModifierKind.Paralyze }],
+        modifiers: [{ duration: 'd4', kind: ModifierKind.Paralyzed }],
         save: SaveType.Paralyze,
         saveMod: 2,
       },
@@ -101,25 +101,37 @@ describe('DamageParser', () => {
       },
     ],
     [
-      'd6[paralyze(d4), damage_each_round(1)]',
+      'd6[paralyzed(d4), damage_each_round(1)]',
       {
-        label: 'paralyze(d4), damage_each_round(1)',
+        label: 'paralyzed(d4), damage_each_round(1)',
         modifiers: [
-          { duration: 'd4', kind: ModifierKind.Paralyze },
+          { duration: 'd4', kind: ModifierKind.Paralyzed },
           { damage: '1', duration: null, kind: ModifierKind.DamageEachRound },
         ],
         save: null,
         saveMod: 0,
       },
     ],
-    // a lone "paralyze" is the modifier, a save would need modifiers
     [
-      'd6[paralyze]',
-      { label: 'paralyze', modifiers: [{ duration: null, kind: ModifierKind.Paralyze }], save: null, saveMod: 0 },
+      'd6[paralyzed]',
+      { label: 'paralyzed', modifiers: [{ duration: null, kind: ModifierKind.Paralyzed }], save: null, saveMod: 0 },
     ],
     [
-      'd6[paralyze(3)]',
-      { label: 'paralyze(3)', modifiers: [{ duration: '3', kind: ModifierKind.Paralyze }], save: null, saveMod: 0 },
+      'd6[paralyzed(3)]',
+      { label: 'paralyzed(3)', modifiers: [{ duration: '3', kind: ModifierKind.Paralyzed }], save: null, saveMod: 0 },
+    ],
+    // "paralyze" is always the save, "paralyzed" the modifier
+    [
+      'd6[paralyzed, damage_each_round(d4)]',
+      {
+        label: 'paralyzed, damage_each_round(d4)',
+        modifiers: [
+          { duration: null, kind: ModifierKind.Paralyzed },
+          { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound },
+        ],
+        save: null,
+        saveMod: 0,
+      },
     ],
     [
       'd6[paralyze, d4]',
@@ -213,7 +225,12 @@ describe('DamageParser', () => {
     ['d6[poison]', /save without modifiers/],
     ['d6[magic(+2)]', /save without modifiers/],
     ['d6[paralyze(+2)]', /save without modifiers/],
+    ['d6[paralyze]', /save without modifiers: "paralyze" does nothing/],
     ['d6[paralyze,paralize]', /unknown modifier "paralize"/],
+    ['d6[poison, paralyze]', /"paralyze" is a save, the modifier is "paralyzed"/],
+    ['d6[paralyze, paralyze(d4)]', /"paralyze" is a save, the modifier is "paralyzed"/],
+    ['d6[paralyze(d4)]', /"paralyze" is a save, the modifier is "paralyzed"/],
+    ['d6[paralyzed, poison]', /unknown modifier "poison"/],
     ['d6[knife]', /unknown modifier "knife"; a name goes in angle brackets: d6<knife>/],
     ['d6[fire, damage_each_round(d4)]', /unknown modifier "fire"; a name goes in angle brackets/],
     ['d6[d4]', /extra damage d4 requires a save; without a save add it to the formula, e.g. d6\+d4/],
@@ -221,7 +238,7 @@ describe('DamageParser', () => {
     ['d6[poison,save_for_half]', /save_for_half requires a damage formula/],
     ['d6[save_or_die]', /save_or_die requires a save/],
     ['d6<Fire>[save_for_half(d6)]', /save_for_half requires a save/],
-    ['d6[poison,paralyze(d4,2)]', /paralyze takes at most one argument/],
+    ['d6[poison,paralyzed(d4,2)]', /paralyzed takes at most one argument/],
     ['d6[poison,damage_each_round(d4,2,1)]', /at most two arguments/],
     ['d6[poison,save_or_die(d4)]', /save_or_die takes no arguments/],
     ['d6[poison, save_or_die, poison]', /unknown modifier "poison"/],

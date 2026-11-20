@@ -39,7 +39,7 @@ export class AttackWizard implements IAttackWizard {
 
   private static newModifier(kind: ModifierKind): Modifier {
     switch (kind) {
-      case ModifierKind.Paralyze:
+      case ModifierKind.Paralyzed:
         return { duration: null, kind }
       case ModifierKind.SaveOrDie:
         return { kind }
@@ -335,7 +335,7 @@ export class AttackWizard implements IAttackWizard {
       )
 
     switch (modifier.kind) {
-      case ModifierKind.Paralyze:
+      case ModifierKind.Paralyzed:
         return [duration(modifier)]
       case ModifierKind.SaveOrDie:
         return []

@@ -15,7 +15,7 @@ describe('addTraitAttacks', () => {
 
   // eslint-disable-next-line no-undefined
   it.each([undefined, ''])('should return only the trait attacks without damage [%j]', (damage) => {
-    expect(addTraitAttacks([MonsterTrait.Paralyzing], damage)).toBe('d4<Paralyzing touch>[paralyze, paralyze(d4)]')
+    expect(addTraitAttacks([MonsterTrait.Paralyzing], damage)).toBe('d4<Paralyzing touch>[paralyze, paralyzed(d4)]')
   })
 
   it.each(Object.values(MonsterTrait))('should have a valid attack for trait [%s]', (trait) => {

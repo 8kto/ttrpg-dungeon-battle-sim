@@ -74,10 +74,10 @@ export class DamageField {
 
   private static describeModifier(modifier: Modifier): string {
     switch (modifier.kind) {
-      case ModifierKind.Paralyze:
+      case ModifierKind.Paralyzed:
         return modifier.duration === null
-          ? messages.t('ui.damageChip.paralyzeForever')
-          : messages.t('ui.damageChip.paralyze', { duration: modifier.duration })
+          ? messages.t('ui.damageChip.paralyzedForever')
+          : messages.t('ui.damageChip.paralyzed', { duration: modifier.duration })
       case ModifierKind.SaveOrDie:
         return messages.t('ui.damageChip.saveOrDie')
       case ModifierKind.SaveForHalf:

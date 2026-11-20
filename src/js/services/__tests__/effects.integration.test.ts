@@ -69,7 +69,7 @@ describe('effects in battle', () => {
 
   it('paralyzed participant skips its turn and recovers', () => {
     const { hit, target } = setup()
-    hit('d6[paralyze,paralyze(2)]')
+    hit('d6[paralyze,paralyzed(2)]')
 
     expect(target.startTurn()).toBe(false)
     expect(nextRound(target)).toBe(false)
@@ -78,7 +78,7 @@ describe('effects in battle', () => {
 
   it('paralysis is immediate', () => {
     const { hit, target } = setup()
-    hit('d6<🧊>[paralyze(1)]')
+    hit('d6<🧊>[paralyzed(1)]')
 
     expect(target.isParalyzed).toBe(true)
     expect(target.startTurn()).toBe(false)
@@ -87,7 +87,7 @@ describe('effects in battle', () => {
 
   it('paralyzed target is hit automatically for max weapon damage', () => {
     const { attacker, hit, target } = setup({}, new RandomStrategy())
-    hit('0<🧊>[paralyze]')
+    hit('0<🧊>[paralyzed]')
     const hp = target.currentHp
     ;(attacker.rollToHit as jest.Mock).mockReturnValue(-100) // would miss
 
@@ -97,7 +97,7 @@ describe('effects in battle', () => {
 
   it('paralyzed target fails saves', () => {
     const { hit, target } = setup({ poison: 0 })
-    hit('0<🧊>[paralyze]')
+    hit('0<🧊>[paralyzed]')
     saveRoll.mockClear()
 
     hit('d6[poison,save_or_die]')
@@ -222,7 +222,7 @@ describe('effects in battle', () => {
 
   it('duration of 0 adds no effect', () => {
     const { hit, target } = setup()
-    hit('d6<🧊>[paralyze(0)]')
+    hit('d6<🧊>[paralyzed(0)]')
 
     expect(target.isParalyzed).toBe(false)
     expect(target.startTurn()).toBe(true)
@@ -256,7 +256,7 @@ describe('effects in battle', () => {
 
   it('ends in a draw when paralyzed targets take no damage', () => {
     jest.restoreAllMocks()
-    const paralyzer: ICharacter = { ...makeChar('Statue'), armorClass: 0, damage: '0<🧊>[paralyze]', toHit: 100 }
+    const paralyzer: ICharacter = { ...makeChar('Statue'), armorClass: 0, damage: '0<🧊>[paralyzed]', toHit: 100 }
     const sim = new BattleSimulator([paralyzer], [{ ...paralyzer, name: 'Gargoyle' }], new NullLogger(), {
       biasMonsters: 0,
       biasPlayers: 0,

@@ -5,7 +5,7 @@ import { ModifierKind } from './types'
 export type ActiveEffect = {
   key: string // label + modifier kind + its arguments, e.g. 'poison:damage_each_round(d4,3)'
   label: string
-  kind: ModifierKind.Paralyze | ModifierKind.DamageEachRound
+  kind: ModifierKind.Paralyzed | ModifierKind.DamageEachRound
   damage: string | null // damage_each_round only
   remaining: number | null // own turns left; null = until the end of battle
   pending: boolean // damage over time starts in the round after the one it was applied in
@@ -32,7 +32,7 @@ export class ActiveEffects {
   }
 
   get isParalyzed(): boolean {
-    return this.effects.some((e) => e.kind === ModifierKind.Paralyze && !e.pending)
+    return this.effects.some((e) => e.kind === ModifierKind.Paralyzed && !e.pending)
   }
 
   getDamageOverTime(): ActiveEffect[] {

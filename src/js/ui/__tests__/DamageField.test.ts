@@ -151,24 +151,24 @@ describe('DamageField', () => {
 
     it('describe effects', () => {
       setUp(
-        'd6<claws>, d4<Bite>[poison(-2), save_or_die] | d8[paralyze, paralyze(d4)], d6[breath, save_for_half(2d6)], ' +
-          'd4<Fire>[damage_each_round(d4, 3)], d4[magic(+1), damage_each_round(1), d6], d4[device, paralyze], ' +
-          'd4[paralyze]',
+        'd6<claws>, d4<Bite>[poison(-2), save_or_die] | d8[paralyze, paralyzed(d4)], d6[breath, save_for_half(2d6)], ' +
+          'd4<Fire>[damage_each_round(d4, 3)], d4[magic(+1), damage_each_round(1), d6], d4[device, paralyzed], ' +
+          'd4[paralyzed]',
       )
       expect(chips()).toEqual([
         'd6 | claws',
         'd4 | Bite | Save vs Poison (-2) | save or die',
-        'd8 | Save vs Paralyze | paralyze d4',
+        'd8 | Save vs Paralyze | paralyzed d4',
         'd6 | Save vs Breath | 2d6, half on save',
         'd4 | Fire | d4/round ✕3',
         'd4 | Save vs Magic (+1) | 1/round | +d6',
-        'd4 | Save vs Device | paralyze ∞',
-        'd4 | paralyze ∞',
+        'd4 | Save vs Device | paralyzed ∞',
+        'd4 | paralyzed ∞',
       ])
     })
 
     it('are colored by the save type', () => {
-      setUp('d6, d6<claws>, d4<Bite>[poison, save_or_die], d4[paralyze, paralyze], d4[damage_each_round(1)]')
+      setUp('d6, d6<claws>, d4<Bite>[poison, save_or_die], d4[paralyze, paralyzed], d4[damage_each_round(1)]')
       expect(Array.from(preview().querySelectorAll('.damage-chip')).map((c) => c.className)).toEqual([
         'damage-chip',
         'damage-chip damage-chip--tag',

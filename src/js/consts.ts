@@ -70,6 +70,6 @@ export enum MonsterTrait {
 // Extra attack a new monster gets for every trait checked next to the Add Monster button
 export const MonsterTraitAttacks: Record<MonsterTrait, string> = {
   [MonsterTrait.Poisonous]: 'd4<Poisonous bite>[poison, save_or_die]',
-  [MonsterTrait.Paralyzing]: 'd4<Paralyzing touch>[paralyze, paralyze(d4)]',
+  [MonsterTrait.Paralyzing]: 'd4<Paralyzing touch>[paralyze, paralyzed(d4)]',
   [MonsterTrait.Fiery]: 'd4<Fire breath>[damage_each_round(d4, 3)]',
 }

@@ -1,3 +1,4 @@
+import { SaveType } from '../../services/attacks/types'
 import { query } from '../../utils/dom'
 import { AttackWizard } from '../AttackWizard'
 import { DamageField } from '../DamageField'
@@ -186,8 +187,30 @@ describe('AttackWizard', () => {
 
     it('adds modifiers without a save', () => {
       clickText('+ Paralyze')
-      expect(code()).toBe('d6[paralyze]')
+      expect(code()).toBe('d6[paralyzed]')
       expect($('.attack-wizard__errors').hidden).toBe(true)
+    })
+
+    it('keeps paralysis without a save when more modifiers follow', () => {
+      clickText('+ Paralyze')
+      clickText('+ Damage each round')
+      expect(code()).toBe('d6[paralyzed, damage_each_round(d4)]')
+      expect($('.attack-wizard__errors').hidden).toBe(true)
+
+      open('d6[paralyzed, damage_each_round(d4)]')
+      expect($<HTMLSelectElement>('.attack-wizard__save').value).toBe('')
+      expect($$('.attack-wizard__modifier .attack-wizard__row-label').map((l) => l.textContent)).toEqual([
+        'Paralyze for',
+        'Damage each round',
+      ])
+    })
+
+    it.each(Object.values(SaveType))('reports the %s save without modifiers', (save) => {
+      selectSave(save)
+      expect($$('.attack-wizard__error-list li').map((li) => li.textContent)).toEqual([
+        `save without modifiers: "${save}" does nothing in "d6[${save}]"`,
+      ])
+      expect($<HTMLButtonElement>('.attack-wizard__apply').disabled).toBe(true)
     })
 
     it('drops save-only modifiers without a save', () => {
@@ -196,11 +219,11 @@ describe('AttackWizard', () => {
       clickText('+ Extra damage')
       clickText('+ Paralyze')
       selectSave('')
-      expect(code()).toBe('d6[paralyze]')
+      expect(code()).toBe('d6[paralyzed]')
       expect($('.attack-wizard__errors').hidden).toBe(true)
 
       selectSave('poison')
-      expect(code()).toBe('d6[poison, paralyze]')
+      expect(code()).toBe('d6[poison, paralyzed]')
     })
 
     it('adds a save with a bonus and modifiers', () => {
@@ -235,16 +258,16 @@ describe('AttackWizard', () => {
       clickText('+ Save for half')
       clickText('+ Extra damage')
       clickText('+ Damage each round')
-      expect(code()).toBe('d6[breath, paralyze, save_for_half(d6), d6, damage_each_round(d4)]')
+      expect(code()).toBe('d6[breath, paralyzed, save_for_half(d6), d6, damage_each_round(d4)]')
 
       const modifiers = $$('.attack-wizard__modifier')
       clickText('d4', modifiers[0])
       clickText('+1', modifiers[3].querySelectorAll('.formula-field')[1])
       clickText('+1', modifiers[3].querySelectorAll('.formula-field')[1])
-      expect(code()).toBe('d6[breath, paralyze(d4), save_for_half(d6), d6, damage_each_round(d4, 2)]')
+      expect(code()).toBe('d6[breath, paralyzed(d4), save_for_half(d6), d6, damage_each_round(d4, 2)]')
 
       clickText('✕', modifiers[1])
-      expect(code()).toBe('d6[breath, paralyze(d4), d6, damage_each_round(d4, 2)]')
+      expect(code()).toBe('d6[breath, paralyzed(d4), d6, damage_each_round(d4, 2)]')
     })
 
     it('allows save-only modifiers with a save', () => {

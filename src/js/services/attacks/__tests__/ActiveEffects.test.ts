@@ -19,9 +19,9 @@ const paralysis = (remaining: number | null): ActiveEffect => ({
   damage: null,
   key: getEffectKey('paralyze', {
     duration: remaining === null ? null : String(remaining),
-    kind: ModifierKind.Paralyze,
+    kind: ModifierKind.Paralyzed,
   }),
-  kind: ModifierKind.Paralyze,
+  kind: ModifierKind.Paralyzed,
   label: 'paralyze',
   pending: false,
   remaining,

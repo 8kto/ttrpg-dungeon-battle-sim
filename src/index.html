@@ -225,7 +225,7 @@
               </label>
               <label class="flex items-center gap-1 text-amber-900 font-medium">
                 <input type="checkbox" class="monster-trait" data-trait="paralyzing" />
-                <abbr title="New monsters get an extra attack: d4[paralyze, paralyze(d4)]">Paralysis</abbr>
+                <abbr title="New monsters get an extra attack: d4[paralyze, paralyzed(d4)]">Paralysis</abbr>
               </label>
               <label class="flex items-center gap-1 text-amber-900 font-medium">
                 <input type="checkbox" class="monster-trait" data-trait="fiery" />
@@ -713,10 +713,10 @@
           <table class="help-modal__table">
             <tbody>
               <tr>
-                <td><code>paralyze</code><br /><code>paralyze(d4)</code></td>
+                <td><code>paralyzed</code><br /><code>paralyzed(d4)</code></td>
                 <td>
                   The target skips its turns for the whole battle / for d4 turns; attacks against it always hit for max
-                  damage. A lone <code>d6[paralyze]</code> paralyzes without a save
+                  damage. Not to be confused with the <code>paralyze</code> save: <code>d6[paralyze, paralyzed]</code>
                 </td>
               </tr>
               <tr>
@@ -741,7 +741,7 @@
           <h3>Examples</h3>
           <ul>
             <li><code>d6&lt;Sword&gt;[poison, save_or_die]</code></li>
-            <li><code>d6[paralyze(+2), paralyze(d4)]</code></li>
+            <li><code>d6[paralyze(+2), paralyzed(d4)]</code></li>
             <li><code>d4&lt;Fire Breath&gt;[breath, save_for_half(2d6)]</code></li>
             <li><code>d4, d4 | d10&lt;Fire&gt;[damage_each_round(d4, 3)]</code></li>
           </ul>

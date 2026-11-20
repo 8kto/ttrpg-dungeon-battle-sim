@@ -17,9 +17,9 @@ export const DEFAULT_SAVES: Readonly<Saves> = Object.freeze({
   poison: 12,
 })
 
-// values are the modifier names as written in the damage field
+// values are the modifier names as written in the damage field; "paralyzed" differs from the "paralyze" save
 export enum ModifierKind {
-  Paralyze = 'paralyze',
+  Paralyzed = 'paralyzed',
   SaveOrDie = 'save_or_die',
   SaveForHalf = 'save_for_half',
   ExtraDamage = 'extra_damage',
@@ -27,7 +27,7 @@ export enum ModifierKind {
 }
 
 export type Modifier =
-  | { kind: ModifierKind.Paralyze; duration: string | null } // null = until the end of battle
+  | { kind: ModifierKind.Paralyzed; duration: string | null } // null = until the end of battle
   | { kind: ModifierKind.SaveOrDie }
   | { kind: ModifierKind.SaveForHalf; damage: string }
   | { kind: ModifierKind.ExtraDamage; damage: string } // bare formula, e.g. [magic,d8]

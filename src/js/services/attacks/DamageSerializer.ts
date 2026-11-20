@@ -27,7 +27,7 @@ export class DamageSerializer implements IDamageSerializer {
 
   private serializeModifier(modifier: Modifier): string {
     switch (modifier.kind) {
-      case ModifierKind.Paralyze:
+      case ModifierKind.Paralyzed:
         return DamageSerializer.withArgs(modifier.kind, modifier.duration)
       case ModifierKind.SaveOrDie:
         return modifier.kind

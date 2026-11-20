@@ -44,16 +44,16 @@ Simulation strategies are:
     per attack; a bonus or penalty goes in parentheses with a sign: `poison(-2)`, `paralyze(+2)`. A save needs
     modifiers. Without a save, modifiers always apply.
   - Modifiers (on a failed save or without a save):
-    - `paralyze` / `paralyze(d4)` — the target skips its turns until the end of battle / for d4 turns; attacks
-      against it hit automatically for max weapon damage, and it fails all saves. A lone `d6[paralyze]` is this
-      modifier without a save
+    - `paralyzed` / `paralyzed(d4)` — the target skips its turns until the end of battle / for d4 turns; attacks
+      against it hit automatically for max weapon damage, and it fails all saves. Not to be confused with the
+      `paralyze` save: `d6[paralyze, paralyzed]`
     - `save_or_die` — the target dies; requires a save
     - `save_for_half(d8)` — d8 damage, half (rounded down) on a successful save; requires a save
     - `d8` — extra d8 damage; requires a save (without a save, add it to the formula: `d6+d8`)
     - `damage_each_round(d4)` / `damage_each_round(d4, 3)` — d4 damage at the start of each of the target's turns
       from the next round, until the end of battle / for 3 turns; identical effects don't stack
 - The log and the summary name an effect by the attack name, else by the save, else by its modifiers.
-- Examples: `d6<Sword>[poison, save_or_die]`, `d6[paralyze(+2), paralyze(d4)]`,
+- Examples: `d6<Sword>[poison, save_or_die]`, `d6[paralyze(+2), paralyzed(d4)]`,
   `d4<Fire Breath>[breath, save_for_half(2d6)]`, `d4, d4 | d10<Fire>[damage_each_round(d4, 3)]`.
 
 ## Features
