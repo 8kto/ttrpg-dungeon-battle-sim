@@ -169,7 +169,7 @@ export class Participant {
 
   private applyEffect(target: Participant, effect: AttackEffect): void {
     const saved = this.rollSave(target, effect)
-    const counters = (this.effectCounters[effect.label] ??= { applied: 0, hasSave: effect.save !== null, saved: 0 })
+    const counters = (this.effectCounters[effect.id] ??= { applied: 0, hasSave: effect.save !== null, saved: 0 })
     if (saved) {
       counters.saved++
     } else {

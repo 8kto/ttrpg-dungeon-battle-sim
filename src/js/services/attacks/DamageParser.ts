@@ -1,7 +1,9 @@
 import { messages } from '../messages/MessageService'
 import { DamageFormula } from './DamageFormula'
+import { DamageSerializer } from './DamageSerializer'
 import type { IDamageFormula } from './IDamageFormula'
 import type { IDamageParser } from './IDamageParser'
+import type { IDamageSerializer } from './IDamageSerializer'
 import type { Attack, AttackEffect, AttackOption, Modifier } from './types'
 import { ModifierKind, SaveType } from './types'
 
@@ -24,7 +26,10 @@ export class DamageParser implements IDamageParser {
   private static readonly NAME_FORBIDDEN_RE: RegExp = /[<>[\],|]/
   private static readonly NAME_MAX_LENGTH: number = 30
 
-  constructor(private readonly damageFormula: IDamageFormula = new DamageFormula()) {}
+  constructor(
+    private readonly damageFormula: IDamageFormula = new DamageFormula(),
+    private readonly damageSerializer: IDamageSerializer = new DamageSerializer(),
+  ) {}
 
   parseDamage(input: string): AttackOption[] {
     const text = input.trim()
@@ -169,20 +174,25 @@ export class DamageParser implements IDamageParser {
     const [first, ...rest] = items
     const tag = DamageParser.parseSaveTag(first)
     if (tag === null) {
-      return {
-        label: name ?? items.join(', '),
-        modifiers: items.map((m) => this.parseModifier(m, false)),
-        save: null,
-        saveMod: 0,
-      }
+      const modifiers = items.map((m) => this.parseModifier(m, false))
+
+      return this.toEffect({ modifiers, save: null, saveMod: 0 }, name ?? items.join(', '), name)
     }
     if (rest.length === 0) {
       throw new Error(messages.t('damage.errors.saveTagWithoutModifiers', { tag: first }))
     }
 
     const { save, saveMod } = tag
+    const modifiers = rest.map((m) => this.parseModifier(m, true))
 
-    return { label: name ?? save, modifiers: rest.map((m) => this.parseModifier(m, true)), save, saveMod }
+    return this.toEffect({ modifiers, save, saveMod }, name ?? save, name)
+  }
+
+  // the id holds the effect written the same way for every spelling: "d6[ Poison,save_or_die ]" is "poison, save_or_die"
+  private toEffect(effect: Omit<AttackEffect, 'id' | 'label'>, label: string, name: string | null): AttackEffect {
+    const text = this.damageSerializer.serializeEffect(effect)
+
+    return { ...effect, id: name === null ? text : `${name} (${text})`, label }
   }
 
   private parseModifier(text: string, hasSave: boolean): Modifier {

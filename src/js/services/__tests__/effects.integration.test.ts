@@ -228,19 +228,20 @@ describe('effects in battle', () => {
     expect(target.startTurn()).toBe(true)
   })
 
-  it('counts effects by label', () => {
+  it('counts every effect apart', () => {
     const { hit } = setup()
     saveRoll.mockReturnValueOnce(1).mockReturnValueOnce(1).mockReturnValueOnce(20)
 
     hit('d6[poison(-2),damage_each_round(1)]')
-    hit('d6[poison(-2),damage_each_round(1)]')
+    hit('d4[Poison(-2), damage_each_round(1)]')
     hit('d6[poison(-2),damage_each_round(1)]')
     hit('d6<knife>')
 
-    expect(counters).toEqual({ poison: { applied: 2, hasSave: true, saved: 1 } })
+    expect(counters).toEqual({ 'poison(-2), damage_each_round(1)': { applied: 2, hasSave: true, saved: 1 } })
   })
 
-  it('counts effects by attack name, or by the modifiers without a name and a save', () => {
+  // the effects of attacks with the same name are counted apart, each with its own save
+  it('counts effects by attack name and effect', () => {
     const { hit } = setup()
     saveRoll.mockReturnValueOnce(1)
 
@@ -249,7 +250,8 @@ describe('effects in battle', () => {
     hit('d6[damage_each_round(1, 2)]')
 
     expect(counters).toEqual({
-      Bite: { applied: 2, hasSave: true, saved: 0 },
+      'Bite (damage_each_round(2))': { applied: 1, hasSave: false, saved: 0 },
+      'Bite (poison, damage_each_round(1))': { applied: 1, hasSave: true, saved: 0 },
       'damage_each_round(1, 2)': { applied: 1, hasSave: false, saved: 0 },
     })
   })
@@ -270,6 +272,6 @@ describe('effects in battle', () => {
     const result = sim.simulate()
     expect(result.winner).toBeNull()
     expect(result.rounds).toBe(MAX_ROUNDS)
-    expect(result.effects['🧊'].applied).toBeGreaterThan(0)
+    expect(result.effects['🧊 (paralyzed)'].applied).toBeGreaterThan(0)
   })
 })

@@ -19,7 +19,7 @@ export class DamageSerializer implements IDamageSerializer {
     return `${damage}${name === null ? '' : `<${name}>`}${effect ? `[${this.serializeEffect(effect)}]` : ''}`
   }
 
-  private serializeEffect({ modifiers, save, saveMod }: SerializableEffect): string {
+  serializeEffect({ modifiers, save, saveMod }: SerializableEffect): string {
     const tag = save === null ? [] : [saveMod ? `${save}(${signed(saveMod)})` : save]
 
     return [...tag, ...modifiers.map((m) => this.serializeModifier(m))].join(', ')

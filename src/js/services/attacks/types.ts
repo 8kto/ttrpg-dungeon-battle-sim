@@ -34,7 +34,10 @@ export type Modifier =
   | { kind: ModifierKind.DamageEachRound; damage: string; duration: string | null }
 
 export type AttackEffect = {
+  // names the effect in the log: the attack name, else the save, else the modifiers
   label: string
+  // tells effects apart in the summary: the attack name with the effect, e.g. "Bite (poison, save_or_die)"
+  id: string
   save: SaveType | null
   saveMod: number // 0 when absent or for non-save tags
   modifiers: Modifier[]
@@ -50,5 +53,5 @@ export type Attack = {
 // attacks made in one turn
 export type AttackOption = Attack[]
 
-// how often effects with a given label were applied (failed save or no save) and saved against
+// how often effects with a given id were applied (failed save or no save) and saved against
 export type EffectCounters = Record<string, { applied: number; saved: number; hasSave: boolean }>

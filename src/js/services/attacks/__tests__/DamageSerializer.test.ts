@@ -53,6 +53,12 @@ describe('DamageSerializer', () => {
     })
   })
 
+  it('writes the effect alone', () => {
+    expect(
+      serializer.serializeEffect({ modifiers: [{ kind: ModifierKind.SaveOrDie }], save: SaveType.Magic, saveMod: -1 }),
+    ).toBe('magic(-1), save_or_die')
+  })
+
   it('omits a zero save bonus', () => {
     expect(
       serializer.serializeAttack({

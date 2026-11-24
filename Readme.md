@@ -52,7 +52,8 @@ Simulation strategies are:
     - `d8` — extra d8 damage; requires a save (without a save, add it to the formula: `d6+d8`)
     - `damage_each_round(d4)` / `damage_each_round(d4, 3)` — d4 damage at the start of each of the target's turns
       from the next round, until the end of battle / for 3 turns; identical effects don't stack
-- The log and the summary name an effect by the attack name, else by the save, else by its modifiers.
+- The log names an effect by the attack name, else by the save, else by its modifiers. The summary counts every
+  effect apart, by the attack name and the effect: `Bite (poison, save_or_die)`.
 - Examples: `d6<Sword>[poison, save_or_die]`, `d6[paralyze(+2), paralyzed(d4)]`,
   `d4<Fire Breath>[breath, save_for_half(2d6)]`, `d4, d4 | d10<Fire>[damage_each_round(d4, 3)]`.
 

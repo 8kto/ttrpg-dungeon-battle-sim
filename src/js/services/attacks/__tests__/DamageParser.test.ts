@@ -34,6 +34,7 @@ describe('DamageParser', () => {
     [
       'd6[paralyze,paralyzed(d4)]',
       {
+        id: 'paralyze, paralyzed(d4)',
         label: 'paralyze',
         modifiers: [{ duration: 'd4', kind: ModifierKind.Paralyzed }],
         save: SaveType.Paralyze,
@@ -43,6 +44,7 @@ describe('DamageParser', () => {
     [
       'd6[paralyze(+2),paralyzed(d4)]',
       {
+        id: 'paralyze(+2), paralyzed(d4)',
         label: 'paralyze',
         modifiers: [{ duration: 'd4', kind: ModifierKind.Paralyzed }],
         save: SaveType.Paralyze,
@@ -51,15 +53,28 @@ describe('DamageParser', () => {
     ],
     [
       'd6[poison(-2), save_or_die]',
-      { label: 'poison', modifiers: [{ kind: ModifierKind.SaveOrDie }], save: SaveType.Poison, saveMod: -2 },
+      {
+        id: 'poison(-2), save_or_die',
+        label: 'poison',
+        modifiers: [{ kind: ModifierKind.SaveOrDie }],
+        save: SaveType.Poison,
+        saveMod: -2,
+      },
     ],
     [
       'd6[magic,save_or_die]',
-      { label: 'magic', modifiers: [{ kind: ModifierKind.SaveOrDie }], save: SaveType.Magic, saveMod: 0 },
+      {
+        id: 'magic, save_or_die',
+        label: 'magic',
+        modifiers: [{ kind: ModifierKind.SaveOrDie }],
+        save: SaveType.Magic,
+        saveMod: 0,
+      },
     ],
     [
       'd6[magic,d8]',
       {
+        id: 'magic, d8',
         label: 'magic',
         modifiers: [{ damage: 'd8', kind: ModifierKind.ExtraDamage }],
         save: SaveType.Magic,
@@ -69,6 +84,7 @@ describe('DamageParser', () => {
     [
       'd6[breath,save_for_half(d8)]',
       {
+        id: 'breath, save_for_half(d8)',
         label: 'breath',
         modifiers: [{ damage: 'd8', kind: ModifierKind.SaveForHalf }],
         save: SaveType.Breath,
@@ -78,6 +94,7 @@ describe('DamageParser', () => {
     [
       'd6[poison,damage_each_round(d4)]',
       {
+        id: 'poison, damage_each_round(d4)',
         label: 'poison',
         modifiers: [{ damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }],
         save: SaveType.Poison,
@@ -87,6 +104,7 @@ describe('DamageParser', () => {
     [
       'd6[poison,damage_each_round(d4,3)]',
       {
+        id: 'poison, damage_each_round(d4, 3)',
         label: 'poison',
         modifiers: [{ damage: 'd4', duration: '3', kind: ModifierKind.DamageEachRound }],
         save: SaveType.Poison,
@@ -96,6 +114,7 @@ describe('DamageParser', () => {
     [
       'd6[damage_each_round(d4)]',
       {
+        id: 'damage_each_round(d4)',
         label: 'damage_each_round(d4)',
         modifiers: [{ damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }],
         save: null,
@@ -105,6 +124,7 @@ describe('DamageParser', () => {
     [
       'd6[paralyzed(d4), damage_each_round(1)]',
       {
+        id: 'paralyzed(d4), damage_each_round(1)',
         label: 'paralyzed(d4), damage_each_round(1)',
         modifiers: [
           { duration: 'd4', kind: ModifierKind.Paralyzed },
@@ -116,16 +136,29 @@ describe('DamageParser', () => {
     ],
     [
       'd6[paralyzed]',
-      { label: 'paralyzed', modifiers: [{ duration: null, kind: ModifierKind.Paralyzed }], save: null, saveMod: 0 },
+      {
+        id: 'paralyzed',
+        label: 'paralyzed',
+        modifiers: [{ duration: null, kind: ModifierKind.Paralyzed }],
+        save: null,
+        saveMod: 0,
+      },
     ],
     [
       'd6[paralyzed(3)]',
-      { label: 'paralyzed(3)', modifiers: [{ duration: '3', kind: ModifierKind.Paralyzed }], save: null, saveMod: 0 },
+      {
+        id: 'paralyzed(3)',
+        label: 'paralyzed(3)',
+        modifiers: [{ duration: '3', kind: ModifierKind.Paralyzed }],
+        save: null,
+        saveMod: 0,
+      },
     ],
     // "paralyze" is always the save, "paralyzed" the modifier
     [
       'd6[paralyzed, damage_each_round(d4)]',
       {
+        id: 'paralyzed, damage_each_round(d4)',
         label: 'paralyzed, damage_each_round(d4)',
         modifiers: [
           { duration: null, kind: ModifierKind.Paralyzed },
@@ -138,6 +171,7 @@ describe('DamageParser', () => {
     [
       'd6[paralyze, d4]',
       {
+        id: 'paralyze, d4',
         label: 'paralyze',
         modifiers: [{ damage: 'd4', kind: ModifierKind.ExtraDamage }],
         save: SaveType.Paralyze,
@@ -147,6 +181,7 @@ describe('DamageParser', () => {
     [
       'd6<🧊 Ice>[damage_each_round(d4)]',
       {
+        id: '🧊 Ice (damage_each_round(d4))',
         label: '🧊 Ice',
         modifiers: [{ damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }],
         save: null,
@@ -156,6 +191,7 @@ describe('DamageParser', () => {
     [
       'd4<Fire Breath>[breath, save_for_half(d6)]',
       {
+        id: 'Fire Breath (breath, save_for_half(d6))',
         label: 'Fire Breath',
         modifiers: [{ damage: 'd6', kind: ModifierKind.SaveForHalf }],
         save: SaveType.Breath,
@@ -180,6 +216,20 @@ describe('DamageParser', () => {
 
     expect(attack.name).toBe(name)
     expect(attack.damage).toBe(damage)
+  })
+
+  it('gives effects with the same name different ids', () => {
+    const [[bite, otherBite]] = parser.parseDamage('d6<Bite>[poison, save_or_die], d4<Bite>[paralyzed(1)]')
+
+    expect(bite.effect?.label).toBe(otherBite.effect?.label)
+    expect(bite.effect?.id).toBe('Bite (poison, save_or_die)')
+    expect(otherBite.effect?.id).toBe('Bite (paralyzed(1))')
+  })
+
+  it('gives the same id to the same effect written differently', () => {
+    expect(parser.parseAttack('d6[ Poison(-2),SAVE_OR_DIE ]').effect?.id).toBe(
+      parser.parseAttack('d8[poison(-2), save_or_die]').effect?.id,
+    )
   })
 
   it('ignores case and whitespace', () => {
