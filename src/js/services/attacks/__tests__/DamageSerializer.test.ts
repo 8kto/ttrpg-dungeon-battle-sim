@@ -21,6 +21,7 @@ describe('DamageSerializer', () => {
     'd6<🧊>[paralyzed(2)] | d4, d4',
     'd6[paralyzed]',
     'd6[paralyzed, damage_each_round(d4)]',
+    'd6<Bow (long>',
   ])('writes "%s" back as it was parsed', (damage) => {
     expect(serializer.serializeDamage(parser.parseDamage(damage))).toBe(damage)
   })

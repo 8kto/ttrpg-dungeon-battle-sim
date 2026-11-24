@@ -120,14 +120,19 @@ export class DamageParser implements IDamageParser {
     return this.damageFormula.max(formula)
   }
 
-  // Splits on a separator outside of [], () and <>; `|` inside brackets is an error
+  // Splits on a separator outside of [], () and <>; `|` inside brackets is an error. A name in <> is taken as is,
+  // up to the closing ">": "Bow (long" is a valid name, and checkName reports brackets and separators in it
   private splitTopLevel(input: string, separator: ',' | '|'): string[] {
     const parts: string[] = []
     const stack: string[] = []
     let current = ''
 
     for (const char of input) {
-      if (char in DamageParser.OPENING) {
+      if (stack[stack.length - 1] === '>') {
+        if (char === '>') {
+          stack.pop()
+        }
+      } else if (char in DamageParser.OPENING) {
         stack.push(DamageParser.OPENING[char])
       } else if (DamageParser.CLOSING.has(char)) {
         if (stack.pop() !== char) {

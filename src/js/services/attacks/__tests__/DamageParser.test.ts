@@ -24,6 +24,8 @@ describe('DamageParser', () => {
     ['d4,d4|d10[breath,save_for_half(3d6)]', [['d4', 'd4'], ['d10[breath,save_for_half(3d6)]']]],
     ['d6<Sword>[poison, save_or_die] | d4<Fire Breath>', [['d6<Sword>[poison, save_or_die]'], ['d4<Fire Breath>']]],
     ['d6+d10, d4<a b>', [['d6+d10', 'd4<a b>']]],
+    // brackets in a name don't count
+    ['d6<Bow (long>, d4<Claw)> | d8', [['d6<Bow (long>', 'd4<Claw)>'], ['d8']]],
   ])('parses options of "%s"', (input, expected) => {
     expect(sources(input)).toEqual(expected)
   })
@@ -169,6 +171,8 @@ describe('DamageParser', () => {
     ['d4<dagger>', 'dagger', 'd4'],
     ['d6<Sword>[damage_each_round(d4,3)]', 'Sword', 'd6'],
     ['d6 < Long Sword > [poison, save_or_die]', 'Long Sword', 'd6'],
+    ['d6<Bow (long)>', 'Bow (long)', 'd6'],
+    ['d6<Bow (long>[poison, save_or_die]', 'Bow (long', 'd6'],
     ['2d6+d4<poison>[poison, d4]', 'poison', '2d6+d4'],
     ['d6[poison, save_or_die]', null, 'd6'],
   ])('parses the name of "%s"', (input, name, damage) => {
@@ -199,14 +203,16 @@ describe('DamageParser', () => {
     ['d6< >[poison, save_or_die]', /empty name/],
     ['d6<', /unbalanced/],
     ['d6>', /unbalanced/],
-    ['d6<a<b>>', /expected a formula with an optional name and effect/],
+    ['d6<a<b>', /name "a<b" can't contain/],
+    ['d6<a<b>>', /unbalanced/],
     ['d6[poison, save_or_die]<Bite>', /expected a formula with an optional name and effect/],
     ['d6<a>x', /expected a formula/],
     ['d6[poison, save_or_die]x', /expected a formula/],
     ['d6<a>[poison, save_or_die]<b>', /expected a formula/],
     ['d6<a,b>', /name "a,b" can't contain/],
     ['d6<a[b]>', /name "a\[b\]" can't contain/],
-    ['d6<a|b>', /"\|" inside brackets/],
+    ['d6<a|b>', /name "a\|b" can't contain/],
+    ['d6<a|b> | d4', /name "a\|b" can't contain/],
     [`d6<${'x'.repeat(31)}>`, /is longer than 30 characters/],
     ['d6[poison,]', /empty modifier/],
     ['[poison, save_or_die]', /missing damage formula/],

@@ -174,12 +174,15 @@ describe('AttackWizard', () => {
       expect($<HTMLButtonElement>('.attack-wizard__apply').disabled).toBe(true)
     })
 
-    it.each(['fire_breath', 'Poison', 'poison ivy', 'claws!', '🧙🏽‍♂️', '❄️'])('accepts the name "%s"', (name) => {
-      type($('.attack-wizard__name'), name)
-      expect($('.attack-wizard__name').classList).not.toContain('damage-input--invalid')
-      expect($('.attack-wizard__errors').hidden).toBe(true)
-      expect(code()).toBe(`d6<${name}>`)
-    })
+    it.each(['fire_breath', 'Poison', 'poison ivy', 'claws!', '🧙🏽‍♂️', '❄️', 'Bow (long', 'Claw)'])(
+      'accepts the name "%s"',
+      (name) => {
+        type($('.attack-wizard__name'), name)
+        expect($('.attack-wizard__name').classList).not.toContain('damage-input--invalid')
+        expect($('.attack-wizard__errors').hidden).toBe(true)
+        expect(code()).toBe(`d6<${name}>`)
+      },
+    )
   })
 
   describe('effects', () => {
