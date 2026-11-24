@@ -23,6 +23,8 @@
   --touch-target: 2.5rem;
   --touch-target-narrow: 1.75rem;
   --icon-color: #999;
+  --logo-shadow: 2px 1px 2px rgb(69 0 0 / 92%);
+  --page-text-shadow: 2px 1px 2px rgb(4 4 4 / 92%);
 
   background-color: var(--page-bg);
 }
@@ -80,11 +82,11 @@ button[disabled] {
 }
 
 .page-logo {
-  text-shadow: 2px 1px 2px rgb(69 0 0 / 92%);
+  text-shadow: var(--logo-shadow);
 }
 
 .page-text {
-  text-shadow: 2px 1px 2px rgb(4 4 4 / 92%);
+  text-shadow: var(--page-text-shadow);
 }
 
 #stop-sim:not([disabled]) {
