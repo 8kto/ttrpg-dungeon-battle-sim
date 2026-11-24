@@ -75,6 +75,8 @@ export class AttackWizard implements IAttackWizard {
 
   private draft: DraftAttack[][] = []
   private onApply: ((damage: string) => void) | null = null
+  // the damage of the draft as last checked, null while it has errors
+  private validDamage: string | null = null
 
   private readonly options: HTMLElement
   private readonly notice: HTMLElement
@@ -122,12 +124,12 @@ export class AttackWizard implements IAttackWizard {
     return this.damageSerializer.serializeDamage(this.draft.map((attacks) => attacks.map(AttackWizard.toAttack)))
   }
 
+  // update() checks the draft after every change and keeps Apply disabled while it has errors
   private apply(): void {
-    const damage = this.damage
-    if (this.check(damage).errors.length > 0) {
+    if (this.validDamage === null) {
       return
     }
-    this.onApply?.(damage)
+    this.onApply?.(this.validDamage)
     this.dialog.close()
   }
 
@@ -159,6 +161,7 @@ export class AttackWizard implements IAttackWizard {
   private update(): void {
     const damage = this.damage
     const { errors, options } = this.check(damage)
+    this.validDamage = errors.length === 0 ? damage : null
 
     this.code.textContent = damage
     this.errorList.replaceChildren(...errors.map((error) => el('li', '', error)))
