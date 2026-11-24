@@ -1,5 +1,3 @@
-import { DamageParser } from '../services/attacks/DamageParser'
-import type { IDamageParser } from '../services/attacks/IDamageParser'
 import type { Attack, AttackOption, Modifier } from '../services/attacks/types'
 import { ModifierKind } from '../services/attacks/types'
 import { messages } from '../services/messages/MessageService'
@@ -25,9 +23,8 @@ type FieldElements = {
 export class DamageField {
   constructor(
     private readonly wizard: IAttackWizard | null = null,
-    private readonly damageParser: IDamageParser = new DamageParser(),
     // formula validity doesn't depend on the strategy
-    private readonly damageValidator: IDamageValidator = new DamageValidator(new MaxStrategy(), damageParser),
+    private readonly damageValidator: IDamageValidator = new DamageValidator(new MaxStrategy()),
   ) {}
 
   // chips of every attack, options separated by "or"
