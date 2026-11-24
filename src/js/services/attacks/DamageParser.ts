@@ -166,7 +166,7 @@ export class DamageParser implements IDamageParser {
     if (tag === null) {
       return {
         label: name ?? items.join(', '),
-        modifiers: items.map((m, i) => this.parseModifier(m, false, i === 0)),
+        modifiers: items.map((m) => this.parseModifier(m, false)),
         save: null,
         saveMod: 0,
       }
@@ -180,17 +180,19 @@ export class DamageParser implements IDamageParser {
     return { label: name ?? save, modifiers: rest.map((m) => this.parseModifier(m, true)), save, saveMod }
   }
 
-  // the first item without a save may be a name written the old way, inside the brackets: "d6[knife]"
-  private parseModifier(text: string, hasSave: boolean, mayBeName: boolean = false): Modifier {
-    // anything but a named modifier is extra damage; the validator checks its formula
+  private parseModifier(text: string, hasSave: boolean): Modifier {
+    // with a save anything but a named modifier is extra damage; the validator checks its formula
     const modifier = DamageParser.parseNamedModifier(text)
     if (modifier === null) {
       const damage = DamageParser.normalizeFormula(text)
-      if (!hasSave) {
+      if (hasSave) {
+        return { damage, kind: ModifierKind.ExtraDamage }
+      }
+      if (this.isFormula(damage)) {
         throw new Error(messages.t('damage.errors.extraDamageNeedsSave', { damage }))
       }
 
-      return { damage, kind: ModifierKind.ExtraDamage }
+      throw new Error(messages.t('damage.errors.unknownModifier', { modifier: text }))
     }
 
     const name = modifier.name.toLowerCase()
@@ -236,18 +238,18 @@ export class DamageParser implements IDamageParser {
 
         return { damage: args[0], duration: args[1] ?? null, kind: ModifierKind.DamageEachRound }
 
-      case SaveType.Paralyze:
-        throw new Error(messages.t('damage.errors.paralyzeIsSave'))
-
       default:
-        throw new Error(
-          messages.t(
-            mayBeName && modifier.args === null
-              ? 'damage.errors.unknownModifierOrName'
-              : 'damage.errors.unknownModifier',
-            { modifier: modifier.name },
-          ),
-        )
+        throw new Error(messages.t('damage.errors.unknownModifier', { modifier: modifier.name }))
+    }
+  }
+
+  private isFormula(text: string): boolean {
+    try {
+      this.damageFormula.parse(text)
+
+      return true
+    } catch {
+      return false
     }
   }
 
@@ -281,10 +283,6 @@ export class DamageParser implements IDamageParser {
     }
 
     const bonus = DamageParser.parseSaveBonus(match[2])
-    // "paralyze(d4)" is the paralyzed modifier spelled as the save
-    if (bonus === null && save === SaveType.Paralyze) {
-      throw new Error(messages.t('damage.errors.paralyzeIsSave'))
-    }
     if (bonus === null) {
       throw new Error(messages.t('damage.errors.invalidSaveTag', { save, tag: text }))
     }

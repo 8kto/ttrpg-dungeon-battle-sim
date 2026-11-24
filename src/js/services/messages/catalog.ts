@@ -78,13 +78,11 @@ export const catalog = {
       noArguments: '{modifier} takes no arguments',
       noFormula: 'no damage formula',
       oneArgument: '{modifier} takes one argument',
-      paralyzeIsSave: '"paralyze" is a save, the modifier is "paralyzed": [poison, paralyzed] or [paralyzed(d4)]',
       pipeInBrackets: '"|" inside brackets',
       saveBonusSign: 'save bonus needs a sign: {save}(+{bonus}) or {save}(-{bonus})',
       saveTagWithoutModifiers: 'save without modifiers: "{tag}" does nothing',
       unbalancedBrackets: 'unbalanced brackets',
       unknownModifier: 'unknown modifier "{modifier}"',
-      unknownModifierOrName: 'unknown modifier "{modifier}"; a name goes in angle brackets: d6<{modifier}>',
     },
   },
   sides: {
