@@ -303,6 +303,39 @@ abbr:hover {
   }
 }
 
+/* a one-line window over a strip of emoji, scrolled frame by frame (see EmojiTicker.ts);
+   a transform animation runs off the main thread, so it doesn't stutter while the simulation loads it */
+.emoji-ticker {
+  --emoji-ticker-size: 1.5em;
+
+  display: inline-block;
+  height: var(--emoji-ticker-size);
+  overflow: hidden;
+  line-height: var(--emoji-ticker-size);
+  vertical-align: middle;
+}
+
+.emoji-ticker__strip {
+  display: block;
+  animation: emoji-ticker var(--emoji-ticker-duration) steps(var(--emoji-ticker-steps)) infinite;
+  will-change: transform;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+.emoji-ticker__frame {
+  display: block;
+  height: var(--emoji-ticker-size);
+}
+
+@keyframes emoji-ticker {
+  to {
+    transform: translateY(-100%);
+  }
+}
+
 #run-sim {
   position: relative;
   background: var(--alt-color);

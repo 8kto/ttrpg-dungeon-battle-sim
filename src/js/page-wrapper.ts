@@ -21,6 +21,7 @@ import type { BattleSimulationConfig } from './types'
 import { AttackWizard } from './ui/AttackWizard'
 import { CharTable } from './ui/CharTable'
 import { DamageField } from './ui/DamageField'
+import { EmojiTicker } from './ui/EmojiTicker'
 import { bindLogoSpin } from './ui/logo'
 import { bindModal } from './ui/modal'
 import { SettingsForm } from './ui/SettingsForm'
@@ -50,6 +51,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const summaryFormatter = new SummaryFormatter()
   const settingsValidator = new SettingsValidator()
   const configParser = new ConfigParser()
+  const runSimTicker = new EmojiTicker(runSimBtn)
 
   // initial setup
   playersTable.init(PlayerTemplates)
@@ -147,8 +149,10 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const lockUiForSimulation = (): void => {
     runSimBtn.setAttribute('disabled', 'disabled')
     stopSimBtn.removeAttribute('disabled')
+    runSimTicker.start()
   }
   const releaseUiAfterSimulation = (): void => {
+    runSimTicker.stop()
     runSimBtn.removeAttribute('disabled')
     stopSimBtn.setAttribute('disabled', 'disabled')
   }
