@@ -167,6 +167,18 @@ describe('DamageField', () => {
       ])
     })
 
+    it('describe petrification and area attacks', () => {
+      setUp('d4<Gaze>[Paralyze, petrified], d4[petrified(d4)] | 0<Bomb>[Paralyze, save_for_half(d4), targets(4)]')
+      expect(chips()).toEqual([
+        'd4 | Gaze | Save vs Paralyze | petrified ∞',
+        'd4 | petrified d4',
+        '0 | Bomb | Save vs Paralyze | d4, half on save | 4 targets',
+      ])
+
+      setUp('d6[Breath, targets]')
+      expect(chips()).toEqual(['d6 | Save vs Breath | 3 targets'])
+    })
+
     it('are colored by the save type', () => {
       setUp('d6, d6<claws>, d4<Bite>[poison, save_or_die], d4[paralyze, paralyzed], d4[damage_each_round(1)]')
       expect(Array.from(preview().querySelectorAll('.damage-chip')).map((c) => c.className)).toEqual([

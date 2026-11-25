@@ -12,23 +12,27 @@ describe('DamageSerializer', () => {
     'd6, d4 | d10',
     'd6+d10-1',
     'd6<claws>',
-    'd4[poison(-2), save_or_die]',
-    'd8[paralyze, paralyzed(d4)]',
-    'd6[breath(+1), save_for_half(2d6)]',
-    'd4<Fire Breath>[breath, save_for_half(d6)]',
+    'd4[Poison(-2), save_or_die]',
+    'd8[Paralyze, paralyzed(d4)]',
+    'd6[Breath(+1), save_for_half(2d6)]',
+    'd4<Fire Breath>[Breath, save_for_half(d6)]',
     'd4<Fire>[damage_each_round(d4, 3)]',
-    'd4[magic, damage_each_round(1), d6]',
+    'd4[Magic, damage_each_round(1), d6]',
     'd6<🧊>[paralyzed(2)] | d4, d4',
     'd6[paralyzed]',
     'd6[paralyzed, damage_each_round(d4)]',
     'd6<Bow (long>',
+    'd4<Gaze>[Paralyze, petrified]',
+    'd4[petrified(d4)]',
+    'd6<Breath>[Breath, save_for_half(2d6), targets]',
+    '0<Bomb>[Paralyze, save_for_half(d4), targets(4)]',
   ])('writes "%s" back as it was parsed', (damage) => {
     expect(serializer.serializeDamage(parser.parseDamage(damage))).toBe(damage)
   })
 
   it('normalizes spacing and case', () => {
-    expect(serializer.serializeDamage(parser.parseDamage('D6 < Bite > [Poison( - 2 ),save_or_die]|d4,d4'))).toBe(
-      'd6<Bite>[poison(-2), save_or_die] | d4, d4',
+    expect(serializer.serializeDamage(parser.parseDamage('D6 < Bite > [poison( - 2 ),save_or_die]|d4,d4'))).toBe(
+      'd6<Bite>[Poison(-2), save_or_die] | d4, d4',
     )
   })
 
@@ -56,7 +60,7 @@ describe('DamageSerializer', () => {
   it('writes the effect alone', () => {
     expect(
       serializer.serializeEffect({ modifiers: [{ kind: ModifierKind.SaveOrDie }], save: SaveType.Magic, saveMod: -1 }),
-    ).toBe('magic(-1), save_or_die')
+    ).toBe('Magic(-1), save_or_die')
   })
 
   it('omits a zero save bonus', () => {
@@ -70,6 +74,6 @@ describe('DamageSerializer', () => {
         },
         name: null,
       }),
-    ).toBe('d6[poison, save_or_die]')
+    ).toBe('d6[Poison, save_or_die]')
   })
 })

@@ -7,10 +7,10 @@ export type SerializableEffect = Omit<AttackEffect, 'id' | 'label'>
 export type SerializableAttack = Pick<Attack, 'damage' | 'name'> & { effect: SerializableEffect | null }
 
 export interface IDamageSerializer {
-  // The whole damage field, e.g. "d6, d4 | d8<Bite>[poison(-2), save_or_die]"
+  // The whole damage field, e.g. "d6, d4 | d8<Bite>[Poison(-2), save_or_die]"
   serializeDamage(options: SerializableAttack[][]): string
-  // One attack, e.g. "d8<Bite>[poison(-2), save_or_die]"
+  // One attack, e.g. "d8<Bite>[Poison(-2), save_or_die]"
   serializeAttack(attack: SerializableAttack): string
-  // The text inside the square brackets, e.g. "poison(-2), save_or_die"
+  // The text inside the square brackets, e.g. "Poison(-2), save_or_die"
   serializeEffect(effect: SerializableEffect): string
 }

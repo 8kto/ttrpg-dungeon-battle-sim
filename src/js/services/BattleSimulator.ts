@@ -104,8 +104,9 @@ export class BattleSimulator implements IBattleSimulator {
     return this.fixedOrder
   }
 
+  // a side whose fighters are all dead or petrified, even for a while, has lost
   hasSurvivors(side: Side): boolean {
-    return this.participants.some((p) => p.side === side && p.currentHp > 0)
+    return this.participants.some((p) => p.side === side && p.isActive)
   }
 
   private initiativeMessage(sides: Participant[][]): string {
@@ -127,7 +128,7 @@ export class BattleSimulator implements IBattleSimulator {
         return {
           effects: this.effectCounters,
           rounds: this.roundsCount,
-          survivors: this.participants.filter((p) => p.currentHp > 0),
+          survivors: this.participants.filter((p) => p.isActive),
           winner: null,
         }
       }
@@ -164,7 +165,7 @@ export class BattleSimulator implements IBattleSimulator {
     }
 
     const winner: Side = this.hasSurvivors(Side.Players) ? Side.Players : Side.Monsters
-    const survivors = this.participants.filter((p) => p.currentHp > 0)
+    const survivors = this.participants.filter((p) => p.isActive)
 
     return {
       effects: this.effectCounters,

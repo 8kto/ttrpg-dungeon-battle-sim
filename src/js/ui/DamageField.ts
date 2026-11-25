@@ -1,5 +1,5 @@
 import type { Attack, AttackOption, Modifier } from '../services/attacks/types'
-import { ModifierKind } from '../services/attacks/types'
+import { DEFAULT_TARGETS, ModifierKind } from '../services/attacks/types'
 import { messages } from '../services/messages/MessageService'
 import { MaxStrategy } from '../services/strategies/MaxStrategy'
 import { DamageValidator } from '../services/validation/DamageValidator'
@@ -75,6 +75,12 @@ export class DamageField {
         return modifier.duration === null
           ? messages.t('ui.damageChip.paralyzedForever')
           : messages.t('ui.damageChip.paralyzed', { duration: modifier.duration })
+      case ModifierKind.Petrified:
+        return modifier.duration === null
+          ? messages.t('ui.damageChip.petrifiedForever')
+          : messages.t('ui.damageChip.petrified', { duration: modifier.duration })
+      case ModifierKind.Targets:
+        return messages.t('ui.damageChip.targets', { count: modifier.count ?? DEFAULT_TARGETS })
       case ModifierKind.SaveOrDie:
         return messages.t('ui.damageChip.saveOrDie')
       case ModifierKind.SaveForHalf:

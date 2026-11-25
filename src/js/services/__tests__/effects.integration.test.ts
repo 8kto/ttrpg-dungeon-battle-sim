@@ -103,7 +103,7 @@ describe('effects in battle', () => {
     hit('d6[poison,save_or_die]')
     expect(target.currentHp).toBeLessThanOrEqual(0)
     expect(saveRoll).not.toHaveBeenCalled()
-    expect(logger.drain()).toContain('🧪 Fighter is paralyzed, fails save vs poison')
+    expect(logger.drain()).toContain('🧪 Fighter is paralyzed, fails save vs Poison')
   })
 
   it.each<[string, number, number]>([
@@ -129,9 +129,9 @@ describe('effects in battle', () => {
     hit('d6[poison(+2),d4]')
 
     const lines = logger.drain()
-    expect(lines).toContain('🧪 Fighter saves vs poison (17 ≥ 12)')
-    expect(lines).toContain('🧪 Fighter fails save vs poison(-2) (13-2=11 < 12)')
-    expect(lines).toContain('🧪 Fighter saves vs poison(+2) (10+2=12 ≥ 12)')
+    expect(lines).toContain('🧪 Fighter saves vs Poison (17 ≥ 12)')
+    expect(lines).toContain('🧪 Fighter fails save vs Poison(-2) (13-2=11 < 12)')
+    expect(lines).toContain('🧪 Fighter saves vs Poison(+2) (10+2=12 ≥ 12)')
   })
 
   it('save_for_half halves on success, rounding down', () => {
@@ -237,7 +237,7 @@ describe('effects in battle', () => {
     hit('d6[poison(-2),damage_each_round(1)]')
     hit('d6<knife>')
 
-    expect(counters).toEqual({ 'poison(-2), damage_each_round(1)': { applied: 2, hasSave: true, saved: 1 } })
+    expect(counters).toEqual({ 'Poison(-2), damage_each_round(1)': { applied: 2, hasSave: true, saved: 1 } })
   })
 
   // the effects of attacks with the same name are counted apart, each with its own save
@@ -250,9 +250,197 @@ describe('effects in battle', () => {
     hit('d6[damage_each_round(1, 2)]')
 
     expect(counters).toEqual({
+      'Bite (Poison, damage_each_round(1))': { applied: 1, hasSave: true, saved: 0 },
       'Bite (damage_each_round(2))': { applied: 1, hasSave: false, saved: 0 },
-      'Bite (poison, damage_each_round(1))': { applied: 1, hasSave: true, saved: 0 },
       'damage_each_round(1, 2)': { applied: 1, hasSave: false, saved: 0 },
+    })
+  })
+
+  describe('petrification', () => {
+    it('takes the target out of the battle on a failed save', () => {
+      const { hit, target } = setup()
+      saveRoll.mockReturnValueOnce(20).mockReturnValueOnce(1)
+
+      hit('d4<Gaze>[paralyze, petrified]')
+      expect(target.isPetrified).toBe(false)
+      hit('d4<Gaze>[paralyze, petrified]')
+      expect(target.isPetrified).toBe(true)
+      expect(target.isActive).toBe(false)
+      expect(target.isValidTarget()).toBe(false)
+      expect(target.currentHp).toBeGreaterThan(0)
+      expect(logger.drain()).toContain('🗿 Fighter turned to stone until the end of battle')
+    })
+
+    it('applies without a save', () => {
+      const { hit, target } = setup()
+      saveRoll.mockClear()
+
+      hit('d4[petrified]')
+      expect(target.isPetrified).toBe(true)
+      expect(saveRoll).not.toHaveBeenCalled()
+    })
+
+    it('lasts the given number of own turns, without damage over time', () => {
+      const { hit, target } = setup()
+      hit('d4<fire>[damage_each_round(5)]')
+      hit('d4<Gaze>[petrified(2)]')
+      const hp = target.currentHp
+
+      expect(nextRound(target)).toBe(false)
+      expect(nextRound(target)).toBe(false)
+      expect(target.isPetrified).toBe(false)
+      expect(target.currentHp).toBe(hp)
+      expect(logger.drain()).toContain('🗿 Fighter is no longer petrified')
+      expect(nextRound(target)).toBe(true)
+      expect(target.currentHp).toBe(hp - 5)
+    })
+
+    it('applies no further modifiers to a statue', () => {
+      const { hit, target } = setup()
+
+      hit('d4[petrified, paralyzed]')
+      expect(target.isParalyzed).toBe(false)
+    })
+
+    it('loses the battle for a side of statues, even petrified for a while', () => {
+      jest.restoreAllMocks()
+      const gorgon: ICharacter = { ...makeChar('Gorgon'), damage: '0<Gaze>[petrified(1000)]', toHit: 100 }
+      const sim = new BattleSimulator([makeChar('Fighter')], [gorgon], new NullLogger(), {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        initiative: Initiative.Fixed,
+        maxAttacksPerTarget: 0,
+        rounding: Rounding.Up,
+        strategy: Strategy.Max,
+        targeting: Targeting.Random,
+      })
+      jest.spyOn(sim, 'getSortedByInitiative').mockImplementation(function (this: BattleSimulator) {
+        const players = this.participants.filter((p) => p.side === Side.Players)
+        const monsters = this.participants.filter((p) => p.side === Side.Monsters)
+
+        return [monsters, players]
+      })
+
+      const result = sim.simulate()
+      expect(result.winner).toBe(Side.Monsters)
+      expect(result.rounds).toBe(1)
+      expect(result.survivors.map((p) => p.char.name)).toEqual(['Gorgon'])
+    })
+  })
+
+  describe('area attacks', () => {
+    // the strategy is the attacker's, the targets have 100 HP
+    const setupArea = (
+      count: number,
+      strategy: ICombatStrategy = new MaxStrategy(),
+    ): { attacker: Participant; targets: Participant[]; attack: (damage: string) => void } => {
+      const attacker = make(makeChar('Dragon'), Side.Monsters, strategy)
+      const targets = Array.from({ length: count }, (_, i) => make(makeChar(`Fighter ${i + 1}`), Side.Players))
+      const rollToHit = jest.spyOn(attacker, 'rollToHit')
+
+      return {
+        attack: (damage: string): void => {
+          const attack = damageParser.parseAttack(damage)
+          attacker.performAreaAttack(targets[0], targets, attack)
+          expect(rollToHit).not.toHaveBeenCalled()
+        },
+        attacker,
+        targets,
+      }
+    }
+
+    it('hits up to 3 targets by default, without a roll to hit', () => {
+      const { attacker, targets } = setupArea(5)
+      const rollToHit = jest.spyOn(attacker, 'rollToHit')
+      const selector = { selectTarget: (_: Participant, enemies: Participant[]): Participant => enemies[0] }
+
+      attacker.performAreaAttack(targets[0], targets, damageParser.parseAttack('d6[breath, targets]'))
+      expect(rollToHit).not.toHaveBeenCalled()
+      expect(targets.filter((t) => t.currentHp < 100)).toHaveLength(3)
+      expect(targets[0].currentHp).toBe(94)
+
+      targets.forEach((t) => (t.currentHp = 100))
+      const dragon = make({ ...makeChar('Dragon'), damage: 'd6[breath, targets]' }, Side.Monsters)
+      dragon.attack(targets, selector)
+      expect(targets.filter((t) => t.currentHp < 100)).toHaveLength(3)
+    })
+
+    it('hits the count of targets given, at most all of them', () => {
+      const { attacker, targets } = setupArea(5)
+      const selector = { selectTarget: (_: Participant, enemies: Participant[]): Participant => enemies[0] }
+      const make4 = make({ ...makeChar('Bomber'), damage: 'd6[breath, targets(4)]' }, Side.Monsters)
+
+      make4.attack(targets, selector)
+      expect(targets.filter((t) => t.currentHp < 100)).toHaveLength(4)
+
+      attacker.performAreaAttack(targets[0], targets.slice(0, 2), damageParser.parseAttack('d6[breath, targets]'))
+      expect(targets[0].currentHp).toBe(88)
+      expect(targets[1].currentHp).toBeLessThan(100)
+    })
+
+    it('rolls a save for every target: a failure takes it all, a success avoids the damage', () => {
+      const { attack, targets } = setupArea(3)
+      saveRoll.mockReturnValueOnce(1).mockReturnValueOnce(20).mockReturnValueOnce(1)
+
+      attack('d6<Breath>[breath, d8, targets]')
+      expect(targets.map((t) => 100 - t.currentHp).sort()).toEqual([0, 14, 14])
+      expect(counters).toEqual({ 'Breath (Breath, d8, targets)': { applied: 2, hasSave: true, saved: 1 } })
+    })
+
+    it('halves save_for_half on a successful save, without the damage of the attack', () => {
+      const { attack, targets } = setupArea(2)
+      saveRoll.mockReturnValueOnce(20).mockReturnValueOnce(1)
+
+      attack('d6<Breath>[breath, save_for_half(2d6), targets]')
+      expect(targets.map((t) => 100 - t.currentHp).sort((a, b) => a - b)).toEqual([6, 18])
+    })
+
+    it('throws a bomb: no damage but from the effect', () => {
+      const { attack, targets } = setupArea(4)
+      saveRoll.mockReturnValueOnce(20).mockReturnValueOnce(1).mockReturnValueOnce(20).mockReturnValueOnce(1)
+
+      attack('0<Bomb>[Paralyze, save_for_half(d4), targets(4)]')
+      expect(targets.map((t) => 100 - t.currentHp).sort((a, b) => a - b)).toEqual([2, 2, 4, 4])
+    })
+
+    it('rolls the damage for every target apart', () => {
+      const strategy = new RandomStrategy()
+      const calculate = jest.spyOn(strategy, 'calculateDamage')
+      const { attack } = setupArea(3, strategy)
+
+      attack('d6[breath, targets]')
+      expect(calculate.mock.calls.filter(([formula]) => formula === 'd6')).toHaveLength(3)
+    })
+
+    it('a paralyzed target fails the save and takes max damage', () => {
+      const strategy = new RandomStrategy()
+      const { attack, targets } = setupArea(1, strategy)
+      const paralyzer = make(makeChar('Ghoul'), Side.Monsters)
+      jest.spyOn(paralyzer, 'rollToHit').mockReturnValue(100)
+      paralyzer.performOneAttack(targets[0], damageParser.parseAttack('0[paralyzed]'))
+      saveRoll.mockClear()
+
+      attack('d6+1[breath, targets]')
+      expect(100 - targets[0].currentHp).toBe(7)
+      expect(saveRoll).not.toHaveBeenCalled()
+    })
+
+    it('uses an attack slot of every target', () => {
+      const attacker = make({ ...makeChar('Dragon'), damage: 'd6[breath, targets]' }, Side.Monsters)
+      const targets = [1, 2, 3].map(
+        (i) => new Participant(makeChar(`F${i}`), Side.Players, new MaxStrategy(), 0, 1, logger, counters),
+      )
+      const selector = { selectTarget: (_: Participant, enemies: Participant[]): Participant => enemies[0] }
+
+      attacker.attack(targets, selector)
+      expect(targets.every((t) => !t.isValidTarget())).toBe(true)
+    })
+
+    it('logs the targets of the attack', () => {
+      const { attack } = setupArea(2)
+
+      attack('d6<Breath>[breath, targets]')
+      expect(logger.drain()[0]).toMatch(/^💥 Dragon attacks Fighter 1, Fighter 2 with Breath \(d6\)$/)
     })
   })
 

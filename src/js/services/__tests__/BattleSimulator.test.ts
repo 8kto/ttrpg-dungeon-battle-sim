@@ -46,7 +46,7 @@ const mockMonster: IMonster = {
 describe('BattleSimulator', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(Participant as jest.Mock).mockImplementation(
+    ;(Participant as unknown as jest.Mock).mockImplementation(
       (
         char: ICharacter,
         side: Side,
@@ -61,6 +61,10 @@ describe('BattleSimulator', () => {
         currentHp: strategy.calculateHp(char.hitDice),
         endRound: jest.fn(),
         hasAttackLimit: maxAttacksPerTarget > 0,
+        get isActive(): boolean {
+          return this.currentHp > 0 && !this.isPetrified
+        },
+        isPetrified: false,
         isValidTarget: jest.fn().mockReturnValue(true),
         logger,
         resetAttackLimit: jest.fn(),
@@ -140,7 +144,7 @@ describe('BattleSimulator', () => {
   describe('simulate', () => {
     // participants as created by the mocked Participant constructor
     const created = (): Array<{ attack: jest.Mock; endRound: jest.Mock; startTurn: jest.Mock }> =>
-      (Participant as jest.Mock).mock.results.map((r) => r.value)
+      (Participant as unknown as jest.Mock).mock.results.map((r) => r.value)
 
     const simulateRounds = (simulator: BattleSimulator, rounds: number): ReturnType<BattleSimulator['simulate']> => {
       const spy = jest.spyOn(simulator, 'hasSurvivors')
@@ -195,7 +199,8 @@ describe('BattleSimulator', () => {
         strategy: Strategy.Random,
         targeting: Targeting.Random,
       })
-      const [[, , , , , , playerCounters], [, , , , , , monsterCounters]] = (Participant as jest.Mock).mock.calls
+      const [[, , , , , , playerCounters], [, , , , , , monsterCounters]] = (Participant as unknown as jest.Mock).mock
+        .calls
       const result = simulateRounds(simulator, 1)
 
       expect(playerCounters).toBe(monsterCounters)

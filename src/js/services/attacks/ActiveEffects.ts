@@ -1,11 +1,11 @@
 import type { Modifier } from './types'
 import { ModifierKind } from './types'
 
-// A lasting effect on a participant: paralysis or damage over time
+// A lasting effect on a participant: paralysis, petrification or damage over time
 export type ActiveEffect = {
-  key: string // label + modifier kind + its arguments, e.g. 'poison:damage_each_round(d4,3)'
+  key: string // label + modifier kind + its arguments, e.g. 'Poison:damage_each_round(d4,3)'
   label: string
-  kind: ModifierKind.Paralyzed | ModifierKind.DamageEachRound
+  kind: ModifierKind.Paralyzed | ModifierKind.Petrified | ModifierKind.DamageEachRound
   damage: string | null // damage_each_round only
   remaining: number | null // own turns left; null = until the end of battle
   pending: boolean // damage over time starts in the round after the one it was applied in
@@ -33,6 +33,10 @@ export class ActiveEffects {
 
   get isParalyzed(): boolean {
     return this.effects.some((e) => e.kind === ModifierKind.Paralyzed && !e.pending)
+  }
+
+  get isPetrified(): boolean {
+    return this.effects.some((e) => e.kind === ModifierKind.Petrified && !e.pending)
   }
 
   getDamageOverTime(): ActiveEffect[] {

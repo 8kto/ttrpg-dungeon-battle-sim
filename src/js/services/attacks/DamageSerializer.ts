@@ -1,9 +1,10 @@
 import { signed } from '../../utils/number'
+import { capitalize } from '../../utils/text'
 import type { IDamageSerializer, SerializableAttack, SerializableEffect } from './IDamageSerializer'
 import type { Modifier } from './types'
 import { ModifierKind } from './types'
 
-// Writes parsed attacks back in the damage field syntax; the opposite of DamageParser.parseDamage
+// Writes parsed attacks back in the damage field syntax, saves capitalized; the opposite of DamageParser.parseDamage
 export class DamageSerializer implements IDamageSerializer {
   private static withArgs(name: string, ...args: (string | null)[]): string {
     const present = args.filter((a): a is string => a !== null)
@@ -20,7 +21,8 @@ export class DamageSerializer implements IDamageSerializer {
   }
 
   serializeEffect({ modifiers, save, saveMod }: SerializableEffect): string {
-    const tag = save === null ? [] : [saveMod ? `${save}(${signed(saveMod)})` : save]
+    const name = save === null ? null : capitalize(save)
+    const tag = name === null ? [] : [saveMod ? `${name}(${signed(saveMod)})` : name]
 
     return [...tag, ...modifiers.map((m) => this.serializeModifier(m))].join(', ')
   }
@@ -28,7 +30,10 @@ export class DamageSerializer implements IDamageSerializer {
   private serializeModifier(modifier: Modifier): string {
     switch (modifier.kind) {
       case ModifierKind.Paralyzed:
+      case ModifierKind.Petrified:
         return DamageSerializer.withArgs(modifier.kind, modifier.duration)
+      case ModifierKind.Targets:
+        return DamageSerializer.withArgs(modifier.kind, modifier.count)
       case ModifierKind.SaveOrDie:
         return modifier.kind
       case ModifierKind.SaveForHalf:

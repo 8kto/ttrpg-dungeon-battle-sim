@@ -17,14 +17,19 @@ export const DEFAULT_SAVES: Readonly<Saves> = Object.freeze({
   poison: 12,
 })
 
-// values are the modifier names as written in the damage field; "paralyzed" differs from the "paralyze" save
+// values are the modifier names as written in the damage field; "paralyzed" differs from the "Paralyze" save
 export enum ModifierKind {
   Paralyzed = 'paralyzed',
   SaveOrDie = 'save_or_die',
   SaveForHalf = 'save_for_half',
   ExtraDamage = 'extra_damage',
   DamageEachRound = 'damage_each_round',
+  Petrified = 'petrified',
+  Targets = 'targets',
 }
+
+// targets hit by an area attack without a count: "targets" is "targets(3)"
+export const DEFAULT_TARGETS = 3
 
 export type Modifier =
   | { kind: ModifierKind.Paralyzed; duration: string | null } // null = until the end of battle
@@ -32,11 +37,13 @@ export type Modifier =
   | { kind: ModifierKind.SaveForHalf; damage: string }
   | { kind: ModifierKind.ExtraDamage; damage: string } // bare formula, e.g. [magic,d8]
   | { kind: ModifierKind.DamageEachRound; damage: string; duration: string | null }
+  | { kind: ModifierKind.Petrified; duration: string | null } // null = until the end of battle
+  | { kind: ModifierKind.Targets; count: string | null } // null = DEFAULT_TARGETS
 
 export type AttackEffect = {
   // names the effect in the log: the attack name, else the save, else the modifiers
   label: string
-  // tells effects apart in the summary: the attack name with the effect, e.g. "Bite (poison, save_or_die)"
+  // tells effects apart in the summary: the attack name with the effect, e.g. "Bite (Poison, save_or_die)"
   id: string
   save: SaveType | null
   saveMod: number // 0 when absent or for non-save tags

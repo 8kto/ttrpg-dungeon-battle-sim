@@ -1,3 +1,4 @@
+import { capitalize } from '../../utils/text'
 import { messages } from '../messages/MessageService'
 import { DamageFormula } from './DamageFormula'
 import { DamageSerializer } from './DamageSerializer'
@@ -18,7 +19,7 @@ export class DamageParser implements IDamageParser {
 
   private static readonly NAMED_MODIFIER_RE: RegExp = /^([a-z_]+)\s*(?:\((.*)\))?$/is
   private static readonly SAVE_TAG_RE: RegExp = new RegExp(`^(${Object.values(SaveType).join('|')})\\s*(.*)$`, 'is')
-  // a save with a bonus written wrong: "poison+2", "poison 2"
+  // a save with a bonus written wrong: "Poison+2", "Poison 2"
   private static readonly BROKEN_BONUS_RE: RegExp = /^[+\-\d]/
   private static readonly SAVE_BONUS_RE: RegExp = /^\(\s*([+-])?\s*(\d+)\s*\)$/
   // formula, optional <name>, optional [effect]; the brackets are balanced by splitTopLevel
@@ -102,7 +103,11 @@ export class DamageParser implements IDamageParser {
     effect?.modifiers.forEach((modifier) => {
       switch (modifier.kind) {
         case ModifierKind.Paralyzed:
+        case ModifierKind.Petrified:
           formulas.push(...(modifier.duration === null ? [] : [modifier.duration]))
+          break
+        case ModifierKind.Targets:
+          formulas.push(...(modifier.count === null ? [] : [modifier.count]))
           break
         case ModifierKind.SaveOrDie:
           break
@@ -160,7 +165,7 @@ export class DamageParser implements IDamageParser {
     return parts
   }
 
-  // a save with its bonus goes first, followed by modifiers: "poison(-2), save_or_die"; without a save, modifiers only
+  // a save with its bonus goes first, followed by modifiers: "Poison(-2), save_or_die"; without a save, modifiers only
   private parseEffect(inner: string, name: string | null): AttackEffect {
     if (inner.trim() === '') {
       throw new Error(messages.t('damage.errors.emptyEffect'))
@@ -184,11 +189,14 @@ export class DamageParser implements IDamageParser {
 
     const { save, saveMod } = tag
     const modifiers = rest.map((m) => this.parseModifier(m, true))
+    if (modifiers.filter((m) => m.kind === ModifierKind.Targets).length > 1) {
+      throw new Error(messages.t('damage.errors.duplicateModifier', { modifier: ModifierKind.Targets }))
+    }
 
-    return this.toEffect({ modifiers, save, saveMod }, name ?? save, name)
+    return this.toEffect({ modifiers, save, saveMod }, name ?? capitalize(save), name)
   }
 
-  // the id holds the effect written the same way for every spelling: "d6[ Poison,save_or_die ]" is "poison, save_or_die"
+  // the id holds the effect written the same way for every spelling: "d6[ poison,save_or_die ]" is "Poison, save_or_die"
   private toEffect(effect: Omit<AttackEffect, 'id' | 'label'>, label: string, name: string | null): AttackEffect {
     const text = this.damageSerializer.serializeEffect(effect)
 
@@ -223,6 +231,21 @@ export class DamageParser implements IDamageParser {
         }
 
         return { duration: args[0] ?? null, kind: ModifierKind.Paralyzed }
+
+      case ModifierKind.Petrified:
+        if (args.length > 1) {
+          throw new Error(messages.t('damage.errors.atMostOneArgument', { modifier: name }))
+        }
+
+        return { duration: args[0] ?? null, kind: ModifierKind.Petrified }
+
+      case ModifierKind.Targets:
+        if (args.length > 1) {
+          throw new Error(messages.t('damage.errors.atMostOneArgument', { modifier: name }))
+        }
+        DamageParser.requireSave(name, hasSave)
+
+        return { count: args[0] ?? null, kind: ModifierKind.Targets }
 
       case ModifierKind.SaveOrDie:
         if (args.length > 0) {
@@ -268,7 +291,7 @@ export class DamageParser implements IDamageParser {
     }
   }
 
-  // "d6 <Sword> [poison, save_or_die]" gives the formula, the name and the text inside the square brackets
+  // "d6 <Sword> [Poison, save_or_die]" gives the formula, the name and the text inside the square brackets
   private static splitAttack(text: string): AttackParts {
     const match = text.match(DamageParser.ATTACK_RE)
     if (!match) {
@@ -278,7 +301,7 @@ export class DamageParser implements IDamageParser {
     return { formula: match[1], inner: match[3] ?? null, name: match[2]?.trim() ?? null }
   }
 
-  // "poison" or "magic (+2)"; null when the text is not a save, like "paralyzed(d4)"; throws on a broken bonus
+  // "Poison" or "Magic (+2)", in any case; null when the text is not a save, like "paralyzed(d4)"; throws on a broken bonus
   private static parseSaveTag(text: string): SaveTag | null {
     const match = text.match(DamageParser.SAVE_TAG_RE)
     if (!match) {
@@ -290,19 +313,19 @@ export class DamageParser implements IDamageParser {
       return { save, saveMod: 0 }
     }
     if (DamageParser.BROKEN_BONUS_RE.test(match[2])) {
-      throw new Error(messages.t('damage.errors.invalidSaveTag', { save, tag: text }))
+      throw new Error(messages.t('damage.errors.invalidSaveTag', { save: capitalize(save), tag: text }))
     }
-    // "poisonous" and "paralyzed" are not saves
+    // "Poisonous" and "paralyzed" are not saves
     if (!match[2].startsWith('(')) {
       return null
     }
 
     const bonus = DamageParser.parseSaveBonus(match[2])
     if (bonus === null) {
-      throw new Error(messages.t('damage.errors.invalidSaveTag', { save, tag: text }))
+      throw new Error(messages.t('damage.errors.invalidSaveTag', { save: capitalize(save), tag: text }))
     }
     if (bonus.sign === null) {
-      throw new Error(messages.t('damage.errors.saveBonusSign', { bonus: bonus.value, save }))
+      throw new Error(messages.t('damage.errors.saveBonusSign', { bonus: bonus.value, save: capitalize(save) }))
     }
 
     return { save, saveMod: parseInt(`${bonus.sign}${bonus.value}`, 10) }

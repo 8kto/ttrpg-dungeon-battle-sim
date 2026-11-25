@@ -7,7 +7,7 @@ import type { IDamageFormula } from '../services/attacks/IDamageFormula'
 import type { IDamageParser } from '../services/attacks/IDamageParser'
 import type { IDamageSerializer, SerializableAttack } from '../services/attacks/IDamageSerializer'
 import type { Attack, Modifier } from '../services/attacks/types'
-import { ModifierKind, SaveType } from '../services/attacks/types'
+import { DEFAULT_TARGETS, ModifierKind, SaveType } from '../services/attacks/types'
 import { messages } from '../services/messages/MessageService'
 import { MaxStrategy } from '../services/strategies/MaxStrategy'
 import { DamageValidator } from '../services/validation/DamageValidator'
@@ -25,7 +25,10 @@ export class AttackWizard implements IAttackWizard {
     ModifierKind.SaveOrDie,
     ModifierKind.SaveForHalf,
     ModifierKind.ExtraDamage,
+    ModifierKind.Targets,
   ])
+  // modifiers an attack can have once
+  private static readonly SINGLE: ReadonlySet<ModifierKind> = new Set([ModifierKind.Targets])
 
   private static newAttack(): DraftAttack {
     return {
@@ -40,7 +43,10 @@ export class AttackWizard implements IAttackWizard {
   private static newModifier(kind: ModifierKind): Modifier {
     switch (kind) {
       case ModifierKind.Paralyzed:
+      case ModifierKind.Petrified:
         return { duration: null, kind }
+      case ModifierKind.Targets:
+        return { count: null, kind }
       case ModifierKind.SaveOrDie:
         return { kind }
       case ModifierKind.SaveForHalf:
@@ -318,15 +324,20 @@ export class AttackWizard implements IAttackWizard {
       if (AttackWizard.SAVE_ONLY.has(kind) && attack.save === null) {
         addButton.disabled = true
         addButton.title = messages.t('ui.attackWizard.needsSave')
+      } else if (AttackWizard.SINGLE.has(kind) && attack.modifiers.some((m) => m.kind === kind)) {
+        addButton.disabled = true
       }
       add.appendChild(addButton)
     })
     section.appendChild(add)
+    if (attack.modifiers.some((m) => m.kind === ModifierKind.Targets)) {
+      section.appendChild(el('p', 'attack-wizard__hint', messages.t('ui.attackWizard.targetsHint')))
+    }
 
     return section
   }
 
-  // an empty duration means "until the end of battle"
+  // an empty duration means "until the end of battle", an empty count of targets the default one
   private renderModifierFields(modifier: Modifier): HTMLElement[] {
     const wholeBattle = messages.t('ui.attackWizard.wholeBattle')
     const duration = (m: Extract<Modifier, { duration: string | null }>): HTMLElement =>
@@ -339,7 +350,17 @@ export class AttackWizard implements IAttackWizard {
 
     switch (modifier.kind) {
       case ModifierKind.Paralyzed:
+      case ModifierKind.Petrified:
         return [duration(modifier)]
+      case ModifierKind.Targets:
+        return [
+          this.formulaField(
+            modifier.count ?? '',
+            String(DEFAULT_TARGETS),
+            (value) => (modifier.count = value.trim() === '' ? null : value),
+            true,
+          ),
+        ]
       case ModifierKind.SaveOrDie:
         return []
       case ModifierKind.SaveForHalf:

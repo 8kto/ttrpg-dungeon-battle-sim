@@ -34,8 +34,8 @@ describe('DamageParser', () => {
     [
       'd6[paralyze,paralyzed(d4)]',
       {
-        id: 'paralyze, paralyzed(d4)',
-        label: 'paralyze',
+        id: 'Paralyze, paralyzed(d4)',
+        label: 'Paralyze',
         modifiers: [{ duration: 'd4', kind: ModifierKind.Paralyzed }],
         save: SaveType.Paralyze,
         saveMod: 0,
@@ -44,8 +44,8 @@ describe('DamageParser', () => {
     [
       'd6[paralyze(+2),paralyzed(d4)]',
       {
-        id: 'paralyze(+2), paralyzed(d4)',
-        label: 'paralyze',
+        id: 'Paralyze(+2), paralyzed(d4)',
+        label: 'Paralyze',
         modifiers: [{ duration: 'd4', kind: ModifierKind.Paralyzed }],
         save: SaveType.Paralyze,
         saveMod: 2,
@@ -54,8 +54,8 @@ describe('DamageParser', () => {
     [
       'd6[poison(-2), save_or_die]',
       {
-        id: 'poison(-2), save_or_die',
-        label: 'poison',
+        id: 'Poison(-2), save_or_die',
+        label: 'Poison',
         modifiers: [{ kind: ModifierKind.SaveOrDie }],
         save: SaveType.Poison,
         saveMod: -2,
@@ -64,8 +64,8 @@ describe('DamageParser', () => {
     [
       'd6[magic,save_or_die]',
       {
-        id: 'magic, save_or_die',
-        label: 'magic',
+        id: 'Magic, save_or_die',
+        label: 'Magic',
         modifiers: [{ kind: ModifierKind.SaveOrDie }],
         save: SaveType.Magic,
         saveMod: 0,
@@ -74,8 +74,8 @@ describe('DamageParser', () => {
     [
       'd6[magic,d8]',
       {
-        id: 'magic, d8',
-        label: 'magic',
+        id: 'Magic, d8',
+        label: 'Magic',
         modifiers: [{ damage: 'd8', kind: ModifierKind.ExtraDamage }],
         save: SaveType.Magic,
         saveMod: 0,
@@ -84,8 +84,8 @@ describe('DamageParser', () => {
     [
       'd6[breath,save_for_half(d8)]',
       {
-        id: 'breath, save_for_half(d8)',
-        label: 'breath',
+        id: 'Breath, save_for_half(d8)',
+        label: 'Breath',
         modifiers: [{ damage: 'd8', kind: ModifierKind.SaveForHalf }],
         save: SaveType.Breath,
         saveMod: 0,
@@ -94,8 +94,8 @@ describe('DamageParser', () => {
     [
       'd6[poison,damage_each_round(d4)]',
       {
-        id: 'poison, damage_each_round(d4)',
-        label: 'poison',
+        id: 'Poison, damage_each_round(d4)',
+        label: 'Poison',
         modifiers: [{ damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }],
         save: SaveType.Poison,
         saveMod: 0,
@@ -104,8 +104,8 @@ describe('DamageParser', () => {
     [
       'd6[poison,damage_each_round(d4,3)]',
       {
-        id: 'poison, damage_each_round(d4, 3)',
-        label: 'poison',
+        id: 'Poison, damage_each_round(d4, 3)',
+        label: 'Poison',
         modifiers: [{ damage: 'd4', duration: '3', kind: ModifierKind.DamageEachRound }],
         save: SaveType.Poison,
         saveMod: 0,
@@ -171,8 +171,8 @@ describe('DamageParser', () => {
     [
       'd6[paralyze, d4]',
       {
-        id: 'paralyze, d4',
-        label: 'paralyze',
+        id: 'Paralyze, d4',
+        label: 'Paralyze',
         modifiers: [{ damage: 'd4', kind: ModifierKind.ExtraDamage }],
         save: SaveType.Paralyze,
         saveMod: 0,
@@ -191,10 +191,53 @@ describe('DamageParser', () => {
     [
       'd4<Fire Breath>[breath, save_for_half(d6)]',
       {
-        id: 'Fire Breath (breath, save_for_half(d6))',
+        id: 'Fire Breath (Breath, save_for_half(d6))',
         label: 'Fire Breath',
         modifiers: [{ damage: 'd6', kind: ModifierKind.SaveForHalf }],
         save: SaveType.Breath,
+        saveMod: 0,
+      },
+    ],
+    [
+      'd4<Gaze>[PARALYZE, petrified]',
+      {
+        id: 'Gaze (Paralyze, petrified)',
+        label: 'Gaze',
+        modifiers: [{ duration: null, kind: ModifierKind.Petrified }],
+        save: SaveType.Paralyze,
+        saveMod: 0,
+      },
+    ],
+    [
+      'd4[petrified(d4)]',
+      {
+        id: 'petrified(d4)',
+        label: 'petrified(d4)',
+        modifiers: [{ duration: 'd4', kind: ModifierKind.Petrified }],
+        save: null,
+        saveMod: 0,
+      },
+    ],
+    [
+      'd6[breath, targets]',
+      {
+        id: 'Breath, targets',
+        label: 'Breath',
+        modifiers: [{ count: null, kind: ModifierKind.Targets }],
+        save: SaveType.Breath,
+        saveMod: 0,
+      },
+    ],
+    [
+      '0<Bomb>[Paralyze, save_for_half(d4), targets(4)]',
+      {
+        id: 'Bomb (Paralyze, save_for_half(d4), targets(4))',
+        label: 'Bomb',
+        modifiers: [
+          { damage: 'd4', kind: ModifierKind.SaveForHalf },
+          { count: '4', kind: ModifierKind.Targets },
+        ],
+        save: SaveType.Paralyze,
         saveMod: 0,
       },
     ],
@@ -222,7 +265,7 @@ describe('DamageParser', () => {
     const [[bite, otherBite]] = parser.parseDamage('d6<Bite>[poison, save_or_die], d4<Bite>[paralyzed(1)]')
 
     expect(bite.effect?.label).toBe(otherBite.effect?.label)
-    expect(bite.effect?.id).toBe('Bite (poison, save_or_die)')
+    expect(bite.effect?.id).toBe('Bite (Poison, save_or_die)')
     expect(otherBite.effect?.id).toBe('Bite (paralyzed(1))')
   })
 
@@ -300,8 +343,19 @@ describe('DamageParser', () => {
     ['d6[poison,damage_each_round(d4,2,1)]', /at most two arguments/],
     ['d6[poison,save_or_die(d4)]', /save_or_die takes no arguments/],
     ['d6[poison, save_or_die, poison]', /unknown modifier "poison"/],
+    ['d6[poison, petrified(d4, 2)]', /petrified takes at most one argument/],
+    ['d6[targets(2)]', /targets requires a save/],
+    ['d6[targets, paralyzed]', /targets requires a save/],
+    ['d6[breath, targets(2, 3)]', /targets takes at most one argument/],
+    ['d6[breath, targets, targets(2)]', /targets can be used once/],
+    ['d6[poison(2), d4]', /save bonus needs a sign: Poison\(\+2\)/],
   ])('rejects malformed damage "%s"', (input, error) => {
     expect(() => parser.parseDamage(input)).toThrow(error)
+  })
+
+  it('lists formulas of petrification and targets for validation', () => {
+    expect(parser.getFormulasOf(parser.parseAttack('0[magic, petrified(d4), targets(d3)]'))).toEqual(['0', 'd4', 'd3'])
+    expect(parser.getFormulasOf(parser.parseAttack('d6[magic, petrified, targets]'))).toEqual(['d6'])
   })
 
   it('lists formulas for validation', () => {

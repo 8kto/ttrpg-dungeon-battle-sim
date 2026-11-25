@@ -242,7 +242,7 @@ describe('Participant', () => {
       attacker.performOneAttack(target, damageParser.parseAttack('d6[poison, save_or_die]'))
       attacker.performOneAttack(target, damageParser.parseAttack('d6<Bite>[poison, save_or_die]'))
 
-      expect(mockLogger.log).toHaveBeenCalledWith('🛡️ Players misses Monsters with poison (d6)')
+      expect(mockLogger.log).toHaveBeenCalledWith('🛡️ Players misses Monsters with Poison (d6)')
       expect(mockLogger.log).toHaveBeenCalledWith('🛡️ Players misses Monsters with Bite (d6)')
     })
 

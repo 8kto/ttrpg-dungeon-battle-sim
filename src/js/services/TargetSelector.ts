@@ -15,7 +15,7 @@ export class RandomTargetSelector implements ITargetSelector {
   }
 }
 
-// An attacker sticks to one target until one of them dies; holds the state of a single battle
+// An attacker sticks to one target until one of them dies or is petrified; holds the state of a single battle
 export class FocusTargetSelector implements ITargetSelector {
   private readonly focus: Map<Participant, Participant> = new Map()
 
@@ -26,7 +26,7 @@ export class FocusTargetSelector implements ITargetSelector {
     }
     // a living target that can't be attacked this round (attack limit) keeps the focus
     const target = getRandomArrayItem(enemies)
-    if (!current || current.currentHp <= 0) {
+    if (!current || !current.isActive) {
       this.focus.set(attacker, target)
     }
 

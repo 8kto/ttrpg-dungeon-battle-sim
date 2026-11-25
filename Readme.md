@@ -40,22 +40,31 @@ Simulation strategies are:
   optional, up to 30 characters, and can't contain `<`, `>`, `[`, `]`, `,` or `|`.
 - An effect in square brackets after the formula and the name applies on hit: `d6<Bite>[save, modifier, ...]` or
   `d6[modifier, ...]`.
-  - A save (`paralyze`, `poison`, `breath`, `device`, `magic`) goes first and makes the target roll that save once
-    per attack; a bonus or penalty goes in parentheses with a sign: `poison(-2)`, `paralyze(+2)`. A save needs
-    modifiers. Without a save, modifiers always apply.
+  - A save (`Paralyze`, `Poison`, `Breath`, `Device`, `Magic`, in any case) goes first and makes the target roll
+    that save once per attack; a bonus or penalty goes in parentheses with a sign: `Poison(-2)`, `Paralyze(+2)`. A
+    save needs modifiers. Without a save, modifiers always apply. The app writes saves capitalized.
   - Modifiers (on a failed save or without a save):
     - `paralyzed` / `paralyzed(d4)` — the target skips its turns until the end of battle / for d4 turns; attacks
       against it hit automatically for max weapon damage, and it fails all saves. Not to be confused with the
-      `paralyze` save: `d6[paralyze, paralyzed]`
+      `Paralyze` save: `d6[Paralyze, paralyzed]`
+    - `petrified` / `petrified(d4)` — the target turns to stone until the end of battle / for d4 turns: it can't act
+      or be attacked and takes no damage over time; a save is optional. A side whose combatants are all dead or
+      petrified loses, petrified ones are not survivors
     - `save_or_die` — the target dies; requires a save
     - `save_for_half(d8)` — d8 damage, half (rounded down) on a successful save; requires a save
     - `d8` — extra d8 damage; requires a save (without a save, add it to the formula: `d6+d8`)
     - `damage_each_round(d4)` / `damage_each_round(d4, 3)` — d4 damage at the start of each of the target's turns
       from the next round, until the end of battle / for 3 turns; identical effects don't stack
+    - `targets` / `targets(4)` — an area attack on 3 / 4 enemies (fewer if there are fewer); requires a save. There
+      is no roll to hit: every target rolls the save and the damage on its own. On a failed save it takes the damage
+      of the attack and the modifiers, on a success nothing but half of `save_for_half`. Each target uses one of its
+      attacks per round (Max Attacks per Target)
 - The log names an effect by the attack name, else by the save, else by its modifiers. The summary counts every
-  effect apart, by the attack name and the effect: `Bite (poison, save_or_die)`.
-- Examples: `d6<Sword>[poison, save_or_die]`, `d6[paralyze(+2), paralyzed(d4)]`,
-  `d4<Fire Breath>[breath, save_for_half(2d6)]`, `d4, d4 | d10<Fire>[damage_each_round(d4, 3)]`.
+  effect apart, by the attack name and the effect: `Bite (Poison, save_or_die)`.
+- Examples: `d6<Sword>[Poison, save_or_die]`, `d6[Paralyze(+2), paralyzed(d4)]`,
+  `d4<Fire Breath>[Breath, save_for_half(2d6)]`, `d4, d4 | d10<Fire>[damage_each_round(d4, 3)]`,
+  `d4<Gaze>[Paralyze, petrified]`, `d6<Bomb>[Paralyze, save_for_half(d4), targets(4)]`. A thrown bomb whose damage
+  comes only from the effect: `0<Bomb>[Paralyze, save_for_half(d4), targets(4)]`.
 
 ## Features
 

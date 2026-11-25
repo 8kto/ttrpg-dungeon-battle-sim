@@ -221,13 +221,13 @@
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
               <label class="flex items-center gap-1 text-amber-900 font-medium">
                 <input type="checkbox" class="monster-trait" data-trait="poisonous" />
-                <abbr title="New monsters get an extra attack: d4&lt;Poisonous bite&gt;[poison, save_or_die]"
+                <abbr title="New monsters get an extra attack: d4&lt;Poisonous bite&gt;[Poison, save_or_die]"
                   >Poisonous</abbr
                 >
               </label>
               <label class="flex items-center gap-1 text-amber-900 font-medium">
                 <input type="checkbox" class="monster-trait" data-trait="paralyzing" />
-                <abbr title="New monsters get an extra attack: d4&lt;Paralyzing touch&gt;[paralyze, paralyzed(d4)]"
+                <abbr title="New monsters get an extra attack: d4&lt;Paralyzing touch&gt;[Paralyze, paralyzed(d4)]"
                   >Paralysis</abbr
                 >
               </label>
@@ -235,6 +235,19 @@
                 <input type="checkbox" class="monster-trait" data-trait="fiery" />
                 <abbr title="New monsters get an extra attack: d4&lt;Fire breath&gt;[damage_each_round(d4, 3)]"
                   >Fiery</abbr
+                >
+              </label>
+              <label class="flex items-center gap-1 text-amber-900 font-medium">
+                <input type="checkbox" class="monster-trait" data-trait="petrifying" />
+                <abbr title="New monsters get an extra attack: d4&lt;Petrifying gaze&gt;[Paralyze, petrified]"
+                  >Petrifying</abbr
+                >
+              </label>
+              <label class="flex items-center gap-1 text-amber-900 font-medium">
+                <input type="checkbox" class="monster-trait" data-trait="breath" />
+                <abbr
+                  title="New monsters get an extra attack: d6&lt;Breath weapon&gt;[Breath, save_for_half(2d6), targets]"
+                  >Breath</abbr
                 >
               </label>
             </div>
@@ -601,7 +614,10 @@
           </table>
           <ul>
             <li><b>⎘</b> duplicates a row, <b>✕</b> removes it, <b>Clear</b> restores the defaults</li>
-            <li><b>Poisonous</b>, <b>Paralysis</b> and <b>Fiery</b> give an extra attack to newly added monsters</li>
+            <li>
+              <b>Poisonous</b>, <b>Paralysis</b>, <b>Fiery</b>, <b>Petrifying</b> and <b>Breath</b> give an extra attack
+              to newly added monsters
+            </li>
           </ul>
 
           <h3>Settings</h3>
@@ -627,7 +643,7 @@
                 <td>Targeting</td>
                 <td>
                   <b>Random</b>: every attack picks a random enemy. <b>Focus</b>: an attacker sticks to one enemy until
-                  it dies
+                  it dies or is petrified
                 </td>
               </tr>
               <tr>
@@ -657,7 +673,10 @@
           <h3>Results</h3>
           <ul>
             <li><b>Players win / Monsters win</b>: share of battles won by each side</li>
-            <li><b>Avg Players survivors</b>: share of players alive after a won battle</li>
+            <li>
+              <b>Avg Players survivors</b>: share of players alive after a won battle; petrified ones don't count. A
+              side whose combatants are all dead or petrified loses
+            </li>
             <li>Effect lines: how often each special effect hit or was saved against</li>
           </ul>
 
@@ -707,9 +726,9 @@
           </p>
           <ul>
             <li>
-              A save (<code>paralyze</code>, <code>poison</code>, <code>breath</code>, <code>device</code>,
-              <code>magic</code>) goes first and gives the target a save; add a bonus or penalty like
-              <code>poison(-2)</code>. A save needs modifiers
+              A save (<code>Paralyze</code>, <code>Poison</code>, <code>Breath</code>, <code>Device</code>,
+              <code>Magic</code>, in any case) goes first and gives the target a save; add a bonus or penalty like
+              <code>Poison(-2)</code>. A save needs modifiers
             </li>
             <li>Without a save, modifiers always apply</li>
           </ul>
@@ -722,7 +741,14 @@
                 <td><code>paralyzed</code><br /><code>paralyzed(d4)</code></td>
                 <td>
                   The target skips its turns for the whole battle / for d4 turns; attacks against it always hit for max
-                  damage. Not to be confused with the <code>paralyze</code> save: <code>d6[paralyze, paralyzed]</code>
+                  damage. Not to be confused with the <code>Paralyze</code> save: <code>d6[Paralyze, paralyzed]</code>
+                </td>
+              </tr>
+              <tr>
+                <td><code>petrified</code><br /><code>petrified(d4)</code></td>
+                <td>
+                  The target turns to stone for the whole battle / for d4 turns: it can't act or be attacked and takes
+                  no damage over time. A side whose combatants are all dead or petrified loses
                 </td>
               </tr>
               <tr>
@@ -741,14 +767,29 @@
                 <td><code>damage_each_round(d4)</code><br /><code>damage_each_round(d4, 3)</code></td>
                 <td>d4 damage every turn for the whole battle / for 3 turns</td>
               </tr>
+              <tr>
+                <td><code>targets</code><br /><code>targets(4)</code></td>
+                <td>
+                  An area attack on 3 / 4 enemies (fewer if there are fewer); requires a save. There is no roll to hit:
+                  every target rolls the save and the damage on its own. On a failure it takes the damage of the attack
+                  and the modifiers, on a success nothing, only half of <code>save_for_half</code>. Each target uses one
+                  of its attacks per round
+                </td>
+              </tr>
             </tbody>
           </table>
 
           <h3>Examples</h3>
           <ul>
-            <li><code>d6&lt;Sword&gt;[poison, save_or_die]</code></li>
-            <li><code>d6[paralyze(+2), paralyzed(d4)]</code></li>
-            <li><code>d4&lt;Fire Breath&gt;[breath, save_for_half(2d6)]</code></li>
+            <li><code>d6&lt;Sword&gt;[Poison, save_or_die]</code></li>
+            <li><code>d6[Paralyze(+2), paralyzed(d4)]</code></li>
+            <li><code>d4&lt;Fire Breath&gt;[Breath, save_for_half(2d6)]</code></li>
+            <li><code>d4&lt;Gaze&gt;[Paralyze, petrified]</code></li>
+            <li><code>d6&lt;Bomb&gt;[Paralyze, save_for_half(d4), targets(4)]</code></li>
+            <li>
+              <code>0&lt;Bomb&gt;[Paralyze, save_for_half(d4), targets(4)]</code>: a thrown bomb, only the effect deals
+              damage
+            </li>
             <li><code>d4, d4 | d10&lt;Fire&gt;[damage_each_round(d4, 3)]</code></li>
           </ul>
           <div class="help-modal__actions">

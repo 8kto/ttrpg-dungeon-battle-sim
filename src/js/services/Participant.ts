@@ -1,12 +1,13 @@
-import { Dice, roll } from 'ttrpg-lib-dice'
+import { Dice, roll, shuffleArray } from 'ttrpg-lib-dice'
 
 import type { Side } from '../types'
+import { capitalize } from '../utils/text'
 import type { ActiveEffect } from './attacks/ActiveEffects'
 import { ActiveEffects, getEffectKey } from './attacks/ActiveEffects'
 import { DamageParser } from './attacks/DamageParser'
 import type { IDamageParser } from './attacks/IDamageParser'
 import type { Attack, AttackEffect, AttackOption, EffectCounters, Modifier } from './attacks/types'
-import { ModifierKind } from './attacks/types'
+import { DEFAULT_TARGETS, ModifierKind } from './attacks/types'
 import type { ILogger } from './logger/ILogger'
 import { messages } from './messages/MessageService'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
@@ -54,8 +55,37 @@ export class Participant {
     return this.effects.isParalyzed
   }
 
+  get isPetrified(): boolean {
+    return this.effects.isPetrified
+  }
+
+  // takes part in the battle: alive and not petrified
+  get isActive(): boolean {
+    return this.currentHp > 0 && !this.effects.isPetrified
+  }
+
+  // the count of targets of an area attack as written, null for a single target attack
+  private static getAreaCount({ effect }: Attack): string | null {
+    const modifier = effect?.modifiers.find((m) => m.kind === ModifierKind.Targets)
+
+    return modifier?.kind === ModifierKind.Targets ? modifier.count ?? String(DEFAULT_TARGETS) : null
+  }
+
   // Resolves lasting effects at the start of the own turn; false when the participant can't act
   startTurn(): boolean {
+    // a statue takes no damage over time and does nothing until the petrification ends
+    if (this.effects.isPetrified) {
+      if (this.logger.isVerbose()) {
+        this.logger.log(messages.t('battle.effects.petrified', { name: this.char.name }))
+      }
+      this.effects.tick()
+      if (!this.effects.isPetrified && this.logger.isVerbose()) {
+        this.logger.log(messages.t('battle.effects.petrifiedEnded', { name: this.char.name }))
+      }
+
+      return false
+    }
+
     for (const effect of this.effects.getDamageOverTime()) {
       const dmg = this.getEffectValue(effect.damage as string)
       this.currentHp -= dmg
@@ -118,8 +148,51 @@ export class Participant {
         break
       }
 
-      this.performOneAttack(targetSelector.selectTarget(this, targets), attack)
+      const target = targetSelector.selectTarget(this, targets)
+      if (Participant.getAreaCount(attack) === null) {
+        this.performOneAttack(target, attack)
+      } else {
+        this.performAreaAttack(target, targets, attack)
+      }
     }
+  }
+
+  // An area attack hits the selected target and random other ones, without a roll to hit: every target rolls the
+  // save on its own; a failed save takes the damage and the modifiers, a successful one only half of save_for_half
+  performAreaAttack(primary: Participant, targets: Participant[], attack: Attack): void {
+    const effect = attack.effect as AttackEffect
+    const total = Math.max(1, this.getEffectValue(Participant.getAreaCount(attack) ?? String(DEFAULT_TARGETS)))
+    const hit = [primary, ...shuffleArray(targets.filter((t) => t !== primary))].slice(0, total)
+    if (this.logger.isVerbose()) {
+      this.logger.log(
+        messages.t('battle.action.area', {
+          name: this.char.name,
+          targets: hit.map((t) => t.char.name).join(', '),
+          weapon: this.getWeaponInfo(attack),
+        }),
+      )
+    }
+
+    hit.forEach((target) => {
+      if (target.hasAttackLimit) {
+        target.attacksRemaining--
+      }
+
+      // a paralyzed target fails the save and takes max damage
+      const helpless = target.isParalyzed
+      const saved = this.rollEffectSave(target, effect)
+      if (!saved) {
+        const dmg = helpless
+          ? Math.max(0, this.damageParser.getMaxDamage(attack.damage))
+          : this.getEffectValue(attack.damage)
+        if (dmg > 0) {
+          this.dealEffectDamage(target, dmg, effect.label)
+        }
+      }
+      if (target.currentHp > 0) {
+        this.applyModifiers(target, effect, saved)
+      }
+    })
   }
 
   performOneAttack(target: Participant, attack: Attack): void {
@@ -168,6 +241,11 @@ export class Participant {
   }
 
   private applyEffect(target: Participant, effect: AttackEffect): void {
+    this.applyModifiers(target, effect, this.rollEffectSave(target, effect))
+  }
+
+  // rolls the save of the effect and counts the outcome for the summary
+  private rollEffectSave(target: Participant, effect: AttackEffect): boolean {
     const saved = this.rollSave(target, effect)
     const counters = (this.effectCounters[effect.id] ??= { applied: 0, hasSave: effect.save !== null, saved: 0 })
     if (saved) {
@@ -176,8 +254,12 @@ export class Participant {
       counters.applied++
     }
 
+    return saved
+  }
+
+  private applyModifiers(target: Participant, effect: AttackEffect, saved: boolean): void {
     for (const modifier of effect.modifiers) {
-      if (target.currentHp <= 0) {
+      if (!target.isActive) {
         break
       }
 
@@ -201,10 +283,14 @@ export class Participant {
           }
           break
         case ModifierKind.Paralyzed:
+        case ModifierKind.Petrified:
         case ModifierKind.DamageEachRound:
           if (!saved) {
             this.addLastingEffect(target, effect.label, modifier)
           }
+          break
+        case ModifierKind.Targets:
+          // picks the targets, see performAreaAttack
           break
         default:
           throw new Error(`Unknown modifier: ${JSON.stringify(modifier)}`)
@@ -226,6 +312,19 @@ export class Participant {
         if (added && this.logger.isVerbose()) {
           this.logger.log(
             messages.t('battle.effects.paralyzedApplied', {
+              duration: formatDuration(remaining),
+              name: target.char.name,
+            }),
+          )
+        }
+        break
+      }
+      case ModifierKind.Petrified: {
+        // petrification is immediate
+        const added = target.effects.add({ damage: null, key, kind: modifier.kind, label, pending: false, remaining })
+        if (added && this.logger.isVerbose()) {
+          this.logger.log(
+            messages.t('battle.effects.petrifiedApplied', {
               duration: formatDuration(remaining),
               name: target.char.name,
             }),
@@ -266,7 +365,8 @@ export class Participant {
       return false
     }
 
-    const saveText = saveMod === 0 ? save : `${save}(${saveMod > 0 ? '+' : ''}${saveMod})`
+    const saveName = capitalize(save)
+    const saveText = saveMod === 0 ? saveName : `${saveName}(${saveMod > 0 ? '+' : ''}${saveMod})`
     if (target.isParalyzed) {
       if (this.logger.isVerbose()) {
         this.logger.log(messages.t('battle.saves.autoFail', { name: target.char.name, save: saveText }))
@@ -315,7 +415,7 @@ export class Participant {
   }
 
   isValidTarget(): boolean {
-    return this.currentHp > 0 && (!this.hasAttackLimit || this.attacksRemaining > 0)
+    return this.isActive && (!this.hasAttackLimit || this.attacksRemaining > 0)
   }
 
   resetAttackLimit(): void {
