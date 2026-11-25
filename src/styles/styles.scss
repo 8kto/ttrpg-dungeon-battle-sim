@@ -353,6 +353,52 @@ abbr:hover {
   transition: background-color 0.2s ease;
 }
 
+/* a pale battle picture over the log (see page-wrapper.ts): shown on page load, pulses during a simulation and fades
+   out when it ends, not to get in the way of reading the results.
+   Multiply blending tints only the light background, so the text stays dark. The fade runs on `opacity` and the pulse
+   on `filter: opacity()`; the pulse is paused rather than removed, so it freezes on its frame instead of jumping when
+   the simulation ends, and the fade goes on smoothly. Both run off the main thread */
+.log-backdrop {
+  --log-backdrop-opacity: 0.1;
+  --log-backdrop-pulse-low: 0.3;
+  --log-backdrop-pulse: 1.5s;
+  --log-backdrop-fade: 1s;
+
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 0.25rem;
+    background: url('/images/battle-mc.jpg') center / cover no-repeat;
+    mix-blend-mode: multiply;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--log-backdrop-fade) ease;
+    animation: log-backdrop-pulse var(--log-backdrop-pulse) ease-in-out infinite alternate paused;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+  }
+
+  &.log-backdrop--visible::after {
+    opacity: var(--log-backdrop-opacity);
+  }
+
+  &.log-backdrop--pulsing::after {
+    animation-play-state: running;
+    will-change: filter;
+  }
+}
+
+@keyframes log-backdrop-pulse {
+  to {
+    filter: opacity(var(--log-backdrop-pulse-low));
+  }
+}
+
 .damage-input--invalid {
   border-color: var(--alt-color);
   outline-color: var(--alt-color);

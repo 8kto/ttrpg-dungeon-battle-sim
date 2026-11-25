@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const runSimBtn = byId<HTMLButtonElement>('run-sim')
   const stopSimBtn = byId<HTMLButtonElement>('stop-sim')
   const progressBar = byId<HTMLProgressElement>('progress-bar')
+  const logBackdrop = byId('tab-log')
   const configArea = byId<HTMLTextAreaElement>('config-area')
 
   const settings = new SettingsForm()
@@ -83,6 +84,9 @@ document.addEventListener('DOMContentLoaded', (): void => {
   onClick(byId('clear-log'), () => {
     logger.clear()
     progressBar.value = 0
+    // the pulse froze on some frame when the last simulation ended: rewind it, to show the backdrop as on page load
+    logBackdrop.getAnimations({ subtree: true }).forEach((animation) => (animation.currentTime = 0))
+    logBackdrop.classList.add('log-backdrop--visible')
   })
 
   bindTabs([
@@ -122,6 +126,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const startProgressDisplay = (logsEnabled: boolean): void => {
     document.body.style.cursor = 'wait'
     progressBar.value = 0
+    logBackdrop.classList.add('log-backdrop--visible', 'log-backdrop--pulsing')
 
     if (!logsEnabled) {
       runSimBtn.classList.add('inline-loading-indicator')
@@ -132,6 +137,7 @@ document.addEventListener('DOMContentLoaded', (): void => {
   const stopProgressDisplay = (): void => {
     runSimBtn.classList.remove('inline-loading-indicator')
     logger.getContainer().classList.remove('bg-muted')
+    logBackdrop.classList.remove('log-backdrop--visible', 'log-backdrop--pulsing')
     document.body.style.cursor = 'default'
   }
 
