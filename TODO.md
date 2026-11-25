@@ -1,2 +1,3 @@
 - Иммунитеты (нежить к яду и т.п.)
 - use Dice lib (ttrpg-lib-dice) where possible
+- share results
