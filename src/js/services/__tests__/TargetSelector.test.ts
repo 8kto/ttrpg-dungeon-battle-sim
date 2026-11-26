@@ -1,7 +1,9 @@
 import { getRandomArrayItem } from 'ttrpg-lib-dice'
 
+import { FocusTargetSelector } from '../FocusTargetSelector'
 import type { Participant } from '../Participant'
-import { FocusTargetSelector, getTargetSelector, RandomTargetSelector } from '../TargetSelector'
+import { RandomTargetSelector } from '../RandomTargetSelector'
+import { getTargetSelector } from '../TargetSelector'
 import { Targeting } from '../types'
 
 jest.mock('ttrpg-lib-dice', () => ({

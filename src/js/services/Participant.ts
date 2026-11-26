@@ -8,10 +8,10 @@ import { DamageParser } from './attacks/DamageParser'
 import type { IDamageParser } from './attacks/IDamageParser'
 import type { Attack, AttackEffect, AttackOption, EffectCounters, Modifier } from './attacks/types'
 import { DEFAULT_TARGETS, ModifierKind } from './attacks/types'
+import type { ITargetSelector } from './ITargetSelector'
 import type { ILogger } from './logger/ILogger'
 import { messages } from './messages/MessageService'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
-import type { ITargetSelector } from './TargetSelector'
 import type { ICharacter } from './types'
 
 // modifiers that leave a lasting effect on the target
