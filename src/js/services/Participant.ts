@@ -1,6 +1,7 @@
 import { Dice, roll, shuffleArray } from 'ttrpg-lib-dice'
 
 import type { Side } from '../types'
+import { signed } from '../utils/number'
 import { capitalize } from '../utils/text'
 import type { ActiveEffect } from './attacks/ActiveEffects'
 import { ActiveEffects } from './attacks/ActiveEffects'
@@ -367,7 +368,7 @@ export class Participant {
     }
 
     const saveName = capitalize(save)
-    const saveText = saveMod === 0 ? saveName : `${saveName}(${saveMod > 0 ? '+' : ''}${saveMod})`
+    const saveText = saveMod === 0 ? saveName : `${saveName}(${signed(saveMod)})`
     if (target.isParalyzed) {
       if (this.logger.isVerbose()) {
         this.logger.log(messages.t('battle.saves.autoFail', { name: target.char.name, save: saveText }))
@@ -381,7 +382,7 @@ export class Participant {
     const value = target.char.saves[save]
     const saved = total >= value
     if (this.logger.isVerbose()) {
-      const calc = saveMod === 0 ? String(rolled) : `${rolled}${saveMod > 0 ? '+' : ''}${saveMod}=${total}`
+      const calc = saveMod === 0 ? String(rolled) : `${rolled}${signed(saveMod)}=${total}`
       const params = { name: target.char.name, roll: calc, save: saveText, value }
       this.logger.log(messages.t(saved ? 'battle.saves.success' : 'battle.saves.failure', params))
     }
