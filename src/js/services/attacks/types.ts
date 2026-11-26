@@ -59,6 +59,8 @@ export type AttackEffect = {
   save: SaveType | null
   saveMod: number // 0 when absent or for non-save tags
   modifiers: Modifier[]
+  // the count of targets of an area attack, from the "targets" modifier; null for a single target attack
+  areaTargets: string | null
 }
 
 export type Attack = {

@@ -4,9 +4,9 @@ import { DamageFormula } from './DamageFormula'
 import { DamageSerializer } from './DamageSerializer'
 import type { IDamageFormula } from './IDamageFormula'
 import type { IDamageParser } from './IDamageParser'
-import type { IDamageSerializer } from './IDamageSerializer'
+import type { IDamageSerializer, SerializableEffect } from './IDamageSerializer'
 import type { Attack, AttackEffect, AttackOption, Modifier } from './types'
-import { ModifierKind, SAVE_ONLY_MODIFIERS, SaveType, SINGLE_MODIFIERS } from './types'
+import { DEFAULT_TARGETS, ModifierKind, SAVE_ONLY_MODIFIERS, SaveType, SINGLE_MODIFIERS } from './types'
 
 type SaveTag = { save: SaveType; saveMod: number }
 type SaveBonus = { sign: string | null; value: string }
@@ -197,7 +197,7 @@ export class DamageParser implements IDamageParser {
   }
 
   // the id holds the effect written the same way for every spelling: "d6[ poison,save_or_die ]" is "Poison, save_or_die"
-  private toEffect(effect: Omit<AttackEffect, 'id' | 'label'>, label: string, name: string | null): AttackEffect {
+  private toEffect(effect: SerializableEffect, label: string, name: string | null): AttackEffect {
     const single = effect.modifiers.find(
       ({ kind }, i) => SINGLE_MODIFIERS.has(kind) && effect.modifiers.findIndex((m) => m.kind === kind) !== i,
     )
@@ -207,7 +207,12 @@ export class DamageParser implements IDamageParser {
 
     const text = this.damageSerializer.serializeEffect(effect)
 
-    return { ...effect, id: name === null ? text : `${name} (${text})`, label }
+    return {
+      ...effect,
+      areaTargets: DamageParser.getAreaTargets(effect.modifiers),
+      id: name === null ? text : `${name} (${text})`,
+      label,
+    }
   }
 
   private parseModifier(text: string, hasSave: boolean): Modifier {
@@ -350,6 +355,13 @@ export class DamageParser implements IDamageParser {
     const match = text.match(DamageParser.NAMED_MODIFIER_RE)
 
     return match ? { args: match[2] ?? null, name: match[1] } : null
+  }
+
+  // the count of targets as written, the default one for "targets" without a count
+  private static getAreaTargets(modifiers: Modifier[]): string | null {
+    const modifier = modifiers.find((m) => m.kind === ModifierKind.Targets)
+
+    return modifier?.kind === ModifierKind.Targets ? modifier.count ?? String(DEFAULT_TARGETS) : null
   }
 
   private static normalizeFormula(formula: string): string {

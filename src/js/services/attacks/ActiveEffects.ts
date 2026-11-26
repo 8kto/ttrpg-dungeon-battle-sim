@@ -13,6 +13,9 @@ export type ActiveEffect = {
 
 export class ActiveEffects {
   private effects: ActiveEffect[] = []
+  // checked on every attack and target choice, so kept up to date instead of searched for
+  private paralyzed: boolean = false
+  private petrified: boolean = false
 
   // Identical effects (same label, modifier and arguments) don't stack; the save bonus is not part of the label
   static getKey(label: string, modifier: Modifier): string {
@@ -27,16 +30,17 @@ export class ActiveEffects {
       return false
     }
     this.effects.push(effect)
+    this.refresh()
 
     return true
   }
 
   get isParalyzed(): boolean {
-    return this.effects.some((e) => e.kind === ModifierKind.Paralyzed && !e.pending)
+    return this.paralyzed
   }
 
   get isPetrified(): boolean {
-    return this.effects.some((e) => e.kind === ModifierKind.Petrified && !e.pending)
+    return this.petrified
   }
 
   getDamageOverTime(): ActiveEffect[] {
@@ -51,9 +55,16 @@ export class ActiveEffects {
       }
     })
     this.effects = this.effects.filter((e) => e.remaining === null || e.remaining > 0)
+    this.refresh()
   }
 
   endRound(): void {
     this.effects.forEach((e) => (e.pending = false))
+    this.refresh()
+  }
+
+  private refresh(): void {
+    this.paralyzed = this.effects.some((e) => e.kind === ModifierKind.Paralyzed && !e.pending)
+    this.petrified = this.effects.some((e) => e.kind === ModifierKind.Petrified && !e.pending)
   }
 }

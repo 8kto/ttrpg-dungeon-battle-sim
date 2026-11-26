@@ -8,7 +8,7 @@ import { ActiveEffects } from './attacks/ActiveEffects'
 import { DamageParser } from './attacks/DamageParser'
 import type { IDamageParser } from './attacks/IDamageParser'
 import type { Attack, AttackEffect, AttackOption, EffectCounters, Modifier } from './attacks/types'
-import { DEFAULT_TARGETS, ModifierKind } from './attacks/types'
+import { ModifierKind } from './attacks/types'
 import type { ITargetSelector } from './ITargetSelector'
 import type { ILogger } from './logger/ILogger'
 import { messages } from './messages/MessageService'
@@ -75,13 +75,6 @@ export class Participant {
     return remaining === null
       ? messages.t('battle.effects.untilEnd')
       : messages.t('battle.effects.forTurns', { turns: remaining })
-  }
-
-  // the count of targets of an area attack as written, null for a single target attack
-  private static getAreaCount({ effect }: Attack): string | null {
-    const modifier = effect?.modifiers.find((m) => m.kind === ModifierKind.Targets)
-
-    return modifier?.kind === ModifierKind.Targets ? modifier.count ?? String(DEFAULT_TARGETS) : null
   }
 
   // Resolves lasting effects at the start of the own turn; false when the participant can't act
@@ -162,7 +155,7 @@ export class Participant {
       }
 
       const target = targetSelector.selectTarget(this, targets)
-      if (Participant.getAreaCount(attack) === null) {
+      if (attack.effect === null || attack.effect.areaTargets === null) {
         this.performOneAttack(target, attack)
       } else {
         this.performAreaAttack(target, targets, attack)
@@ -174,7 +167,7 @@ export class Participant {
   // save on its own; a failed save takes the damage and the modifiers, a successful one only half of save_for_half
   performAreaAttack(primary: Participant, targets: Participant[], attack: Attack): void {
     const effect = attack.effect as AttackEffect
-    const total = Math.max(1, this.getEffectValue(Participant.getAreaCount(attack) ?? String(DEFAULT_TARGETS)))
+    const total = Math.max(1, this.getEffectValue(effect.areaTargets as string))
     const hit = [primary, ...shuffleArray(targets.filter((t) => t !== primary))].slice(0, total)
     if (this.logger.isVerbose()) {
       this.logger.log(

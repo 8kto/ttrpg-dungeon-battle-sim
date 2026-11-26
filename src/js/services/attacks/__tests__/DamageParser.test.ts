@@ -34,6 +34,7 @@ describe('DamageParser', () => {
     [
       'd6[paralyze,paralyzed(d4)]',
       {
+        areaTargets: null,
         id: 'Paralyze, paralyzed(d4)',
         label: 'Paralyze',
         modifiers: [{ duration: 'd4', kind: ModifierKind.Paralyzed }],
@@ -44,6 +45,7 @@ describe('DamageParser', () => {
     [
       'd6[paralyze(+2),paralyzed(d4)]',
       {
+        areaTargets: null,
         id: 'Paralyze(+2), paralyzed(d4)',
         label: 'Paralyze',
         modifiers: [{ duration: 'd4', kind: ModifierKind.Paralyzed }],
@@ -54,6 +56,7 @@ describe('DamageParser', () => {
     [
       'd6[poison(-2), save_or_die]',
       {
+        areaTargets: null,
         id: 'Poison(-2), save_or_die',
         label: 'Poison',
         modifiers: [{ kind: ModifierKind.SaveOrDie }],
@@ -64,6 +67,7 @@ describe('DamageParser', () => {
     [
       'd6[magic,save_or_die]',
       {
+        areaTargets: null,
         id: 'Magic, save_or_die',
         label: 'Magic',
         modifiers: [{ kind: ModifierKind.SaveOrDie }],
@@ -74,6 +78,7 @@ describe('DamageParser', () => {
     [
       'd6[magic,d8]',
       {
+        areaTargets: null,
         id: 'Magic, d8',
         label: 'Magic',
         modifiers: [{ damage: 'd8', kind: ModifierKind.ExtraDamage }],
@@ -84,6 +89,7 @@ describe('DamageParser', () => {
     [
       'd6[breath,save_for_half(d8)]',
       {
+        areaTargets: null,
         id: 'Breath, save_for_half(d8)',
         label: 'Breath',
         modifiers: [{ damage: 'd8', kind: ModifierKind.SaveForHalf }],
@@ -94,6 +100,7 @@ describe('DamageParser', () => {
     [
       'd6[poison,damage_each_round(d4)]',
       {
+        areaTargets: null,
         id: 'Poison, damage_each_round(d4)',
         label: 'Poison',
         modifiers: [{ damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }],
@@ -104,6 +111,7 @@ describe('DamageParser', () => {
     [
       'd6[poison,damage_each_round(d4,3)]',
       {
+        areaTargets: null,
         id: 'Poison, damage_each_round(d4, 3)',
         label: 'Poison',
         modifiers: [{ damage: 'd4', duration: '3', kind: ModifierKind.DamageEachRound }],
@@ -114,6 +122,7 @@ describe('DamageParser', () => {
     [
       'd6[damage_each_round(d4)]',
       {
+        areaTargets: null,
         id: 'damage_each_round(d4)',
         label: 'damage_each_round(d4)',
         modifiers: [{ damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }],
@@ -124,6 +133,7 @@ describe('DamageParser', () => {
     [
       'd6[paralyzed(d4), damage_each_round(1)]',
       {
+        areaTargets: null,
         id: 'paralyzed(d4), damage_each_round(1)',
         label: 'paralyzed(d4), damage_each_round(1)',
         modifiers: [
@@ -137,6 +147,7 @@ describe('DamageParser', () => {
     [
       'd6[paralyzed]',
       {
+        areaTargets: null,
         id: 'paralyzed',
         label: 'paralyzed',
         modifiers: [{ duration: null, kind: ModifierKind.Paralyzed }],
@@ -147,6 +158,7 @@ describe('DamageParser', () => {
     [
       'd6[paralyzed(3)]',
       {
+        areaTargets: null,
         id: 'paralyzed(3)',
         label: 'paralyzed(3)',
         modifiers: [{ duration: '3', kind: ModifierKind.Paralyzed }],
@@ -158,6 +170,7 @@ describe('DamageParser', () => {
     [
       'd6[paralyzed, damage_each_round(d4)]',
       {
+        areaTargets: null,
         id: 'paralyzed, damage_each_round(d4)',
         label: 'paralyzed, damage_each_round(d4)',
         modifiers: [
@@ -171,6 +184,7 @@ describe('DamageParser', () => {
     [
       'd6[paralyze, d4]',
       {
+        areaTargets: null,
         id: 'Paralyze, d4',
         label: 'Paralyze',
         modifiers: [{ damage: 'd4', kind: ModifierKind.ExtraDamage }],
@@ -181,6 +195,7 @@ describe('DamageParser', () => {
     [
       'd6<🧊 Ice>[damage_each_round(d4)]',
       {
+        areaTargets: null,
         id: '🧊 Ice (damage_each_round(d4))',
         label: '🧊 Ice',
         modifiers: [{ damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }],
@@ -191,6 +206,7 @@ describe('DamageParser', () => {
     [
       'd4<Fire Breath>[breath, save_for_half(d6)]',
       {
+        areaTargets: null,
         id: 'Fire Breath (Breath, save_for_half(d6))',
         label: 'Fire Breath',
         modifiers: [{ damage: 'd6', kind: ModifierKind.SaveForHalf }],
@@ -201,6 +217,7 @@ describe('DamageParser', () => {
     [
       'd4<Gaze>[PARALYZE, petrified]',
       {
+        areaTargets: null,
         id: 'Gaze (Paralyze, petrified)',
         label: 'Gaze',
         modifiers: [{ duration: null, kind: ModifierKind.Petrified }],
@@ -211,6 +228,7 @@ describe('DamageParser', () => {
     [
       'd4[petrified(d4)]',
       {
+        areaTargets: null,
         id: 'petrified(d4)',
         label: 'petrified(d4)',
         modifiers: [{ duration: 'd4', kind: ModifierKind.Petrified }],
@@ -221,6 +239,7 @@ describe('DamageParser', () => {
     [
       'd6[breath, targets]',
       {
+        areaTargets: '3',
         id: 'Breath, targets',
         label: 'Breath',
         modifiers: [{ count: null, kind: ModifierKind.Targets }],
@@ -231,6 +250,7 @@ describe('DamageParser', () => {
     [
       '0<Bomb>[Paralyze, save_for_half(d4), targets(4)]',
       {
+        areaTargets: '4',
         id: 'Bomb (Paralyze, save_for_half(d4), targets(4))',
         label: 'Bomb',
         modifiers: [

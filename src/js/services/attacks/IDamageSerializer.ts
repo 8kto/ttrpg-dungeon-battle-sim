@@ -1,7 +1,7 @@
 import type { Attack, AttackEffect } from './types'
 
-// the label and the id are derived from the name and the effect
-export type SerializableEffect = Omit<AttackEffect, 'id' | 'label'>
+// the label, the id and the area targets are derived from the name and the effect
+export type SerializableEffect = Omit<AttackEffect, 'areaTargets' | 'id' | 'label'>
 
 // an attack without its source text, which is what the serializer builds
 export type SerializableAttack = Pick<Attack, 'damage' | 'name'> & { effect: SerializableEffect | null }
