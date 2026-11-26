@@ -19,6 +19,17 @@ import type { ICharacter } from './types'
 type LastingModifier = Extract<Modifier, { kind: ActiveEffect['kind'] }>
 
 export class Participant {
+  // log messages of lasting effects that act at once, damage over time has its own
+  private static readonly APPLIED_MESSAGES: Readonly<
+    Record<
+      ModifierKind.Paralyzed | ModifierKind.Petrified,
+      'battle.effects.paralyzedApplied' | 'battle.effects.petrifiedApplied'
+    >
+  > = {
+    [ModifierKind.Paralyzed]: 'battle.effects.paralyzedApplied',
+    [ModifierKind.Petrified]: 'battle.effects.petrifiedApplied',
+  }
+
   public currentHp: number
   public readonly hasAttackLimit: boolean
   // how many more times this participant can be attacked in the current round
@@ -308,25 +319,13 @@ export class Participant {
 
     const key = ActiveEffects.getKey(label, modifier)
     switch (modifier.kind) {
-      case ModifierKind.Paralyzed: {
-        // paralysis is immediate
-        const added = target.effects.add({ damage: null, key, kind: modifier.kind, label, pending: false, remaining })
-        if (added && this.logger.isVerbose()) {
-          this.logger.log(
-            messages.t('battle.effects.paralyzedApplied', {
-              duration: Participant.formatDuration(remaining),
-              name: target.char.name,
-            }),
-          )
-        }
-        break
-      }
+      case ModifierKind.Paralyzed:
       case ModifierKind.Petrified: {
-        // petrification is immediate
+        // paralysis and petrification are immediate
         const added = target.effects.add({ damage: null, key, kind: modifier.kind, label, pending: false, remaining })
         if (added && this.logger.isVerbose()) {
           this.logger.log(
-            messages.t('battle.effects.petrifiedApplied', {
+            messages.t(Participant.APPLIED_MESSAGES[modifier.kind], {
               duration: Participant.formatDuration(remaining),
               name: target.char.name,
             }),

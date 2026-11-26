@@ -226,18 +226,12 @@ export class DamageParser implements IDamageParser {
 
     switch (name) {
       case ModifierKind.Paralyzed:
-        if (args.length > 1) {
-          throw new Error(messages.t('damage.errors.atMostOneArgument', { modifier: name }))
-        }
-
-        return { duration: args[0] ?? null, kind: ModifierKind.Paralyzed }
-
       case ModifierKind.Petrified:
         if (args.length > 1) {
           throw new Error(messages.t('damage.errors.atMostOneArgument', { modifier: name }))
         }
 
-        return { duration: args[0] ?? null, kind: ModifierKind.Petrified }
+        return { duration: args[0] ?? null, kind: name }
 
       case ModifierKind.Targets:
         if (args.length > 1) {
