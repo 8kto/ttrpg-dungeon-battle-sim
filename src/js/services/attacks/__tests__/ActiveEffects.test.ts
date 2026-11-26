@@ -1,10 +1,10 @@
 import type { ActiveEffect } from '../ActiveEffects'
-import { ActiveEffects, getEffectKey } from '../ActiveEffects'
+import { ActiveEffects } from '../ActiveEffects'
 import { ModifierKind } from '../types'
 
 const dot = (label: string, damage: string, remaining: number | null, pending: boolean = false): ActiveEffect => ({
   damage,
-  key: getEffectKey(label, {
+  key: ActiveEffects.getKey(label, {
     damage,
     duration: remaining === null ? null : String(remaining),
     kind: ModifierKind.DamageEachRound,
@@ -17,7 +17,7 @@ const dot = (label: string, damage: string, remaining: number | null, pending: b
 
 const paralysis = (remaining: number | null): ActiveEffect => ({
   damage: null,
-  key: getEffectKey('paralyze', {
+  key: ActiveEffects.getKey('paralyze', {
     duration: remaining === null ? null : String(remaining),
     kind: ModifierKind.Paralyzed,
   }),
@@ -28,20 +28,26 @@ const paralysis = (remaining: number | null): ActiveEffect => ({
 })
 
 describe('ActiveEffects', () => {
-  describe('getEffectKey', () => {
+  describe('getKey', () => {
     it('is the same for the same label and modifier', () => {
       // poison and poison(-2) both have the label "poison"
-      expect(getEffectKey('poison', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound })).toBe(
-        getEffectKey('poison', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }),
+      expect(ActiveEffects.getKey('poison', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound })).toBe(
+        ActiveEffects.getKey('poison', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }),
       )
     })
 
     it('differs by label, damage or duration', () => {
-      const key = getEffectKey('poison', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound })
+      const key = ActiveEffects.getKey('poison', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound })
 
-      expect(getEffectKey('fire', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound })).not.toBe(key)
-      expect(getEffectKey('poison', { damage: 'd6', duration: null, kind: ModifierKind.DamageEachRound })).not.toBe(key)
-      expect(getEffectKey('poison', { damage: 'd4', duration: '3', kind: ModifierKind.DamageEachRound })).not.toBe(key)
+      expect(
+        ActiveEffects.getKey('fire', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }),
+      ).not.toBe(key)
+      expect(
+        ActiveEffects.getKey('poison', { damage: 'd6', duration: null, kind: ModifierKind.DamageEachRound }),
+      ).not.toBe(key)
+      expect(
+        ActiveEffects.getKey('poison', { damage: 'd4', duration: '3', kind: ModifierKind.DamageEachRound }),
+      ).not.toBe(key)
     })
   })
 

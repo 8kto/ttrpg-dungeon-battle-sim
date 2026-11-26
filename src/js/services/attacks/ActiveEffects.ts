@@ -11,15 +11,15 @@ export type ActiveEffect = {
   pending: boolean // damage over time starts in the round after the one it was applied in
 }
 
-// Identical effects (same label, modifier and arguments) don't stack; the save bonus is not part of the label
-export const getEffectKey = (label: string, modifier: Modifier): string => {
-  const { kind, ...args } = modifier
-
-  return `${label}:${kind}(${Object.values(args).join(',')})`
-}
-
 export class ActiveEffects {
   private effects: ActiveEffect[] = []
+
+  // Identical effects (same label, modifier and arguments) don't stack; the save bonus is not part of the label
+  static getKey(label: string, modifier: Modifier): string {
+    const { kind, ...args } = modifier
+
+    return `${label}:${kind}(${Object.values(args).join(',')})`
+  }
 
   // false (and no change) when the same effect is already active
   add(effect: ActiveEffect): boolean {

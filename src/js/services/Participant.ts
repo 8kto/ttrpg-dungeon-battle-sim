@@ -3,7 +3,7 @@ import { Dice, roll, shuffleArray } from 'ttrpg-lib-dice'
 import type { Side } from '../types'
 import { capitalize } from '../utils/text'
 import type { ActiveEffect } from './attacks/ActiveEffects'
-import { ActiveEffects, getEffectKey } from './attacks/ActiveEffects'
+import { ActiveEffects } from './attacks/ActiveEffects'
 import { DamageParser } from './attacks/DamageParser'
 import type { IDamageParser } from './attacks/IDamageParser'
 import type { Attack, AttackEffect, AttackOption, EffectCounters, Modifier } from './attacks/types'
@@ -16,11 +16,6 @@ import type { ICharacter } from './types'
 
 // modifiers that leave a lasting effect on the target
 type LastingModifier = Extract<Modifier, { kind: ActiveEffect['kind'] }>
-
-const formatDuration = (remaining: number | null): string =>
-  remaining === null
-    ? messages.t('battle.effects.untilEnd')
-    : messages.t('battle.effects.forTurns', { turns: remaining })
 
 export class Participant {
   public currentHp: number
@@ -62,6 +57,12 @@ export class Participant {
   // takes part in the battle: alive and not petrified
   get isActive(): boolean {
     return this.currentHp > 0 && !this.effects.isPetrified
+  }
+
+  private static formatDuration(remaining: number | null): string {
+    return remaining === null
+      ? messages.t('battle.effects.untilEnd')
+      : messages.t('battle.effects.forTurns', { turns: remaining })
   }
 
   // the count of targets of an area attack as written, null for a single target attack
@@ -304,7 +305,7 @@ export class Participant {
       return
     }
 
-    const key = getEffectKey(label, modifier)
+    const key = ActiveEffects.getKey(label, modifier)
     switch (modifier.kind) {
       case ModifierKind.Paralyzed: {
         // paralysis is immediate
@@ -312,7 +313,7 @@ export class Participant {
         if (added && this.logger.isVerbose()) {
           this.logger.log(
             messages.t('battle.effects.paralyzedApplied', {
-              duration: formatDuration(remaining),
+              duration: Participant.formatDuration(remaining),
               name: target.char.name,
             }),
           )
@@ -325,7 +326,7 @@ export class Participant {
         if (added && this.logger.isVerbose()) {
           this.logger.log(
             messages.t('battle.effects.petrifiedApplied', {
-              duration: formatDuration(remaining),
+              duration: Participant.formatDuration(remaining),
               name: target.char.name,
             }),
           )
@@ -345,7 +346,7 @@ export class Participant {
         if (added && this.logger.isVerbose()) {
           this.logger.log(
             messages.t('battle.effects.applied', {
-              duration: formatDuration(remaining),
+              duration: Participant.formatDuration(remaining),
               kind: modifier.kind,
               label,
               name: target.char.name,
