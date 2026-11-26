@@ -47,8 +47,15 @@ describe('DamageFormula', () => {
       expect(formula.parse(text)).toEqual(expected)
     })
 
-    it.each(['', 'oops', 'd6x', '-1', '-d4', 'd6+', 'd6++d4', 'd6 d4', 'd6*2'])('rejects "%s"', (text) => {
-      expect(() => formula.parse(text)).toThrowError(/Invalid damage formula/)
+    it.each(['', 'oops', 'd6x', '-1', '-d4', 'd6+', 'd6++d4', 'd6 d4', 'd6*2', '0d6', '00d6', 'd0', '2d0', 'd6+0d4'])(
+      'rejects "%s"',
+      (text) => {
+        expect(() => formula.parse(text)).toThrowError(/Invalid damage formula/)
+      },
+    )
+
+    it.each(['0', '10d10', 'd100', 'd6+0'])('accepts "%s"', (text) => {
+      expect(() => formula.parse(text)).not.toThrow()
     })
 
     it('returns cached tokens for the same formula', () => {

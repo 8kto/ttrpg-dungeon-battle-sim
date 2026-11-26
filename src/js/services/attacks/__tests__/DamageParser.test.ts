@@ -353,6 +353,16 @@ describe('DamageParser', () => {
     expect(() => parser.parseDamage(input)).toThrow(error)
   })
 
+  it.each<[string, boolean]>([
+    ['2d6+1', true],
+    ['0', true],
+    ['0d6', false],
+    ['d0', false],
+    ['save_or_die', false],
+  ])('tells whether "%s" is a formula', (text, expected) => {
+    expect(parser.isFormula(text)).toBe(expected)
+  })
+
   it('lists formulas of petrification and targets for validation', () => {
     expect(parser.getFormulasOf(parser.parseAttack('0[magic, petrified(d4), targets(d3)]'))).toEqual(['0', 'd4', 'd3'])
     expect(parser.getFormulasOf(parser.parseAttack('d6[magic, petrified, targets]'))).toEqual(['d6'])

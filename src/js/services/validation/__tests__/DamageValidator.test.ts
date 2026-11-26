@@ -1,5 +1,6 @@
 import type { ICombatStrategy } from '../../strategies/ICombatStrategy'
 import { MaxStrategy } from '../../strategies/MaxStrategy'
+import { RandomStrategy } from '../../strategies/RandomStrategy'
 import { DamageValidator } from '../DamageValidator'
 
 describe('DamageValidator', () => {
@@ -30,6 +31,13 @@ describe('DamageValidator', () => {
     } as object as ICombatStrategy
 
     expect(new DamageValidator(strategy).validate('d6, d4')).toEqual(['invalid damage formula "d4"'])
+  })
+
+  // the Random strategy rolls "0d6" as one die and "d0" as NaN
+  it.each(['0d6', 'd0'])('reports "%s" for any strategy', (formula) => {
+    expect(new DamageValidator(new RandomStrategy()).validate(`d6, ${formula}`)).toEqual([
+      `invalid damage formula "${formula}"`,
+    ])
   })
 
   describe('check', () => {

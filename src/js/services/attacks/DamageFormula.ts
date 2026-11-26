@@ -1,9 +1,11 @@
 import type { DiceGroup, FormulaTokens, IDamageFormula } from './IDamageFormula'
 
 // The one place that knows the formula format the strategies support: dice and numbers joined by "+" and "-",
-// e.g. "d6", "2d6", "3d10+2", "d6 + d10 - 1" or "5"
+// e.g. "d6", "2d6", "3d10+2", "d6 + d10 - 1" or "5"; a die has at least one side and is rolled at least once,
+// "0d6" and "d0" are not formulas
 export class DamageFormula implements IDamageFormula {
-  private static readonly FORMULA_RE: RegExp = /^(?:\d*d\d+|\d+)(?:\s*[+-]\s*(?:\d*d\d+|\d+))*$/i
+  private static readonly FORMULA_RE: RegExp =
+    /^(?:(?:[1-9]\d*)?d[1-9]\d*|\d+)(?:\s*[+-]\s*(?:(?:[1-9]\d*)?d[1-9]\d*|\d+))*$/i
   private static readonly TERM_RE: RegExp = /([+-]?)\s*(?:(\d*)d(\d+)|(\d+))/gi
 
   // formulas are parsed on every attack, but there are only a few distinct ones per simulation;

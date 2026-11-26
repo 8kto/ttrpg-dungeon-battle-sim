@@ -275,7 +275,7 @@ export class DamageParser implements IDamageParser {
     }
   }
 
-  private isFormula(text: string): boolean {
+  isFormula(text: string): boolean {
     try {
       this.damageFormula.parse(text)
 
