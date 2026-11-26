@@ -7,7 +7,13 @@ import type { IDamageFormula } from '../services/attacks/IDamageFormula'
 import type { IDamageParser } from '../services/attacks/IDamageParser'
 import type { IDamageSerializer, SerializableAttack } from '../services/attacks/IDamageSerializer'
 import type { Attack, Modifier } from '../services/attacks/types'
-import { DEFAULT_TARGETS, ModifierKind, SaveType } from '../services/attacks/types'
+import {
+  DEFAULT_TARGETS,
+  ModifierKind,
+  SAVE_ONLY_MODIFIERS,
+  SaveType,
+  SINGLE_MODIFIERS,
+} from '../services/attacks/types'
 import { messages } from '../services/messages/MessageService'
 import { MaxStrategy } from '../services/strategies/MaxStrategy'
 import { DamageValidator } from '../services/validation/DamageValidator'
@@ -21,14 +27,6 @@ import type { DraftAttack, IAttackWizard } from './IAttackWizard'
 // The dialog markup (#attack-wizard) holds the static parts, the editor is rendered into .attack-wizard__options
 export class AttackWizard implements IAttackWizard {
   private static readonly DICE: readonly number[] = [Dice.d4, Dice.d6, Dice.d8, Dice.d10, Dice.d12, Dice.d20]
-  private static readonly SAVE_ONLY: ReadonlySet<ModifierKind> = new Set([
-    ModifierKind.SaveOrDie,
-    ModifierKind.SaveForHalf,
-    ModifierKind.ExtraDamage,
-    ModifierKind.Targets,
-  ])
-  // modifiers an attack can have once
-  private static readonly SINGLE: ReadonlySet<ModifierKind> = new Set([ModifierKind.Targets])
 
   private static newAttack(): DraftAttack {
     return {
@@ -272,7 +270,7 @@ export class AttackWizard implements IAttackWizard {
       attack.save = select.value === '' ? null : (select.value as SaveType)
       // without a save these modifiers make the damage invalid
       if (attack.save === null) {
-        attack.modifiers = attack.modifiers.filter((m) => !AttackWizard.SAVE_ONLY.has(m.kind))
+        attack.modifiers = attack.modifiers.filter((m) => !SAVE_ONLY_MODIFIERS.has(m.kind))
       }
       this.render()
     })
@@ -321,10 +319,10 @@ export class AttackWizard implements IAttackWizard {
         attack.modifiers.push(AttackWizard.newModifier(kind))
         this.render()
       })
-      if (AttackWizard.SAVE_ONLY.has(kind) && attack.save === null) {
+      if (SAVE_ONLY_MODIFIERS.has(kind) && attack.save === null) {
         addButton.disabled = true
         addButton.title = messages.t('ui.attackWizard.needsSave')
-      } else if (AttackWizard.SINGLE.has(kind) && attack.modifiers.some((m) => m.kind === kind)) {
+      } else if (SINGLE_MODIFIERS.has(kind) && attack.modifiers.some((m) => m.kind === kind)) {
         addButton.disabled = true
       }
       add.appendChild(addButton)

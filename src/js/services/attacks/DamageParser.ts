@@ -6,7 +6,7 @@ import type { IDamageFormula } from './IDamageFormula'
 import type { IDamageParser } from './IDamageParser'
 import type { IDamageSerializer } from './IDamageSerializer'
 import type { Attack, AttackEffect, AttackOption, Modifier } from './types'
-import { ModifierKind, SaveType } from './types'
+import { ModifierKind, SAVE_ONLY_MODIFIERS, SaveType, SINGLE_MODIFIERS } from './types'
 
 type SaveTag = { save: SaveType; saveMod: number }
 type SaveBonus = { sign: string | null; value: string }
@@ -188,22 +188,38 @@ export class DamageParser implements IDamageParser {
     }
 
     const { save, saveMod } = tag
-    const modifiers = rest.map((m) => this.parseModifier(m, true))
-    if (modifiers.filter((m) => m.kind === ModifierKind.Targets).length > 1) {
-      throw new Error(messages.t('damage.errors.duplicateModifier', { modifier: ModifierKind.Targets }))
-    }
 
-    return this.toEffect({ modifiers, save, saveMod }, name ?? capitalize(save), name)
+    return this.toEffect(
+      { modifiers: rest.map((m) => this.parseModifier(m, true)), save, saveMod },
+      name ?? capitalize(save),
+      name,
+    )
   }
 
   // the id holds the effect written the same way for every spelling: "d6[ poison,save_or_die ]" is "Poison, save_or_die"
   private toEffect(effect: Omit<AttackEffect, 'id' | 'label'>, label: string, name: string | null): AttackEffect {
+    const single = effect.modifiers.find(
+      ({ kind }, i) => SINGLE_MODIFIERS.has(kind) && effect.modifiers.findIndex((m) => m.kind === kind) !== i,
+    )
+    if (single) {
+      throw new Error(messages.t('damage.errors.duplicateModifier', { modifier: single.kind }))
+    }
+
     const text = this.damageSerializer.serializeEffect(effect)
 
     return { ...effect, id: name === null ? text : `${name} (${text})`, label }
   }
 
   private parseModifier(text: string, hasSave: boolean): Modifier {
+    const modifier = this.parseModifierArgs(text, hasSave)
+    if (!hasSave && SAVE_ONLY_MODIFIERS.has(modifier.kind)) {
+      throw new Error(messages.t('damage.errors.modifierNeedsSave', { modifier: modifier.kind }))
+    }
+
+    return modifier
+  }
+
+  private parseModifierArgs(text: string, hasSave: boolean): Modifier {
     // with a save anything but a named modifier is extra damage; the validator checks its formula
     const modifier = DamageParser.parseNamedModifier(text)
     if (modifier === null) {
@@ -237,7 +253,6 @@ export class DamageParser implements IDamageParser {
         if (args.length > 1) {
           throw new Error(messages.t('damage.errors.atMostOneArgument', { modifier: name }))
         }
-        DamageParser.requireSave(name, hasSave)
 
         return { count: args[0] ?? null, kind: ModifierKind.Targets }
 
@@ -245,7 +260,6 @@ export class DamageParser implements IDamageParser {
         if (args.length > 0) {
           throw new Error(messages.t('damage.errors.noArguments', { modifier: name }))
         }
-        DamageParser.requireSave(name, hasSave)
 
         return { kind: ModifierKind.SaveOrDie }
 
@@ -256,7 +270,6 @@ export class DamageParser implements IDamageParser {
         if (args.length > 1) {
           throw new Error(messages.t('damage.errors.oneArgument', { modifier: name }))
         }
-        DamageParser.requireSave(name, hasSave)
 
         return { damage: args[0], kind: ModifierKind.SaveForHalf }
 
@@ -337,12 +350,6 @@ export class DamageParser implements IDamageParser {
     const match = text.match(DamageParser.NAMED_MODIFIER_RE)
 
     return match ? { args: match[2] ?? null, name: match[1] } : null
-  }
-
-  private static requireSave(name: string, hasSave: boolean): void {
-    if (!hasSave) {
-      throw new Error(messages.t('damage.errors.modifierNeedsSave', { modifier: name }))
-    }
   }
 
   private static normalizeFormula(formula: string): string {

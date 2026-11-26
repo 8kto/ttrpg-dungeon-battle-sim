@@ -31,6 +31,17 @@ export enum ModifierKind {
 // targets hit by an area attack without a count: "targets" is "targets(3)"
 export const DEFAULT_TARGETS = 3
 
+// modifiers that work only with a save tag before them: "[Breath, save_for_half(2d6)]"
+export const SAVE_ONLY_MODIFIERS: ReadonlySet<ModifierKind> = new Set([
+  ModifierKind.SaveOrDie,
+  ModifierKind.SaveForHalf,
+  ModifierKind.ExtraDamage,
+  ModifierKind.Targets,
+])
+
+// modifiers an effect can have once
+export const SINGLE_MODIFIERS: ReadonlySet<ModifierKind> = new Set([ModifierKind.Targets])
+
 export type Modifier =
   | { kind: ModifierKind.Paralyzed; duration: string | null } // null = until the end of battle
   | { kind: ModifierKind.SaveOrDie }
