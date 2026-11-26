@@ -181,7 +181,7 @@ export class DamageParser implements IDamageParser {
     if (tag === null) {
       const modifiers = items.map((m) => this.parseModifier(m, false))
 
-      return this.toEffect({ modifiers, save: null, saveMod: 0 }, name ?? items.join(', '), name)
+      return this.toEffect({ modifiers, save: null, saveMod: 0 }, name)
     }
     if (rest.length === 0) {
       throw new Error(messages.t('damage.errors.saveTagWithoutModifiers', { tag: first }))
@@ -189,15 +189,11 @@ export class DamageParser implements IDamageParser {
 
     const { save, saveMod } = tag
 
-    return this.toEffect(
-      { modifiers: rest.map((m) => this.parseModifier(m, true)), save, saveMod },
-      name ?? capitalize(save),
-      name,
-    )
+    return this.toEffect({ modifiers: rest.map((m) => this.parseModifier(m, true)), save, saveMod }, name)
   }
 
   // the id holds the effect written the same way for every spelling: "d6[ poison,save_or_die ]" is "Poison, save_or_die"
-  private toEffect(effect: SerializableEffect, label: string, name: string | null): AttackEffect {
+  private toEffect(effect: SerializableEffect, name: string | null): AttackEffect {
     const single = effect.modifiers.find(
       ({ kind }, i) => SINGLE_MODIFIERS.has(kind) && effect.modifiers.findIndex((m) => m.kind === kind) !== i,
     )
@@ -206,6 +202,7 @@ export class DamageParser implements IDamageParser {
     }
 
     const text = this.damageSerializer.serializeEffect(effect)
+    const label = name ?? (effect.save === null ? null : capitalize(effect.save))
 
     return {
       ...effect,

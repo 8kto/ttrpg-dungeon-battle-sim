@@ -4,7 +4,7 @@ import { ModifierKind } from './types'
 // A lasting effect on a participant: paralysis, petrification or damage over time
 export type ActiveEffect = {
   key: string // label + modifier kind + its arguments, e.g. 'Poison:damage_each_round(d4,3)'
-  label: string
+  label: string | null
   kind: ModifierKind.Paralyzed | ModifierKind.Petrified | ModifierKind.DamageEachRound
   damage: string | null // damage_each_round only
   remaining: number | null // own turns left; null = until the end of battle
@@ -18,10 +18,10 @@ export class ActiveEffects {
   private petrified: boolean = false
 
   // Identical effects (same label, modifier and arguments) don't stack; the save bonus is not part of the label
-  static getKey(label: string, modifier: Modifier): string {
+  static getKey(label: string | null, modifier: Modifier): string {
     const { kind, ...args } = modifier
 
-    return `${label}:${kind}(${Object.values(args).join(',')})`
+    return `${label ?? ''}:${kind}(${Object.values(args).join(',')})`
   }
 
   // false (and no change) when the same effect is already active

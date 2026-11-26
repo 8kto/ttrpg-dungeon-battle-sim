@@ -124,7 +124,7 @@ describe('DamageParser', () => {
       {
         areaTargets: null,
         id: 'damage_each_round(d4)',
-        label: 'damage_each_round(d4)',
+        label: null,
         modifiers: [{ damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }],
         save: null,
         saveMod: 0,
@@ -135,7 +135,7 @@ describe('DamageParser', () => {
       {
         areaTargets: null,
         id: 'paralyzed(d4), damage_each_round(1)',
-        label: 'paralyzed(d4), damage_each_round(1)',
+        label: null,
         modifiers: [
           { duration: 'd4', kind: ModifierKind.Paralyzed },
           { damage: '1', duration: null, kind: ModifierKind.DamageEachRound },
@@ -149,7 +149,7 @@ describe('DamageParser', () => {
       {
         areaTargets: null,
         id: 'paralyzed',
-        label: 'paralyzed',
+        label: null,
         modifiers: [{ duration: null, kind: ModifierKind.Paralyzed }],
         save: null,
         saveMod: 0,
@@ -160,7 +160,7 @@ describe('DamageParser', () => {
       {
         areaTargets: null,
         id: 'paralyzed(3)',
-        label: 'paralyzed(3)',
+        label: null,
         modifiers: [{ duration: '3', kind: ModifierKind.Paralyzed }],
         save: null,
         saveMod: 0,
@@ -172,7 +172,7 @@ describe('DamageParser', () => {
       {
         areaTargets: null,
         id: 'paralyzed, damage_each_round(d4)',
-        label: 'paralyzed, damage_each_round(d4)',
+        label: null,
         modifiers: [
           { duration: null, kind: ModifierKind.Paralyzed },
           { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound },
@@ -230,7 +230,7 @@ describe('DamageParser', () => {
       {
         areaTargets: null,
         id: 'petrified(d4)',
-        label: 'petrified(d4)',
+        label: null,
         modifiers: [{ duration: 'd4', kind: ModifierKind.Petrified }],
         save: null,
         saveMod: 0,

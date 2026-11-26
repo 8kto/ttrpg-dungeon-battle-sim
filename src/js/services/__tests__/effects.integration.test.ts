@@ -201,6 +201,21 @@ describe('effects in battle', () => {
     expect(logger.drain()).toContain('🔥 Fighter takes 2 damage (fire damage_each_round)')
   })
 
+  // an unnamed effect without a save is named by its modifier, whatever spacing it is written with
+  it('names an unnamed effect without a save by its modifier and does not stack it', () => {
+    const { hit, target } = setup()
+    hit('d10[damage_each_round(d4, 3)]')
+    hit('d6[damage_each_round( d4 ,3 )]')
+    const hp = target.currentHp
+
+    nextRound(target)
+    expect(hp - target.currentHp).toBe(4)
+    const lines = logger.drain()
+    expect(lines).toContain('🗡️ Ghoul attacks Fighter with damage_each_round(d4, 3) (d10), damage: 10')
+    expect(lines).toContain('🔥 Fighter affected by damage_each_round for 3 turns')
+    expect(lines).toContain('🔥 Fighter takes 4 damage (damage_each_round)')
+  })
+
   it('does not act when killed by damage over time', () => {
     const { hit, target } = setup()
     hit('d6<fire>[damage_each_round(3)]')

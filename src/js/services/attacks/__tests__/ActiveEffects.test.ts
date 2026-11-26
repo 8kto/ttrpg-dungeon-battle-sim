@@ -49,6 +49,10 @@ describe('ActiveEffects', () => {
         ActiveEffects.getKey('poison', { damage: 'd4', duration: '3', kind: ModifierKind.DamageEachRound }),
       ).not.toBe(key)
     })
+
+    it('takes an effect without a label', () => {
+      expect(ActiveEffects.getKey(null, { duration: '2', kind: ModifierKind.Paralyzed })).toBe(':paralyzed(2)')
+    })
   })
 
   it('does not stack identical effects', () => {

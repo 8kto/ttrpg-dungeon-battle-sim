@@ -52,8 +52,8 @@ export type Modifier =
   | { kind: ModifierKind.Targets; count: string | null } // null = DEFAULT_TARGETS
 
 export type AttackEffect = {
-  // names the effect in the log: the attack name, else the save, else the modifiers
-  label: string
+  // names the effect in the log: the attack name, else the save; null for an unnamed effect without a save
+  label: string | null
   // tells effects apart in the summary: the attack name with the effect, e.g. "Bite (Poison, save_or_die)"
   id: string
   save: SaveType | null

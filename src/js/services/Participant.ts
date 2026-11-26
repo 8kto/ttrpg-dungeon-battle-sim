@@ -77,6 +77,16 @@ export class Participant {
       : messages.t('battle.effects.forTurns', { turns: remaining })
   }
 
+  // "Poison damage_each_round", or the modifier alone for an unnamed effect without a save
+  private static formatSource(label: string | null, kind: ModifierKind): string {
+    return label === null ? kind : `${label} ${kind}`
+  }
+
+  // the effect in the log: its label, or how it is written when it has none
+  private static effectName({ id, label }: AttackEffect): string {
+    return label ?? id
+  }
+
   // Resolves lasting effects at the start of the own turn; false when the participant can't act
   startTurn(): boolean {
     // a statue takes no damage over time and does nothing until the petrification ends
@@ -97,7 +107,11 @@ export class Participant {
       this.currentHp -= dmg
       if (this.logger.isVerbose()) {
         this.logger.log(
-          messages.t('battle.effects.damage', { dmg, name: this.char.name, source: `${effect.label} ${effect.kind}` }),
+          messages.t('battle.effects.damage', {
+            dmg,
+            name: this.char.name,
+            source: Participant.formatSource(effect.label, effect.kind),
+          }),
         )
       }
     }
@@ -192,7 +206,7 @@ export class Participant {
           ? Math.max(0, this.damageParser.getMaxDamage(attack.damage))
           : this.getEffectValue(attack.damage)
         if (dmg > 0) {
-          this.dealEffectDamage(target, dmg, effect.label)
+          this.dealEffectDamage(target, dmg, Participant.effectName(effect))
         }
       }
       if (target.currentHp > 0) {
@@ -272,12 +286,13 @@ export class Participant {
       switch (modifier.kind) {
         case ModifierKind.SaveForHalf: {
           const dmg = this.getEffectValue(modifier.damage)
-          this.dealEffectDamage(target, saved ? Math.floor(dmg / 2) : dmg, `${effect.label} ${modifier.kind}`)
+          const source = Participant.formatSource(effect.label, modifier.kind)
+          this.dealEffectDamage(target, saved ? Math.floor(dmg / 2) : dmg, source)
           break
         }
         case ModifierKind.ExtraDamage:
           if (!saved) {
-            this.dealEffectDamage(target, this.getEffectValue(modifier.damage), effect.label)
+            this.dealEffectDamage(target, this.getEffectValue(modifier.damage), Participant.effectName(effect))
           }
           break
         case ModifierKind.SaveOrDie:
@@ -304,7 +319,7 @@ export class Participant {
     }
   }
 
-  private addLastingEffect(target: Participant, label: string, modifier: LastingModifier): void {
+  private addLastingEffect(target: Participant, label: string | null, modifier: LastingModifier): void {
     const remaining = modifier.duration === null ? null : this.getEffectValue(modifier.duration)
     if (remaining !== null && remaining <= 0) {
       return
@@ -340,9 +355,8 @@ export class Participant {
           this.logger.log(
             messages.t('battle.effects.applied', {
               duration: Participant.formatDuration(remaining),
-              kind: modifier.kind,
-              label,
               name: target.char.name,
+              source: Participant.formatSource(label, modifier.kind),
             }),
           )
         }
@@ -399,7 +413,7 @@ export class Participant {
 
   // " with Sword (d6)" for named attacks and attacks with effects, nothing for plain ones
   private getWeaponInfo({ damage, effect, name }: Attack): string {
-    const label = name ?? effect?.label ?? null
+    const label = name ?? (effect === null ? null : Participant.effectName(effect))
 
     return label === null ? '' : messages.t('battle.action.weapon', { damage, label })
   }

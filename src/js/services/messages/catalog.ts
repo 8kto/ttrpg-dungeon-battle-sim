@@ -13,7 +13,7 @@ export const catalog = {
     death: '💀 {name} is dead',
     deathByEffect: '💀 {name} dies ({kind})',
     effects: {
-      applied: '🔥 {name} affected by {label} {kind} {duration}',
+      applied: '🔥 {name} affected by {source} {duration}',
       damage: '🔥 {name} takes {dmg} damage ({source})',
       forTurns: 'for {turns} turns',
       paralyzed: '😵 {name} is paralyzed, skips turn',
