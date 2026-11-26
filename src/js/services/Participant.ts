@@ -277,10 +277,13 @@ export class Participant {
     return saved
   }
 
+  // Petrification goes last, whatever the order of the modifiers: a statue takes no more damage or effects, so the
+  // other modifiers of the same hit apply before it
   private applyModifiers(target: Participant, effect: AttackEffect, saved: boolean): void {
+    let petrification: LastingModifier | null = null
     for (const modifier of effect.modifiers) {
-      if (!target.isActive) {
-        break
+      if (target.currentHp <= 0) {
+        return
       }
 
       switch (modifier.kind) {
@@ -303,8 +306,10 @@ export class Participant {
             }
           }
           break
-        case ModifierKind.Paralyzed:
         case ModifierKind.Petrified:
+          petrification = modifier
+          break
+        case ModifierKind.Paralyzed:
         case ModifierKind.DamageEachRound:
           if (!saved) {
             this.addLastingEffect(target, effect.label, modifier)
@@ -316,6 +321,9 @@ export class Participant {
         default:
           throw new Error(`Unknown modifier: ${JSON.stringify(modifier)}`)
       }
+    }
+    if (petrification !== null && !saved && target.currentHp > 0) {
+      this.addLastingEffect(target, effect.label, petrification)
     }
   }
 

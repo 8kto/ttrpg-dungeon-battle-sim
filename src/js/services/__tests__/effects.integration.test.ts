@@ -310,11 +310,32 @@ describe('effects in battle', () => {
       expect(target.currentHp).toBe(hp - 5)
     })
 
-    it('applies no further modifiers to a statue', () => {
+    // the order of the modifiers doesn't matter: a failed save never takes less damage than a successful one
+    it.each(['d4[Paralyze, petrified(2), save_for_half(10)]', 'd4[Paralyze, save_for_half(10), petrified(2)]'])(
+      'applies the other modifiers of "%s" before the petrification',
+      (attack) => {
+        const { hit, target } = setup()
+        const hp = target.currentHp
+
+        hit(attack)
+        expect(target.isPetrified).toBe(true)
+        expect(hp - target.currentHp).toBe(4 + 10)
+
+        saveRoll.mockReturnValue(20)
+        const saved = setup()
+        const savedHp = saved.target.currentHp
+        saved.hit(attack)
+        expect(saved.target.isPetrified).toBe(false)
+        expect(savedHp - saved.target.currentHp).toBe(4 + 5)
+      },
+    )
+
+    it('does not petrify a target killed by the other modifiers', () => {
       const { hit, target } = setup()
 
-      hit('d4[petrified, paralyzed]')
-      expect(target.isParalyzed).toBe(false)
+      hit('d4[Paralyze, petrified, save_or_die]')
+      expect(target.currentHp).toBeLessThanOrEqual(0)
+      expect(target.isPetrified).toBe(false)
     })
 
     it('loses the battle for a side of statues, even petrified for a while', () => {
