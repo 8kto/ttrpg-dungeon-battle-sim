@@ -49,17 +49,26 @@ export class ActiveEffects {
 
   // one own turn has passed: count down finite effects and drop finished ones
   tick(): void {
-    this.effects.forEach((e) => {
-      if (!e.pending && e.remaining !== null) {
-        e.remaining--
-      }
-    })
-    this.effects = this.effects.filter((e) => e.remaining === null || e.remaining > 0)
-    this.refresh()
+    this.countDown(() => true)
+  }
+
+  // one own turn of a statue has passed: the other effects wait until the petrification ends
+  tickPetrification(): void {
+    this.countDown((e) => e.kind === ModifierKind.Petrified)
   }
 
   endRound(): void {
     this.effects.forEach((e) => (e.pending = false))
+    this.refresh()
+  }
+
+  private countDown(affects: (effect: ActiveEffect) => boolean): void {
+    this.effects.forEach((e) => {
+      if (!e.pending && e.remaining !== null && affects(e)) {
+        e.remaining--
+      }
+    })
+    this.effects = this.effects.filter((e) => e.remaining === null || e.remaining > 0)
     this.refresh()
   }
 

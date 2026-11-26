@@ -338,6 +338,23 @@ describe('effects in battle', () => {
       expect(target.isPetrified).toBe(false)
     })
 
+    it('keeps the other effects of a statue waiting until the petrification ends', () => {
+      const { hit, target } = setup()
+      hit('d4<fire>[damage_each_round(3, 1)]')
+      hit('d4[paralyzed(1)]')
+      hit('d4<Gaze>[petrified(2)]')
+      const hp = target.currentHp
+
+      expect(nextRound(target)).toBe(false)
+      expect(nextRound(target)).toBe(false)
+      expect(target.currentHp).toBe(hp)
+      // the damage over time and the paralysis get their turn after the petrification
+      expect(nextRound(target)).toBe(false)
+      expect(target.currentHp).toBe(hp - 3)
+      expect(nextRound(target)).toBe(true)
+      expect(target.currentHp).toBe(hp - 3)
+    })
+
     it('loses the battle for a side of statues, even petrified for a while', () => {
       jest.restoreAllMocks()
       const gorgon: ICharacter = { ...makeChar('Gorgon'), damage: '0<Gaze>[petrified(1000)]', toHit: 100 }

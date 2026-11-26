@@ -49,8 +49,8 @@ Simulation strategies are:
       `Paralyze` save: `d6[Paralyze, paralyzed]`
     - `petrified` / `petrified(d4)` — the target turns to stone until the end of battle / for d4 turns: it can't act
       or be attacked and takes no damage over time; a save is optional. The other modifiers of the attack apply
-      first, wherever `petrified` is written. A side whose combatants are all dead or petrified loses, petrified ones
-      are not survivors
+      first, wherever `petrified` is written, and the target's other effects wait until it is no longer petrified. A
+      side whose combatants are all dead or petrified loses, petrified ones are not survivors
     - `save_or_die` — the target dies; requires a save
     - `save_for_half(d8)` — d8 damage, half (rounded down) on a successful save; requires a save
     - `d8` — extra d8 damage; requires a save (without a save, add it to the formula: `d6+d8`)

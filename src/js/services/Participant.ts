@@ -89,12 +89,12 @@ export class Participant {
 
   // Resolves lasting effects at the start of the own turn; false when the participant can't act
   startTurn(): boolean {
-    // a statue takes no damage over time and does nothing until the petrification ends
+    // a statue takes no damage over time and does nothing until the petrification ends; the other effects wait
     if (this.effects.isPetrified) {
       if (this.logger.isVerbose()) {
         this.logger.log(messages.t('battle.effects.petrified', { name: this.char.name }))
       }
-      this.effects.tick()
+      this.effects.tickPetrification()
       if (!this.effects.isPetrified && this.logger.isVerbose()) {
         this.logger.log(messages.t('battle.effects.petrifiedEnded', { name: this.char.name }))
       }

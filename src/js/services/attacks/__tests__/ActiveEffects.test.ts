@@ -27,6 +27,18 @@ const paralysis = (remaining: number | null): ActiveEffect => ({
   remaining,
 })
 
+const petrification = (remaining: number | null): ActiveEffect => ({
+  damage: null,
+  key: ActiveEffects.getKey('Gaze', {
+    duration: remaining === null ? null : String(remaining),
+    kind: ModifierKind.Petrified,
+  }),
+  kind: ModifierKind.Petrified,
+  label: 'Gaze',
+  pending: false,
+  remaining,
+})
+
 describe('ActiveEffects', () => {
   describe('getKey', () => {
     it('is the same for the same label and modifier', () => {
@@ -79,6 +91,20 @@ describe('ActiveEffects', () => {
     effects.add(paralysis(2))
 
     effects.tick()
+    expect(effects.isParalyzed).toBe(true)
+    effects.tick()
+    expect(effects.isParalyzed).toBe(false)
+  })
+
+  it('counts down only the petrification of a statue', () => {
+    const effects = new ActiveEffects()
+    effects.add(paralysis(1))
+    effects.add(petrification(2))
+
+    effects.tickPetrification()
+    expect(effects.isPetrified).toBe(true)
+    effects.tickPetrification()
+    expect(effects.isPetrified).toBe(false)
     expect(effects.isParalyzed).toBe(true)
     effects.tick()
     expect(effects.isParalyzed).toBe(false)
