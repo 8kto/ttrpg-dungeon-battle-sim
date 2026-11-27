@@ -155,7 +155,7 @@ export const catalog = {
         none: 'No save',
         save: 'Save vs {save}',
       },
-      targetsHint: 'An area attack: no roll to hit, a successful save avoids the damage',
+      targetsHint: 'An area attack: no roll to hit; a target that saves takes only half of save_for_half',
       wholeBattle: 'whole battle',
     },
     damageChip: {

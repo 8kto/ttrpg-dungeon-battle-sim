@@ -310,7 +310,7 @@ describe('AttackWizard', () => {
       expect(code()).toBe('d6[Breath, save_for_half(d6), targets]')
       expect($('.attack-wizard__errors').hidden).toBe(true)
       expect($$('.attack-wizard__hint').map((h) => h.textContent)).toContain(
-        'An area attack: no roll to hit, a successful save avoids the damage',
+        'An area attack: no roll to hit; a target that saves takes only half of save_for_half',
       )
       expect(addButton()?.disabled).toBe(true)
 
