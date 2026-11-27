@@ -126,10 +126,6 @@ export class DamageParser implements IDamageParser {
     return formulas
   }
 
-  getMaxDamage(formula: string): number {
-    return this.damageFormula.max(formula)
-  }
-
   // Splits on a separator outside of [], () and <>; `|` inside brackets is an error. A name in <> is taken as is,
   // up to the closing ">": "Bow (long" is a valid name, and checkName reports brackets and separators in it
   private splitTopLevel(input: string, separator: ',' | '|'): string[] {

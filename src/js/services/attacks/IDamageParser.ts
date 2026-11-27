@@ -9,8 +9,6 @@ export interface IDamageParser {
   getFormulasOf(attack: Attack): string[]
   // True when the text is a formula in the format of DamageFormula, e.g. "2d6+1"
   isFormula(text: string): boolean
-  // Maximum value of a formula, e.g. "2d6+1" → 13
-  getMaxDamage(formula: string): number
   // The error of an attack name (the text inside "<>"), null when it's valid
   checkName(name: string): string | null
 }

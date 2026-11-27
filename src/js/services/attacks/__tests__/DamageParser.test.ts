@@ -398,22 +398,6 @@ describe('DamageParser', () => {
     ])
   })
 
-  describe('getMaxDamage', () => {
-    it.each<[string, number]>([
-      ['d6', 6],
-      ['d6+1', 7],
-      ['2d6-1', 11],
-      ['5', 5],
-      ['2d4 + 1', 9],
-    ])('"%s" → %d', (formula, expected) => {
-      expect(parser.getMaxDamage(formula)).toBe(expected)
-    })
-
-    it.each(['', 'd', 'hello', 'd6+', 'd6*2'])('throws on "%s"', (formula) => {
-      expect(() => parser.getMaxDamage(formula)).toThrow(`Invalid damage formula: "${formula}"`)
-    })
-  })
-
   describe('checkName', () => {
     it.each(['Sword', 'Fire Breath', 'poison', 'poison ivy', '🧊', '🧙🏽‍♂️', 'claws!', 'x'.repeat(30), '🧊'.repeat(30)])(
       'accepts "%s"',
