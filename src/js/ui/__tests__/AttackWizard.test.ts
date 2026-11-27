@@ -65,6 +65,21 @@ describe('AttackWizard', () => {
       expect($('.attack-wizard__notice').hidden).toBe(true)
     })
 
+    it('loads damage with an invalid formula, showing the error', () => {
+      open('d6<Bite>[Poison, save_or_die] | 2d8<Claw>, d0')
+      expect(code()).toBe('d6<Bite>[Poison, save_or_die] | 2d8<Claw>, d0')
+      expect(attacks()).toHaveLength(3)
+      expect($('.attack-wizard__notice').hidden).toBe(true)
+      expect($('.attack-wizard__errors').hidden).toBe(false)
+      expect($<HTMLButtonElement>('.attack-wizard__apply').disabled).toBe(true)
+
+      const field = query(attacks()[2], '.formula-field')
+      clickText('⌫', field)
+      clickText('d4', field)
+      expect(code()).toBe('d6<Bite>[Poison, save_or_die] | 2d8<Claw>, d4')
+      expect($<HTMLButtonElement>('.attack-wizard__apply').disabled).toBe(false)
+    })
+
     it('starts over when the damage is invalid', () => {
       open('d6[')
       expect(code()).toBe('d6')

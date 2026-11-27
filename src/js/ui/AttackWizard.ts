@@ -126,11 +126,12 @@ export class AttackWizard implements IAttackWizard {
 
   open(damage: string, onApply: (damage: string) => void): void {
     this.onApply = onApply
-    const { errors, options } = this.damageValidator.check(damage)
-    const valid = errors.length === 0
-    this.draft = valid ? options.map((attacks) => attacks.map(AttackWizard.toDraft)) : [[AttackWizard.newAttack()]]
+    // damage with an invalid formula is loaded, with its errors shown, to be fixed by clicks;
     // damage that doesn't parse can't be edited here, the wizard starts over
-    this.notice.hidden = valid || damage.trim() === ''
+    const { options } = this.damageValidator.check(damage)
+    const parsed = options.length > 0
+    this.draft = parsed ? options.map((attacks) => attacks.map(AttackWizard.toDraft)) : [[AttackWizard.newAttack()]]
+    this.notice.hidden = parsed || damage.trim() === ''
 
     this.render()
     this.dialog.showModal()
