@@ -106,10 +106,7 @@ export class AttackWizard implements IAttackWizard {
     private readonly dialog: HTMLDialogElement,
     private readonly damageParser: IDamageParser = new DamageParser(),
     // formula validity doesn't depend on the strategy
-    private readonly damageValidator: IDamageValidator = new DamageValidator(
-      new MaxStrategy(damageParser),
-      damageParser,
-    ),
+    private readonly damageValidator: IDamageValidator = new DamageValidator(new MaxStrategy(), damageParser),
     private readonly damageSerializer: IDamageSerializer = new DamageSerializer(),
     private readonly damageFormula: IDamageFormula = new DamageFormula(),
   ) {

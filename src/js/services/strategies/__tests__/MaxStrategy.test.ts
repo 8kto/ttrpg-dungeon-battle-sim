@@ -72,7 +72,7 @@ describe('MaxStrategy', () => {
   it('uses the injected formula parser', () => {
     const damageFormula = new DamageFormula()
     const parse = jest.spyOn(damageFormula, 'parse')
-    new MaxStrategy(new DamageParser(), damageFormula).calculateDamage('d6')
+    new MaxStrategy(damageFormula).calculateDamage('d6')
 
     expect(parse).toHaveBeenCalledWith('d6')
   })
