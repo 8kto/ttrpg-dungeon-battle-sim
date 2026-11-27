@@ -34,10 +34,11 @@ export class DamageFormula implements IDamageFormula {
     const terms = dice
       .filter(({ count }) => count !== 0)
       .map(({ count, sides }) => `${count < 0 ? '-' : ''}${Math.abs(count) === 1 ? '' : Math.abs(count)}d${sides}`)
-    if (mod !== 0) {
+    // a zero is dropped next to dice, but alone it is the formula "0"
+    if (mod !== 0 || terms.length === 0) {
       terms.push(String(mod))
     }
-    // the formula can't start with "-": "-d4+3" is written "3-d4"
+    // the formula can't start with "-": "-d4+3" is written "3-d4", and "-1" or "-d4" can't be written at all
     const first = terms.findIndex((term) => !term.startsWith('-'))
     if (first === -1) {
       return ''

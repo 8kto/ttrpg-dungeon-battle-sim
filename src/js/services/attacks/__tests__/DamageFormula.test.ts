@@ -84,7 +84,7 @@ describe('DamageFormula', () => {
       [{ dice: [{ count: 2, sides: 8 }], mod: 3 }, '2d8+3'],
       [{ dice: [{ count: 4, sides: 8 }], mod: -3 }, '4d8-3'],
       [{ dice: [], mod: 5 }, '5'],
-      [{ dice: [], mod: 0 }, ''],
+      [{ dice: [], mod: 0 }, '0'],
       [{ dice: [], mod: -2 }, ''],
       [
         {
@@ -107,7 +107,7 @@ describe('DamageFormula', () => {
         'd8-d4',
       ],
       [{ dice: [{ count: -1, sides: 4 }], mod: 3 }, '3-d4'],
-      [{ dice: [{ count: 0, sides: 4 }], mod: 0 }, ''],
+      [{ dice: [{ count: 0, sides: 4 }], mod: 0 }, '0'],
     ])('formats %o as "%s"', (tokens, expected) => {
       expect(formula.format(tokens)).toBe(expected)
     })
@@ -141,6 +141,7 @@ describe('DamageFormula', () => {
       ['d8-d4', 4, 'd8-d4+d4'],
       ['d6-1', 6, '2d6-1'],
       ['3', 8, 'd8+3'],
+      ['0', 6, 'd6'],
       [' 2D6 + 1 ', 6, '3d6+1'],
       ['d6x', 8, 'd8'],
     ])('"%s" + d%i = "%s"', (text, sides, expected) => {
@@ -152,7 +153,8 @@ describe('DamageFormula', () => {
     it.each([
       ['', 1, '1'],
       ['', -1, ''],
-      ['1', -1, ''],
+      ['1', -1, '0'],
+      ['0', -1, ''],
       ['2', 1, '3'],
       ['d6', 1, 'd6+1'],
       ['d6+1', 1, 'd6+2'],
