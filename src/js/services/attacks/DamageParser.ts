@@ -207,7 +207,7 @@ export class DamageParser implements IDamageParser {
     return {
       ...effect,
       areaTargets: DamageParser.getAreaTargets(effect.modifiers),
-      id: name === null ? text : `${name} (${text})`,
+      id: name === null ? text : messages.t('damage.namedEffect', { effect: text, name }),
       label,
     }
   }

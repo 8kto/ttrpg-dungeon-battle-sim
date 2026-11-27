@@ -158,7 +158,11 @@ export class Participant {
       this.logger.log(
         messages.t('battle.action.uses', {
           name: this.char.name,
-          sources: option.map((a) => (a.name === null ? a.source : `${a.name} (${a.damage})`)).join(', '),
+          sources: option
+            .map((a) =>
+              a.name === null ? a.source : messages.t('battle.action.namedSource', { damage: a.damage, name: a.name }),
+            )
+            .join(', '),
         }),
       )
     }

@@ -6,6 +6,7 @@ export const catalog = {
       area: '💥 {name} attacks {targets}{weapon}',
       hit: '🗡️ {name} attacks {target}{weapon}, damage: {dmg}',
       miss: '🛡️ {name} misses {target}{weapon}',
+      namedSource: '{name} ({damage})',
       skip: '🫢 {name} skips turn',
       uses: '🎲 {name} uses: {sources}',
       weapon: ' with {label} ({damage})',
@@ -89,6 +90,7 @@ export const catalog = {
       unbalancedBrackets: 'unbalanced brackets',
       unknownModifier: 'unknown modifier "{modifier}"',
     },
+    namedEffect: '{name} ({effect})',
   },
   sides: {
     monsters: 'Monsters',
