@@ -727,10 +727,14 @@
           <ul>
             <li>
               A save (<code>Paralyze</code>, <code>Poison</code>, <code>Breath</code>, <code>Device</code>,
-              <code>Magic</code>, in any case) goes first and gives the target a save; add a bonus or penalty like
-              <code>Poison(-2)</code>. A save needs modifiers
+              <code>Magic</code>, in any case) goes first and gives the target a save; a bonus or penalty goes in
+              parentheses with a sign: <code>Poison(-2)</code>, <code>Paralyze(+2)</code>. A save needs modifiers
             </li>
             <li>Without a save, modifiers always apply</li>
+            <li>
+              The log names an effect by the attack name, else by the save, else by its modifiers. The summary counts
+              every effect apart, by the attack name and the effect: <code>Bite (Poison, save_or_die)</code>
+            </li>
           </ul>
 
           <h3>Modifiers</h3>
@@ -741,7 +745,8 @@
                 <td><code>paralyzed</code><br /><code>paralyzed(d4)</code></td>
                 <td>
                   The target skips its turns for the whole battle / for d4 turns; attacks against it always hit for max
-                  damage. Not to be confused with the <code>Paralyze</code> save: <code>d6[Paralyze, paralyzed]</code>
+                  damage, and it fails all saves. Not to be confused with the <code>Paralyze</code> save:
+                  <code>d6[Paralyze, paralyzed]</code>
                 </td>
               </tr>
               <tr>
