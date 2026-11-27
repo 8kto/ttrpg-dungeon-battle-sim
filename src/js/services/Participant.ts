@@ -200,13 +200,10 @@ export class Participant {
         target.attacksRemaining--
       }
 
-      // a paralyzed target fails the save and takes max damage
-      const helpless = target.isParalyzed
+      // a paralyzed target fails the save
       const saved = this.rollEffectSave(target, effect)
       if (!saved) {
-        const dmg = helpless
-          ? Math.max(0, this.damageParser.getMaxDamage(attack.damage))
-          : this.getEffectValue(attack.damage)
+        const dmg = this.rollAttackDamage(target, attack.damage)
         if (dmg > 0) {
           this.dealEffectDamage(target, dmg, Participant.effectName(effect))
         }
@@ -226,10 +223,7 @@ export class Participant {
     // a paralyzed target is hit automatically and takes max weapon damage
     const helpless = target.isParalyzed
     if (helpless || this.rollToHit() >= target.char.armorClass) {
-      // negative modifiers must not heal the target
-      const dmg = helpless
-        ? Math.max(0, this.damageParser.getMaxDamage(attack.damage))
-        : this.getEffectValue(attack.damage)
+      const dmg = this.rollAttackDamage(target, attack.damage)
       target.currentHp -= dmg
 
       // log messages are built only when they will be shown: this is the hottest path
@@ -413,6 +407,11 @@ export class Participant {
         this.logger.log(messages.t('battle.death', { name: target.char.name }))
       }
     }
+  }
+
+  // the damage of an attack that hits: a paralyzed target takes the max; negative modifiers must not heal the target
+  private rollAttackDamage(target: Participant, damage: string): number {
+    return target.isParalyzed ? Math.max(0, this.damageParser.getMaxDamage(damage)) : this.getEffectValue(damage)
   }
 
   // damage, durations and other effect values are computed by the strategy; negative values count as 0
