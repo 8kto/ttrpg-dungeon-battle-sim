@@ -148,7 +148,9 @@ export const catalog = {
       needsSave: 'Requires a save',
       option: 'Option {number}',
       optionHint: 'One option is used per turn',
-      remove: 'Remove',
+      removeAttack: 'Remove the attack',
+      removeModifier: 'Remove the modifier',
+      removeOption: 'Remove the option',
       save: 'Save',
       saveBonus: 'Save bonus',
       saveSelect: {

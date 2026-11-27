@@ -141,6 +141,12 @@ describe('AttackWizard', () => {
     it('removes attacks and options', () => {
       clickText('+ Attack this turn')
       clickText('+ Alternative option')
+      expect($$('.attack-wizard__remove').map((b) => b.title)).toEqual([
+        'Remove the option',
+        'Remove the attack',
+        'Remove the attack',
+        'Remove the option',
+      ])
       clickText('✕', attacks()[0])
       expect(code()).toBe('d6 | d6')
 
@@ -292,6 +298,9 @@ describe('AttackWizard', () => {
       expect(
         $$<HTMLButtonElement>('.attack-wizard__add-modifiers button').find((b) => b.textContent === '+ Petrify'),
       ).toHaveProperty('disabled', true)
+      expect(query<HTMLButtonElement>($('.attack-wizard__modifier'), '.attack-wizard__remove').title).toBe(
+        'Remove the modifier',
+      )
 
       clickText('d4', $('.attack-wizard__modifier'))
       expect(code()).toBe('d6[petrified(d4)]')

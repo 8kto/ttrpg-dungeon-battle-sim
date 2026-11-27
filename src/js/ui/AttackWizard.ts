@@ -186,12 +186,12 @@ export class AttackWizard implements IAttackWizard {
     option.appendChild(legend)
 
     if (this.draft.length > 1) {
-      legend.appendChild(
-        button('attack-wizard__remove', '✕', () => {
-          this.draft.splice(index, 1)
-          this.render()
-        }),
-      )
+      const remove = button('attack-wizard__remove', '✕', () => {
+        this.draft.splice(index, 1)
+        this.render()
+      })
+      remove.title = messages.t('ui.attackWizard.removeOption')
+      legend.appendChild(remove)
       option.appendChild(el('p', 'attack-wizard__hint', messages.t('ui.attackWizard.optionHint')))
     }
 
@@ -212,12 +212,12 @@ export class AttackWizard implements IAttackWizard {
     const header = el('div', 'attack-wizard__attack-header')
     header.appendChild(el('span', '', messages.t('ui.attackWizard.attack', { number: index + 1 })))
     if (attacks.length > 1) {
-      header.appendChild(
-        button('attack-wizard__remove', '✕', () => {
-          attacks.splice(index, 1)
-          this.render()
-        }),
-      )
+      const remove = button('attack-wizard__remove', '✕', () => {
+        attacks.splice(index, 1)
+        this.render()
+      })
+      remove.title = messages.t('ui.attackWizard.removeAttack')
+      header.appendChild(remove)
     }
     card.appendChild(header)
 
@@ -303,7 +303,7 @@ export class AttackWizard implements IAttackWizard {
         attack.modifiers.splice(i, 1)
         this.render()
       })
-      remove.title = messages.t('ui.attackWizard.remove')
+      remove.title = messages.t('ui.attackWizard.removeModifier')
       const row = this.row(
         messages.t(`ui.attackWizard.modifier.${modifier.kind}`),
         ...this.renderModifierFields(modifier),
