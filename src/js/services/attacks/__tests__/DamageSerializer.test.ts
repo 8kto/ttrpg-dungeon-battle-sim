@@ -63,6 +63,14 @@ describe('DamageSerializer', () => {
     ).toBe('Magic(-1), save_or_die')
   })
 
+  it.each<[SaveType, number, string]>([
+    [SaveType.Poison, 0, 'Poison'],
+    [SaveType.Magic, 2, 'Magic(+2)'],
+    [SaveType.Breath, -1, 'Breath(-1)'],
+  ])('writes the save %s with the bonus %d as "%s"', (save, saveMod, expected) => {
+    expect(serializer.serializeSave(save, saveMod)).toBe(expected)
+  })
+
   it('omits a zero save bonus', () => {
     expect(
       serializer.serializeAttack({

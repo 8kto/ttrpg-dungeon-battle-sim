@@ -1,7 +1,7 @@
 import { signed } from '../../utils/number'
 import { capitalize } from '../../utils/text'
 import type { IDamageSerializer, SerializableAttack, SerializableEffect } from './IDamageSerializer'
-import type { Modifier } from './types'
+import type { Modifier, SaveType } from './types'
 import { ModifierKind } from './types'
 
 // Writes parsed attacks back in the damage field syntax, saves capitalized; the opposite of DamageParser.parseDamage
@@ -21,10 +21,15 @@ export class DamageSerializer implements IDamageSerializer {
   }
 
   serializeEffect({ modifiers, save, saveMod }: SerializableEffect): string {
-    const name = save === null ? null : capitalize(save)
-    const tag = name === null ? [] : [saveMod ? `${name}(${signed(saveMod)})` : name]
+    const tag = save === null ? [] : [this.serializeSave(save, saveMod)]
 
     return [...tag, ...modifiers.map((m) => this.serializeModifier(m))].join(', ')
+  }
+
+  serializeSave(save: SaveType, saveMod: number): string {
+    const name = capitalize(save)
+
+    return saveMod === 0 ? name : `${name}(${signed(saveMod)})`
   }
 
   private serializeModifier(modifier: Modifier): string {

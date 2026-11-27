@@ -1,4 +1,4 @@
-import type { Attack, AttackEffect } from './types'
+import type { Attack, AttackEffect, SaveType } from './types'
 
 // the label, the id and the area targets are derived from the name and the effect
 export type SerializableEffect = Omit<AttackEffect, 'areaTargets' | 'id' | 'label'>
@@ -13,4 +13,6 @@ export interface IDamageSerializer {
   serializeAttack(attack: SerializableAttack): string
   // The text inside the square brackets, e.g. "Poison(-2), save_or_die"
   serializeEffect(effect: SerializableEffect): string
+  // A save tag with its bonus, e.g. "Poison(-2)", or "Poison" without one
+  serializeSave(save: SaveType, saveMod: number): string
 }

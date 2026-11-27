@@ -2,11 +2,12 @@ import { Dice, roll, shuffleArray } from 'ttrpg-lib-dice'
 
 import type { Side } from '../types'
 import { signed } from '../utils/number'
-import { capitalize } from '../utils/text'
 import type { ActiveEffect } from './attacks/ActiveEffects'
 import { ActiveEffects } from './attacks/ActiveEffects'
 import { DamageParser } from './attacks/DamageParser'
+import { DamageSerializer } from './attacks/DamageSerializer'
 import type { IDamageParser } from './attacks/IDamageParser'
+import type { IDamageSerializer } from './attacks/IDamageSerializer'
 import type { Attack, AttackEffect, AttackOption, EffectCounters, Modifier } from './attacks/types'
 import { ModifierKind } from './attacks/types'
 import type { ITargetSelector } from './ITargetSelector'
@@ -46,6 +47,7 @@ export class Participant {
     private readonly logger: ILogger,
     private readonly effectCounters: EffectCounters = {},
     private readonly damageParser: IDamageParser = new DamageParser(),
+    private readonly damageSerializer: IDamageSerializer = new DamageSerializer(),
   ) {
     if (!Number.isInteger(maxAttacksPerTarget) || maxAttacksPerTarget < 0) {
       throw new Error(`Invalid max attacks per target: ${maxAttacksPerTarget}`)
@@ -381,8 +383,7 @@ export class Participant {
       return false
     }
 
-    const saveName = capitalize(save)
-    const saveText = saveMod === 0 ? saveName : `${saveName}(${signed(saveMod)})`
+    const saveText = this.damageSerializer.serializeSave(save, saveMod)
     if (target.isParalyzed) {
       if (this.logger.isVerbose()) {
         this.logger.log(messages.t('battle.saves.autoFail', { name: target.char.name, save: saveText }))
