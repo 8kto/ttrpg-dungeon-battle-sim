@@ -17,37 +17,61 @@ export const DEFAULT_SAVES: Readonly<Saves> = Object.freeze({
   poison: 12,
 })
 
-// values are the modifier names as written in the damage field
+// values are the modifier names as written in the damage field; "paralyzed" differs from the "Paralyze" save
 export enum ModifierKind {
-  Paralyze = 'paralyze',
+  Paralyzed = 'paralyzed',
   SaveOrDie = 'save_or_die',
   SaveForHalf = 'save_for_half',
   ExtraDamage = 'extra_damage',
   DamageEachRound = 'damage_each_round',
+  Petrified = 'petrified',
+  Targets = 'targets',
 }
 
+// targets hit by an area attack without a count: "targets" is "targets(3)"
+export const DEFAULT_TARGETS = 3
+
+// modifiers that work only with a save tag before them: "[Breath, save_for_half(2d6)]"
+export const SAVE_ONLY_MODIFIERS: ReadonlySet<ModifierKind> = new Set([
+  ModifierKind.SaveOrDie,
+  ModifierKind.SaveForHalf,
+  ModifierKind.ExtraDamage,
+  ModifierKind.Targets,
+])
+
+// modifiers an effect can have once
+export const SINGLE_MODIFIERS: ReadonlySet<ModifierKind> = new Set([ModifierKind.Petrified, ModifierKind.Targets])
+
 export type Modifier =
-  | { kind: ModifierKind.Paralyze; duration: string | null } // null = until the end of battle
+  | { kind: ModifierKind.Paralyzed; duration: string | null } // null = until the end of battle
   | { kind: ModifierKind.SaveOrDie }
   | { kind: ModifierKind.SaveForHalf; damage: string }
   | { kind: ModifierKind.ExtraDamage; damage: string } // bare formula, e.g. [magic,d8]
   | { kind: ModifierKind.DamageEachRound; damage: string; duration: string | null }
+  | { kind: ModifierKind.Petrified; duration: string | null } // null = until the end of battle
+  | { kind: ModifierKind.Targets; count: string | null } // null = DEFAULT_TARGETS
 
 export type AttackEffect = {
-  label: string // save name for save tags (without bonus), otherwise the tag text as written
+  // names the effect in the log: the attack name, else the save; null for an unnamed effect without a save
+  label: string | null
+  // tells effects apart in the summary: the attack name with the effect, e.g. "Bite (Poison, save_or_die)"
+  id: string
   save: SaveType | null
   saveMod: number // 0 when absent or for non-save tags
   modifiers: Modifier[]
+  // the count of targets of an area attack, from the "targets" modifier; null for a single target attack
+  areaTargets: string | null
 }
 
 export type Attack = {
   source: string
   damage: string
+  name: string | null
   effect: AttackEffect | null
 }
 
 // attacks made in one turn
 export type AttackOption = Attack[]
 
-// how often effects with a given label were applied (failed save or no save) and saved against
+// how often effects with a given id were applied (failed save or no save) and saved against
 export type EffectCounters = Record<string, { applied: number; saved: number; hasSave: boolean }>

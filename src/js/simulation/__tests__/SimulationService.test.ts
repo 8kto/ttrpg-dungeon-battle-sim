@@ -9,6 +9,7 @@ import type { ICharacter } from '../../services/types'
 import { Initiative, Rounding, Strategy, Targeting } from '../../services/types'
 import type { SimulationRequest } from '../ISimulationService'
 import type { IStatsAccumulator } from '../IStatsAccumulator'
+import type { BattleFactory } from '../SimulationService'
 import { MAX_LOGGED_BATTLES, SimulationService } from '../SimulationService'
 import { StatsAccumulator } from '../StatsAccumulator'
 
@@ -112,7 +113,10 @@ describe('SimulationService', () => {
       new SimulationService(createBattle).run(request, logger)
 
       expect(createBattle).toHaveBeenCalledTimes(2)
-      expect(createBattle).toHaveBeenCalledWith([hero], [goblin], logger, request.settings)
+      expect(createBattle).toHaveBeenCalledWith([hero], [goblin], logger, request.settings, expect.anything())
+      // one parsed damage for all the battles of the run
+      const [[, , , , first], [, , , , second]] = createBattle.mock.calls as unknown as Parameters<BattleFactory>[]
+      expect(first).toBe(second)
     })
 
     it('adds every result to the accumulator and returns its stats', () => {

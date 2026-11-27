@@ -1,6 +1,7 @@
 import * as dice from 'ttrpg-lib-dice'
 import { Dice } from 'ttrpg-lib-dice'
 
+import { DamageFormula } from '../../attacks/DamageFormula'
 import { DamageParser } from '../../attacks/DamageParser'
 import { Rounding } from '../../types'
 import { AverageStrategy } from '../AverageStrategy'
@@ -20,7 +21,7 @@ describe('AverageStrategy', () => {
       [2, Dice.d6, 7, 7], // 7
       [3, Dice.d8, 14, 13], // 13.5
       [5, Dice.d10, 28, 27], // 27.5
-    ])('with %i×d%i returns %i (up) / %i (down)', (count, dice, up, down) => {
+    ])('with %i✕d%i returns %i (up) / %i (down)', (count, dice, up, down) => {
       expect(strategyUp.calculateHp([count, dice])).toBe(up)
       expect(strategyDown.calculateHp([count, dice])).toBe(down)
     })
@@ -41,6 +42,11 @@ describe('AverageStrategy', () => {
       ['5d4+0', 13, 12], // 12.5
       ['6d12-5', 34, 34], // 39-5
       ['d4-5', -2, -3], // 2.5-5, clamped to 0 by Participant
+      ['d6+d10', 9, 9], // 3.5+5.5
+      ['d6+d4+1', 7, 7], // 3.5+2.5+1
+      ['d8-d4', 2, 2], // 4.5-2.5
+      ['d6+d8', 8, 8], // 3.5+4.5
+      ['d4+d6+d8', 11, 10], // 2.5+3.5+4.5
     ])('"%s" → %d (up) / %d (down)', (input, up, down) => {
       expect(strategyUp.calculateDamage(input)).toBe(up)
       expect(strategyDown.calculateDamage(input)).toBe(down)
@@ -64,5 +70,13 @@ describe('AverageStrategy', () => {
     expect(strategyUp.pickOption(options)).toBe(options[1])
     expect(spy).toHaveBeenCalledWith(options)
     spy.mockRestore()
+  })
+
+  it('uses the injected formula parser', () => {
+    const damageFormula = new DamageFormula()
+    const parse = jest.spyOn(damageFormula, 'parse')
+    new AverageStrategy(Rounding.Up, damageFormula).calculateDamage('d6')
+
+    expect(parse).toHaveBeenCalledWith('d6')
   })
 })

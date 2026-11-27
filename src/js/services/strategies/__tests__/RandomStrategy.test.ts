@@ -7,7 +7,7 @@ describe('RandomStrategy', () => {
   const strategy = new RandomStrategy()
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    jest.restoreAllMocks()
   })
 
   describe('calculateHp', () => {
@@ -34,14 +34,40 @@ describe('RandomStrategy', () => {
   })
 
   describe('calculateDamage', () => {
-    it('delegates to rollDiceFormula with the given formula', () => {
-      const formula = '2d6+3'
-      const rdfSpy = jest.spyOn(dice, 'rollDiceFormula').mockReturnValue(14)
+    it('rolls every die apart and adds the modifier', () => {
+      const rollSpy = jest.spyOn(dice, 'secureRandomInteger').mockReturnValueOnce(2).mockReturnValueOnce(5)
 
-      const result = strategy.calculateDamage(formula)
-      expect(result).toBe(14)
-      expect(rdfSpy).toHaveBeenCalledTimes(1)
-      expect(rdfSpy).toHaveBeenCalledWith(formula)
+      expect(strategy.calculateDamage('2d6+3')).toBe(10)
+      expect(rollSpy.mock.calls).toEqual([
+        [1, 6],
+        [1, 6],
+      ])
+    })
+
+    it('subtracts the rolls of subtracted dice', () => {
+      jest.spyOn(dice, 'secureRandomInteger').mockReturnValueOnce(7).mockReturnValueOnce(3).mockReturnValueOnce(1)
+
+      expect(strategy.calculateDamage('d8-2d4+1')).toBe(7 - 3 - 1 + 1)
+    })
+
+    it('returns a plain number as it is', () => {
+      const rollSpy = jest.spyOn(dice, 'secureRandomInteger')
+
+      expect(strategy.calculateDamage('5')).toBe(5)
+      expect(rollSpy).not.toHaveBeenCalled()
+    })
+
+    it('stays within the range of the formula', () => {
+      for (let i = 0; i < 100; i++) {
+        const value = strategy.calculateDamage('d20+d4-2')
+        expect(value).toBeGreaterThanOrEqual(0)
+        expect(value).toBeLessThanOrEqual(22)
+      }
+    })
+
+    // the format is the one of DamageFormula, the dice library's own grammar is wider
+    it.each(['0d6', 'd0', 'oops'])('throws on "%s"', (formula) => {
+      expect(() => strategy.calculateDamage(formula)).toThrowError(/Invalid damage formula/)
     })
   })
 

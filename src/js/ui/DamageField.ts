@@ -1,78 +1,100 @@
-import { DamageParser } from '../services/attacks/DamageParser'
-import type { IDamageParser } from '../services/attacks/IDamageParser'
-import type { Attack, Modifier } from '../services/attacks/types'
-import { ModifierKind } from '../services/attacks/types'
+import type { Attack, AttackOption, Modifier } from '../services/attacks/types'
+import { DEFAULT_TARGETS, ModifierKind } from '../services/attacks/types'
 import { messages } from '../services/messages/MessageService'
 import { MaxStrategy } from '../services/strategies/MaxStrategy'
 import { DamageValidator } from '../services/validation/DamageValidator'
 import type { IDamageValidator } from '../services/validation/IDamageValidator'
+import { el, onClick } from '../utils/dom'
+import { signed } from '../utils/number'
 import { capitalize } from '../utils/text'
+import type { IAttackWizard } from './IAttackWizard'
 
 type FieldElements = {
   input: HTMLInputElement
   error: HTMLElement
   preview: HTMLElement
   toggle: HTMLButtonElement
-}
-
-const el = (tag: string, className: string, text: string = ''): HTMLElement => {
-  const node = document.createElement(tag)
-  node.className = className
-  node.textContent = text
-
-  return node
-}
-
-const signed = (n: number): string => (n > 0 ? `+${n}` : String(n))
-
-const describeModifier = (modifier: Modifier): string => {
-  switch (modifier.kind) {
-    case ModifierKind.Paralyze:
-      return modifier.duration === null
-        ? messages.t('ui.damageChip.paralyzeForever')
-        : messages.t('ui.damageChip.paralyze', { duration: modifier.duration })
-    case ModifierKind.SaveOrDie:
-      return messages.t('ui.damageChip.saveOrDie')
-    case ModifierKind.SaveForHalf:
-      return messages.t('ui.damageChip.saveForHalf', { damage: modifier.damage })
-    case ModifierKind.ExtraDamage:
-      return messages.t('ui.damageChip.extraDamage', { damage: modifier.damage })
-    case ModifierKind.DamageEachRound:
-      return modifier.duration === null
-        ? messages.t('ui.damageChip.damageEachRound', { damage: modifier.damage })
-        : messages.t('ui.damageChip.damageEachRoundFor', { damage: modifier.damage, duration: modifier.duration })
-    default:
-      throw new Error(`Unknown modifier: ${JSON.stringify(modifier)}`)
-  }
-}
-
-const renderChip = ({ damage, effect }: Attack): HTMLElement => {
-  const chip = el('span', 'damage-chip')
-  chip.appendChild(el('span', 'damage-chip__formula', damage))
-
-  if (effect) {
-    chip.classList.add(effect.save ? `damage-chip--${effect.save}` : 'damage-chip--tag')
-    const save = effect.save && capitalize(effect.save)
-    const tag = !save
-      ? effect.label
-      : effect.saveMod
-        ? messages.t('ui.damageChip.saveVsWithMod', { mod: signed(effect.saveMod), save })
-        : messages.t('ui.damageChip.saveVs', { save })
-    chip.appendChild(el('span', 'damage-chip__tag', tag))
-    effect.modifiers.forEach((m) => chip.appendChild(el('span', 'damage-chip__modifier', describeModifier(m))))
-  }
-
-  return chip
+  wizardButton: HTMLButtonElement | null
 }
 
 // Damage of a character shown as chips of the parsed attacks; the input opens with the Damage label
-// or a click on the chips, closes with the same label (now "Done"), and stays open while the damage is invalid
+// or a click on the chips, closes with the same label (now "Done"), and stays open while the damage is invalid;
+// the wizard button edits the damage in the attack wizard
 export class DamageField {
   constructor(
-    private readonly damageParser: IDamageParser = new DamageParser(),
+    private readonly wizard: IAttackWizard | null = null,
     // formula validity doesn't depend on the strategy
-    private readonly damageValidator: IDamageValidator = new DamageValidator(new MaxStrategy(), damageParser),
+    private readonly damageValidator: IDamageValidator = new DamageValidator(new MaxStrategy()),
   ) {}
+
+  // chips of every attack, options separated by "or"
+  static renderAttackOptions(container: HTMLElement, options: AttackOption[]): void {
+    container.replaceChildren()
+    options.forEach((attacks, i) => {
+      if (i > 0) {
+        container.appendChild(el('span', 'damage-preview__or', messages.t('ui.damageChip.or')))
+      }
+      const option = el('span', 'damage-preview__option')
+      attacks.forEach((attack) => option.appendChild(DamageField.renderChip(attack)))
+      container.appendChild(option)
+    })
+  }
+
+  private static renderChip({ damage, effect, name }: Attack): HTMLElement {
+    const chip = el('span', 'damage-chip')
+    chip.appendChild(el('span', 'damage-chip__formula', damage))
+    if (name !== null) {
+      chip.appendChild(el('span', 'damage-chip__name', name))
+    }
+
+    if (effect?.save) {
+      chip.classList.add(`damage-chip--${effect.save}`)
+      const save = capitalize(effect.save)
+      chip.appendChild(
+        el(
+          'span',
+          'damage-chip__tag',
+          effect.saveMod
+            ? messages.t('ui.damageChip.saveVsWithMod', { mod: signed(effect.saveMod), save })
+            : messages.t('ui.damageChip.saveVs', { save }),
+        ),
+      )
+    } else if (name !== null || effect) {
+      chip.classList.add('damage-chip--tag')
+    }
+    effect?.modifiers.forEach((m) =>
+      chip.appendChild(el('span', 'damage-chip__modifier', DamageField.describeModifier(m))),
+    )
+
+    return chip
+  }
+
+  private static describeModifier(modifier: Modifier): string {
+    switch (modifier.kind) {
+      case ModifierKind.Paralyzed:
+        return modifier.duration === null
+          ? messages.t('ui.damageChip.paralyzedForever')
+          : messages.t('ui.damageChip.paralyzed', { duration: modifier.duration })
+      case ModifierKind.Petrified:
+        return modifier.duration === null
+          ? messages.t('ui.damageChip.petrifiedForever')
+          : messages.t('ui.damageChip.petrified', { duration: modifier.duration })
+      case ModifierKind.Targets:
+        return messages.t('ui.damageChip.targets', { count: modifier.count ?? DEFAULT_TARGETS })
+      case ModifierKind.SaveOrDie:
+        return messages.t('ui.damageChip.saveOrDie')
+      case ModifierKind.SaveForHalf:
+        return messages.t('ui.damageChip.saveForHalf', { damage: modifier.damage })
+      case ModifierKind.ExtraDamage:
+        return messages.t('ui.damageChip.extraDamage', { damage: modifier.damage })
+      case ModifierKind.DamageEachRound:
+        return modifier.duration === null
+          ? messages.t('ui.damageChip.damageEachRound', { damage: modifier.damage })
+          : messages.t('ui.damageChip.damageEachRoundFor', { damage: modifier.damage, duration: modifier.duration })
+      default:
+        throw new Error(`Unknown modifier: ${JSON.stringify(modifier)}`)
+    }
+  }
 
   // binds the field of a character group; call it again for cloned groups, as listeners are not cloned
   attach(group: HTMLElement): void {
@@ -81,7 +103,7 @@ export class DamageField {
       return
     }
 
-    const { input, preview, toggle } = elements
+    const { input, preview, toggle, wizardButton } = elements
     input.addEventListener('input', (): void => this.setEditing(elements, !input.hidden))
     input.addEventListener('keydown', (e): void => {
       if (e.key === 'Enter' || e.key === 'Escape') {
@@ -89,11 +111,18 @@ export class DamageField {
         this.setEditing(elements, false)
       }
     })
-    toggle.addEventListener('click', (e): void => {
-      e.preventDefault()
-      this.setEditing(elements, input.hidden)
-    })
+    onClick(toggle, () => this.setEditing(elements, input.hidden))
     preview.addEventListener('click', (): void => this.setEditing(elements, true))
+    // without the wizard the button would do nothing
+    if (wizardButton) {
+      wizardButton.hidden = !this.wizard
+      onClick(wizardButton, () =>
+        this.wizard?.open(input.value, (damage) => {
+          input.value = damage
+          this.setEditing(elements, false)
+        }),
+      )
+    }
 
     this.setEditing(elements, false)
   }
@@ -106,8 +135,9 @@ export class DamageField {
     if (!input || !error || !preview || !toggle) {
       return null
     }
+    const wizardButton = group.querySelector<HTMLButtonElement>('.damage-wizard-btn')
 
-    return { error, input, preview, toggle }
+    return { error, input, preview, toggle, wizardButton }
   }
 
   // invalid damage keeps the input open; chips are shown only while it's closed
@@ -127,26 +157,18 @@ export class DamageField {
 
   // returns whether the damage is valid
   private render({ error, input, preview }: FieldElements): boolean {
-    const damage = input.value
-    const errors = this.damageValidator.validate(damage)
+    const { errors, options } = this.damageValidator.check(input.value)
 
     input.classList.toggle('damage-input--invalid', errors.length > 0)
     error.textContent = errors.join('; ')
     error.hidden = errors.length === 0
 
-    preview.replaceChildren()
     if (errors.length > 0) {
+      preview.replaceChildren()
+
       return false
     }
-
-    this.damageParser.parseDamage(damage).forEach((attacks, i) => {
-      if (i > 0) {
-        preview.appendChild(el('span', 'damage-preview__or', messages.t('ui.damageChip.or')))
-      }
-      const option = el('span', 'damage-preview__option')
-      attacks.forEach((attack) => option.appendChild(renderChip(attack)))
-      preview.appendChild(option)
-    })
+    DamageField.renderAttackOptions(preview, options)
 
     return true
   }

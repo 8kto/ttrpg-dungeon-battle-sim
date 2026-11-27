@@ -1,8 +1,9 @@
 import { DamageParser } from '../attacks/DamageParser'
 import type { IDamageParser } from '../attacks/IDamageParser'
+import type { AttackOption } from '../attacks/types'
 import { messages } from '../messages/MessageService'
 import type { ICombatStrategy } from '../strategies/ICombatStrategy'
-import type { IDamageValidator } from './IDamageValidator'
+import type { DamageCheck, IDamageValidator } from './IDamageValidator'
 
 // Checks the syntax of the damage field and that the strategy can evaluate every formula in it
 export class DamageValidator implements IDamageValidator {
@@ -12,22 +13,31 @@ export class DamageValidator implements IDamageValidator {
   ) {}
 
   validate(damage: string): string[] {
-    if (damage.trim() === '') {
-      return [messages.t('damage.errors.noFormula')]
-    }
-
-    try {
-      return this.damageParser
-        .parseDamage(damage)
-        .flat()
-        .flatMap((attack) => this.damageParser.getFormulasOf(attack))
-        .filter((formula) => !this.isValidFormula(formula))
-        .map((formula) => messages.t('damage.errors.invalidFormula', { formula }))
-    } catch (err) {
-      return [(err as Error).message]
-    }
+    return this.check(damage).errors
   }
 
+  check(damage: string): DamageCheck {
+    if (damage.trim() === '') {
+      return { errors: [messages.t('damage.errors.noFormula')], options: [] }
+    }
+
+    let options: AttackOption[]
+    try {
+      options = this.damageParser.parseDamage(damage)
+    } catch (err) {
+      return { errors: [(err as Error).message], options: [] }
+    }
+
+    const errors = options
+      .flat()
+      .flatMap((attack) => this.damageParser.getFormulasOf(attack))
+      .filter((formula) => !this.isValidFormula(formula))
+      .map((formula) => messages.t('damage.errors.invalidFormula', { formula }))
+
+    return { errors, options }
+  }
+
+  // the strategies parse formulas with DamageFormula, so an invalid one throws
   private isValidFormula(formula: string): boolean {
     try {
       this.strategy.calculateDamage(formula)

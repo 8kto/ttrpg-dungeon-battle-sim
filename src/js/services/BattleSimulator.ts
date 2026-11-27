@@ -2,23 +2,29 @@ import { shuffleArray } from 'ttrpg-lib-dice'
 
 import type { SimulationSettings } from '../types'
 import { Side } from '../types'
+import { AttackOptionsCache } from './attacks/AttackOptionsCache'
+import { DamageFormula } from './attacks/DamageFormula'
+import { DamageSerializer } from './attacks/DamageSerializer'
+import type { IAttackOptionsCache } from './attacks/IAttackOptionsCache'
+import type { IDamageFormula } from './attacks/IDamageFormula'
+import type { IDamageSerializer } from './attacks/IDamageSerializer'
 import type { EffectCounters } from './attacks/types'
 import type { IBattleSimulator } from './IBattleSimulator'
+import type { ITargetSelector } from './ITargetSelector'
 import type { ILogger } from './logger/ILogger'
 import { messages } from './messages/MessageService'
 import { Participant } from './Participant'
 import { getStrategy } from './strategies/getStrategy'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
-import type { ITargetSelector } from './TargetSelector'
 import { getTargetSelector } from './TargetSelector'
-import type { IMonster, IPlayerCharacter } from './types'
+import type { ICharacter, IMonster, IPlayerCharacter } from './types'
 import { Initiative } from './types'
 
 // Guards against endless battles (nobody can hit, everybody skips turns, etc.)
 export const MAX_ROUNDS = 1000
 
 export type BattleResult = {
-  winner: Side | null // null is a draw: round limit reached
+  winner: Side | null // null is a draw: round limit reached, or nobody left to fight
   rounds: number
   survivors: Array<Participant>
   effects: EffectCounters
@@ -45,35 +51,31 @@ export class BattleSimulator implements IBattleSimulator {
     monsters: IMonster[],
     private readonly logger: ILogger,
     { biasMonsters, biasPlayers, initiative, maxAttacksPerTarget, rounding, strategy, targeting }: BattleSettings,
+    // the parsed damage of the characters, shared by the battles of a simulation
+    attackOptions: IAttackOptionsCache = new AttackOptionsCache(),
+    // stateless services, shared by the participants of the battle
+    damageFormula: IDamageFormula = new DamageFormula(),
+    damageSerializer: IDamageSerializer = new DamageSerializer(),
   ) {
     this.initiative = initiative
     this.targetSelector = getTargetSelector(targeting)
     this.strategy = getStrategy(strategy, rounding)
 
-    this.sidePlayers = players.map(
-      (c) =>
-        new Participant(
-          c,
-          Side.Players,
-          this.strategy,
-          biasPlayers,
-          maxAttacksPerTarget,
-          this.logger,
-          this.effectCounters,
-        ),
-    )
-    this.sideMonsters = monsters.map(
-      (c) =>
-        new Participant(
-          c,
-          Side.Monsters,
-          this.strategy,
-          biasMonsters,
-          maxAttacksPerTarget,
-          this.logger,
-          this.effectCounters,
-        ),
-    )
+    const join = (char: ICharacter, side: Side, bias: number): Participant =>
+      new Participant(
+        char,
+        side,
+        this.strategy,
+        bias,
+        maxAttacksPerTarget,
+        this.logger,
+        this.effectCounters,
+        attackOptions,
+        damageFormula,
+        damageSerializer,
+      )
+    this.sidePlayers = players.map((c) => join(c, Side.Players, biasPlayers))
+    this.sideMonsters = monsters.map((c) => join(c, Side.Monsters, biasMonsters))
   }
 
   get participants(): Participant[] {
@@ -104,8 +106,30 @@ export class BattleSimulator implements IBattleSimulator {
     return this.fixedOrder
   }
 
+  // a side whose fighters are all dead or petrified, even for a while, loses to a side that can fight
   hasSurvivors(side: Side): boolean {
-    return this.participants.some((p) => p.side === side && p.currentHp > 0)
+    return this.participants.some((p) => p.side === side && p.isActive)
+  }
+
+  // Both sides fight; or neither can, but a statue comes back to life later: the rounds go on until a side has
+  // fighters again, it wins unless the other one gets them in the same round
+  private isOngoing(): boolean {
+    const players = this.hasSurvivors(Side.Players)
+    const monsters = this.hasSurvivors(Side.Monsters)
+    if (players !== monsters) {
+      return false
+    }
+
+    return players || this.participants.some((p) => p.willRevive)
+  }
+
+  // the side that can fight; null when nobody can: all dead or petrified for good
+  private getWinner(): Side | null {
+    if (this.hasSurvivors(Side.Players)) {
+      return Side.Players
+    }
+
+    return this.hasSurvivors(Side.Monsters) ? Side.Monsters : null
   }
 
   private initiativeMessage(sides: Participant[][]): string {
@@ -119,15 +143,14 @@ export class BattleSimulator implements IBattleSimulator {
       )
     }
 
-    // Round: goes while there are two sides
-    while (this.hasSurvivors(Side.Players) && this.hasSurvivors(Side.Monsters)) {
+    while (this.isOngoing()) {
       if (this.roundsCount >= MAX_ROUNDS) {
         this.logger.log(messages.t('battle.roundLimit', { max: MAX_ROUNDS }))
 
         return {
           effects: this.effectCounters,
           rounds: this.roundsCount,
-          survivors: this.participants.filter((p) => p.currentHp > 0),
+          survivors: this.participants.filter((p) => p.isActive),
           winner: null,
         }
       }
@@ -163,8 +186,11 @@ export class BattleSimulator implements IBattleSimulator {
       this.participants.forEach((p) => p.endRound())
     }
 
-    const winner: Side = this.hasSurvivors(Side.Players) ? Side.Players : Side.Monsters
-    const survivors = this.participants.filter((p) => p.currentHp > 0)
+    const winner = this.getWinner()
+    if (winner === null) {
+      this.logger.log(messages.t('battle.noFighters'))
+    }
+    const survivors = this.participants.filter((p) => p.isActive)
 
     return {
       effects: this.effectCounters,

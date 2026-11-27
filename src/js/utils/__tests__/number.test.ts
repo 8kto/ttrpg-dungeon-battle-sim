@@ -1,4 +1,4 @@
-import { parseNumber } from '../number'
+import { parseNumber, signed } from '../number'
 
 describe('parseNumber', () => {
   it.each<[string, number]>([
@@ -11,5 +11,15 @@ describe('parseNumber', () => {
     ['abc', NaN],
   ])('parses "%s"', (value, expected) => {
     expect(parseNumber(value)).toBe(expected)
+  })
+})
+
+describe('signed', () => {
+  it.each<[number, string]>([
+    [2, '+2'],
+    [-2, '-2'],
+    [0, '0'],
+  ])('formats %i as "%s"', (n, expected) => {
+    expect(signed(n)).toBe(expected)
   })
 })

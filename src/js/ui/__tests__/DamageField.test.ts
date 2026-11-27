@@ -98,7 +98,7 @@ describe('DamageField', () => {
       toggle().click()
       type('d6[poison]')
       expect(error().hidden).toBe(false)
-      expect(error().textContent).toBe('save tag without modifiers: "poison" does nothing in "d6[poison]"')
+      expect(error().textContent).toBe('save without modifiers: "poison" does nothing in "d6[poison]"')
       expect(input().classList).toContain('damage-input--invalid')
       expect(preview().hidden).toBe(true)
 
@@ -151,27 +151,42 @@ describe('DamageField', () => {
 
     it('describe effects', () => {
       setUp(
-        'd6[claws], d4[poison(-2), save_or_die] | d8[paralyze, paralyze(d4)], d6[breath, save_for_half(2d6)], ' +
-          'd4[fire, damage_each_round(d4, 3), d6], d4[magic(+1), damage_each_round(1)], d4[device, paralyze]',
+        'd6<claws>, d4<Bite>[poison(-2), save_or_die] | d8[paralyze, paralyzed(d4)], d6[breath, save_for_half(2d6)], ' +
+          'd4<Fire>[damage_each_round(d4, 3)], d4[magic(+1), damage_each_round(1), d6], d4[device, paralyzed], ' +
+          'd4[paralyzed]',
       )
       expect(chips()).toEqual([
         'd6 | claws',
-        'd4 | Save vs Poison (-2) | save or die',
-        'd8 | Save vs Paralyze | paralyze d4',
+        'd4 | Bite | Save vs Poison (-2) | save or die',
+        'd8 | Save vs Paralyze | paralyzed d4',
         'd6 | Save vs Breath | 2d6, half on save',
-        'd4 | fire | d4/round ×3 | +d6',
-        'd4 | Save vs Magic (+1) | 1/round',
-        'd4 | Save vs Device | paralyze ∞',
+        'd4 | Fire | d4/round ✕3',
+        'd4 | Save vs Magic (+1) | 1/round | +d6',
+        'd4 | Save vs Device | paralyzed ∞',
+        'd4 | paralyzed ∞',
       ])
     })
 
+    it('describe petrification and area attacks', () => {
+      setUp('d4<Gaze>[Paralyze, petrified], d4[petrified(d4)] | 0<Bomb>[Paralyze, save_for_half(d4), targets(4)]')
+      expect(chips()).toEqual([
+        'd4 | Gaze | Save vs Paralyze | petrified ∞',
+        'd4 | petrified d4',
+        '0 | Bomb | Save vs Paralyze | d4, half on save | 4 targets',
+      ])
+
+      setUp('d6[Breath, targets]')
+      expect(chips()).toEqual(['d6 | Save vs Breath | 3 targets'])
+    })
+
     it('are colored by the save type', () => {
-      setUp('d6, d6[claws], d4[poison, save_or_die], d4[paralyze, paralyze]')
+      setUp('d6, d6<claws>, d4<Bite>[poison, save_or_die], d4[paralyze, paralyzed], d4[damage_each_round(1)]')
       expect(Array.from(preview().querySelectorAll('.damage-chip')).map((c) => c.className)).toEqual([
         'damage-chip',
         'damage-chip damage-chip--tag',
         'damage-chip damage-chip--poison',
         'damage-chip damage-chip--paralyze',
+        'damage-chip damage-chip--tag',
       ])
     })
   })

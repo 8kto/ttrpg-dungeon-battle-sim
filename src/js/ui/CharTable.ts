@@ -5,39 +5,43 @@ import { DEFAULT_SAVES, SaveType } from '../services/attacks/types'
 import { messages } from '../services/messages/MessageService'
 import type { ICharacter } from '../services/types'
 import type { CharStats } from '../types'
+import { onClick, query } from '../utils/dom'
 import { parseNumber } from '../utils/number'
 import type { DamageField } from './DamageField'
-
-const toCharStats = (char: ICharacter): CharStats => ({
-  armorClass: char.armorClass,
-  damage: char.damage,
-  hdCount: char.hitDice[0],
-  hdType: char.hitDice[1],
-  prefix: char.name,
-  saves: char.saves,
-  toHit: char.toHit,
-})
-
-const getSaveInput = (group: HTMLElement, save: SaveType): HTMLInputElement =>
-  group.querySelector(`.save-input[data-save="${save}"]`) as HTMLInputElement
-
-const setSavesExpanded = (group: HTMLElement, expanded: boolean): void => {
-  const toggle = group.querySelector('.saves-toggle') as HTMLButtonElement
-  ;(group.querySelector('.saves-fields') as HTMLElement).hidden = !expanded
-  toggle.setAttribute('aria-expanded', String(expanded))
-  toggle.textContent = messages.t(expanded ? 'ui.savesToggle.expanded' : 'ui.savesToggle.collapsed')
-}
 
 // Editable table of characters (one side of the battle); every character is a <tbody class="char">
 // with the main row, the attacks row and the saves row
 export class CharTable {
+  private static toCharStats(char: ICharacter): CharStats {
+    return {
+      armorClass: char.armorClass,
+      damage: char.damage,
+      hdCount: char.hitDice[0],
+      hdType: char.hitDice[1],
+      prefix: char.name,
+      saves: char.saves,
+      toHit: char.toHit,
+    }
+  }
+
+  private static getSaveInput(group: HTMLElement, save: SaveType): HTMLInputElement {
+    return query<HTMLInputElement>(group, `.save-input[data-save="${save}"]`)
+  }
+
+  private static setSavesExpanded(group: HTMLElement, expanded: boolean): void {
+    const toggle = query<HTMLButtonElement>(group, '.saves-toggle')
+    query<HTMLElement>(group, '.saves-fields').hidden = !expanded
+    toggle.setAttribute('aria-expanded', String(expanded))
+    toggle.textContent = messages.t(expanded ? 'ui.savesToggle.expanded' : 'ui.savesToggle.collapsed')
+  }
+
   private readonly template: HTMLTableSectionElement
 
   constructor(
     private readonly table: HTMLTableElement,
     private readonly damageField: DamageField | null = null,
   ) {
-    this.template = table.querySelector('tbody.char') as HTMLTableSectionElement
+    this.template = query<HTMLTableSectionElement>(table, 'tbody.char')
   }
 
   get size(): number {
@@ -50,7 +54,7 @@ export class CharTable {
   }
 
   load(chars: ICharacter[]): void {
-    this.init(chars.map(toCharStats))
+    this.init(chars.map(CharTable.toCharStats))
   }
 
   addRow(defs: CharStats): void {
@@ -68,14 +72,14 @@ export class CharTable {
   // fractional and empty values are kept as is (NaN for empty), so the validator can report them
   read(): ICharacter[] {
     return this.getGroups().map((group) => {
-      const ni = group.querySelector('.name-input') as HTMLInputElement
-      const ac = parseNumber((group.querySelector('.ac-input') as HTMLInputElement).value)
-      const th = parseNumber((group.querySelector('.tohit-input') as HTMLInputElement).value)
-      const hc = parseNumber((group.querySelector('.hd-count-input') as HTMLInputElement).value)
-      const ht = parseNumber((group.querySelector('.hd-type-select') as HTMLSelectElement).value) as Dice
-      const dmg = (group.querySelector('.damage-input') as HTMLInputElement).value.trim()
+      const ni = query<HTMLInputElement>(group, '.name-input')
+      const ac = parseNumber(query<HTMLInputElement>(group, '.ac-input').value)
+      const th = parseNumber(query<HTMLInputElement>(group, '.tohit-input').value)
+      const hc = parseNumber(query<HTMLInputElement>(group, '.hd-count-input').value)
+      const ht = parseNumber(query<HTMLSelectElement>(group, '.hd-type-select').value) as Dice
+      const dmg = query<HTMLInputElement>(group, '.damage-input').value.trim()
       const saves = Object.fromEntries(
-        Object.values(SaveType).map((save) => [save, parseNumber(getSaveInput(group, save).value)]),
+        Object.values(SaveType).map((save) => [save, parseNumber(CharTable.getSaveInput(group, save).value)]),
       ) as Saves
 
       return { armorClass: ac, damage: dmg, hitDice: [hc, ht], name: ni.value, saves, toHit: th }
@@ -91,31 +95,29 @@ export class CharTable {
   }
 
   private initGroup(group: HTMLTableSectionElement, defs: CharStats): void {
-    ;(group.querySelector('.name-input') as HTMLInputElement).value = defs.prefix
-    ;(group.querySelector('.ac-input') as HTMLInputElement).value = defs.armorClass.toString()
-    ;(group.querySelector('.tohit-input') as HTMLInputElement).value = defs.toHit.toString()
-    ;(group.querySelector('.hd-count-input') as HTMLInputElement).value = defs.hdCount.toString()
-    ;(group.querySelector('.hd-type-select') as HTMLSelectElement).value = defs.hdType.toString()
-    ;(group.querySelector('.damage-input') as HTMLInputElement).value = defs.damage
+    query<HTMLInputElement>(group, '.name-input').value = defs.prefix
+    query<HTMLInputElement>(group, '.ac-input').value = defs.armorClass.toString()
+    query<HTMLInputElement>(group, '.tohit-input').value = defs.toHit.toString()
+    query<HTMLInputElement>(group, '.hd-count-input').value = defs.hdCount.toString()
+    query<HTMLSelectElement>(group, '.hd-type-select').value = defs.hdType.toString()
+    query<HTMLInputElement>(group, '.damage-input').value = defs.damage
 
     const saves = defs.saves ?? DEFAULT_SAVES
-    Object.values(SaveType).forEach((save) => (getSaveInput(group, save).value = saves[save].toString()))
+    Object.values(SaveType).forEach((save) => (CharTable.getSaveInput(group, save).value = saves[save].toString()))
 
     group.dataset.prefix = defs.prefix
   }
 
   private bindControls(group: HTMLTableSectionElement, defs: CharStats): void {
-    const removeBtn = group.querySelector('.remove-row') as HTMLButtonElement
-    const dupBtn = group.querySelector('.duplicate-row') as HTMLButtonElement
-    const savesToggle = group.querySelector('.saves-toggle') as HTMLButtonElement
+    const removeBtn = query<HTMLButtonElement>(group, '.remove-row')
+    const dupBtn = query<HTMLButtonElement>(group, '.duplicate-row')
+    const savesToggle = query<HTMLButtonElement>(group, '.saves-toggle')
 
-    savesToggle.addEventListener('click', (e): void => {
-      e.preventDefault()
-      setSavesExpanded(group, savesToggle.getAttribute('aria-expanded') !== 'true')
+    onClick(savesToggle, (): void => {
+      CharTable.setSavesExpanded(group, savesToggle.getAttribute('aria-expanded') !== 'true')
     })
 
-    dupBtn.addEventListener('click', (e): void => {
-      e.preventDefault()
+    onClick(dupBtn, (): void => {
       const clone = group.cloneNode(true) as HTMLTableSectionElement
       const cloneInputs = clone.querySelectorAll('input')
       const cloneSelects = clone.querySelectorAll('select')
@@ -132,8 +134,7 @@ export class CharTable {
       this.reindexNames()
     })
 
-    removeBtn.addEventListener('click', (e): void => {
-      e.preventDefault()
+    onClick(removeBtn, (): void => {
       if (this.size > 1) {
         group.remove()
         this.reindexNames()

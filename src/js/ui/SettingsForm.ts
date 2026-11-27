@@ -1,11 +1,10 @@
 import { messages } from '../services/messages/MessageService'
 import { Initiative, Rounding, Strategy, Targeting } from '../services/types'
 import type { BattleSimulationConfig, SimulationSettings } from '../types'
+import { byId } from '../utils/dom'
 import { parseNumber } from '../utils/number'
 
 type GlobalConfig = Omit<BattleSimulationConfig, 'monsters' | 'players'>
-
-const byId = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T
 
 // Global simulation settings: battle count, strategy, rounding, targeting, initiative, bias, attack limit, logs
 export class SettingsForm {

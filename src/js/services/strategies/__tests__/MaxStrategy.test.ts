@@ -1,5 +1,6 @@
 import { Dice } from 'ttrpg-lib-dice'
 
+import { DamageFormula } from '../../attacks/DamageFormula'
 import { DamageParser } from '../../attacks/DamageParser'
 import { MaxStrategy } from '../MaxStrategy'
 
@@ -12,7 +13,7 @@ describe('MaxStrategy', () => {
       [2, Dice.d6, 12],
       [3, Dice.d8, 24],
       [5, Dice.d10, 50],
-    ])('with %i×d%i returns %i', (count, dice, expected) => {
+    ])('with %i✕d%i returns %i', (count, dice, expected) => {
       expect(strategy.calculateHp([count, dice])).toBe(expected)
     })
   })
@@ -30,6 +31,9 @@ describe('MaxStrategy', () => {
       ['4d8 -3', 29],
       ['5d4+0', 20],
       ['6d12-5', 67],
+      ['d6+d10', 16],
+      ['2d6+d4-1', 15],
+      ['d8-d4', 7],
     ])('"%s" → %d', (input, expected) => {
       expect(strategy.calculateDamage(input)).toBe(expected)
     })
@@ -63,5 +67,13 @@ describe('MaxStrategy', () => {
     it('ignores effects', () => {
       expect(picked('d4|d10[breath,save_for_half(10d6)]|d6')).toEqual(['d10[breath,save_for_half(10d6)]'])
     })
+  })
+
+  it('uses the injected formula parser', () => {
+    const damageFormula = new DamageFormula()
+    const parse = jest.spyOn(damageFormula, 'parse')
+    new MaxStrategy(damageFormula).calculateDamage('d6')
+
+    expect(parse).toHaveBeenCalledWith('d6')
   })
 })

@@ -1,7 +1,9 @@
 import { getRandomArrayItem } from 'ttrpg-lib-dice'
 
+import { FocusTargetSelector } from '../FocusTargetSelector'
 import type { Participant } from '../Participant'
-import { FocusTargetSelector, getTargetSelector, RandomTargetSelector } from '../TargetSelector'
+import { RandomTargetSelector } from '../RandomTargetSelector'
+import { getTargetSelector } from '../TargetSelector'
 import { Targeting } from '../types'
 
 jest.mock('ttrpg-lib-dice', () => ({
@@ -9,7 +11,16 @@ jest.mock('ttrpg-lib-dice', () => ({
   getRandomArrayItem: jest.fn(),
 }))
 
-const makeParticipant = (name: string, currentHp = 5): Participant => ({ char: { name }, currentHp }) as Participant
+// isActive as in Participant: alive and not petrified
+const makeParticipant = (name: string, currentHp = 5): Participant =>
+  ({
+    char: { name },
+    currentHp,
+    get isActive(): boolean {
+      return this.currentHp > 0 && !this.isPetrified
+    },
+    isPetrified: false,
+  }) as Participant
 
 describe('TargetSelector', () => {
   const randomItem = getRandomArrayItem as jest.Mock
@@ -61,6 +72,18 @@ describe('TargetSelector', () => {
 
       selector.selectTarget(attacker, [victim, orc])
       victim.currentHp = 0
+
+      expect(selector.selectTarget(attacker, [orc])).toBe(orc)
+      expect(selector.selectTarget(attacker, [goblin, orc])).toBe(orc)
+    })
+
+    it('picks a new target when the focused one is petrified', () => {
+      const victim = makeParticipant('Kobold') as Participant & { isPetrified: boolean }
+      randomItem.mockReturnValueOnce(victim).mockReturnValue(orc)
+      const selector = new FocusTargetSelector()
+
+      selector.selectTarget(attacker, [victim, orc])
+      victim.isPetrified = true
 
       expect(selector.selectTarget(attacker, [orc])).toBe(orc)
       expect(selector.selectTarget(attacker, [goblin, orc])).toBe(orc)

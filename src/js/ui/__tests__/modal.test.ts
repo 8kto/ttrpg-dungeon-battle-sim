@@ -27,11 +27,29 @@ describe('bindModal', () => {
     expect(dialog.close).toHaveBeenCalledTimes(1)
   })
 
+  // a click on an element after the mouse button was pressed on another one
+  const press = (pressed: HTMLElement, released: HTMLElement): void => {
+    pressed.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }))
+    released.click()
+  }
+
   it('closes the dialog on a backdrop click only', () => {
-    ;(document.getElementById('content') as HTMLElement).click()
+    const content = document.getElementById('content') as HTMLElement
+    press(content, content)
     expect(dialog.close).not.toHaveBeenCalled()
 
-    dialog.click()
+    press(dialog, dialog)
     expect(dialog.close).toHaveBeenCalledTimes(1)
+  })
+
+  it('stays open after a drag from the content to the backdrop', () => {
+    press(document.getElementById('content') as HTMLElement, dialog)
+    expect(dialog.close).not.toHaveBeenCalled()
+  })
+
+  it('stays open after a drag from the backdrop to the content', () => {
+    press(dialog, document.getElementById('content') as HTMLElement)
+    press(document.getElementById('content') as HTMLElement, dialog)
+    expect(dialog.close).not.toHaveBeenCalled()
   })
 })

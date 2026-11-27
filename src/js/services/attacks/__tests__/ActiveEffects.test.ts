@@ -1,10 +1,10 @@
 import type { ActiveEffect } from '../ActiveEffects'
-import { ActiveEffects, getEffectKey } from '../ActiveEffects'
+import { ActiveEffects } from '../ActiveEffects'
 import { ModifierKind } from '../types'
 
 const dot = (label: string, damage: string, remaining: number | null, pending: boolean = false): ActiveEffect => ({
   damage,
-  key: getEffectKey(label, {
+  key: ActiveEffects.getKey(label, {
     damage,
     duration: remaining === null ? null : String(remaining),
     kind: ModifierKind.DamageEachRound,
@@ -17,31 +17,53 @@ const dot = (label: string, damage: string, remaining: number | null, pending: b
 
 const paralysis = (remaining: number | null): ActiveEffect => ({
   damage: null,
-  key: getEffectKey('paralyze', {
+  key: ActiveEffects.getKey('paralyze', {
     duration: remaining === null ? null : String(remaining),
-    kind: ModifierKind.Paralyze,
+    kind: ModifierKind.Paralyzed,
   }),
-  kind: ModifierKind.Paralyze,
+  kind: ModifierKind.Paralyzed,
   label: 'paralyze',
   pending: false,
   remaining,
 })
 
+const petrification = (remaining: number | null): ActiveEffect => ({
+  damage: null,
+  key: ActiveEffects.getKey('Gaze', {
+    duration: remaining === null ? null : String(remaining),
+    kind: ModifierKind.Petrified,
+  }),
+  kind: ModifierKind.Petrified,
+  label: 'Gaze',
+  pending: false,
+  remaining,
+})
+
 describe('ActiveEffects', () => {
-  describe('getEffectKey', () => {
+  describe('getKey', () => {
     it('is the same for the same label and modifier', () => {
       // poison and poison(-2) both have the label "poison"
-      expect(getEffectKey('poison', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound })).toBe(
-        getEffectKey('poison', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }),
+      expect(ActiveEffects.getKey('poison', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound })).toBe(
+        ActiveEffects.getKey('poison', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }),
       )
     })
 
     it('differs by label, damage or duration', () => {
-      const key = getEffectKey('poison', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound })
+      const key = ActiveEffects.getKey('poison', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound })
 
-      expect(getEffectKey('fire', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound })).not.toBe(key)
-      expect(getEffectKey('poison', { damage: 'd6', duration: null, kind: ModifierKind.DamageEachRound })).not.toBe(key)
-      expect(getEffectKey('poison', { damage: 'd4', duration: '3', kind: ModifierKind.DamageEachRound })).not.toBe(key)
+      expect(
+        ActiveEffects.getKey('fire', { damage: 'd4', duration: null, kind: ModifierKind.DamageEachRound }),
+      ).not.toBe(key)
+      expect(
+        ActiveEffects.getKey('poison', { damage: 'd6', duration: null, kind: ModifierKind.DamageEachRound }),
+      ).not.toBe(key)
+      expect(
+        ActiveEffects.getKey('poison', { damage: 'd4', duration: '3', kind: ModifierKind.DamageEachRound }),
+      ).not.toBe(key)
+    })
+
+    it('takes an effect without a label', () => {
+      expect(ActiveEffects.getKey(null, { duration: '2', kind: ModifierKind.Paralyzed })).toBe(':paralyzed(2)')
     })
   })
 
@@ -72,6 +94,31 @@ describe('ActiveEffects', () => {
     expect(effects.isParalyzed).toBe(true)
     effects.tick()
     expect(effects.isParalyzed).toBe(false)
+  })
+
+  it('counts down only the petrification of a statue', () => {
+    const effects = new ActiveEffects()
+    effects.add(paralysis(1))
+    effects.add(petrification(2))
+
+    effects.tickPetrification()
+    expect(effects.isPetrified).toBe(true)
+    effects.tickPetrification()
+    expect(effects.isPetrified).toBe(false)
+    expect(effects.isParalyzed).toBe(true)
+    effects.tick()
+    expect(effects.isParalyzed).toBe(false)
+  })
+
+  it('tells a petrification for the whole battle from one for a while', () => {
+    const effects = new ActiveEffects()
+    expect(effects.isPetrifiedForGood).toBe(false)
+
+    effects.add(petrification(2))
+    expect(effects.isPetrifiedForGood).toBe(false)
+
+    effects.add({ ...petrification(null), key: 'forever' })
+    expect(effects.isPetrifiedForGood).toBe(true)
   })
 
   it('keeps permanent effects', () => {

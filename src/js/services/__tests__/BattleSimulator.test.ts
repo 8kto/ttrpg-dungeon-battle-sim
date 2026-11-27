@@ -1,6 +1,9 @@
 import { Dice } from 'ttrpg-lib-dice'
 
 import { Side } from '../../types'
+import { AttackOptionsCache } from '../attacks/AttackOptionsCache'
+import { DamageFormula } from '../attacks/DamageFormula'
+import { DamageSerializer } from '../attacks/DamageSerializer'
 import { DEFAULT_SAVES } from '../attacks/types'
 import { BattleSimulator, MAX_ROUNDS } from '../BattleSimulator'
 import type { ILogger } from '../logger/ILogger'
@@ -46,7 +49,7 @@ const mockMonster: IMonster = {
 describe('BattleSimulator', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(Participant as jest.Mock).mockImplementation(
+    ;(Participant as unknown as jest.Mock).mockImplementation(
       (
         char: ICharacter,
         side: Side,
@@ -61,12 +64,17 @@ describe('BattleSimulator', () => {
         currentHp: strategy.calculateHp(char.hitDice),
         endRound: jest.fn(),
         hasAttackLimit: maxAttacksPerTarget > 0,
+        get isActive(): boolean {
+          return this.currentHp > 0 && !this.isPetrified
+        },
+        isPetrified: false,
         isValidTarget: jest.fn().mockReturnValue(true),
         logger,
         resetAttackLimit: jest.fn(),
         side,
         startTurn: jest.fn().mockReturnValue(true),
         strategy,
+        willRevive: false,
       }),
     )
     ;(getStrategy as jest.Mock).mockReturnValue(mockStrategy)
@@ -85,8 +93,31 @@ describe('BattleSimulator', () => {
       })
 
       expect(getStrategy).toHaveBeenCalledWith(Strategy.Average, Rounding.Down)
-      expect(Participant).toHaveBeenCalledWith(mockPlayer, Side.Players, mockStrategy, 0, 0, mockLogger, {})
-      expect(Participant).toHaveBeenCalledWith(mockMonster, Side.Monsters, mockStrategy, 0, 0, mockLogger, {})
+      const services = [expect.any(AttackOptionsCache), expect.any(DamageFormula), expect.any(DamageSerializer)]
+      expect(Participant).toHaveBeenCalledWith(
+        mockPlayer,
+        Side.Players,
+        mockStrategy,
+        0,
+        0,
+        mockLogger,
+        {},
+        ...services,
+      )
+      expect(Participant).toHaveBeenCalledWith(
+        mockMonster,
+        Side.Monsters,
+        mockStrategy,
+        0,
+        0,
+        mockLogger,
+        {},
+        ...services,
+      )
+      // both sides share the parsed damage and the services
+      const [player, monster] = (Participant as jest.MockedClass<typeof Participant>).mock.calls
+      expect(player.slice(7)).toHaveLength(3)
+      player.slice(7).forEach((service, i) => expect(service).toBe(monster[7 + i]))
     })
   })
 
@@ -140,14 +171,15 @@ describe('BattleSimulator', () => {
   describe('simulate', () => {
     // participants as created by the mocked Participant constructor
     const created = (): Array<{ attack: jest.Mock; endRound: jest.Mock; startTurn: jest.Mock }> =>
-      (Participant as jest.Mock).mock.results.map((r) => r.value)
+      (Participant as unknown as jest.Mock).mock.results.map((r) => r.value)
 
     const simulateRounds = (simulator: BattleSimulator, rounds: number): ReturnType<BattleSimulator['simulate']> => {
       const spy = jest.spyOn(simulator, 'hasSurvivors')
       for (let i = 0; i < rounds; i++) {
         spy.mockReturnValueOnce(true).mockReturnValueOnce(true)
       }
-      spy.mockReturnValue(false)
+      // then the players win
+      spy.mockImplementation((side) => side === Side.Players)
 
       return simulator.simulate()
     }
@@ -195,7 +227,8 @@ describe('BattleSimulator', () => {
         strategy: Strategy.Random,
         targeting: Targeting.Random,
       })
-      const [[, , , , , , playerCounters], [, , , , , , monsterCounters]] = (Participant as jest.Mock).mock.calls
+      const [[, , , , , , playerCounters], [, , , , , , monsterCounters]] = (Participant as unknown as jest.Mock).mock
+        .calls
       const result = simulateRounds(simulator, 1)
 
       expect(playerCounters).toBe(monsterCounters)
@@ -254,6 +287,49 @@ describe('BattleSimulator', () => {
       expect(result.rounds).toBe(MAX_ROUNDS)
       expect(result.winner).toBeNull()
       expect(mockLogger.log).toHaveBeenCalledWith(`⏸️ Round limit (${MAX_ROUNDS}) reached — draw`)
+    })
+
+    it('goes on while nobody can fight, until a statue comes back to life', () => {
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        initiative: Initiative.Random,
+        maxAttacksPerTarget: 0,
+        rounding: Rounding.Up,
+        strategy: Strategy.Random,
+        targeting: Targeting.Random,
+      })
+      const [, monster] = created() as unknown as Array<{ willRevive: boolean }>
+      monster.willRevive = true
+      jest
+        .spyOn(simulator, 'hasSurvivors')
+        .mockReturnValueOnce(true)
+        .mockReturnValueOnce(true)
+        .mockReturnValueOnce(false)
+        .mockReturnValueOnce(false)
+        .mockImplementation((side) => side === Side.Monsters)
+
+      const result = simulator.simulate()
+      expect(result.rounds).toBe(2)
+      expect(result.winner).toBe(Side.Monsters)
+    })
+
+    it('ends in a draw when nobody can fight anymore', () => {
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        initiative: Initiative.Random,
+        maxAttacksPerTarget: 0,
+        rounding: Rounding.Up,
+        strategy: Strategy.Random,
+        targeting: Targeting.Random,
+      })
+      jest.spyOn(simulator, 'hasSurvivors').mockReturnValueOnce(true).mockReturnValueOnce(true).mockReturnValue(false)
+
+      const result = simulator.simulate()
+      expect(result.rounds).toBe(1)
+      expect(result.winner).toBeNull()
+      expect(mockLogger.log).toHaveBeenCalledWith('⏸️ No one is left to fight — draw')
     })
 
     it('resets attack limits each round', () => {
@@ -334,7 +410,8 @@ describe('BattleSimulator', () => {
       for (let i = 0; i < rounds; i++) {
         spy.mockReturnValueOnce(true).mockReturnValueOnce(true)
       }
-      spy.mockReturnValue(false)
+      // then the players win
+      spy.mockImplementation((side) => side === Side.Players)
       simulator.simulate()
     }
 

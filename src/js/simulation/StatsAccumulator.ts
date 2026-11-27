@@ -25,8 +25,8 @@ export class StatsAccumulator implements IStatsAccumulator {
     stats.roundsTotal += result.rounds
     stats.completed++
 
-    Object.entries(result.effects).forEach(([label, { applied, hasSave, saved }]) => {
-      const total = (stats.effects[label] ??= { applied: 0, hasSave, saved: 0 })
+    Object.entries(result.effects).forEach(([id, { applied, hasSave, saved }]) => {
+      const total = (stats.effects[id] ??= { applied: 0, hasSave, saved: 0 })
       total.applied += applied
       total.saved += saved
     })

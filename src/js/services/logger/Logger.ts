@@ -1,3 +1,4 @@
+import { el } from '../../utils/dom'
 import { BaseLogger } from './BaseLogger'
 import { LogLevel } from './ILogger'
 
@@ -48,9 +49,7 @@ export class Logger extends BaseLogger {
   private flush(): void {
     const frag = document.createDocumentFragment()
     for (const line of this.buffer) {
-      const p = document.createElement('p')
-      p.textContent = line
-      frag.appendChild(p)
+      frag.appendChild(el('p', '', line))
     }
     this.container.appendChild(frag)
     // scroll to bottom
