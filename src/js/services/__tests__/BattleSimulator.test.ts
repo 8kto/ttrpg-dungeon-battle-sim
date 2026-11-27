@@ -1,6 +1,9 @@
 import { Dice } from 'ttrpg-lib-dice'
 
 import { Side } from '../../types'
+import { AttackOptionsCache } from '../attacks/AttackOptionsCache'
+import { DamageFormula } from '../attacks/DamageFormula'
+import { DamageSerializer } from '../attacks/DamageSerializer'
 import { DEFAULT_SAVES } from '../attacks/types'
 import { BattleSimulator, MAX_ROUNDS } from '../BattleSimulator'
 import type { ILogger } from '../logger/ILogger'
@@ -89,8 +92,31 @@ describe('BattleSimulator', () => {
       })
 
       expect(getStrategy).toHaveBeenCalledWith(Strategy.Average, Rounding.Down)
-      expect(Participant).toHaveBeenCalledWith(mockPlayer, Side.Players, mockStrategy, 0, 0, mockLogger, {})
-      expect(Participant).toHaveBeenCalledWith(mockMonster, Side.Monsters, mockStrategy, 0, 0, mockLogger, {})
+      const services = [expect.any(AttackOptionsCache), expect.any(DamageFormula), expect.any(DamageSerializer)]
+      expect(Participant).toHaveBeenCalledWith(
+        mockPlayer,
+        Side.Players,
+        mockStrategy,
+        0,
+        0,
+        mockLogger,
+        {},
+        ...services,
+      )
+      expect(Participant).toHaveBeenCalledWith(
+        mockMonster,
+        Side.Monsters,
+        mockStrategy,
+        0,
+        0,
+        mockLogger,
+        {},
+        ...services,
+      )
+      // both sides share the parsed damage and the services
+      const [player, monster] = (Participant as jest.MockedClass<typeof Participant>).mock.calls
+      expect(player.slice(7)).toHaveLength(3)
+      player.slice(7).forEach((service, i) => expect(service).toBe(monster[7 + i]))
     })
   })
 

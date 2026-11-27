@@ -2,6 +2,12 @@ import { shuffleArray } from 'ttrpg-lib-dice'
 
 import type { SimulationSettings } from '../types'
 import { Side } from '../types'
+import { AttackOptionsCache } from './attacks/AttackOptionsCache'
+import { DamageFormula } from './attacks/DamageFormula'
+import { DamageSerializer } from './attacks/DamageSerializer'
+import type { IAttackOptionsCache } from './attacks/IAttackOptionsCache'
+import type { IDamageFormula } from './attacks/IDamageFormula'
+import type { IDamageSerializer } from './attacks/IDamageSerializer'
 import type { EffectCounters } from './attacks/types'
 import type { IBattleSimulator } from './IBattleSimulator'
 import type { ITargetSelector } from './ITargetSelector'
@@ -11,7 +17,7 @@ import { Participant } from './Participant'
 import { getStrategy } from './strategies/getStrategy'
 import type { ICombatStrategy } from './strategies/ICombatStrategy'
 import { getTargetSelector } from './TargetSelector'
-import type { IMonster, IPlayerCharacter } from './types'
+import type { ICharacter, IMonster, IPlayerCharacter } from './types'
 import { Initiative } from './types'
 
 // Guards against endless battles (nobody can hit, everybody skips turns, etc.)
@@ -45,35 +51,31 @@ export class BattleSimulator implements IBattleSimulator {
     monsters: IMonster[],
     private readonly logger: ILogger,
     { biasMonsters, biasPlayers, initiative, maxAttacksPerTarget, rounding, strategy, targeting }: BattleSettings,
+    // the parsed damage of the characters, shared by the battles of a simulation
+    attackOptions: IAttackOptionsCache = new AttackOptionsCache(),
+    // stateless services, shared by the participants of the battle
+    damageFormula: IDamageFormula = new DamageFormula(),
+    damageSerializer: IDamageSerializer = new DamageSerializer(),
   ) {
     this.initiative = initiative
     this.targetSelector = getTargetSelector(targeting)
     this.strategy = getStrategy(strategy, rounding)
 
-    this.sidePlayers = players.map(
-      (c) =>
-        new Participant(
-          c,
-          Side.Players,
-          this.strategy,
-          biasPlayers,
-          maxAttacksPerTarget,
-          this.logger,
-          this.effectCounters,
-        ),
-    )
-    this.sideMonsters = monsters.map(
-      (c) =>
-        new Participant(
-          c,
-          Side.Monsters,
-          this.strategy,
-          biasMonsters,
-          maxAttacksPerTarget,
-          this.logger,
-          this.effectCounters,
-        ),
-    )
+    const join = (char: ICharacter, side: Side, bias: number): Participant =>
+      new Participant(
+        char,
+        side,
+        this.strategy,
+        bias,
+        maxAttacksPerTarget,
+        this.logger,
+        this.effectCounters,
+        attackOptions,
+        damageFormula,
+        damageSerializer,
+      )
+    this.sidePlayers = players.map((c) => join(c, Side.Players, biasPlayers))
+    this.sideMonsters = monsters.map((c) => join(c, Side.Monsters, biasMonsters))
   }
 
   get participants(): Participant[] {

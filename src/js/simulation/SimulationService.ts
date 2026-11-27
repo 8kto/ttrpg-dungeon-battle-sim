@@ -1,3 +1,5 @@
+import { AttackOptionsCache } from '../services/attacks/AttackOptionsCache'
+import type { IAttackOptionsCache } from '../services/attacks/IAttackOptionsCache'
 import type { BattleSettings } from '../services/BattleSimulator'
 import { BattleSimulator } from '../services/BattleSimulator'
 import type { IBattleSimulator } from '../services/IBattleSimulator'
@@ -18,6 +20,7 @@ export type BattleFactory = (
   monsters: ICharacter[],
   logger: ILogger,
   settings: BattleSettings,
+  attackOptions: IAttackOptionsCache,
 ) => IBattleSimulator
 
 export class SimulationService implements ISimulationService {
@@ -25,6 +28,8 @@ export class SimulationService implements ISimulationService {
     private readonly createBattle: BattleFactory = (...args): IBattleSimulator => new BattleSimulator(...args),
     private readonly createAccumulator: () => IStatsAccumulator = (): IStatsAccumulator => new StatsAccumulator(),
     private readonly maxLoggedBattles: number = MAX_LOGGED_BATTLES,
+    private readonly createAttackOptions: () => IAttackOptionsCache = (): IAttackOptionsCache =>
+      new AttackOptionsCache(),
   ) {}
 
   run(
@@ -34,6 +39,8 @@ export class SimulationService implements ISimulationService {
   ): BattleStats {
     const accumulator = this.createAccumulator()
     const silentLogger = new NullLogger()
+    // the damage of the characters is parsed once for all the battles
+    const attackOptions = this.createAttackOptions()
 
     for (let i = 0; i < settings.battleCount; i++) {
       if (i === this.maxLoggedBattles && logger.isVerbose()) {
@@ -47,7 +54,7 @@ export class SimulationService implements ISimulationService {
       battleLogger.log(messages.t('battle.header', { number: i + 1 }))
       battleLogger.delimiter()
 
-      const sim = this.createBattle(players, monsters, battleLogger, settings)
+      const sim = this.createBattle(players, monsters, battleLogger, settings, attackOptions)
       sim.renderDetails()
       battleLogger.lineBreak()
 

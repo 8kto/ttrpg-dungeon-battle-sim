@@ -4,9 +4,11 @@ import type { Side } from '../types'
 import { signed } from '../utils/number'
 import type { ActiveEffect } from './attacks/ActiveEffects'
 import { ActiveEffects } from './attacks/ActiveEffects'
-import { DamageParser } from './attacks/DamageParser'
+import { AttackOptionsCache } from './attacks/AttackOptionsCache'
+import { DamageFormula } from './attacks/DamageFormula'
 import { DamageSerializer } from './attacks/DamageSerializer'
-import type { IDamageParser } from './attacks/IDamageParser'
+import type { IAttackOptionsCache } from './attacks/IAttackOptionsCache'
+import type { IDamageFormula } from './attacks/IDamageFormula'
 import type { IDamageSerializer } from './attacks/IDamageSerializer'
 import type { Attack, AttackEffect, AttackOption, EffectCounters, Modifier } from './attacks/types'
 import { ModifierKind } from './attacks/types'
@@ -46,15 +48,16 @@ export class Participant {
     private readonly maxAttacksPerTarget: number, // 0 = unlimited
     private readonly logger: ILogger,
     private readonly effectCounters: EffectCounters = {},
-    private readonly damageParser: IDamageParser = new DamageParser(),
+    // shared by the battles of a simulation, so the damage is parsed once per run, not per battle
+    attackOptions: IAttackOptionsCache = new AttackOptionsCache(),
+    private readonly damageFormula: IDamageFormula = new DamageFormula(),
     private readonly damageSerializer: IDamageSerializer = new DamageSerializer(),
   ) {
     if (!Number.isInteger(maxAttacksPerTarget) || maxAttacksPerTarget < 0) {
       throw new Error(`Invalid max attacks per target: ${maxAttacksPerTarget}`)
     }
 
-    // parsed once per participant, not on every attack
-    this.options = damageParser.parseDamage(char.damage)
+    this.options = attackOptions.get(char.damage)
     this.currentHp = strategy.calculateHp(char.hitDice)
     this.hasAttackLimit = maxAttacksPerTarget > 0
     this.attacksRemaining = maxAttacksPerTarget
@@ -425,7 +428,7 @@ export class Participant {
 
   // the damage of an attack that hits: a paralyzed target takes the max; negative modifiers must not heal the target
   private rollAttackDamage(target: Participant, damage: string): number {
-    return target.isParalyzed ? Math.max(0, this.damageParser.getMaxDamage(damage)) : this.getEffectValue(damage)
+    return target.isParalyzed ? Math.max(0, this.damageFormula.max(damage)) : this.getEffectValue(damage)
   }
 
   // damage, durations and other effect values are computed by the strategy; negative values count as 0
