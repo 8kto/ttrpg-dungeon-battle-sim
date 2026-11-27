@@ -1,4 +1,4 @@
-import { Dice, roll, shuffleArray } from 'ttrpg-lib-dice'
+import { Dice, getRandomArrayItems, roll } from 'ttrpg-lib-dice'
 
 import type { Side } from '../types'
 import { signed } from '../utils/number'
@@ -188,7 +188,9 @@ export class Participant {
   performAreaAttack(primary: Participant, targets: Participant[], attack: Attack): void {
     const effect = attack.effect as AttackEffect
     const total = Math.max(1, this.getEffectValue(effect.areaTargets as string))
-    const hit = [primary, ...shuffleArray(targets.filter((t) => t !== primary))].slice(0, total)
+    const others = targets.filter((t) => t !== primary)
+    const extra = Math.min(total - 1, others.length)
+    const hit = extra > 0 ? [primary, ...getRandomArrayItems(others, extra)] : [primary]
     if (this.logger.isVerbose()) {
       this.logger.log(
         messages.t('battle.action.area', {
