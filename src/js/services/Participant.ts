@@ -404,9 +404,9 @@ export class Participant {
       return false
     }
 
-    const saveText = this.damageSerializer.serializeSave(save, saveMod)
     if (target.isParalyzed) {
       if (this.logger.isVerbose()) {
+        const saveText = this.damageSerializer.serializeSave(save, saveMod)
         this.logger.log(messages.t('battle.saves.autoFail', { name: target.char.name, save: saveText }))
       }
 
@@ -419,7 +419,12 @@ export class Participant {
     const saved = total >= value
     if (this.logger.isVerbose()) {
       const calc = saveMod === 0 ? String(rolled) : `${rolled}${signed(saveMod)}=${total}`
-      const params = { name: target.char.name, roll: calc, save: saveText, value }
+      const params = {
+        name: target.char.name,
+        roll: calc,
+        save: this.damageSerializer.serializeSave(save, saveMod),
+        value,
+      }
       this.logger.log(messages.t(saved ? 'battle.saves.success' : 'battle.saves.failure', params))
     }
 
