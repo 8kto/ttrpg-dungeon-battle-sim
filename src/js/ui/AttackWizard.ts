@@ -199,7 +199,7 @@ export class AttackWizard implements IAttackWizard {
     option.appendChild(legend)
 
     if (this.draft.length > 1) {
-      const remove = button('attack-wizard__remove', '✕', () => {
+      const remove = button('attack-wizard__remove', messages.t('ui.attackWizard.button.remove'), () => {
         this.draft.splice(index, 1)
         this.render()
       })
@@ -225,7 +225,7 @@ export class AttackWizard implements IAttackWizard {
     const header = el('div', 'attack-wizard__attack-header')
     header.appendChild(el('span', '', messages.t('ui.attackWizard.attack', { number: index + 1 })))
     if (attacks.length > 1) {
-      const remove = button('attack-wizard__remove', '✕', () => {
+      const remove = button('attack-wizard__remove', messages.t('ui.attackWizard.button.remove'), () => {
         attacks.splice(index, 1)
         this.render()
       })
@@ -312,7 +312,7 @@ export class AttackWizard implements IAttackWizard {
     section.appendChild(el('p', 'attack-wizard__hint', messages.t('ui.attackWizard.modifiersHint')))
 
     attack.modifiers.forEach((modifier, i) => {
-      const remove = button('attack-wizard__remove', '✕', () => {
+      const remove = button('attack-wizard__remove', messages.t('ui.attackWizard.button.remove'), () => {
         attack.modifiers.splice(i, 1)
         this.render()
       })
@@ -411,9 +411,14 @@ export class AttackWizard implements IAttackWizard {
     AttackWizard.DICE.forEach((sides) =>
       dice.appendChild(button('formula-field__die', `d${sides}`, () => set(this.damageFormula.addDie(formula, sides)))),
     )
-    dice.appendChild(button('formula-field__die', '+1', () => set(this.addConstant(formula, 1, optional))))
-    dice.appendChild(button('formula-field__die', '−1', () => set(this.addConstant(formula, -1, optional))))
-    const clear = button('formula-field__die formula-field__clear', '⌫', () => set(''))
+    const constant = (key: 'addOne' | 'subtractOne', delta: number): HTMLButtonElement =>
+      button('formula-field__die', messages.t(`ui.attackWizard.button.${key}`), () =>
+        set(this.addConstant(formula, delta, optional)),
+      )
+    dice.append(constant('addOne', 1), constant('subtractOne', -1))
+    const clear = button('formula-field__die formula-field__clear', messages.t('ui.attackWizard.button.clear'), () =>
+      set(''),
+    )
     clear.title = messages.t('ui.attackWizard.clearFormula')
     dice.appendChild(clear)
 

@@ -129,6 +129,12 @@ export const catalog = {
       },
       addOption: '+ Alternative option',
       attack: 'Attack {number}',
+      button: {
+        addOne: '+1',
+        clear: '⌫',
+        remove: '✕',
+        subtractOne: '−1',
+      },
       clearFormula: 'Clear',
       damage: 'Damage',
       for: 'for',
