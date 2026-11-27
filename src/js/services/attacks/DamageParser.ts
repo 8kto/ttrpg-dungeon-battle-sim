@@ -343,7 +343,7 @@ export class DamageParser implements IDamageParser {
     return match ? { sign: match[1] ?? null, value: match[2] } : null
   }
 
-  // "paralyze(1d4)" gives the name and the raw argument list, null without parentheses
+  // "paralyzed(1d4)" gives the name and the raw argument list, null without parentheses
   private static parseNamedModifier(text: string): NamedModifier | null {
     const match = text.match(DamageParser.NAMED_MODIFIER_RE)
 
