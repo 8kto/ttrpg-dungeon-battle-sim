@@ -127,6 +127,44 @@ describe('AttackWizard', () => {
       expect(input.value).toBe('1')
       expect(code()).toBe('d6<fire>[damage_each_round(d4, 1)]')
     })
+
+    it('keep an optional duration at 1 at least, not turning it into the whole battle', () => {
+      clickText('+ Paralyze')
+      const duration = query($$('.attack-wizard__modifier')[0], '.formula-field')
+      clickText('−1', duration)
+      expect(code()).toBe('d6[paralyzed]')
+
+      clickText('+1', duration)
+      clickText('−1', duration)
+      expect(code()).toBe('d6[paralyzed(1)]')
+
+      clickText('d4', duration)
+      clickText('−1', duration)
+      expect(code()).toBe('d6[paralyzed(d4)]')
+    })
+
+    it('keep the count of targets at 1 at least, starting from the default one', () => {
+      selectSave('breath')
+      clickText('+ Area (targets)')
+      const count = query($$('.attack-wizard__modifier')[0], '.formula-field')
+      clickText('−1', count)
+      expect(code()).toBe('d6[Breath, targets(2)]')
+      clickText('−1', count)
+      clickText('−1', count)
+      expect(code()).toBe('d6[Breath, targets(1)]')
+    })
+
+    it('allow a damage of 0, but not below', () => {
+      const field = $('.formula-field')
+      clickText('⌫', field)
+      clickText('+1', field)
+      clickText('−1', field)
+      expect(code()).toBe('0')
+      expect($<HTMLButtonElement>('.attack-wizard__apply').disabled).toBe(false)
+
+      clickText('−1', field)
+      expect(code()).toBe('0')
+    })
   })
 
   describe('options and attacks', () => {
@@ -325,9 +363,7 @@ describe('AttackWizard', () => {
 
       const targets = $$('.attack-wizard__modifier')[1]
       expect(query<HTMLInputElement>(targets, '.formula-field__input').placeholder).toBe('3')
-      clickText('+1', targets)
-      clickText('+1', targets)
-      clickText('+1', targets)
+      // ±1 starts from the default count
       clickText('+1', targets)
       expect(code()).toBe('d6[Breath, save_for_half(d6), targets(4)]')
 

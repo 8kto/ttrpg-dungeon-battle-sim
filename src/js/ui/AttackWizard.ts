@@ -23,6 +23,10 @@ import { capitalize } from '../utils/text'
 import { DamageField } from './DamageField'
 import type { DraftAttack, IAttackWizard } from './IAttackWizard'
 
+// a formula that may stay empty: it then stands for a number, shown as the placeholder, or for none, described by
+// the placeholder ("whole battle")
+type OptionalFormula = { emptyValue: number } | { emptyValue: null; placeholder: string }
+
 // Builds the damage of a character by clicks: alternative options, attacks of a turn, their effects and modifiers.
 // The dialog markup (#attack-wizard) holds the static parts, the editor is rendered into .attack-wizard__options
 export class AttackWizard implements IAttackWizard {
@@ -55,6 +59,14 @@ export class AttackWizard implements IAttackWizard {
       default:
         throw new Error(`Unknown modifier: ${kind}`)
     }
+  }
+
+  private static placeholderOf(optional: OptionalFormula | null): string {
+    if (optional === null) {
+      return ''
+    }
+
+    return optional.emptyValue === null ? optional.placeholder : String(optional.emptyValue)
   }
 
   private static toDraft({ damage, effect, name }: Attack): DraftAttack {
@@ -224,7 +236,7 @@ export class AttackWizard implements IAttackWizard {
     card.appendChild(
       this.row(
         messages.t('ui.attackWizard.damage'),
-        this.formulaField(attack.damage, '', (value) => (attack.damage = value)),
+        this.formulaField(attack.damage, (value) => (attack.damage = value)),
       ),
     )
     card.appendChild(this.row(messages.t('ui.attackWizard.name'), this.renderName(attack)))
@@ -337,14 +349,9 @@ export class AttackWizard implements IAttackWizard {
 
   // an empty duration means "until the end of battle", an empty count of targets the default one
   private renderModifierFields(modifier: Modifier): HTMLElement[] {
-    const wholeBattle = messages.t('ui.attackWizard.wholeBattle')
+    const wholeBattle: OptionalFormula = { emptyValue: null, placeholder: messages.t('ui.attackWizard.wholeBattle') }
     const duration = (m: Extract<Modifier, { duration: string | null }>): HTMLElement =>
-      this.formulaField(
-        m.duration ?? '',
-        wholeBattle,
-        (value) => (m.duration = value.trim() === '' ? null : value),
-        true,
-      )
+      this.formulaField(m.duration ?? '', (value) => (m.duration = value === '' ? null : value), wholeBattle)
 
     switch (modifier.kind) {
       case ModifierKind.Paralyzed:
@@ -352,21 +359,18 @@ export class AttackWizard implements IAttackWizard {
         return [duration(modifier)]
       case ModifierKind.Targets:
         return [
-          this.formulaField(
-            modifier.count ?? '',
-            String(DEFAULT_TARGETS),
-            (value) => (modifier.count = value.trim() === '' ? null : value),
-            true,
-          ),
+          this.formulaField(modifier.count ?? '', (value) => (modifier.count = value === '' ? null : value), {
+            emptyValue: DEFAULT_TARGETS,
+          }),
         ]
       case ModifierKind.SaveOrDie:
         return []
       case ModifierKind.SaveForHalf:
       case ModifierKind.ExtraDamage:
-        return [this.formulaField(modifier.damage, '', (value) => (modifier.damage = value))]
+        return [this.formulaField(modifier.damage, (value) => (modifier.damage = value))]
       case ModifierKind.DamageEachRound:
         return [
-          this.formulaField(modifier.damage, '', (value) => (modifier.damage = value)),
+          this.formulaField(modifier.damage, (value) => (modifier.damage = value)),
           el('span', 'attack-wizard__for', messages.t('ui.attackWizard.for')),
           duration(modifier),
         ]
@@ -379,21 +383,20 @@ export class AttackWizard implements IAttackWizard {
   // ⌫ clears it; a required formula is outlined while empty, an optional one shows the placeholder
   private formulaField(
     value: string,
-    placeholder: string,
     onChange: (value: string) => void,
-    optional: boolean = false,
+    optional: OptionalFormula | null = null,
   ): HTMLElement {
     const field = el('div', 'formula-field')
     const input = el('input', 'formula-field__input border rounded px-2')
     input.type = 'text'
     input.readOnly = true
     input.tabIndex = -1
-    input.placeholder = placeholder
+    input.placeholder = AttackWizard.placeholderOf(optional)
     let formula = value
 
     const show = (): void => {
       input.value = formula
-      input.classList.toggle('damage-input--invalid', !optional && formula === '')
+      input.classList.toggle('damage-input--invalid', optional === null && formula === '')
     }
     const set = (next: string): void => {
       formula = next
@@ -407,8 +410,8 @@ export class AttackWizard implements IAttackWizard {
     AttackWizard.DICE.forEach((sides) =>
       dice.appendChild(button('formula-field__die', `d${sides}`, () => set(this.damageFormula.addDie(formula, sides)))),
     )
-    dice.appendChild(button('formula-field__die', '+1', () => set(this.damageFormula.addConstant(formula, 1))))
-    dice.appendChild(button('formula-field__die', '−1', () => set(this.damageFormula.addConstant(formula, -1))))
+    dice.appendChild(button('formula-field__die', '+1', () => set(this.addConstant(formula, 1, optional))))
+    dice.appendChild(button('formula-field__die', '−1', () => set(this.addConstant(formula, -1, optional))))
     const clear = button('formula-field__die formula-field__clear', '⌫', () => set(''))
     clear.title = messages.t('ui.attackWizard.clearFormula')
     dice.appendChild(clear)
@@ -416,6 +419,21 @@ export class AttackWizard implements IAttackWizard {
     field.append(input, dice)
 
     return field
+  }
+
+  // ±1 on the formula; on an empty optional one it starts from the number the formula stands for: +1 on the default
+  // 3 targets gives 4. The formula stays as it is when the result can't be written ("0" - 1), and an optional one
+  // stays at least 1, as a duration or a count of 0 means nothing
+  private addConstant(formula: string, delta: number, optional: OptionalFormula | null): string {
+    const start =
+      formula === '' && optional !== null && optional.emptyValue !== null ? String(optional.emptyValue) : formula
+    const next = this.damageFormula.addConstant(start, delta)
+    if (next === '') {
+      return formula
+    }
+    const { dice, mod } = this.damageFormula.parse(next)
+
+    return optional !== null && dice.length === 0 && mod < 1 ? formula : next
   }
 
   private row(label: string, ...content: HTMLElement[]): HTMLElement {
