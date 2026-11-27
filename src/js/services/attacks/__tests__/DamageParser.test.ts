@@ -368,6 +368,7 @@ describe('DamageParser', () => {
     ['d6[targets, paralyzed]', /targets requires a save/],
     ['d6[breath, targets(2, 3)]', /targets takes at most one argument/],
     ['d6[breath, targets, targets(2)]', /targets can be used once/],
+    ['d6[paralyze, petrified(1), petrified]', /petrified can be used once/],
     ['d6[poison(2), d4]', /save bonus needs a sign: Poison\(\+2\)/],
   ])('rejects malformed damage "%s"', (input, error) => {
     expect(() => parser.parseDamage(input)).toThrow(error)

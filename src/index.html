@@ -748,8 +748,10 @@
                 <td><code>petrified</code><br /><code>petrified(d4)</code></td>
                 <td>
                   The target turns to stone for the whole battle / for d4 turns: it can't act or be attacked and takes
-                  no damage over time. The other modifiers of the attack apply first, and the other effects on the
-                  target wait until the petrification ends. A side whose combatants are all dead or petrified loses
+                  no damage over time; a save is optional, and an effect has at most one <code>petrified</code>. The
+                  other modifiers of the attack apply first, wherever <code>petrified</code> is written, and the other
+                  effects on the target wait until the petrification ends. A side whose combatants are all dead or
+                  petrified loses
                 </td>
               </tr>
               <tr>

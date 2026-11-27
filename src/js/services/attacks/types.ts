@@ -40,7 +40,7 @@ export const SAVE_ONLY_MODIFIERS: ReadonlySet<ModifierKind> = new Set([
 ])
 
 // modifiers an effect can have once
-export const SINGLE_MODIFIERS: ReadonlySet<ModifierKind> = new Set([ModifierKind.Targets])
+export const SINGLE_MODIFIERS: ReadonlySet<ModifierKind> = new Set([ModifierKind.Petrified, ModifierKind.Targets])
 
 export type Modifier =
   | { kind: ModifierKind.Paralyzed; duration: string | null } // null = until the end of battle

@@ -31,12 +31,26 @@ export class Participant {
     [ModifierKind.Petrified]: 'battle.effects.petrifiedApplied',
   }
 
+  // the order the modifiers of a hit apply in, lower first, whatever the order they are written in: petrification goes
+  // last, as a statue takes no more damage or effects
+  private static readonly APPLY_ORDER: Readonly<Record<ModifierKind, number>> = {
+    [ModifierKind.Paralyzed]: 0,
+    [ModifierKind.SaveOrDie]: 0,
+    [ModifierKind.SaveForHalf]: 0,
+    [ModifierKind.ExtraDamage]: 0,
+    [ModifierKind.DamageEachRound]: 0,
+    [ModifierKind.Targets]: 0,
+    [ModifierKind.Petrified]: 1,
+  }
+
   public currentHp: number
   public readonly hasAttackLimit: boolean
   // how many more times this participant can be attacked in the current round
   private attacksRemaining: number
   private readonly options: AttackOption[]
   private readonly effects: ActiveEffects = new ActiveEffects()
+  // the modifiers of the effects this participant applied, in APPLY_ORDER: sorted once per effect, not on every hit
+  private readonly orderedModifiers: WeakMap<AttackEffect, Modifier[]> = new WeakMap()
 
   constructor(
     public readonly char: ICharacter,
@@ -87,6 +101,11 @@ export class Participant {
   // the effect in the log: its label, or how it is written when it has none
   private static effectName({ id, label }: AttackEffect): string {
     return label ?? id
+  }
+
+  // the modifiers sorted by APPLY_ORDER; the sort is stable, modifiers of the same order keep the written one
+  private static inApplyOrder(modifiers: Modifier[]): Modifier[] {
+    return [...modifiers].sort((a, b) => Participant.APPLY_ORDER[a.kind] - Participant.APPLY_ORDER[b.kind])
   }
 
   // Resolves lasting effects at the start of the own turn; false when the participant can't act
@@ -277,11 +296,8 @@ export class Participant {
     return saved
   }
 
-  // Petrification goes last, whatever the order of the modifiers: a statue takes no more damage or effects, so the
-  // other modifiers of the same hit apply before it
   private applyModifiers(target: Participant, effect: AttackEffect, saved: boolean): void {
-    let petrification: LastingModifier | null = null
-    for (const modifier of effect.modifiers) {
+    for (const modifier of this.getOrderedModifiers(effect)) {
       if (target.currentHp <= 0) {
         return
       }
@@ -306,10 +322,8 @@ export class Participant {
             }
           }
           break
-        case ModifierKind.Petrified:
-          petrification = modifier
-          break
         case ModifierKind.Paralyzed:
+        case ModifierKind.Petrified:
         case ModifierKind.DamageEachRound:
           if (!saved) {
             this.addLastingEffect(target, effect.label, modifier)
@@ -322,9 +336,18 @@ export class Participant {
           throw new Error(`Unknown modifier: ${JSON.stringify(modifier)}`)
       }
     }
-    if (petrification !== null && !saved && target.currentHp > 0) {
-      this.addLastingEffect(target, effect.label, petrification)
+  }
+
+  private getOrderedModifiers(effect: AttackEffect): Modifier[] {
+    const cached = this.orderedModifiers.get(effect)
+    if (cached) {
+      return cached
     }
+
+    const modifiers = Participant.inApplyOrder(effect.modifiers)
+    this.orderedModifiers.set(effect, modifiers)
+
+    return modifiers
   }
 
   private addLastingEffect(target: Participant, label: string | null, modifier: LastingModifier): void {

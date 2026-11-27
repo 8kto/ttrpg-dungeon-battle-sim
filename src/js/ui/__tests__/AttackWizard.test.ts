@@ -289,6 +289,9 @@ describe('AttackWizard', () => {
       clickText('+ Petrify')
       expect(code()).toBe('d6[petrified]')
       expect($('.attack-wizard__errors').hidden).toBe(true)
+      expect(
+        $$<HTMLButtonElement>('.attack-wizard__add-modifiers button').find((b) => b.textContent === '+ Petrify'),
+      ).toHaveProperty('disabled', true)
 
       clickText('d4', $('.attack-wizard__modifier'))
       expect(code()).toBe('d6[petrified(d4)]')
