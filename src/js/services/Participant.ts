@@ -76,6 +76,11 @@ export class Participant {
     return this.currentHp > 0 && !this.effects.isPetrified
   }
 
+  // a statue that comes back to life when its petrification ends
+  get willRevive(): boolean {
+    return this.currentHp > 0 && this.effects.isPetrified && !this.effects.isPetrifiedForGood
+  }
+
   private static formatDuration(remaining: number | null): string {
     return remaining === null
       ? messages.t('battle.effects.untilEnd')
@@ -84,7 +89,7 @@ export class Participant {
 
   // "Poison damage_each_round", or the modifier alone for an unnamed effect without a save
   private static formatSource(label: string | null, kind: ModifierKind): string {
-    return label === null ? kind : `${label} ${kind}`
+    return label === null ? kind : messages.t('battle.effects.source', { kind, label })
   }
 
   // the effect in the log: its label, or how it is written when it has none
@@ -217,9 +222,7 @@ export class Participant {
           this.dealEffectDamage(target, dmg, Participant.effectName(effect))
         }
       }
-      if (target.currentHp > 0) {
-        this.applyModifiers(target, effect, saved)
-      }
+      this.applyModifiers(target, effect, saved)
     })
   }
 
@@ -295,6 +298,7 @@ export class Participant {
     }
   }
 
+  // a target killed by the damage of the attack or by an earlier modifier gets no more of them
   private applyModifier(target: Participant, effect: AttackEffect, modifier: Modifier, saved: boolean): void {
     if (target.currentHp <= 0) {
       return

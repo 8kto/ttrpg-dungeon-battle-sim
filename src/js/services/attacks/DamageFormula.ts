@@ -1,3 +1,4 @@
+import { deepFreeze } from '../../utils/object'
 import type { DiceGroup, FormulaTokens, IDamageFormula } from './IDamageFormula'
 
 // The one place that knows the formula format the strategies support: dice and numbers joined by "+" and "-",
@@ -13,7 +14,8 @@ export class DamageFormula implements IDamageFormula {
   private static readonly CACHE_LIMIT: number = 200
   private static readonly cache: Map<string, Readonly<FormulaTokens>> = new Map()
 
-  private static readonly EMPTY: Readonly<FormulaTokens> = Object.freeze({ dice: [], mod: 0 })
+  // the tokens are shared by every user of a formula, so frozen with their dice
+  private static readonly EMPTY: Readonly<FormulaTokens> = deepFreeze({ dice: [], mod: 0 })
 
   parse(formula: string): Readonly<FormulaTokens> {
     const cached = DamageFormula.cache.get(formula)
@@ -21,7 +23,7 @@ export class DamageFormula implements IDamageFormula {
       return cached
     }
 
-    const tokens = Object.freeze(DamageFormula.tokenize(formula))
+    const tokens = deepFreeze(DamageFormula.tokenize(formula))
     if (DamageFormula.cache.size >= DamageFormula.CACHE_LIMIT) {
       DamageFormula.cache.clear()
     }

@@ -178,6 +178,7 @@ abbr:hover {
   }
 }
 .damage-wizard-btn {
+  @apply leading-7;
   color: var(--icon-color);
   filter: grayscale(1);
 
@@ -523,10 +524,6 @@ abbr:hover {
 }
 
 /* attack wizard: options are fieldsets, attacks are cards inside them */
-.damage-wizard-btn {
-  @apply leading-7;
-}
-
 .attack-wizard__notice {
   @apply mb-2 text-sm;
   color: var(--alt-color);

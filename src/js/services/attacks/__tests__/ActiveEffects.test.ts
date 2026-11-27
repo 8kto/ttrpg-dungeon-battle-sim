@@ -110,6 +110,17 @@ describe('ActiveEffects', () => {
     expect(effects.isParalyzed).toBe(false)
   })
 
+  it('tells a petrification for the whole battle from one for a while', () => {
+    const effects = new ActiveEffects()
+    expect(effects.isPetrifiedForGood).toBe(false)
+
+    effects.add(petrification(2))
+    expect(effects.isPetrifiedForGood).toBe(false)
+
+    effects.add({ ...petrification(null), key: 'forever' })
+    expect(effects.isPetrifiedForGood).toBe(true)
+  })
+
   it('keeps permanent effects', () => {
     const effects = new ActiveEffects()
     effects.add(paralysis(null))

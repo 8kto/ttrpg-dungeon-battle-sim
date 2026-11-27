@@ -276,17 +276,21 @@ describe('AttackWizard', () => {
       expect($<HTMLButtonElement>('.attack-wizard__apply').disabled).toBe(true)
     })
 
-    it('drops save-only modifiers without a save', () => {
+    it('keeps save-only modifiers without a save, reporting them', () => {
       selectSave('poison')
       clickText('+ Save or die')
       clickText('+ Extra damage')
       clickText('+ Paralyze')
       selectSave('')
-      expect(code()).toBe('d6[paralyzed]')
-      expect($('.attack-wizard__errors').hidden).toBe(true)
+      expect(code()).toBe('d6[save_or_die, d6, paralyzed]')
+      expect($$('.attack-wizard__error-list li').map((li) => li.textContent)).toEqual([
+        'save_or_die requires a save in "d6[save_or_die, d6, paralyzed]"',
+      ])
+      expect($<HTMLButtonElement>('.attack-wizard__apply').disabled).toBe(true)
 
       selectSave('poison')
-      expect(code()).toBe('d6[Poison, paralyzed]')
+      expect(code()).toBe('d6[Poison, save_or_die, d6, paralyzed]')
+      expect($('.attack-wizard__errors').hidden).toBe(true)
     })
 
     it('adds a save with a bonus and modifiers', () => {
@@ -383,7 +387,8 @@ describe('AttackWizard', () => {
       expect(code()).toBe('d6[Breath, save_for_half(d6), targets(4)]')
 
       selectSave('')
-      expect(code()).toBe('d6')
+      expect(code()).toBe('d6[save_for_half(d6), targets(4)]')
+      expect($<HTMLButtonElement>('.attack-wizard__apply').disabled).toBe(true)
     })
 
     it('edits parsed effects', () => {

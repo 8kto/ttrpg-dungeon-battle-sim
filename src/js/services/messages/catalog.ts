@@ -22,6 +22,8 @@ export const catalog = {
       petrified: '🗿 {name} is petrified, skips turn',
       petrifiedApplied: '🗿 {name} turned to stone {duration}',
       petrifiedEnded: '🗿 {name} is no longer petrified',
+      // the effect that deals the damage: its label and the modifier, e.g. "Poison damage_each_round"
+      source: '{label} {kind}',
       untilEnd: 'until the end of battle',
     },
     header: '[Battle {number}]',
@@ -34,6 +36,7 @@ export const catalog = {
       monsters: 'monsters won initiative',
       players: 'players won initiative',
     },
+    noFighters: '⏸️ No one is left to fight — draw',
     round: '>>> round {round}',
     roundLimit: '⏸️ Round limit ({max}) reached — draw',
     roundWithInitiative: '>>> round {round}, {initiative}',
@@ -106,7 +109,7 @@ export const catalog = {
   },
   stats: {
     avgRounds: '>> Avg Rounds: {rounds}',
-    draws: '>> Draws (round limit reached): {percent}%',
+    draws: '>> Draws (round limit reached or no one left to fight): {percent}%',
     effect: '>> {label}: {applied} applied',
     effectWithSave: '>> {label}: {applied} applied, {saved} saved',
     elapsed: '>> Execution time: {seconds} s',

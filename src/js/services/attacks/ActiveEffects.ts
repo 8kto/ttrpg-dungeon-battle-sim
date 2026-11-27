@@ -43,6 +43,11 @@ export class ActiveEffects {
     return this.petrified
   }
 
+  // turned to stone until the end of battle: checked once a round, so searched for
+  get isPetrifiedForGood(): boolean {
+    return this.effects.some((e) => e.kind === ModifierKind.Petrified && !e.pending && e.remaining === null)
+  }
+
   getDamageOverTime(): ActiveEffect[] {
     return this.effects.filter((e) => e.kind === ModifierKind.DamageEachRound && !e.pending)
   }

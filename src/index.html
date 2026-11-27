@@ -581,7 +581,9 @@
           <ul>
             <li>Each round a random side acts first, then the other</li>
             <li>An attack hits when <code>d20 + To Hit ≥ AC</code> of the target</li>
-            <li>The battle ends when one side is wiped out, or in a draw if it never ends</li>
+            <li>
+              The battle ends when one side is wiped out, or in a draw if it never ends or no one is left to fight
+            </li>
           </ul>
 
           <h3>Characters</h3>
@@ -677,6 +679,7 @@
               <b>Avg Players survivors</b>: share of players alive after a won battle; petrified ones don't count. A
               side whose combatants are all dead or petrified loses
             </li>
+            <li><b>Draws</b>: battles that hit the round limit or left no one able to fight</li>
             <li>Effect lines: how often each special effect hit or was saved against</li>
           </ul>
 
@@ -756,7 +759,8 @@
                   no damage over time; a save is optional, and an effect has at most one <code>petrified</code>. The
                   other modifiers of the attack apply first, wherever <code>petrified</code> is written, and the other
                   effects on the target wait until the petrification ends. A side whose combatants are all dead or
-                  petrified loses
+                  petrified loses to a side that can still fight; when neither can, the rounds go on until a statue
+                  comes back to life, and its side wins, or the battle is a draw if no statue will
                 </td>
               </tr>
               <tr>

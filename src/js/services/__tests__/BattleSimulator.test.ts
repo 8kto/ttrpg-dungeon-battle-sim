@@ -74,6 +74,7 @@ describe('BattleSimulator', () => {
         side,
         startTurn: jest.fn().mockReturnValue(true),
         strategy,
+        willRevive: false,
       }),
     )
     ;(getStrategy as jest.Mock).mockReturnValue(mockStrategy)
@@ -177,7 +178,8 @@ describe('BattleSimulator', () => {
       for (let i = 0; i < rounds; i++) {
         spy.mockReturnValueOnce(true).mockReturnValueOnce(true)
       }
-      spy.mockReturnValue(false)
+      // then the players win
+      spy.mockImplementation((side) => side === Side.Players)
 
       return simulator.simulate()
     }
@@ -287,6 +289,49 @@ describe('BattleSimulator', () => {
       expect(mockLogger.log).toHaveBeenCalledWith(`⏸️ Round limit (${MAX_ROUNDS}) reached — draw`)
     })
 
+    it('goes on while nobody can fight, until a statue comes back to life', () => {
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        initiative: Initiative.Random,
+        maxAttacksPerTarget: 0,
+        rounding: Rounding.Up,
+        strategy: Strategy.Random,
+        targeting: Targeting.Random,
+      })
+      const [, monster] = created() as unknown as Array<{ willRevive: boolean }>
+      monster.willRevive = true
+      jest
+        .spyOn(simulator, 'hasSurvivors')
+        .mockReturnValueOnce(true)
+        .mockReturnValueOnce(true)
+        .mockReturnValueOnce(false)
+        .mockReturnValueOnce(false)
+        .mockImplementation((side) => side === Side.Monsters)
+
+      const result = simulator.simulate()
+      expect(result.rounds).toBe(2)
+      expect(result.winner).toBe(Side.Monsters)
+    })
+
+    it('ends in a draw when nobody can fight anymore', () => {
+      const simulator = new BattleSimulator([mockPlayer], [mockMonster], mockLogger, {
+        biasMonsters: 0,
+        biasPlayers: 0,
+        initiative: Initiative.Random,
+        maxAttacksPerTarget: 0,
+        rounding: Rounding.Up,
+        strategy: Strategy.Random,
+        targeting: Targeting.Random,
+      })
+      jest.spyOn(simulator, 'hasSurvivors').mockReturnValueOnce(true).mockReturnValueOnce(true).mockReturnValue(false)
+
+      const result = simulator.simulate()
+      expect(result.rounds).toBe(1)
+      expect(result.winner).toBeNull()
+      expect(mockLogger.log).toHaveBeenCalledWith('⏸️ No one is left to fight — draw')
+    })
+
     it('resets attack limits each round', () => {
       mockStrategy.calculateDamage.mockReturnValue(3)
       mockStrategy.calculateHp.mockReturnValueOnce(5).mockReturnValueOnce(6)
@@ -365,7 +410,8 @@ describe('BattleSimulator', () => {
       for (let i = 0; i < rounds; i++) {
         spy.mockReturnValueOnce(true).mockReturnValueOnce(true)
       }
-      spy.mockReturnValue(false)
+      // then the players win
+      spy.mockImplementation((side) => side === Side.Players)
       simulator.simulate()
     }
 

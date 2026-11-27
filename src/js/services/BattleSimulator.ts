@@ -24,7 +24,7 @@ import { Initiative } from './types'
 export const MAX_ROUNDS = 1000
 
 export type BattleResult = {
-  winner: Side | null // null is a draw: round limit reached
+  winner: Side | null // null is a draw: round limit reached, or nobody left to fight
   rounds: number
   survivors: Array<Participant>
   effects: EffectCounters
@@ -106,9 +106,30 @@ export class BattleSimulator implements IBattleSimulator {
     return this.fixedOrder
   }
 
-  // a side whose fighters are all dead or petrified, even for a while, has lost
+  // a side whose fighters are all dead or petrified, even for a while, loses to a side that can fight
   hasSurvivors(side: Side): boolean {
     return this.participants.some((p) => p.side === side && p.isActive)
+  }
+
+  // Both sides fight; or neither can, but a statue comes back to life later: the rounds go on until a side has
+  // fighters again, it wins unless the other one gets them in the same round
+  private isOngoing(): boolean {
+    const players = this.hasSurvivors(Side.Players)
+    const monsters = this.hasSurvivors(Side.Monsters)
+    if (players !== monsters) {
+      return false
+    }
+
+    return players || this.participants.some((p) => p.willRevive)
+  }
+
+  // the side that can fight; null when nobody can: all dead or petrified for good
+  private getWinner(): Side | null {
+    if (this.hasSurvivors(Side.Players)) {
+      return Side.Players
+    }
+
+    return this.hasSurvivors(Side.Monsters) ? Side.Monsters : null
   }
 
   private initiativeMessage(sides: Participant[][]): string {
@@ -122,8 +143,7 @@ export class BattleSimulator implements IBattleSimulator {
       )
     }
 
-    // Round: goes while there are two sides
-    while (this.hasSurvivors(Side.Players) && this.hasSurvivors(Side.Monsters)) {
+    while (this.isOngoing()) {
       if (this.roundsCount >= MAX_ROUNDS) {
         this.logger.log(messages.t('battle.roundLimit', { max: MAX_ROUNDS }))
 
@@ -166,7 +186,10 @@ export class BattleSimulator implements IBattleSimulator {
       this.participants.forEach((p) => p.endRound())
     }
 
-    const winner: Side = this.hasSurvivors(Side.Players) ? Side.Players : Side.Monsters
+    const winner = this.getWinner()
+    if (winner === null) {
+      this.logger.log(messages.t('battle.noFighters'))
+    }
     const survivors = this.participants.filter((p) => p.isActive)
 
     return {

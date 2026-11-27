@@ -24,7 +24,7 @@ describe('SummaryFormatter', () => {
 
     expect(formatter.format(stats, context)).toEqual([
       'Players win: 50.0%, Monsters win: 25.0%',
-      '>> Draws (round limit reached): 25.0%',
+      '>> Draws (round limit reached or no one left to fight): 25.0%',
       '>> Avg Players survivors: 75.0%',
       '>> Strategy Random, 4 of 10 battles',
       '>> Avg Rounds: 2.5',

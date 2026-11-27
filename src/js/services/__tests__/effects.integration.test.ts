@@ -286,6 +286,21 @@ describe('effects in battle', () => {
       expect(logger.drain()).toContain('🗿 Fighter turned to stone until the end of battle')
     })
 
+    it('comes back to life only after a petrification for a while', () => {
+      const { hit, target } = setup()
+      expect(target.willRevive).toBe(false)
+
+      hit('d4[petrified(2)]')
+      expect(target.willRevive).toBe(true)
+
+      const statue = setup()
+      statue.hit('d4[petrified]')
+      expect(statue.target.willRevive).toBe(false)
+
+      target.currentHp = 0
+      expect(target.willRevive).toBe(false)
+    })
+
     it('applies without a save', () => {
       const { hit, target } = setup()
       saveRoll.mockClear()
@@ -355,10 +370,8 @@ describe('effects in battle', () => {
       expect(target.currentHp).toBe(hp - 3)
     })
 
-    it('loses the battle for a side of statues, even petrified for a while', () => {
-      jest.restoreAllMocks()
-      const gorgon: ICharacter = { ...makeChar('Gorgon'), damage: '0<Gaze>[petrified(1000)]', toHit: 100 }
-      const sim = new BattleSimulator([makeChar('Fighter')], [gorgon], new NullLogger(), {
+    const makeSim = (players: ICharacter[], monsters: ICharacter[]): BattleSimulator =>
+      new BattleSimulator(players, monsters, logger, {
         biasMonsters: 0,
         biasPlayers: 0,
         initiative: Initiative.Fixed,
@@ -367,6 +380,74 @@ describe('effects in battle', () => {
         strategy: Strategy.Max,
         targeting: Targeting.Random,
       })
+
+    // puts an effect on a participant of the battle before it starts
+    const afflict = (sim: BattleSimulator, name: string, attack: string): void => {
+      const target = sim.participants.find((p) => p.char.name === name) as Participant
+      const caster = make(makeChar('Witch'), Side.Monsters)
+      jest.spyOn(caster, 'rollToHit').mockReturnValue(100)
+      caster.performOneAttack(target, damageParser.parseAttack(attack))
+      target.endRound()
+    }
+
+    // the last fighters of both sides die from damage over time in the first round
+    const doomed = (players: string[], monsters: string[]): BattleSimulator => {
+      const sim = makeSim(
+        players.map((n) => makeChar(n)),
+        monsters.map((n) => makeChar(n)),
+      )
+      afflict(sim, players[0], '0<fire>[damage_each_round(200)]')
+      afflict(sim, monsters[0], '0<fire>[damage_each_round(200)]')
+
+      return sim
+    }
+
+    it('goes on while nobody can fight, until a statue comes back to life and wins', () => {
+      const sim = doomed(['Fighter'], ['Ogre', 'Gorgon'])
+      afflict(sim, 'Gorgon', '0[petrified(2)]')
+
+      const result = sim.simulate()
+      expect(result.winner).toBe(Side.Monsters)
+      expect(result.rounds).toBe(2)
+      expect(result.survivors.map((p) => p.char.name)).toEqual(['Gorgon'])
+    })
+
+    it('gives the win to the side whose statue comes back to life first', () => {
+      const sim = doomed(['Fighter', 'Knight'], ['Ogre', 'Gorgon'])
+      afflict(sim, 'Knight', '0[petrified(2)]')
+      afflict(sim, 'Gorgon', '0[petrified(3)]')
+
+      const result = sim.simulate()
+      expect(result.winner).toBe(Side.Players)
+      expect(result.rounds).toBe(2)
+      expect(result.survivors.map((p) => p.char.name)).toEqual(['Knight'])
+    })
+
+    it('goes on with the battle when both sides come back to life in the same round', () => {
+      const sim = doomed(['Fighter', 'Knight'], ['Ogre', 'Gorgon'])
+      afflict(sim, 'Knight', '0[petrified(2)]')
+      afflict(sim, 'Gorgon', '0[petrified(2)]')
+
+      const result = sim.simulate()
+      expect(result.rounds).toBeGreaterThan(2)
+      expect(result.survivors).toHaveLength(result.winner === null ? 2 : 1)
+    })
+
+    it('ends in a draw when nobody can fight and no statue will come back to life', () => {
+      const sim = doomed(['Fighter'], ['Ogre', 'Gorgon'])
+      afflict(sim, 'Gorgon', '0[petrified]')
+
+      const result = sim.simulate()
+      expect(result.winner).toBeNull()
+      expect(result.rounds).toBe(1)
+      expect(result.survivors).toEqual([])
+      expect(logger.drain()).toContain('⏸️ No one is left to fight — draw')
+    })
+
+    it('loses the battle for a side of statues, even petrified for a while', () => {
+      jest.restoreAllMocks()
+      const gorgon: ICharacter = { ...makeChar('Gorgon'), damage: '0<Gaze>[petrified(1000)]', toHit: 100 }
+      const sim = makeSim([makeChar('Fighter')], [gorgon])
       jest.spyOn(sim, 'getSortedByInitiative').mockImplementation(function (this: BattleSimulator) {
         const players = this.participants.filter((p) => p.side === Side.Players)
         const monsters = this.participants.filter((p) => p.side === Side.Monsters)

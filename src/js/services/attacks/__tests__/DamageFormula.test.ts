@@ -62,6 +62,14 @@ describe('DamageFormula', () => {
       expect(formula.parse('3d4+1')).toBe(new DamageFormula().parse('3d4+1'))
     })
 
+    it('freezes the cached tokens with their dice', () => {
+      const tokens = formula.parse('2d6+d4')
+
+      expect(Object.isFrozen(tokens)).toBe(true)
+      expect(Object.isFrozen(tokens.dice)).toBe(true)
+      tokens.dice.forEach((group) => expect(Object.isFrozen(group)).toBe(true))
+    })
+
     it('starts the cache over when it is full', () => {
       const first = formula.parse('7d4+1')
       for (let mod = 1; mod <= 200; mod++) {

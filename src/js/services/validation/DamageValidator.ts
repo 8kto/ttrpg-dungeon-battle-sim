@@ -37,11 +37,8 @@ export class DamageValidator implements IDamageValidator {
     return { errors, options }
   }
 
-  // the format is checked apart: a strategy may evaluate formulas the others don't accept, like "0d6"
+  // the strategies parse formulas with DamageFormula, so an invalid one throws
   private isValidFormula(formula: string): boolean {
-    if (!this.damageParser.isFormula(formula)) {
-      return false
-    }
     try {
       this.strategy.calculateDamage(formula)
 

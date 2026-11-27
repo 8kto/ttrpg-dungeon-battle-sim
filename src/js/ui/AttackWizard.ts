@@ -277,11 +277,8 @@ export class AttackWizard implements IAttackWizard {
     )
     select.value = attack.save ?? ''
     select.addEventListener('change', (): void => {
+      // modifiers that require a save stay without one, reported until a save is picked again or they are removed
       attack.save = select.value === '' ? null : (select.value as SaveType)
-      // without a save these modifiers make the damage invalid
-      if (attack.save === null) {
-        attack.modifiers = attack.modifiers.filter((m) => !SAVE_ONLY_MODIFIERS.has(m.kind))
-      }
       this.render()
     })
 
