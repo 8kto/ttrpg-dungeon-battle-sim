@@ -297,12 +297,6 @@ abbr:hover {
   }
 }
 
-@keyframes rotate-emoji {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 /* a one-line window over a strip of emoji, scrolled frame by frame (see EmojiTicker.ts);
    a transform animation runs off the main thread, so it doesn't stutter while the simulation loads it */
 .emoji-ticker {
@@ -339,14 +333,6 @@ abbr:hover {
 #run-sim {
   position: relative;
   background: var(--alt-color);
-
-  &.inline-loading-indicator::after {
-    content: '🕸️';
-    display: inline-block;
-    margin-left: 0.5rem;
-    opacity: 1;
-    animation: rotate-emoji 1s linear infinite;
-  }
 }
 
 #result-log {

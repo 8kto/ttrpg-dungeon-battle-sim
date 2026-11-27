@@ -129,13 +129,11 @@ document.addEventListener('DOMContentLoaded', (): void => {
     logBackdrop.classList.add('log-backdrop--visible', 'log-backdrop--pulsing')
 
     if (!logsEnabled) {
-      runSimBtn.classList.add('inline-loading-indicator')
       logger.getContainer().classList.add('bg-muted')
     }
   }
 
   const stopProgressDisplay = (): void => {
-    runSimBtn.classList.remove('inline-loading-indicator')
     logger.getContainer().classList.remove('bg-muted')
     logBackdrop.classList.remove('log-backdrop--visible', 'log-backdrop--pulsing')
     document.body.style.cursor = 'default'
